@@ -1,0 +1,13 @@
+{
+  "Id": "WarningsDisabler",
+  "DisplayName": "WarningsDisabler",
+  "Author": "zorgesho",
+  "Version": "1.0.0",
+  "Dependencies": [],
+  "LoadBefore": [],
+  "LoadAfter": [],
+  "Enable": true,
+  "Game": "Subnautica",
+  "AssemblyName": "WarningsDisabler.dll",
+  "EntryMethod": "WarningsDisabler.Main.patch"
+}

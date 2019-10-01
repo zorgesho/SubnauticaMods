@@ -3,8 +3,8 @@
 namespace WarningsDisabler
 {
 	[System.Serializable]
-	class Config
+	public class Config: BaseConfig
 	{
-		public int field = 42;
+		public bool disableOxygenWarnings = true;
 	}
 }

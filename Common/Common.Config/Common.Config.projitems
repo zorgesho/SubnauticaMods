@@ -3,13 +3,12 @@
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
     <HasSharedItems>true</HasSharedItems>
-    <SharedGUID>acfe8ab0-f047-44b1-8b43-d918f5ecad77</SharedGUID>
+    <SharedGUID>b39de674-737e-4f48-a1f7-a26b7e3d501f</SharedGUID>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
-    <Import_RootNamespace>Common</Import_RootNamespace>
+    <Import_RootNamespace>Common.Config</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)Log.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)PathHelpers.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ConfigHelper.cs" />
   </ItemGroup>
 </Project>

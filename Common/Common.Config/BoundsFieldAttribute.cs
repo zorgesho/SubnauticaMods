@@ -1,0 +1,40 @@
+﻿using System;
+using System.Reflection;
+
+namespace Common.Config
+{
+	[AttributeUsage(AttributeTargets.Field)]
+	class BoundsFieldAttribute: ConfigFieldAttribute
+	{
+		public readonly float min = float.MinValue;
+		public readonly float max = float.MaxValue;
+
+		public BoundsFieldAttribute(float Min = float.MinValue, float Max = float.MaxValue)
+		{
+			min = Min;
+			max = Max;
+		}
+
+		public bool isBothBoundsSet() => min > float.MinValue && max < float.MaxValue;
+
+		override public void process(object config, FieldInfo field)
+		{																						$"BoundsFieldAttribute.process min > max, field '{field.Name}'".logDbgError(min > max);
+			try
+			{
+				float value = field.GetValue(config).toFloat();
+				float valuePrev = value;
+
+				value = UnityEngine.Mathf.Clamp(value, min, max);
+
+				if (value != valuePrev)
+				{																				$"BoundsFieldAttribute.process changing field '{field.Name}' from {valuePrev} to {value}".logWarning();
+					field.SetValue(config, Convert.ChangeType(value, field.FieldType));
+				}
+			}
+			catch (Exception e)
+			{
+				Log.msg(e, $"config field {field.Name}");
+			}
+		}
+	}
+}

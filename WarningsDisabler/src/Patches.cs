@@ -1,31 +1,28 @@
 ﻿using System;
 using Harmony;
 using UnityEngine;
+using Common;
 
 namespace WarningsDisabler
 {
 	// remove all oxygen warnings
 	class OxygenWarnings
 	{	
-		[HarmonyPatch(typeof(HintSwimToSurface))]
-		[HarmonyPatch("Update")]
+		[HarmonyPatch(typeof(HintSwimToSurface), "Update")]
 		class HintSwimToSurface_Update_Patch
 		{
 			private static bool Prefix(HintSwimToSurface __instance)
 			{
-				GameObject.Destroy(__instance);
-				return false;
+				return !Main.config.disableOxygenWarnings;
 			}
 		}
 	
-		[HarmonyPatch(typeof(LowOxygenAlert))]
-		[HarmonyPatch("Update")]
+		[HarmonyPatch(typeof(LowOxygenAlert), "Update")]
 		class LowOxygenAlert_Update_Patch
 		{
 			private static bool Prefix(LowOxygenAlert __instance)
 			{
-				GameObject.Destroy(__instance);
-				return false;
+				return !Main.config.disableOxygenWarnings;
 			}
 		}
 	}

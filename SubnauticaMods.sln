@@ -11,9 +11,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{EE6D7B
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Common.Config", "Common\Common.Config\Common.Config.shproj", "{B39DE674-737E-4F48-A1F7-A26B7E3D501F}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Common.ModOptions", "Common\Common.ModOptions\Common.ModOptions.shproj", "{0610F2C1-4B75-45F9-B517-9D747E3EDD41}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Common\Common.ModOptions\Common.ModOptions.projitems*{0610f2c1-4b75-45f9-b517-9d747e3edd41}*SharedItemsImports = 13
 		Common\Common.Config\Common.Config.projitems*{93c2cdd8-5d48-451f-a5c1-35a0b48ddbe6}*SharedItemsImports = 4
+		Common\Common.ModOptions\Common.ModOptions.projitems*{93c2cdd8-5d48-451f-a5c1-35a0b48ddbe6}*SharedItemsImports = 4
 		Common\Common.projitems*{93c2cdd8-5d48-451f-a5c1-35a0b48ddbe6}*SharedItemsImports = 4
 		Common\Common.projitems*{acfe8ab0-f047-44b1-8b43-d918f5ecad77}*SharedItemsImports = 13
 		Common\Common.Config\Common.Config.projitems*{b39de674-737e-4f48-a1f7-a26b7e3d501f}*SharedItemsImports = 13
@@ -34,6 +38,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{ACFE8AB0-F047-44B1-8B43-D918F5ECAD77} = {EE6D7B7D-F20A-439A-8C01-97B6A16F9B52}
 		{B39DE674-737E-4F48-A1F7-A26B7E3D501F} = {EE6D7B7D-F20A-439A-8C01-97B6A16F9B52}
+		{0610F2C1-4B75-45F9-B517-9D747E3EDD41} = {EE6D7B7D-F20A-439A-8C01-97B6A16F9B52}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0A745472-1C11-4AB7-B6C4-79A169E0FB35}

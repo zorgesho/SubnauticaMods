@@ -35,8 +35,8 @@
     <Reference Include="0Harmony-1.2.0.1">
       <HintPath>..\..\..\..\games\Subnautica\Subnautica_Data\Managed\0Harmony-1.2.0.1.dll</HintPath>
     </Reference>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\..\..\games\Subnautica\Subnautica_Data\Managed\Assembly-CSharp.dll</HintPath>
+    <Reference Include="Assembly-CSharp_publicized">
+      <HintPath>..\..\..\..\games\Subnautica\Subnautica_Data\Managed\Assembly-CSharp_publicized.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\..\..\games\Subnautica\Subnautica_Data\Managed\Newtonsoft.Json.dll</HintPath>
@@ -55,7 +55,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="src\Patches.cs" />
+    <Compile Include="src\temp.cs" />
+    <Compile Include="src\TestPowerWarnings.cs" />
+    <None Include="src\HabitatPowerWarnings.cs" />
+    <Compile Include="src\OxygenWarnings.cs" />
     <Compile Include="config.cs" />
     <Compile Include="main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

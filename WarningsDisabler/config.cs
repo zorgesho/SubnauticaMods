@@ -1,12 +1,13 @@
-﻿using Common.Config;
+﻿using System;
+using Common.Config;
 
 namespace WarningsDisabler
 {
-	[System.Serializable]
+	[Serializable]
 	[Options.Name("Warnings Disabler")]
 	class Config: BaseConfig
 	{
-		[Options.Field("Disable Oxygen Warnings")]
+		[Options.Field("Disable Oxygen Warnings", typeof(OxygenWarnings.OxygenWarningsCustomAction))]
 		public bool disableOxygenWarnings = true;
 	}
 }

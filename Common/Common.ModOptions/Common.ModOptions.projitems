@@ -11,6 +11,6 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)ModOptions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ModOptionsElements.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)OptionFieldAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ModOptionsAttribute.cs" />
   </ItemGroup>
 </Project>

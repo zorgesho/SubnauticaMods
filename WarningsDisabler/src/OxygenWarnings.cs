@@ -25,7 +25,7 @@ namespace WarningsDisabler
 		
 		// for hiding popup message properly when changing option in game
 		[HarmonyPatch(typeof(HintSwimToSurface), "OnLanguageChanged")]
-		class HintSwimToSurface_OnLanguageChanged_Patch
+		static class HintSwimToSurface_OnLanguageChanged_Patch
 		{
 			static void Postfix(HintSwimToSurface __instance)
 			{
@@ -34,7 +34,7 @@ namespace WarningsDisabler
 		}
 		
 		[HarmonyPatch(typeof(HintSwimToSurface), "Update")]
-		class HintSwimToSurface_Update_Patch
+		static class HintSwimToSurface_Update_Patch
 		{
 			static bool Prefix(HintSwimToSurface __instance)
 			{
@@ -43,7 +43,7 @@ namespace WarningsDisabler
 		}
 	
 		[HarmonyPatch(typeof(LowOxygenAlert), "Update")]
-		class LowOxygenAlert_Update_Patch
+		static class LowOxygenAlert_Update_Patch
 		{
 			static bool Prefix(LowOxygenAlert __instance)
 			{

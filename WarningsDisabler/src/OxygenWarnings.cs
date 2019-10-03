@@ -4,12 +4,12 @@ using Common.Config;
 
 namespace WarningsDisabler
 {
-	// remove all oxygen warnings
+	// remove low oxygen warnings
 	static class OxygenWarnings
 	{
 		static int hintMessageHash = 0;
 		
-		public class OxygenWarningsCustomAction: Options.IFieldCustomAction
+		public class HideOxygenHint: Options.IFieldCustomAction
 		{
 			public void fieldCustomAction()
 			{

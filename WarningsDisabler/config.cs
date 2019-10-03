@@ -7,7 +7,7 @@ namespace WarningsDisabler
 	[Options.Name("Warnings Disabler")]
 	class Config: BaseConfig
 	{
-		[Options.Field("Disable Oxygen Warnings", typeof(OxygenWarnings.OxygenWarningsCustomAction))]
+		[Options.Field("Disable Oxygen Warnings", typeof(OxygenWarnings.HideOxygenHint))]
 		public bool disableOxygenWarnings = true;
 		
 		[Options.Field]

@@ -7,10 +7,11 @@ using Common;
 
 namespace WarningsDisabler
 {
+	// Disabling power warnings and welcome messages
 	[HarmonyPatch(typeof(VoiceNotification), "Play", new Type[] { typeof(object[]) })]
 	static class VoiceNotification_Play_Patch
 	{
-		static List<string> powerMessages = new List<string>()
+		static List<string> powerWarnings = new List<string>()
 		{
 			"BasePowerUp",		// "HABITAT: Power restored. All primary systems online."
 			"BasePowerDown"		// "HABITAT: Warning, emergency power only."
@@ -30,10 +31,10 @@ namespace WarningsDisabler
 		
 		static bool Prefix(VoiceNotification __instance, object[] args, bool __result)
 		{																											$"VoiceNotification.Play {__instance.text}, interval:{__instance.minInterval}".onScreen().logDbg();
-			if (Main.config.disablePowerWarnings && powerMessages.Find((s) => __instance.text == s) != null)
+			if (!Main.config.powerWarningsEnabled && powerWarnings.Find((s) => __instance.text == s) != null)
 				return false;
 			
-			if (Main.config.disableWelcomesMessages && welcomeMessages.Find((s) => __instance.text == s) != null)
+			if (!Main.config.welcomeMessagesEnabled && welcomeMessages.Find((s) => __instance.text == s) != null)
 				return false;
 
 			return true;

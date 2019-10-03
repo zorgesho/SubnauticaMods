@@ -13,7 +13,7 @@ namespace WarningsDisabler
 		{
 			public void fieldCustomAction()
 			{
-				if (Main.config.disableOxygenWarnings)
+				if (!Main.config.oxygenWarningsEnabled)
 				{
 					uGUI_PopupMessage popup = Hint.main?.message;
 					
@@ -38,7 +38,7 @@ namespace WarningsDisabler
 		{
 			static bool Prefix(HintSwimToSurface __instance)
 			{
-				return !Main.config.disableOxygenWarnings;
+				return Main.config.oxygenWarningsEnabled;
 			}
 		}
 	
@@ -47,7 +47,7 @@ namespace WarningsDisabler
 		{
 			static bool Prefix(LowOxygenAlert __instance)
 			{
-				return !Main.config.disableOxygenWarnings;
+				return Main.config.oxygenWarningsEnabled;
 			}
 		}
 	}

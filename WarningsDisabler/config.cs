@@ -4,22 +4,22 @@ using Common.Config;
 namespace WarningsDisabler
 {
 	[Serializable]
-	[Options.Name("Warnings Disabler")]
+	[Options.Name("Warnings & messages <color=#999999FF>(uncheck boxes to disable)</color>")]
 	class Config: BaseConfig
 	{
-		[Options.Field("Disable Oxygen Warnings", typeof(OxygenWarnings.HideOxygenHint))]
-		public bool disableOxygenWarnings = true;
+		[Options.Field("Oxygen warnings", typeof(OxygenWarnings.HideOxygenHint))]
+		public bool oxygenWarningsEnabled = true;
 		
-		[Options.Field]
-		public bool disableDepthWarnings = true;
+		[Options.Field("Depth warnings")]
+		public bool depthWarningsEnabled = true;
 
-		[Options.Field]
-		public bool disablePowerWarnings = true;
+		[Options.Field("Habitat power warnings")]
+		public bool powerWarningsEnabled = true;
 		
-		[Options.Field]
-		public bool disableFoodWaterWarnings = true;
+		[Options.Field("Food and water warnings")]
+		public bool foodWaterWarningsEnabled = true;
 		
-		[Options.Field]
-		public bool disableWelcomesMessages = true;
+		[Options.Field("Welcome messages")]
+		public bool welcomeMessagesEnabled = true;
 	}
 }

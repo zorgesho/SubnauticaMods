@@ -7,6 +7,7 @@ using Common;
 
 namespace WarningsDisabler
 {
+	// Disabling food/water warnings and depth warnings
 	[HarmonyPatch(typeof(PDANotification), "Play", new Type[] { typeof(object[]) })]
 	static class PDANotification_Play_Patch
 	{
@@ -29,10 +30,10 @@ namespace WarningsDisabler
 
 		static bool Prefix(PDANotification __instance, object[] args)
 		{																											$"PDANotification.Play {__instance.text}".onScreen().logDbg();
-			if (Main.config.disableDepthWarnings && depthWarnings.Find((s) => __instance.text == s) != null)
+			if (!Main.config.depthWarningsEnabled && depthWarnings.Find((s) => __instance.text == s) != null)
 				return false;
 			
-			if (Main.config.disableFoodWaterWarnings && foodWaterWarnings.Find((s) => __instance.text == s) != null)
+			if (!Main.config.foodWaterWarningsEnabled && foodWaterWarnings.Find((s) => __instance.text == s) != null)
 				return false;
 
 			return true;

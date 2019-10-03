@@ -5,6 +5,7 @@ using SMLHelper.V2.Options;
 
 namespace Common.Config
 {
+	// Config attributes for Mod Options
 	partial class Options: ModOptions
 	{
 		public interface IFieldCustomAction
@@ -69,7 +70,12 @@ namespace Common.Config
 				ModOption.InitParams initParams = new ModOption.InitParams{config = config, field = field, label = label};
 
 				if (customActionType != null)
+				{
 					initParams.action = Activator.CreateInstance(customActionType) as IFieldCustomAction;
+					
+					if (initParams.action == null)
+						$"Options.FieldAttribute: '{field.Name}' You need to implement IFieldCustomAction in CustomAction".logError();
+				}
 
 				if (field.FieldType == typeof(bool))
 				{
@@ -78,7 +84,7 @@ namespace Common.Config
 				else
 				if (field.FieldType == typeof(UnityEngine.KeyCode))
 				{
-					add(new KeyBindOption(config, field, label));
+					add(new KeyBindOption(initParams));
 				}
 				else
 				if (field.FieldType == typeof(float) || field.FieldType == typeof(int))
@@ -86,21 +92,21 @@ namespace Common.Config
 					ChoiceAttribute choice = GetCustomAttribute(field, typeof(ChoiceAttribute)) as ChoiceAttribute;
 					if (choice != null && choice.choices.Length > 0)
 					{
-						add(new ChoiceOption(config, field, label, choice.choices));
+						add(new ChoiceOption(initParams, choice.choices));
 						return;
 					}
 
 					BoundsFieldAttribute bounds = GetCustomAttribute(field, typeof(BoundsFieldAttribute)) as BoundsFieldAttribute;
 					if (bounds != null && bounds.isBothBoundsSet())
 					{
-						add(new SliderOption(config, field, label, bounds.min, bounds.max));
+						add(new SliderOption(initParams, bounds.min, bounds.max));
 						return;
 					}
 
-					$"You need set bounds or something!!!!".logError();
+					$"Options.FieldAttribute: '{field.Name}' For number option field you also need to add ChoiceAttribute or BoundsFieldAttribute".logError();
 				}
 				else
-					$"UNSUPPORTED !!!!!!!".logError();
+					$"Options.FieldAttribute: '{field.Name}' Unsupported field type".logError();
 			}
 		}
 	}

@@ -5,6 +5,7 @@ using SMLHelper.V2.Options;
 
 namespace Common.Config
 {
+	// UI elements for Mod Options
 	partial class Options: ModOptions
 	{
 		abstract class ModOption
@@ -50,15 +51,6 @@ namespace Common.Config
 				id = field.Name;
 				label = p.label;
 			}
-			
-			public ModOption(object _config, FieldInfo _field, string _label)
-			{
-				field = _field;
-				config = _config;
-
-				id = field.Name;
-				label = _label;
-			}
 
 			abstract public void addOption(Options options);
 
@@ -72,14 +64,7 @@ namespace Common.Config
 
 		class ToggleOption: ModOption
 		{
-			//public ToggleOption(object _config, FieldInfo _fieldInfo, string _label):
-			//	base(_config, _fieldInfo, _label)
-			//{
-			//}
-			
-			public ToggleOption(InitParams prms): base(prms)
-			{
-			}
+			public ToggleOption(InitParams p): base(p) {}
 
 			override public void addOption(Options options)
 			{
@@ -98,14 +83,7 @@ namespace Common.Config
 		{
 			float min, max;
 
-			public SliderOption(object _config, FieldInfo _fieldInfo, string _label, float _min, float _max):
-				base(_config, _fieldInfo, _label)
-			{
-				min = _min;
-				max = _max;
-			}
-			
-			public SliderOption(InitParams prms, float _min, float _max): base(prms)
+			public SliderOption(InitParams p, float _min, float _max): base(p)
 			{
 				min = _min;
 				max = _max;
@@ -128,8 +106,7 @@ namespace Common.Config
 		{
 			string[] choices = null;
 
-			public ChoiceOption(object _config, FieldInfo _fieldInfo, string _label, string[] _choices):
-				base(_config, _fieldInfo, _label)
+			public ChoiceOption(InitParams p, string[] _choices): base(p)
 			{
 				choices = _choices;
 			}
@@ -149,10 +126,7 @@ namespace Common.Config
 
 		class KeyBindOption: ModOption
 		{
-			public KeyBindOption(object _config, FieldInfo _fieldInfo, string _label):
-				base(_config, _fieldInfo, _label)
-			{
-			}
+			public KeyBindOption(InitParams p): base(p)	{}
 
 			override public void addOption(Options options)
 			{

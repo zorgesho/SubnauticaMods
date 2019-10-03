@@ -55,7 +55,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="src\VoicePDANotifications.cs" />
+    <Compile Include="src\PDANotifications .cs" />
+    <Compile Include="src\VoiceNotifications.cs" />
     <Compile Include="src\OxygenWarnings.cs" />
     <Compile Include="config.cs" />
     <Compile Include="main.cs" />

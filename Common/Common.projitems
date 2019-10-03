@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Log.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MiscInGame.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PathHelpers.cs" />
   </ItemGroup>
 </Project>

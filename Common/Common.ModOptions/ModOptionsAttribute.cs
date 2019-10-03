@@ -13,6 +13,7 @@ namespace Common.Config
 			void fieldCustomAction();
 		}
 		
+		// Class attribute for setting mod options name in menu
 		[AttributeUsage(AttributeTargets.Class)]
 		public class NameAttribute: ConfigAttribute
 		{
@@ -30,6 +31,8 @@ namespace Common.Config
 			}
 		}
 
+
+		// used by FieldAttribute, don't do anything on it's own
 		[AttributeUsage(AttributeTargets.Field)]
 		public class ChoiceAttribute: ConfigFieldAttribute
 		{
@@ -42,11 +45,13 @@ namespace Common.Config
 
 			override public void process(object config, FieldInfo field)
 			{
-				$"CHOICE ATTR PROCESS".logDbg();
+				if (choices == null || choices.Length == 0)
+					$"Options.ChoiceAttribute.process fieldName:'{field.Name}' Choices not set".logError();
 			}
 		}
 
 
+		// Attribute for creating options UI elements
 		[AttributeUsage(AttributeTargets.Field)]
 		public class FieldAttribute: ConfigFieldAttribute
 		{
@@ -60,7 +65,7 @@ namespace Common.Config
 			}
 
 			override public void process(object config, FieldInfo field)
-			{																			$"OptionFieldAttribute.process fieldName:'{field.Name}' fieldType:{field.FieldType} label: '{label}'".logDbg();
+			{																			$"Options.FieldAttribute.process fieldName:'{field.Name}' fieldType:{field.FieldType} label: '{label}'".logDbg();
 				if (mainConfig == null && config is BaseConfig)
 					mainConfig = config as BaseConfig;
 
@@ -89,6 +94,7 @@ namespace Common.Config
 				else
 				if (field.FieldType == typeof(float) || field.FieldType == typeof(int))
 				{
+					// creating ChoiceOption if we also have choice attribute
 					ChoiceAttribute choice = GetCustomAttribute(field, typeof(ChoiceAttribute)) as ChoiceAttribute;
 					if (choice != null && choice.choices.Length > 0)
 					{
@@ -96,6 +102,7 @@ namespace Common.Config
 						return;
 					}
 
+					// creating SliderOption if we also have bounds attribute
 					BoundsFieldAttribute bounds = GetCustomAttribute(field, typeof(BoundsFieldAttribute)) as BoundsFieldAttribute;
 					if (bounds != null && bounds.isBothBoundsSet())
 					{
@@ -103,7 +110,7 @@ namespace Common.Config
 						return;
 					}
 
-					$"Options.FieldAttribute: '{field.Name}' For number option field you also need to add ChoiceAttribute or BoundsFieldAttribute".logError();
+					$"Options.FieldAttribute: '{field.Name}' For numeric option field you also need to add ChoiceAttribute or BoundsFieldAttribute".logError();
 				}
 				else
 					$"Options.FieldAttribute: '{field.Name}' Unsupported field type".logError();

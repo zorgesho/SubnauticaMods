@@ -56,7 +56,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\temp.cs" />
-    <Compile Include="src\TestPowerWarnings.cs" />
+    <None Include="src\TestPowerWarnings.cs" />
+    <Compile Include="src\VoicePDANotifications.cs" />
     <None Include="src\HabitatPowerWarnings.cs" />
     <Compile Include="src\OxygenWarnings.cs" />
     <Compile Include="config.cs" />

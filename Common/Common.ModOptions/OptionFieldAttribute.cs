@@ -7,6 +7,11 @@ namespace Common.Config
 {
 	partial class Options: ModOptions
 	{
+		public interface IFieldCustomAction
+		{
+			void fieldCustomAction();
+		}
+		
 		[AttributeUsage(AttributeTargets.Class)]
 		public class NameAttribute: ConfigAttribute
 		{
@@ -45,10 +50,12 @@ namespace Common.Config
 		public class FieldAttribute: ConfigFieldAttribute
 		{
 			string label = null;
+			Type customActionType = null;
 
-			public FieldAttribute(string _label = null)
+			public FieldAttribute(string Label = null, Type CustomActionType = null)
 			{
-				label = _label;
+				label = Label;
+				customActionType = CustomActionType;
 			}
 
 			override public void process(object config, FieldInfo field)
@@ -59,9 +66,14 @@ namespace Common.Config
 				if (label == null)
 					label = field.Name;
 
+				ModOption.InitParams initParams = new ModOption.InitParams{config = config, field = field, label = label};
+
+				if (customActionType != null)
+					initParams.action = Activator.CreateInstance(customActionType) as IFieldCustomAction;
+
 				if (field.FieldType == typeof(bool))
 				{
-					add(new ToggleOption(config, field, label));
+					add(new ToggleOption(initParams));
 				}
 				else
 				if (field.FieldType == typeof(UnityEngine.KeyCode))

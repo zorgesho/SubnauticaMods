@@ -9,11 +9,20 @@ namespace Common.Config
 	{
 		abstract class ModOption
 		{
+			public struct InitParams
+			{
+				public object config;
+				public FieldInfo field;
+				public string label;
+				public IFieldCustomAction action;
+			}
+			
 			public readonly string id;
 			protected readonly string label;
 
 			readonly object config;
 			readonly FieldInfo field;
+			readonly IFieldCustomAction action;
 
 			protected object fieldValue
 			{
@@ -32,6 +41,16 @@ namespace Common.Config
 				}
 			}
 
+			public ModOption(InitParams p)
+			{
+				field = p.field;
+				config = p.config;
+				action = p.action;
+
+				id = field.Name;
+				label = p.label;
+			}
+			
 			public ModOption(object _config, FieldInfo _field, string _label)
 			{
 				field = _field;
@@ -46,15 +65,19 @@ namespace Common.Config
 			virtual public void onEvent(EventArgs e)
 			{
 				mainConfig?.save();
-				// custom field handling will go there if needed
+				action?.fieldCustomAction();
 			}
 		}
 
 
 		class ToggleOption: ModOption
 		{
-			public ToggleOption(object _config, FieldInfo _fieldInfo, string _label):
-				base(_config, _fieldInfo, _label)
+			//public ToggleOption(object _config, FieldInfo _fieldInfo, string _label):
+			//	base(_config, _fieldInfo, _label)
+			//{
+			//}
+			
+			public ToggleOption(InitParams prms): base(prms)
 			{
 			}
 
@@ -77,6 +100,12 @@ namespace Common.Config
 
 			public SliderOption(object _config, FieldInfo _fieldInfo, string _label, float _min, float _max):
 				base(_config, _fieldInfo, _label)
+			{
+				min = _min;
+				max = _max;
+			}
+			
+			public SliderOption(InitParams prms, float _min, float _max): base(prms)
 			{
 				min = _min;
 				max = _max;

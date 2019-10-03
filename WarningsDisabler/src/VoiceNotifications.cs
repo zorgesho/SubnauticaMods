@@ -13,8 +13,9 @@ namespace WarningsDisabler
 	{
 		static List<string> powerWarnings = new List<string>()
 		{
-			"BasePowerUp",		// "HABITAT: Power restored. All primary systems online."
-			"BasePowerDown"		// "HABITAT: Warning, emergency power only."
+			"BasePowerUp",			// "HABITAT: Power restored. All primary systems online."
+			"BasePowerDown",		// "HABITAT: Warning, emergency power only."
+			"BaseWelcomeNoPower"	// "HABITAT: Warning: Emergency power only. Oxygen production offline."
 		};
 
 		static List<string> welcomeMessages = new List<string>()
@@ -25,8 +26,7 @@ namespace WarningsDisabler
 			"SeamothWelcomeNoPower",			// "Seamoth: Warning: Emergency power only. Oxygen production offline."
 			"ExosuitWelcomeAboard",				// "PRAWN: Welcome aboard captain."
 			"ExosuitWelcomeNoPower",			// "PRAWN: Warning: Emergency power only. Oxygen production offline."
-			"BaseWelcomeAboard",				// "HABITAT: Welcome aboard captain."
-			"BaseWelcomeNoPower"				// "HABITAT: Warning: Emergency power only. Oxygen production offline."
+			"BaseWelcomeAboard"					// "HABITAT: Welcome aboard captain."
 		};
 		
 		static bool Prefix(VoiceNotification __instance, object[] args, bool __result)

@@ -9,6 +9,7 @@
     <Import_RootNamespace>Common.Config</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)BaseConfigSerialization.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BoundsFieldAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ConfigAttributes.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BaseConfig.cs" />

@@ -2,22 +2,18 @@
 using System.IO;
 using System.Reflection;
 
-using Oculus.Newtonsoft.Json;
-
 using Common.PathHelpers;
 
 namespace Common.Config
 {
-	public class BaseConfig
+	partial class BaseConfig
 	{
-		[NonSerialized]
 		static bool loadFromFile =
 #if (DEBUG && !WRITE_CONFIG)
 			false;
 #else
 			true;
 #endif
-		[NonSerialized]
 		string configPath;
 
 		// try to load config from mod folder. If file not found, create default config and save to that path
@@ -33,8 +29,7 @@ namespace Common.Config
 
 				if (loadFromFile && File.Exists(configPath))
 				{
-					string configJson = File.ReadAllText(configPath);
-					config = JsonConvert.DeserializeObject<C>(configJson);
+					config = deserialize<C>(File.ReadAllText(configPath));
 					config.configPath = configPath;
 				}
 				else
@@ -61,14 +56,13 @@ namespace Common.Config
 
 			try
 			{
-				File.WriteAllText(configPath, JsonConvert.SerializeObject(this, Formatting.Indented));
+				File.WriteAllText(configPath, serialize());
 			}
 			catch (Exception e)
 			{
 				Log.msg(e);
 			}
 		}
-
 
 		void processAttributes() => processAttributes(this); // using static method because of possible nested config classes
 		

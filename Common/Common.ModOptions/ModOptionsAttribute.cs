@@ -15,7 +15,7 @@ namespace Common.Config
 		
 		// Class attribute for setting mod options name in menu
 		[AttributeUsage(AttributeTargets.Class)]
-		public class NameAttribute: ConfigAttribute
+		public class NameAttribute: Config.ConfigAttribute
 		{
 			string optionsName;
 
@@ -34,7 +34,7 @@ namespace Common.Config
 
 		// used by FieldAttribute, don't do anything on its own
 		[AttributeUsage(AttributeTargets.Field)]
-		public class ChoiceAttribute: ConfigFieldAttribute
+		public class ChoiceAttribute: Config.FieldAttribute
 		{
 			public readonly string[] choices = null;
 
@@ -53,7 +53,7 @@ namespace Common.Config
 
 		// Attribute for creating options UI elements
 		[AttributeUsage(AttributeTargets.Field)]
-		public class FieldAttribute: ConfigFieldAttribute
+		public class FieldAttribute: Config.FieldAttribute
 		{
 			string label = null;
 			Type customActionType = null;
@@ -103,14 +103,14 @@ namespace Common.Config
 					}
 
 					// creating SliderOption if we also have bounds attribute
-					BoundsFieldAttribute bounds = GetCustomAttribute(field, typeof(BoundsFieldAttribute)) as BoundsFieldAttribute;
+					Config.FieldBoundsAttribute bounds = GetCustomAttribute(field, typeof(Config.FieldBoundsAttribute)) as Config.FieldBoundsAttribute;
 					if (bounds != null && bounds.isBothBoundsSet())
 					{
 						add(new SliderOption(initParams, bounds.min, bounds.max));
 						return;
 					}
 
-					$"Options.FieldAttribute: '{field.Name}' For numeric option field you also need to add ChoiceAttribute or BoundsFieldAttribute".logError();
+					$"Options.FieldAttribute: '{field.Name}' For numeric option field you also need to add ChoiceAttribute or FieldBoundsAttribute".logError();
 				}
 				else
 					$"Options.FieldAttribute: '{field.Name}' Unsupported field type".logError();

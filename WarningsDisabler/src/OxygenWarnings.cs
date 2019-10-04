@@ -27,28 +27,19 @@ namespace WarningsDisabler
 		[HarmonyPatch(typeof(HintSwimToSurface), "OnLanguageChanged")]
 		static class HintSwimToSurface_OnLanguageChanged_Patch
 		{
-			static void Postfix(HintSwimToSurface __instance)
-			{
-				hintMessageHash = __instance.messageHash;
-			}
+			static void Postfix(HintSwimToSurface __instance) => hintMessageHash = __instance.messageHash;
 		}
 		
 		[HarmonyPatch(typeof(HintSwimToSurface), "Update")]
 		static class HintSwimToSurface_Update_Patch
 		{
-			static bool Prefix(HintSwimToSurface __instance)
-			{
-				return Main.config.oxygenWarningsEnabled;
-			}
+			static bool Prefix(HintSwimToSurface __instance) => Main.config.oxygenWarningsEnabled;
 		}
 	
 		[HarmonyPatch(typeof(LowOxygenAlert), "Update")]
 		static class LowOxygenAlert_Update_Patch
 		{
-			static bool Prefix(LowOxygenAlert __instance)
-			{
-				return Main.config.oxygenWarningsEnabled;
-			}
+			static bool Prefix(LowOxygenAlert __instance) => Main.config.oxygenWarningsEnabled;
 		}
 	}
 }

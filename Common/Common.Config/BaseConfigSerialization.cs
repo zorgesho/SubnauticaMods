@@ -5,7 +5,7 @@ using Oculus.Newtonsoft.Json.Serialization;
 
 namespace Common.Config
 {
-	partial class BaseConfig
+	partial class Config
 	{
 		class ReadOnlyWritableContractResolver: DefaultContractResolver
 		{

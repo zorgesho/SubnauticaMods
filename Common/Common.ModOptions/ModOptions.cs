@@ -11,7 +11,7 @@ namespace Common.Config
 	{
 		static bool inited = false;
 
-		static BaseConfig mainConfig = null;
+		static Config mainConfig = null;
 		static string name = Assembly.GetExecutingAssembly().GetName().Name;
 		static List<ModOption> modOptions = new List<ModOption>();
 

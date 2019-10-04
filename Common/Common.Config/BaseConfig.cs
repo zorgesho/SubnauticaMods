@@ -6,7 +6,7 @@ using Common.PathHelpers;
 
 namespace Common.Config
 {
-	partial class BaseConfig
+	partial class Config
 	{
 		static bool loadFromFile =
 #if (DEBUG && !WRITE_CONFIG)
@@ -17,7 +17,7 @@ namespace Common.Config
 		string configPath;
 
 		// try to load config from mod folder. If file not found, create default config and save to that path
-		static public C tryLoad<C>(string localPath = "config.json", bool processAttributes = true) where C: BaseConfig, new()
+		static public C tryLoad<C>(string localPath = "config.json", bool processAttributes = true) where C: Config, new()
 		{
 			string configPath = ModPath.rootPath + localPath;
 			C config = null;

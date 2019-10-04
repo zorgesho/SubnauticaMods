@@ -27,7 +27,7 @@ namespace Common.Config
 			override public void process(object config)
 			{
 				name = optionsName;
-				mainConfig = config as BaseConfig;
+				mainConfig = config as Config;
 			}
 		}
 
@@ -66,8 +66,8 @@ namespace Common.Config
 
 			override public void process(object config, FieldInfo field)
 			{																			$"Options.FieldAttribute.process fieldName:'{field.Name}' fieldType:{field.FieldType} label: '{label}'".logDbg();
-				if (mainConfig == null && config is BaseConfig)
-					mainConfig = config as BaseConfig;
+				if (mainConfig == null)
+					mainConfig = config as Config;
 
 				if (label == null)
 					label = field.Name;

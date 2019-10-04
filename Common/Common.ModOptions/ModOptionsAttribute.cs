@@ -32,7 +32,7 @@ namespace Common.Config
 		}
 
 
-		// used by FieldAttribute, don't do anything on it's own
+		// used by FieldAttribute, don't do anything on its own
 		[AttributeUsage(AttributeTargets.Field)]
 		public class ChoiceAttribute: ConfigFieldAttribute
 		{

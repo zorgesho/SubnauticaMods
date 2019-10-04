@@ -7,7 +7,7 @@ namespace WarningsDisabler
 {
 	static public class Main
 	{
-		static internal readonly Config config = BaseConfig.tryLoad<Config>();
+		static internal readonly ModConfig config = Config.tryLoad<ModConfig>();
 
 		static public void patch()
 		{

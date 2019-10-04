@@ -5,21 +5,21 @@ namespace WarningsDisabler
 {
 	[Serializable]
 	[Options.Name("Warnings & messages <color=#999999FF>(uncheck boxes to disable)</color>")]
-	class Config: BaseConfig
+	class ModConfig: Config
 	{
 		[Options.Field("Oxygen warnings", typeof(OxygenWarnings.HideOxygenHint))]
-		public bool oxygenWarningsEnabled = true;
-		
+		public readonly bool oxygenWarningsEnabled = true;
+
 		[Options.Field("Depth warnings")]
-		public bool depthWarningsEnabled = true;
+		public readonly bool depthWarningsEnabled = true;
 
 		[Options.Field("Habitat power warnings")]
-		public bool powerWarningsEnabled = true;
-		
+		public readonly bool powerWarningsEnabled = true;
+
 		[Options.Field("Food and water warnings")]
-		public bool foodWaterWarningsEnabled = true;
-		
+		public readonly bool foodWaterWarningsEnabled = true;
+
 		[Options.Field("Welcome messages")]
-		public bool welcomeMessagesEnabled = true;
+		public readonly bool welcomeMessagesEnabled = true;
 	}
 }

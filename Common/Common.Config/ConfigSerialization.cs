@@ -7,6 +7,7 @@ namespace Common.Config
 {
 	partial class Config
 	{
+		// for writing to readonly config fields in json desearialization
 		class ReadOnlyWritableContractResolver: DefaultContractResolver
 		{
 			protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)

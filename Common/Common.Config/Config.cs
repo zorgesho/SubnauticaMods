@@ -8,14 +8,14 @@ namespace Common.Config
 	partial class Config
 	{
 		static bool loadFromFile =
-#if (DEBUG && !WRITE_CONFIG)
+#if (DEBUG && !LOAD_CONFIG)
 			false;
 #else
 			true;
 #endif
 		string configPath;
 
-		// try to load config from mod folder. If file not found, create default config and save to that path
+		// try to load config from mod folder. If file not found, create default config and save it to that path
 		static public C tryLoad<C>(string localPath = "config.json", bool processAttributes = true) where C: Config, new()
 		{
 			string configPath = ModPath.rootPath + localPath;

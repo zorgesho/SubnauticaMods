@@ -20,11 +20,13 @@ namespace ModsOptionsAdjusted
 	[HarmonyPatch(typeof(uGUI_TabbedControlsPanel), "SetVisibleTab")]
 	static class uGUITabbedControlsPanel_SetVisibleTab_Patch
 	{
+		// do not show tab if it already visible (to prevent scroll position resetting)
 		static bool Prefix(uGUI_TabbedControlsPanel __instance, int tabIndex)
 		{
 			return !(tabIndex >= 0 && tabIndex < __instance.tabs.Count && __instance.tabs[tabIndex].pane.activeSelf);
 		}
 		
+		// adjusting ui elements
 		static void Postfix(uGUI_TabbedControlsPanel __instance, int tabIndex)
 		{
 			if (tabIndex >= 0 && tabIndex < __instance.tabs.Count)

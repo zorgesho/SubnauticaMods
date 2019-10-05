@@ -47,7 +47,7 @@ namespace Common
 #endif
 		static public void msg(string str, MsgType msgType)
 		{
-			string formattedMsg = $"[{logPrefix}] {msgType.ToString()}: {str}";
+			string formattedMsg = $"[{logPrefix}] {msgType}: {str}";
 			Console.WriteLine(formattedMsg);
 #if DEBUG
 			using (StreamWriter writer = File.AppendText(customLogPath))

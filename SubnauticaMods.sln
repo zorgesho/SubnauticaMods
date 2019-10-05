@@ -7,11 +7,17 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Common", "Common\Common.shp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WarningsDisabler", "WarningsDisabler\WarningsDisabler.csproj", "{93C2CDD8-5D48-451F-A5C1-35A0B48DDBE6}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{EE6D7B7D-F20A-439A-8C01-97B6A16F9B52}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "shared", "shared", "{EE6D7B7D-F20A-439A-8C01-97B6A16F9B52}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Common.Config", "Common\Common.Config\Common.Config.shproj", "{B39DE674-737E-4F48-A1F7-A26B7E3D501F}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Common.ModOptions", "Common\Common.ModOptions\Common.ModOptions.shproj", "{0610F2C1-4B75-45F9-B517-9D747E3EDD41}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "published", "published", "{C49BC122-0A68-48A8-8EA3-737FB7553D8B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "mac-event", "mac-event", "{020D3CAF-E41C-4B4A-B4DF-0A7BC1A9A5CF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModsOptionsAdjusted", "ModsOptionsAdjusted\ModsOptionsAdjusted.csproj", "{E808117C-7ABE-4140-A1D3-FEA6B1E2F7F0}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -31,6 +37,10 @@ Global
 		{93C2CDD8-5D48-451F-A5C1-35A0B48DDBE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{93C2CDD8-5D48-451F-A5C1-35A0B48DDBE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{93C2CDD8-5D48-451F-A5C1-35A0B48DDBE6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E808117C-7ABE-4140-A1D3-FEA6B1E2F7F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E808117C-7ABE-4140-A1D3-FEA6B1E2F7F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E808117C-7ABE-4140-A1D3-FEA6B1E2F7F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E808117C-7ABE-4140-A1D3-FEA6B1E2F7F0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -39,6 +49,8 @@ Global
 		{ACFE8AB0-F047-44B1-8B43-D918F5ECAD77} = {EE6D7B7D-F20A-439A-8C01-97B6A16F9B52}
 		{B39DE674-737E-4F48-A1F7-A26B7E3D501F} = {EE6D7B7D-F20A-439A-8C01-97B6A16F9B52}
 		{0610F2C1-4B75-45F9-B517-9D747E3EDD41} = {EE6D7B7D-F20A-439A-8C01-97B6A16F9B52}
+		{020D3CAF-E41C-4B4A-B4DF-0A7BC1A9A5CF} = {C49BC122-0A68-48A8-8EA3-737FB7553D8B}
+		{E808117C-7ABE-4140-A1D3-FEA6B1E2F7F0} = {C49BC122-0A68-48A8-8EA3-737FB7553D8B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0A745472-1C11-4AB7-B6C4-79A169E0FB35}

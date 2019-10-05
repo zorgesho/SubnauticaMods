@@ -27,6 +27,7 @@ namespace WarningsDisabler
 			"ExosuitWelcomeAboard",				// "PRAWN: Welcome aboard captain."
 			"ExosuitWelcomeNoPower",			// "PRAWN: Warning: Emergency power only. Oxygen production offline."
 			"BaseWelcomeAboard"					// "HABITAT: Welcome aboard captain."
+			//"BaseWelcomeNoPower"				//  Moved to powerWarnings list
 		};
 		
 		static bool Prefix(VoiceNotification __instance, object[] args, bool __result)

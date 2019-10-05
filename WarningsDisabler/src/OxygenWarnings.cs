@@ -4,11 +4,12 @@ using Common.Config;
 
 namespace WarningsDisabler
 {
-	// remove low oxygen warnings
+	// Disabling low oxygen warnings
 	static class OxygenWarnings
 	{
 		static int hintMessageHash = 0;
 		
+		// for hiding popup message when changing option in game
 		public class HideOxygenHint: Options.IFieldCustomAction
 		{
 			public void fieldCustomAction()
@@ -23,7 +24,7 @@ namespace WarningsDisabler
 			}
 		}
 		
-		// for hiding popup message properly when changing option in game
+		// to make sure we hide proper popup
 		[HarmonyPatch(typeof(HintSwimToSurface), "OnLanguageChanged")]
 		static class HintSwimToSurface_OnLanguageChanged_Patch
 		{

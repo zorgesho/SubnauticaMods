@@ -20,35 +20,40 @@ namespace ModsOptionsAdjusted
 	[HarmonyPatch(typeof(uGUI_TabbedControlsPanel), "SetVisibleTab")]
 	static class uGUITabbedControlsPanel_SetVisibleTab_Patch
 	{
+		static bool Prefix(uGUI_TabbedControlsPanel __instance, int tabIndex)
+		{
+			return !(tabIndex >= 0 && tabIndex < __instance.tabs.Count && __instance.tabs[tabIndex].pane.activeSelf);
+		}
+		
 		static void Postfix(uGUI_TabbedControlsPanel __instance, int tabIndex)
 		{
-			if (tabIndex >= __instance.tabs.Count)
-				return;
-
-			try
+			if (tabIndex >= 0 && tabIndex < __instance.tabs.Count)
 			{
-				Transform options = __instance.tabs[tabIndex].container.transform;
-
-				for (int i = 0; i < options.childCount; ++i)
+				try
 				{
-					Transform option = options.GetChild(i);
+					Transform options = __instance.tabs[tabIndex].container.transform;
 
-					if (option.localPosition.x == 0) // layout don't adjust it yet
-						continue;
+					for (int i = 0; i < options.childCount; ++i)
+					{
+						Transform option = options.GetChild(i);
 
-					if (option.name.Contains("uGUI_ToggleOption"))
-						processToggleOption(option);
-					else
-					if (option.name.Contains("uGUI_SliderOption"))
-						processSliderOption(option);
-					else
-					if (option.name.Contains("uGUI_ChoiceOption"))
-						processChoiceOption(option);
+						if (option.localPosition.x == 0) // layout don't adjust it yet
+							continue;
+
+						if (option.name.Contains("uGUI_ToggleOption"))
+							processToggleOption(option);
+						else
+						if (option.name.Contains("uGUI_SliderOption"))
+							processSliderOption(option);
+						else
+						if (option.name.Contains("uGUI_ChoiceOption"))
+							processChoiceOption(option);
+					}
 				}
-			}
-			catch (Exception e)
-			{
-				Console.WriteLine($"[ModsOptionsAdjusted] EXCEPTION: {e.GetType()}\t{e.Message}");
+				catch (Exception e)
+				{
+					Console.WriteLine($"[ModsOptionsAdjusted] EXCEPTION: {e.GetType()}\t{e.Message}");
+				}
 			}
 		}
 

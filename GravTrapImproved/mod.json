@@ -1,0 +1,13 @@
+{
+  "Id": "GravTrapImproved",
+  "DisplayName": "GravTrapImproved",
+  "Author": "zorgesho",
+  "Version": "1.0.0",
+  "Dependencies": [],
+  "LoadBefore": [],
+  "LoadAfter": [],
+  "Enable": true,
+  "Game": "Subnautica",
+  "AssemblyName": "GravTrapImproved.dll",
+  "EntryMethod": "GravTrapImproved.Main.patch"
+}

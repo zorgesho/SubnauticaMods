@@ -1,8 +1,10 @@
-﻿namespace GravTrapImproved
+﻿using Common.Config;
+
+namespace GravTrapImproved
 {
 	[System.Serializable]
-	public class Config
+	class ModConfig: Config
 	{
-		public float treaderSpawnChunkProbability = 1f;
+		public readonly float treaderSpawnChunkProbability = 1f;
 	}
 }

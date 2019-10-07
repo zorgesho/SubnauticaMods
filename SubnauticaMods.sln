@@ -24,6 +24,7 @@ EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Common\Common.ModOptions\Common.ModOptions.projitems*{0610f2c1-4b75-45f9-b517-9d747e3edd41}*SharedItemsImports = 13
+		Common\Common.Config\Common.Config.projitems*{4ef61a6d-0c6e-48a9-8625-58d196fd5386}*SharedItemsImports = 4
 		Common\Common.projitems*{4ef61a6d-0c6e-48a9-8625-58d196fd5386}*SharedItemsImports = 4
 		Common\Common.Config\Common.Config.projitems*{93c2cdd8-5d48-451f-a5c1-35a0b48ddbe6}*SharedItemsImports = 4
 		Common\Common.ModOptions\Common.ModOptions.projitems*{93c2cdd8-5d48-451f-a5c1-35a0b48ddbe6}*SharedItemsImports = 4

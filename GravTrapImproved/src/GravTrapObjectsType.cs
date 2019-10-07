@@ -9,7 +9,7 @@ namespace GravTrapImproved
 	{
 		class SaveData
 		{
-			public int trapObjType;
+			public ObjectsType trapObjType;
 		}
 	
 		static public string GetSavePathDir()
@@ -18,11 +18,27 @@ namespace GravTrapImproved
 			return Path.Combine(savePathDir, "GravTrapImproved");
 		}
 
-		static int[] techIndex = new int[] {0, 26, 82, 122}; // indexes in GravSphere.allowedTechTypes[]
-		static int maxObjectsType = 3;
-		static string[] strObjTypes = { "All", "Creatures", "Resources", "Eggs"};
+		static readonly int[] techIndex = new int[] {0, 26, 82, 122}; // indexes in GravSphere.allowedTechTypes[]
 		
-		int objType = 0;
+		public enum ObjectsType {All = 0, Creatures = 1, Resources = 2, Eggs = 3, count}; // also used in UI
+
+		public ObjectsType ObjType
+		{
+			get => objType;
+			
+			set
+			{
+				objType = value;
+
+				if (objType < 0)
+					objType = ObjectsType.count - 1;
+
+				if (objType >= ObjectsType.count)
+					objType = 0;
+			}
+		}
+		ObjectsType objType = ObjectsType.All;
+
 		string id;
 		bool inited = false;
 
@@ -88,19 +104,7 @@ namespace GravTrapImproved
 			File.WriteAllText(saveFile, json);
 		}
 
-		
-		public void switchObjectsType(int objTypeForced = -1)
-		{
-			objType = (objTypeForced == -1)? (objType + 1) % (maxObjectsType + 1): objTypeForced;
-		}
-		
-		
-		public string getObjectsTypeAsString()
-		{
-			return strObjTypes[objType];
-		}
 
-		
 		public void handleAttracted(Rigidbody r)
 		{
 			SinkingGroundChunk sgc = r.gameObject.GetComponent<SinkingGroundChunk>();
@@ -118,22 +122,20 @@ namespace GravTrapImproved
 				return;
 			}
 
-			Crash crashFish = r.gameObject.GetComponent<Crash>();
-			
-			if (crashFish)
-				crashFish.AttackLastTarget();
+			// if target object is CrashFish we want to pull it out
+			r.gameObject.GetComponent<Crash>()?.AttackLastTarget();
 		}
 		
 
 		public bool isValidTarget(GameObject obj)
 		{
 			if (obj.GetComponentInParent<SinkingGroundChunk>() || obj.name.Contains("TreaderShale"))
-				return (objType == 0 || objType == 2);
+				return (objType == ObjectsType.All || objType == ObjectsType.Resources);
 		
 			TechType techType = CraftData.GetTechType(obj);
 
 			if (techType == TechType.Crash)
-				return (objType == 0 || objType == 1);
+				return (objType == ObjectsType.All || objType == ObjectsType.Creatures);
 			
 			if (techType == TechType.CrashPowder)
 				return false;
@@ -142,8 +144,8 @@ namespace GravTrapImproved
 
 			if (!component || !component.attached)
 			{
-				int begin = (objType == 0)? 0: GravTrapObjectsType.techIndex[objType - 1];
-				int end = (objType == 0)? Gravsphere.allowedTechTypes.Length: GravTrapObjectsType.techIndex[objType];
+				int begin = (objType == ObjectsType.All)? 0: techIndex[(int)objType - 1];
+				int end = (objType == ObjectsType.All)? Gravsphere.allowedTechTypes.Length: techIndex[(int)objType];
 		
 				for (int i = begin; i < end; ++i)
 					if (Gravsphere.allowedTechTypes[i] == techType)

@@ -54,7 +54,7 @@ namespace GravTrapImproved
 		static void Postfix(StringBuilder sb, TechType techType, GameObject obj)
 		{
 			if (techType == TechType.Gravsphere)
-				TooltipFactory.WriteDescription(sb, "Objects type: " + GravTrapObjectsType.getFrom(obj).getObjectsTypeAsString());
+				TooltipFactory.WriteDescription(sb, "Objects type: " + GravTrapObjectsType.getFrom(obj).ObjType);
 		}
 	}
 
@@ -74,7 +74,7 @@ namespace GravTrapImproved
 		static void Postfix(InventoryItem item, int button)
 		{
 			if (item.item.GetTechType() == TechType.Gravsphere && button == 2)
-				GravTrapObjectsType.getFrom(item.item.gameObject).switchObjectsType();
+				GravTrapObjectsType.getFrom(item.item.gameObject).ObjType += 1;
 		}
 	}
 }

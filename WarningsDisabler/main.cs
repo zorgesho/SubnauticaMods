@@ -3,6 +3,8 @@
 using Harmony;
 using Common.Config;
 
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality", "IDE0051", Scope = "namespaceanddescendants", Target = "WarningsDisabler")]
+
 namespace WarningsDisabler
 {
 	static public class Main

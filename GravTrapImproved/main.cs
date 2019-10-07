@@ -5,6 +5,8 @@ using System.Reflection;
 using Harmony;
 using Oculus.Newtonsoft.Json;
 
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality", "IDE0051", Scope = "namespaceanddescendants", Target = "GravTrapImproved")]
+
 namespace GravTrapImproved
 {
 	static public class Main

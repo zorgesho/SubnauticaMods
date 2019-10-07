@@ -15,4 +15,10 @@ namespace Common
 				go.AddComponent<T>();
 		}
 	}
+
+
+	static class InputHelper
+	{
+		static public float getMouseWheelValue() => Input.GetAxis("Mouse ScrollWheel");
+	}
 }

@@ -2,6 +2,7 @@
 
 using UnityEngine;
 using Harmony;
+
 using Common;
 
 namespace GravTrapImproved
@@ -10,30 +11,20 @@ namespace GravTrapImproved
 	[HarmonyPatch(typeof(SeaTreaderSounds), "SpawnChunks")]
 	static class SeaTreaderSounds_SpawnChunks_Patch
 	{
-		static bool Prefix(SeaTreaderSounds __instance, Transform legTr)
-		{
-			return UnityEngine.Random.value <= Main.config.treaderSpawnChunkProbability;
-		}
+		static bool Prefix(SeaTreaderSounds __instance, Transform legTr) => Random.value <= Main.config.treaderSpawnChunkProbability;
 	}
 
 	// Gravtrap patches
 	[HarmonyPatch(typeof(Gravsphere), "Start")]
 	static class Gravsphere_Start_Patch
 	{
-		static void Postfix(Gravsphere __instance)
-		{
-			__instance.gameObject.addComponentIfNeeded<GravTrapObjectsType>();
-		}
+		static void Postfix(Gravsphere __instance) => __instance.gameObject.addComponentIfNeeded<GravTrapObjectsType>();
 	}
-
 
 	[HarmonyPatch(typeof(Gravsphere), "AddAttractable")]
 	static class Gravsphere_AddAttractable_Patch
 	{
-		static void Postfix(Gravsphere __instance, Rigidbody r)
-		{
-			__instance.GetComponent<GravTrapObjectsType>().handleAttracted(r);
-		}
+		static void Postfix(Gravsphere __instance, Rigidbody r) => __instance.GetComponent<GravTrapObjectsType>().handleAttracted(r);
 	}
 
 	[HarmonyPatch(typeof(Gravsphere), "IsValidTarget")]
@@ -54,17 +45,26 @@ namespace GravTrapImproved
 		static void Postfix(StringBuilder sb, TechType techType, GameObject obj)
 		{
 			if (techType == TechType.Gravsphere)
+			{
+				if (Main.config.useWheelScroll && InputHelper.getMouseWheelValue() != 0f) // not exactly right to do it here, but I don't find a better way
+					GravTrapObjectsType.getFrom(obj).ObjType += System.Math.Sign(InputHelper.getMouseWheelValue());
+
 				TooltipFactory.WriteDescription(sb, "Objects type: " + GravTrapObjectsType.getFrom(obj).ObjType);
+			}
 		}
 	}
 
 	[HarmonyPatch(typeof(TooltipFactory), "ItemActions")]
 	static class TooltipFactory_ItemActions_Patch
 	{
+		static readonly string buttons = (Main.config.useWheelClick? Strings.Mouse.middleButton: "") +
+										((Main.config.useWheelClick && Main.config.useWheelScroll)? " or ": "") +
+										 (Main.config.useWheelScroll? (Strings.Mouse.scrollUp + "/" + Strings.Mouse.scrollDown): "");
+		
 		static void Postfix(StringBuilder sb, InventoryItem item)
 		{
-			if (item.item.GetTechType() == TechType.Gravsphere)
-				TooltipFactory.WriteAction(sb, "MMB", "switch objects type");
+			if ((Main.config.useWheelClick || Main.config.useWheelScroll) && item.item.GetTechType() == TechType.Gravsphere)
+				TooltipFactory.WriteAction(sb, buttons, "switch objects type");
 		}
 	}
 
@@ -73,7 +73,7 @@ namespace GravTrapImproved
 	{
 		static void Postfix(InventoryItem item, int button)
 		{
-			if (item.item.GetTechType() == TechType.Gravsphere && button == 2)
+			if (Main.config.useWheelClick && item.item.GetTechType() == TechType.Gravsphere && button == 2)
 				GravTrapObjectsType.getFrom(item.item.gameObject).ObjType += 1;
 		}
 	}

@@ -64,7 +64,8 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy $(TargetPath) C:\games\Subnautica\QMods\$(ProjectName)\  /q /y
-xcopy $(TargetDir)mod.json C:\games\Subnautica\QMods\$(ProjectName)\  /q /y</PostBuildEvent>
+    <PostBuildEvent>if exist c:\games\subnautica\QMods\ xcopy $(TargetPath) c:\games\subnautica\QMods\$(ProjectName)\ /q /y
+if exist c:\games\subnautica\QMods\ xcopy $(ProjectDir)mod.json c:\games\subnautica\QMods\$(ProjectName)\ /q /y
+if exist c:\games\subnautica\QMods\ if exist $(ProjectDir)assets\ xcopy $(ProjectDir)assets c:\games\subnautica\QMods\$(ProjectName)\assets\  /e /q /y</PostBuildEvent>
   </PropertyGroup>
 </Project>

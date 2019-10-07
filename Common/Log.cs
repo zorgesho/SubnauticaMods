@@ -40,7 +40,7 @@ namespace Common
 			EXCEPTION
 		}
 
-		static string logPrefix = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
+		static string logPrefix = Strings.modName;
 #if DEBUG
 		static string customLogPath = PathHelpers.ModPath.rootPath + logPrefix + ".log";
 		static Log() => File.Delete(customLogPath);
@@ -50,8 +50,8 @@ namespace Common
 			string formattedMsg = $"[{logPrefix}] {msgType}: {str}";
 			Console.WriteLine(formattedMsg);
 #if DEBUG
-			using (StreamWriter writer = File.AppendText(customLogPath))
-				writer.WriteLine(formattedMsg);
+				using (StreamWriter writer = File.AppendText(customLogPath))
+					writer.WriteLine(formattedMsg);
 #endif
 		}
 

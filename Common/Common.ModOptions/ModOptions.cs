@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection;
 using System.Collections.Generic;
 
 using SMLHelper.V2.Options;
@@ -12,7 +11,7 @@ namespace Common.Config
 		static bool inited = false;
 
 		static Config mainConfig = null;
-		static string name = Assembly.GetExecutingAssembly().GetName().Name;
+		static string name = Strings.modName;
 		static List<ModOption> modOptions = new List<ModOption>();
 
 		static public void init()

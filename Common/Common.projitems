@@ -12,5 +12,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Log.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MiscInGame.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PathHelpers.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UnityExtensions.cs" />
   </ItemGroup>
 </Project>

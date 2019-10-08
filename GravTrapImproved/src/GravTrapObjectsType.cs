@@ -1,7 +1,6 @@
-﻿using System.IO;
+﻿using UnityEngine;
 
-using UnityEngine;
-using Oculus.Newtonsoft.Json;
+using Common.GameSerialization;
 
 namespace GravTrapImproved
 {
@@ -11,16 +10,13 @@ namespace GravTrapImproved
 		{
 			public ObjectsType trapObjType;
 		}
-	
-		static public string GetSavePathDir()
-		{
-			var savePathDir = Path.Combine(@".\SNAppData\SavedGames\", Utils.GetSavegameDir());
-			return Path.Combine(savePathDir, "GravTrapImproved");
-		}
 
 		static readonly int[] techIndex = new int[] {0, 26, 82, 122}; // indexes in GravSphere.allowedTechTypes[]
-		
+
 		public enum ObjectsType {All = 0, Creatures = 1, Resources = 2, Eggs = 3, count}; // also used in UI
+
+		string id;
+		bool inited = false;
 
 		public ObjectsType ObjType
 		{
@@ -39,10 +35,7 @@ namespace GravTrapImproved
 		}
 		ObjectsType objType = ObjectsType.All;
 
-		string id;
-		bool inited = false;
-
-		// we need to add this component while gameobject is inactive (while in inventory), so Awake is not called
+		// we may add this component while gameobject is inactive (while in inventory) and Awake for it is not calling, so we need init it that way
 		static public GravTrapObjectsType getFrom(GameObject go)
 		{
 			GravTrapObjectsType cmp = go.GetComponent<GravTrapObjectsType>();
@@ -72,36 +65,13 @@ namespace GravTrapImproved
 
 		public void OnProtoDeserialize(ProtobufSerializer serializer)
 		{
-			var savePathDir = GetSavePathDir();
-			var saveFile = Path.Combine(savePathDir, id + ".json");
-
-			if (File.Exists(saveFile))
-			{
-				var json = File.ReadAllText(saveFile);
-				var saveData = JsonConvert.DeserializeObject<SaveData>(json);
-
-				objType = saveData.trapObjType;
-			}
-			else
-				objType = 0;
+			SaveData saveData = SaveLoad.load<SaveData>(id);
+			objType = saveData?.trapObjType ?? 0;
 		}
-		
 		
 		public void OnProtoSerialize(ProtobufSerializer serializer)
 		{
-			var savePathDir = GetSavePathDir();
-			var saveFile = Path.Combine(savePathDir, id + ".json");
-
-			if (!Directory.Exists(savePathDir))
-				Directory.CreateDirectory(savePathDir);
-
-			var saveData = new SaveData()
-			{
-				trapObjType = objType
-			};
-
-			var json = JsonConvert.SerializeObject(saveData, Formatting.None);
-			File.WriteAllText(saveFile, json);
+			SaveLoad.save(id, new SaveData { trapObjType = objType });
 		}
 
 
@@ -111,7 +81,7 @@ namespace GravTrapImproved
 		
 			if (sgc)
 			{
-				UnityEngine.Object.Destroy(sgc);
+				Destroy(sgc);
 
 				BoxCollider c = r.gameObject.AddComponent<BoxCollider>();
 				c.size = new Vector3(0.736f,0.51f,0.564f);

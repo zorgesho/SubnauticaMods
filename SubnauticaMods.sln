@@ -21,10 +21,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModsOptionsAdjusted", "Mods
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GravTrapImproved", "GravTrapImproved\GravTrapImproved.csproj", "{4EF61A6D-0C6E-48A9-8625-58D196FD5386}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Common.GameSerialization", "Common\Common.GameSerialization\Common.GameSerialization.shproj", "{37C6E8C9-4864-415A-9561-161035212EBA}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Common\Common.ModOptions\Common.ModOptions.projitems*{0610f2c1-4b75-45f9-b517-9d747e3edd41}*SharedItemsImports = 13
+		Common\Common.GameSerialization\Common.GameSerialization.projitems*{37c6e8c9-4864-415a-9561-161035212eba}*SharedItemsImports = 13
 		Common\Common.Config\Common.Config.projitems*{4ef61a6d-0c6e-48a9-8625-58d196fd5386}*SharedItemsImports = 4
+		Common\Common.GameSerialization\Common.GameSerialization.projitems*{4ef61a6d-0c6e-48a9-8625-58d196fd5386}*SharedItemsImports = 4
 		Common\Common.projitems*{4ef61a6d-0c6e-48a9-8625-58d196fd5386}*SharedItemsImports = 4
 		Common\Common.Config\Common.Config.projitems*{93c2cdd8-5d48-451f-a5c1-35a0b48ddbe6}*SharedItemsImports = 4
 		Common\Common.ModOptions\Common.ModOptions.projitems*{93c2cdd8-5d48-451f-a5c1-35a0b48ddbe6}*SharedItemsImports = 4
@@ -60,6 +64,7 @@ Global
 		{020D3CAF-E41C-4B4A-B4DF-0A7BC1A9A5CF} = {C49BC122-0A68-48A8-8EA3-737FB7553D8B}
 		{E808117C-7ABE-4140-A1D3-FEA6B1E2F7F0} = {C49BC122-0A68-48A8-8EA3-737FB7553D8B}
 		{4EF61A6D-0C6E-48A9-8625-58D196FD5386} = {C49BC122-0A68-48A8-8EA3-737FB7553D8B}
+		{37C6E8C9-4864-415A-9561-161035212EBA} = {EE6D7B7D-F20A-439A-8C01-97B6A16F9B52}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0A745472-1C11-4AB7-B6C4-79A169E0FB35}

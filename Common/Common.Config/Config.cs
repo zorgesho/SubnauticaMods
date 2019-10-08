@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-using Common.PathHelpers;
+using Common.PathHelper;
 
 namespace Common.Config
 {
@@ -18,7 +18,7 @@ namespace Common.Config
 		// try to load config from mod folder. If file not found, create default config and save it to that path
 		static public C tryLoad<C>(string localPath = "config.json", bool processAttributes = true) where C: Config, new()
 		{
-			string configPath = ModPath.rootPath + localPath;
+			string configPath = Paths.modRootPath + localPath;
 			C config = null;
 
 			try

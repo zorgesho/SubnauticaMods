@@ -42,7 +42,7 @@ namespace Common
 
 		static string logPrefix = Strings.modName;
 #if DEBUG
-		static string customLogPath = PathHelpers.ModPath.rootPath + logPrefix + ".log";
+		static string customLogPath = PathHelper.Paths.modRootPath + logPrefix + ".log";
 		static Log() => File.Delete(customLogPath);
 #endif
 		static public void msg(string str, MsgType msgType)

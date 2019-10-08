@@ -1,18 +1,15 @@
 ﻿using System.IO;
-using System.Reflection;
 
-namespace Common.PathHelpers
+namespace Common.PathHelper
 {
-	static class ModPath
+	static partial class Paths
 	{
-		static public readonly string rootPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + Path.DirectorySeparatorChar.ToString();
-
 		static public string savesPath
 		{
 			get
 			{
 #if DEBUG && !GAME_SAVEPATH
-				string path = Path.Combine(rootPath, "{dbgsave}");
+				string path = Path.Combine(modRootPath, "{dbgsave}");
 
 				if (!Directory.Exists(path))
 					Directory.CreateDirectory(path);														$"Using DEBUG SAVE PATH '{path}'".logWarning();

@@ -9,6 +9,7 @@
     <Import_RootNamespace>Common.GameSerialization</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)PathHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SaveLoad.cs" />
   </ItemGroup>
 </Project>

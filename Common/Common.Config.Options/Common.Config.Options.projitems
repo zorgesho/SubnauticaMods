@@ -6,7 +6,7 @@
     <SharedGUID>0610f2c1-4b75-45f9-b517-9d747e3edd41</SharedGUID>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
-    <Import_RootNamespace>Common.ModOptions</Import_RootNamespace>
+    <Import_RootNamespace>Common.Config</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)ModOptions.cs" />

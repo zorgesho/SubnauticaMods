@@ -8,16 +8,16 @@ namespace Common.GameSerialization
 	{
 		static public void save<T>(string id, T saveData)
 		{
-			string filePath = Path.Combine(PathHelper.Paths.savesPath, id + ".json");
-
-			File.WriteAllText(filePath, JsonConvert.SerializeObject(saveData, Formatting.None));
+			File.WriteAllText(getPath(id), JsonConvert.SerializeObject(saveData, Formatting.None));
 		}
 
 		static public T load<T>(string id)
 		{
-			string filePath = Path.Combine(PathHelper.Paths.savesPath, id + ".json");
+			string filePath = getPath(id);
 
 			return File.Exists(filePath)? JsonConvert.DeserializeObject<T>(File.ReadAllText(filePath)): default;
 		}
+
+		static string getPath(string id) => Path.Combine(PathHelper.Paths.savesPath, id + ".json");
 	}
 }

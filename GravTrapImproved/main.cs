@@ -3,6 +3,7 @@ using Harmony;
 using Common.Config;
 
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality", "IDE0051", Scope = "namespaceanddescendants", Target = "GravTrapImproved")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality", "IDE0060", Scope = "namespaceanddescendants", Target = "GravTrapImproved")]
 
 namespace GravTrapImproved
 {
@@ -13,6 +14,8 @@ namespace GravTrapImproved
 		static public void patch()
 		{
 			HarmonyInstance.Create("GravTrapImproved").PatchAll(Assembly.GetExecutingAssembly());
+
+			Options.init();
 		}
 	}
 }

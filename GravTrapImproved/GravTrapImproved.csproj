@@ -32,8 +32,9 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="0Harmony">
-      <HintPath>..\..\..\..\games\Subnautica\Subnautica_Data\Managed\0Harmony.dll</HintPath>
+    <Reference Include="0Harmony-1.2.0.1, Version=1.2.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\games\Subnautica\Subnautica_Data\Managed\0Harmony-1.2.0.1.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -46,6 +47,9 @@
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\games\Subnautica\Subnautica_Data\Managed\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="SMLHelper">
+      <HintPath>..\..\..\..\games\Subnautica\QMods\Modding Helper\SMLHelper.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -72,6 +76,7 @@
   <Import Project="..\Common\Common.projitems" Label="Shared" />
   <Import Project="..\Common\Common.Config\Common.Config.projitems" Label="Shared" />
   <Import Project="..\Common\Common.GameSerialization\Common.GameSerialization.projitems" Label="Shared" />
+  <Import Project="..\Common\Common.Config.Options\Common.Config.Options.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>if exist c:\games\subnautica\QMods\ xcopy $(TargetPath) c:\games\subnautica\QMods\$(ProjectName)\ /q /y

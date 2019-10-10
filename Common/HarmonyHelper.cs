@@ -14,16 +14,19 @@ namespace Common
 		// expected to called only from mod entry function
 		static public void patchAll()
 		{
-			HarmonyInstance.Create(Strings.modName).PatchAll(Assembly.GetExecutingAssembly());
+			findConfig("Main", "config"); // need to be called before harmony patching
 
-			findConfig("Main", "config");
+			HarmonyInstance.Create(Strings.modName).PatchAll(Assembly.GetExecutingAssembly());
 		}
 
 		// for using in transpilers
 		static public IEnumerable<CodeInstruction> changeConstToConfigVar<T>(IEnumerable<CodeInstruction> instructions, T val, string configVar)
 		{
 			FieldInfo varField = mainConfigField?.FieldType.GetField(configVar, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-			
+
+			if (varField == null)
+				$"changeConstToConfigVar: varField for {configVar} is not found".logError();
+
 			return varField != null? changeConstToVar(instructions, val, mainConfigField, varField): null;
 		}
 		#endregion

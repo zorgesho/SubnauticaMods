@@ -9,7 +9,7 @@ namespace Common.PathHelper
 			get
 			{
 #if DEBUG && !GAME_SAVEPATH
-				string path = Path.Combine(modRootPath, "{dbgsave}");
+				string path = modRootPath + "{dbgsave}";
 
 				if (!Directory.Exists(path))
 					Directory.CreateDirectory(path);														$"Using DEBUG SAVE PATH '{path}'".logWarning();

@@ -9,8 +9,14 @@
     <Import_RootNamespace>Common.Config</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)attributes\ChoiceAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)attributes\FieldAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)attributes\NameAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ModOptions.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ModOptionsElements.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ModOptionsAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ui\ChoiceOption.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ui\KeyBindOption.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ui\SliderOption.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ui\ToggleOption.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ui\BaseOption.cs" />
   </ItemGroup>
 </Project>

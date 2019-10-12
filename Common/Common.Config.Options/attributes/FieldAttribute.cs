@@ -5,52 +5,14 @@ using SMLHelper.V2.Options;
 
 namespace Common.Config
 {
-	// Config attributes for Mod Options
 	partial class Options: ModOptions
 	{
+		// implement this to create custom action when field is changes via options
 		public interface IFieldCustomAction
 		{
 			void fieldCustomAction();
 		}
 		
-		// Class attribute for setting mod options name in menu
-		[AttributeUsage(AttributeTargets.Class)]
-		public class NameAttribute: Config.ConfigAttribute
-		{
-			string optionsName;
-
-			public NameAttribute(string name)
-			{
-				optionsName = name;
-			}
-
-			override public void process(object config)
-			{
-				name = optionsName;
-				mainConfig = config as Config;
-			}
-		}
-
-
-		// used by FieldAttribute, don't do anything on its own
-		[AttributeUsage(AttributeTargets.Field)]
-		public class ChoiceAttribute: Config.FieldAttribute
-		{
-			public readonly string[] choices = null;
-
-			public ChoiceAttribute(params string[] choices_)
-			{
-				choices = choices_;
-			}
-
-			override public void process(object config, FieldInfo field)
-			{
-				if (choices == null || choices.Length == 0)
-					$"Options.ChoiceAttribute.process fieldName:'{field.Name}' Choices not set".logError();
-			}
-		}
-
-
 		// Attribute for creating options UI elements
 		[AttributeUsage(AttributeTargets.Field)]
 		public class FieldAttribute: Config.FieldAttribute

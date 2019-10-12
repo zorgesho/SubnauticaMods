@@ -59,7 +59,7 @@ namespace GravTrapImproved
 	{
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
 		{
-			return HarmonyHelper.changeConstToConfigVar(instructions, (sbyte)12, nameof(Main.config.maxAttractedObjects));
+			return HarmonyHelper.changeConstToConfigVar(instructions, (sbyte)12, nameof(Main.config.maxObjects));
 		}
 	}
 

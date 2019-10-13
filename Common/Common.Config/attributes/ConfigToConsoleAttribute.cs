@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Reflection;
 
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace Common.Config
 {
@@ -60,7 +59,8 @@ namespace Common.Config
 				{
 					if (config != null)
 					{
-						consoleObject = new GameObject("ConfigConsoleCommands", typeof(SetCfgVarCommand), typeof(SceneCleanerPreserve));
+						consoleObject = PersistentConsoleCommands.createGameObject<SetCfgVarCommand>("ConfigConsoleCommands");
+
 						mainConfig = config;
 						cfgNamespace = _cfgNamespace;
 					}
@@ -77,16 +77,6 @@ namespace Common.Config
 					$"ConfigVarsConsoleCommand: field {name} is already added!".logError();
 				else
 					cfgFields[name] = new ConfigField { config = config, field = field };
-			}
-
-
-			static void registerCommand(SetCfgVarCommand cmp)
-			{
-				UnityEngine.Object.DontDestroyOnLoad(cmp.gameObject);
-				DevConsole.RegisterConsoleCommand(cmp, cmdName);
-#if DEBUG
-				DevConsole.disableConsole = false;
-#endif
 			}
 
 			static void setFieldValue(string fieldName, string fieldValue)
@@ -113,23 +103,8 @@ namespace Common.Config
 				}
 			}
 
-			class SetCfgVarCommand: MonoBehaviour
+			class SetCfgVarCommand: PersistentConsoleCommands
 			{
-				void Awake()
-				{
-					registerCommand(this);
-					SceneManager.sceneUnloaded += onSceneUnloaded;
-				}
-
-				void OnDestroy() => SceneManager.sceneUnloaded -= onSceneUnloaded;
-
-				void onSceneUnloaded(Scene scene)
-				{
-					// notifications are cleared between some scenes, so we need to reregister command
-					if (NotificationCenter.DefaultCenter.notifications["OnConsoleCommand_" + cmdName] == null)
-						registerCommand(this);
-				}
-
 				void OnConsoleCommand_setcfgvar(NotificationCenter.Notification n)
 				{
 					if (n?.data != null && n.data.Count == 2)

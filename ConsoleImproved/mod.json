@@ -1,0 +1,13 @@
+{
+  "Id": "ConsoleImproved",
+  "DisplayName": "ConsoleImproved",
+  "Author": "zorgesho",
+  "Version": "1.0.0",
+  "Dependencies": [],
+  "LoadBefore": [],
+  "LoadAfter": [],
+  "Enable": true,
+  "Game": "Subnautica",
+  "AssemblyName": "ConsoleImproved.dll",
+  "EntryMethod": "ConsoleImproved.Main.patch"
+}

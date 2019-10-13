@@ -23,10 +23,14 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Common.GameSerialization", 
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Common.Config.Options", "Common\Common.Config.Options\Common.Config.Options.shproj", "{0610F2C1-4B75-45F9-B517-9D747E3EDD41}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleImproved", "ConsoleImproved\ConsoleImproved.csproj", "{3BD3AB93-7001-4322-A0D8-B9DE42ED38AA}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Common\Common.Config.Options\Common.Config.Options.projitems*{0610f2c1-4b75-45f9-b517-9d747e3edd41}*SharedItemsImports = 13
 		Common\Common.GameSerialization\Common.GameSerialization.projitems*{37c6e8c9-4864-415a-9561-161035212eba}*SharedItemsImports = 13
+		Common\Common.Config\Common.Config.projitems*{3bd3ab93-7001-4322-a0d8-b9de42ed38aa}*SharedItemsImports = 4
+		Common\Common.projitems*{3bd3ab93-7001-4322-a0d8-b9de42ed38aa}*SharedItemsImports = 4
 		Common\Common.Config.Options\Common.Config.Options.projitems*{4ef61a6d-0c6e-48a9-8625-58d196fd5386}*SharedItemsImports = 4
 		Common\Common.Config\Common.Config.projitems*{4ef61a6d-0c6e-48a9-8625-58d196fd5386}*SharedItemsImports = 4
 		Common\Common.GameSerialization\Common.GameSerialization.projitems*{4ef61a6d-0c6e-48a9-8625-58d196fd5386}*SharedItemsImports = 4
@@ -54,6 +58,10 @@ Global
 		{4EF61A6D-0C6E-48A9-8625-58D196FD5386}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4EF61A6D-0C6E-48A9-8625-58D196FD5386}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4EF61A6D-0C6E-48A9-8625-58D196FD5386}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3BD3AB93-7001-4322-A0D8-B9DE42ED38AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3BD3AB93-7001-4322-A0D8-B9DE42ED38AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3BD3AB93-7001-4322-A0D8-B9DE42ED38AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3BD3AB93-7001-4322-A0D8-B9DE42ED38AA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

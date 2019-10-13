@@ -56,6 +56,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="src\ConsoleHelper.cs" />
     <Compile Include="src\Patches.cs" />
     <Compile Include="config.cs" />
     <Compile Include="main.cs" />

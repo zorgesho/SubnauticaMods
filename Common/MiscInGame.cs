@@ -13,6 +13,12 @@ namespace Common
 			ErrorMessage.AddDebug(s);
 			return s;
 		}
+		
+		static public void onScreen(this List<string> list, string msg = "")
+		{
+			foreach (var s in list)
+				ErrorMessage.AddDebug(msg + s);
+		}
 	}
 
 	static class Strings
@@ -77,7 +83,7 @@ namespace Common
 			SceneManager.sceneUnloaded -= onSceneUnloaded;
 		}
 
-		// notifications are cleared between some scenes, so we need to reregister command
+		// notifications are cleared between some scenes, so we need to reregister commands
 		void onSceneUnloaded(Scene scene)
 		{
 			registerCommands(true);

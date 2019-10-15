@@ -1,10 +1,21 @@
 ﻿using System.Reflection.Emit;
 using System.Collections.Generic;
 
+using UnityEngine;
 using Harmony;
 
 namespace ConsoleImproved
 {
+	// don't clear onscreen messages while console is open
+	[HarmonyPatch(typeof(ErrorMessage), "Update")]
+	static class ErrorMessage_Update_Patch
+	{
+		static bool Prefix(ErrorMessage __instance)
+		{
+			return !(Main.config.keepMessagesOnScreen && DevConsole.instance.state);
+		}
+	}
+	
 	static partial class ConsoleHelper
 	{
 		// patch for full history in console
@@ -55,24 +66,31 @@ namespace ConsoleImproved
 				saveHistory();
 			}
 		}
+
+
+		[HarmonyPatch(typeof(ConsoleInput), "KeyPressedOverride")]
+		static class ConsoleInput_KeyPressedOverride_Patch
+		{
+			static bool Prefix(ConsoleInput __instance, Event evt, ref bool __result)
+			{
+				KeyCode keyCode = __instance.processingEvent.keyCode;
+
+				if (keyCode == KeyCode.Tab)
+				{
+					if (__instance.text.Length > 0 && __instance.caretPosition == __instance.text.Length)
+					{
+						string ret = tryCompleteText(__instance.text);
+
+						if (ret != "")
+							__instance.text = ret;
+
+						__result = true;
+						return false;
+					}
+				}
+
+				return true;
+			}
+		}
 	}
-
-
-	//private bool KeyPressedOverride(Event evt)
-	//[HarmonyPatch(typeof(ConsoleInput), "KeyPressedOverride")]
-	//static class DevConsole_Awake_Patch11
-	//{
-	//	static bool Prefix(ConsoleInput __instance, Event evt, ref bool __result)
-	//	{
-	//		KeyCode keyCode = __instance.processingEvent.keyCode;
-
-	//		if (keyCode == KeyCode.Tab)
-	//		{
-	//			"TAB".onScreen();
-	//			__instance.text += "ololo";//.onScreen();
-	//		}
-
-	//		return true;
-	//	}
-	//}
 }

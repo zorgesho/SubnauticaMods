@@ -14,14 +14,8 @@ namespace ConsoleImproved
 		static GameObject consoleObject = null;
 		static readonly string historyPath = Common.PathHelper.Paths.modRootPath + "history.txt";
 
-		class ConsoleCommands: PersistentConsoleCommands
-		{
-			void OnConsoleCommand_clearhistory(NotificationCenter.Notification n)
-			{
-				setHistory(new List<string>());
-			}
-		}
-
+		static readonly CommandCache commandCache = new CommandCache();
+		static readonly TechTypeCache techtypeCache = new TechTypeCache();
 
 		static void init()
 		{
@@ -49,8 +43,8 @@ namespace ConsoleImproved
 
 			File.WriteAllText(historyPath, stringBuilder.ToString());
 		}
-		
-		
+
+
 		static void loadHistory()
 		{
 			if (!File.Exists(historyPath))

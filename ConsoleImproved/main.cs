@@ -1,8 +1,10 @@
-﻿using Common;
+﻿using System.Diagnostics.CodeAnalysis;
+
+using Common;
 using Common.Config;
 
-[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality", "IDE0051", Scope = "namespaceanddescendants", Target = "ConsoleImproved")]
-[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality", "IDE0060", Scope = "namespaceanddescendants", Target = "ConsoleImproved")]
+[assembly: SuppressMessage("Code Quality", "IDE0051", Scope = "namespaceanddescendants", Target = "ConsoleImproved")]
+[assembly: SuppressMessage("Code Quality", "IDE0060", Scope = "namespaceanddescendants", Target = "ConsoleImproved")]
 
 
 namespace ConsoleImproved

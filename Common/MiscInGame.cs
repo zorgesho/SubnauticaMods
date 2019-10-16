@@ -14,9 +14,14 @@ namespace Common
 			return s;
 		}
 		
-		static public void onScreen(this List<string> list, string msg = "")
+		static public void onScreen(this List<string> list, string msg = "", int maxCount = 30)
 		{
-			foreach (var s in list)
+			List<string> listToPrint = list.Count > maxCount? list.GetRange(0, maxCount): list;
+
+			if (list.Count > maxCount)
+				$"List is too large ({list.Count} entries), printing first {maxCount} entries".onScreen();
+			
+			foreach (var s in listToPrint)
 				ErrorMessage.AddDebug(msg + s);
 		}
 	}

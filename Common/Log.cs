@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace Common
 {
@@ -25,6 +26,13 @@ namespace Common
 		{
 			if (condition)
 				Log.msg(s, Log.MsgType.ERROR);
+		}
+
+		[Conditional("DEBUG")]
+		static public void logDbg(this List<string> strings, string msg = "")
+		{
+			foreach (var s in strings)
+				Log.msg(msg + s, Log.MsgType.DEBUG);
 		}
 	}
 

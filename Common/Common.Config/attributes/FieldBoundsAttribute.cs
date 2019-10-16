@@ -6,7 +6,7 @@ namespace Common.Config
 	partial class Config
 	{
 		[AttributeUsage(AttributeTargets.Field)]
-		public class FieldBoundsAttribute: FieldAttribute
+		public class FieldBoundsAttribute: Attribute, IFieldAttribute
 		{
 			public readonly float min = float.MinValue;
 			public readonly float max = float.MaxValue;
@@ -19,7 +19,7 @@ namespace Common.Config
 
 			public bool isBothBoundsSet() => min > float.MinValue && max < float.MaxValue;
 
-			override public void process(object config, FieldInfo field)
+			public void process(object config, FieldInfo field)
 			{																					$"BoundsFieldAttribute.process min > max, field '{field.Name}'".logDbgError(min > max);
 				try
 				{

@@ -18,31 +18,34 @@ namespace Common.Config
 	
 	partial class Config
 	{
-		[AttributeUsage(AttributeTargets.Class)]
-		public class AddFieldsToConsoleAttribute: ConfigAttribute
+		[AttributeUsage(AttributeTargets.Class | AttributeTargets.Field)]
+		public class AddToConsoleAttribute: Attribute, IConfigAttribute, IFieldAttribute
 		{
 			readonly string cfgNamespace = null;
 
-			public AddFieldsToConsoleAttribute(string _cfgNamespace = null) => cfgNamespace = _cfgNamespace;
-			
-			override public void process(object config)
-			{
-				if (config is Config)
-					ConfigVarsConsoleCommand.init(config as Config, cfgNamespace);
+			public AddToConsoleAttribute(string _cfgNamespace = null) => cfgNamespace = _cfgNamespace;
 
+			public void process(object config)
+			{
 				FieldInfo[] fields = config.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
-				foreach (FieldInfo field in fields)
+				foreach (var field in fields)
+					process(config, field);
+			}
+
+			public void process(object config, FieldInfo field)
+			{
+				if (!ConfigVarsConsoleCommand.isInited && config is Config)
+					ConfigVarsConsoleCommand.init(config as Config, cfgNamespace);
+
+				if (field.FieldType.IsPrimitive)
 				{
-					if (field.FieldType.IsPrimitive)
-					{
-						ConfigVarsConsoleCommand.addCfgField(config, field);
-						ExportedCfgVarFields.addField((cfgNamespace != null? cfgNamespace + ".": "") + field.Name);
-					}
-					
-					if (field.FieldType.IsClass)
-						process(field.GetValue(config));
+					ConfigVarsConsoleCommand.addCfgField(config, field);
+					ExportedCfgVarFields.addField((cfgNamespace != null? cfgNamespace + ".": "") + field.Name);
 				}
+					
+				if (field.FieldType.IsClass)
+					process(field.GetValue(config));
 			}
 		}
 	}
@@ -58,11 +61,13 @@ namespace Common.Config
 			static string cfgNamespace = null; // optional namespace for use in console in case of duplicate names
 			static Config mainConfig = null;
 
+			static public bool isInited { get => consoleObject != null; }
+
 			struct ConfigField
 			{
 				public object config;
 				public FieldInfo field;
-			}
+					}
 
 			static readonly Dictionary<string, ConfigField> cfgFields = new Dictionary<string, ConfigField>();
 

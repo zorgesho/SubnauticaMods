@@ -12,17 +12,16 @@ namespace Common.Config
 
 	partial class Config
 	{
-		abstract public class ConfigAttribute: Attribute
+		public interface IConfigAttribute
 		{
-			abstract public void process(object config);
+			void process(object config);
 		}
 
-		abstract public class FieldAttribute: Attribute
+		public interface IFieldAttribute
 		{
-			abstract public void process(object config, FieldInfo field);
+			void process(object config, FieldInfo field);
 		}
 
-		
 		void processAttributes() => processAttributes(this); // using static method because of possible nested config classes
 		
 		static void processAttributes(object config)
@@ -31,23 +30,20 @@ namespace Common.Config
 				return;
 
 			// processing attributes for config class
-			ConfigAttribute[] configAttrs = Attribute.GetCustomAttributes(config.GetType(), typeof(ConfigAttribute)) as ConfigAttribute[];
+			Attribute[] configAttrs = Attribute.GetCustomAttributes(config.GetType());
 
 			foreach (var attr in configAttrs)
-				attr.process(config);
+				(attr as IConfigAttribute)?.process(config);
 			
 			// processing attributes for fields and nested classes
 			FieldInfo[] fields = config.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
 			foreach (FieldInfo field in fields)
 			{																															$"Checking field '{field.Name}' for attributes".logDbg();
-				if (Attribute.IsDefined(field, typeof(FieldAttribute)))
-				{
-					FieldAttribute[] attrs = Attribute.GetCustomAttributes(field, typeof(FieldAttribute)) as FieldAttribute[];
+				Attribute[] attrs = Attribute.GetCustomAttributes(field);
 
-					foreach (var attr in attrs)
-						attr.process(config, field);
-				}
+				foreach (var attr in attrs)
+					(attr as IFieldAttribute).process(config, field);
 
 				if (field.FieldType.IsClass)
 					processAttributes(field.GetValue(config));

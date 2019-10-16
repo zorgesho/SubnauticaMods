@@ -8,7 +8,7 @@ namespace Common.Config
 	{
 		// Class attribute for setting mod options name in menu
 		[AttributeUsage(AttributeTargets.Class)]
-		public class NameAttribute: Config.ConfigAttribute
+		public class NameAttribute: Attribute, Config.IConfigAttribute
 		{
 			readonly string optionsName;
 
@@ -17,7 +17,7 @@ namespace Common.Config
 				optionsName = name;
 			}
 
-			override public void process(object config)
+			public void process(object config)
 			{
 				name = optionsName;
 				mainConfig = config as Config;

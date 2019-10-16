@@ -9,7 +9,7 @@ namespace Common.Config
 	{
 		// used by FieldAttribute, don't do anything on its own
 		[AttributeUsage(AttributeTargets.Field)]
-		public class ChoiceAttribute: Config.FieldAttribute
+		public class ChoiceAttribute: Attribute, Config.IFieldAttribute
 		{
 			public readonly string[] choices = null;
 
@@ -18,7 +18,7 @@ namespace Common.Config
 				choices = choices_;
 			}
 
-			override public void process(object config, FieldInfo field)
+			public void process(object config, FieldInfo field)
 			{
 				if (choices == null || choices.Length == 0)
 					$"Options.ChoiceAttribute.process fieldName:'{field.Name}' Choices not set".logError();

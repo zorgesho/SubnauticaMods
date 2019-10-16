@@ -15,7 +15,7 @@ namespace Common.Config
 		
 		// Attribute for creating options UI elements
 		[AttributeUsage(AttributeTargets.Field)]
-		public class FieldAttribute: Config.FieldAttribute
+		public class FieldAttribute: Attribute, Config.IFieldAttribute
 		{
 			string label = null;
 			Type customActionType = null;
@@ -26,7 +26,7 @@ namespace Common.Config
 				customActionType = CustomActionType;
 			}
 
-			override public void process(object config, FieldInfo field)
+			public void process(object config, FieldInfo field)
 			{																			$"Options.FieldAttribute.process fieldName:'{field.Name}' fieldType:{field.FieldType} label: '{label}'".logDbg();
 				if (mainConfig == null)
 					mainConfig = config as Config;

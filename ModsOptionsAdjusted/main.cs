@@ -6,8 +6,6 @@ using UnityEngine.UI;
 
 using Harmony;
 
-[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality", "IDE0051", Scope = "namespaceanddescendants", Target = "ModsOptionsAdjusted")]
-
 namespace ModsOptionsAdjusted
 {
 	static public class Main

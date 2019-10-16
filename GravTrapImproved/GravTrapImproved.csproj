@@ -63,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="config.cs" />
+    <Compile Include="Properties\SuppressMessages.cs" />
     <Compile Include="src\GravTrapObjectsType.cs" />
     <Compile Include="main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

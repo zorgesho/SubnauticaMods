@@ -1,9 +1,5 @@
-﻿using System.Reflection;
-
-using Harmony;
+﻿using Common;
 using Common.Config;
-
-[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality", "IDE0051", Scope = "namespaceanddescendants", Target = "WarningsDisabler")]
 
 namespace WarningsDisabler
 {
@@ -13,7 +9,7 @@ namespace WarningsDisabler
 
 		static public void patch()
 		{
-			HarmonyInstance.Create("WarningsDisabler").PatchAll(Assembly.GetExecutingAssembly());
+			HarmonyHelper.patchAll();
 
 			Options.init();
 		}

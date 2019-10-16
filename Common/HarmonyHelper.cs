@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Diagnostics;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -16,7 +17,8 @@ namespace Common
 		{
 			findConfig("Main", "config"); // need to be called before harmony patching
 
-			HarmonyInstance.Create(Strings.modName).PatchAll(Assembly.GetExecutingAssembly());
+			harmonyInstance = HarmonyInstance.Create(Strings.modName);
+			harmonyInstance.PatchAll(Assembly.GetExecutingAssembly());
 		}
 
 		// for using in transpilers
@@ -29,11 +31,72 @@ namespace Common
 
 			return varField != null? changeConstToVar(instructions, val, mainConfigField, varField): null;
 		}
+
+		// dynamic patching/unpatching, for use with OptionalPatch attribute
+		static public void setPatchEnabled(bool val, Type type)
+		{
+			if (Attribute.GetCustomAttribute(type, typeof(OptionalPatchAttribute)) is OptionalPatchAttribute patchAttribute)
+				patchAttribute.setEnabled(val, type);
+		}
+
+		
+		[AttributeUsage(AttributeTargets.Class)]
+		public class OptionalPatchAttribute: Attribute
+		{
+			const BindingFlags bf = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static;
+			readonly MethodInfo method;
+
+			public OptionalPatchAttribute(Type type, string methodName)
+			{
+				method = type.GetMethod(methodName, bf);								$"OptionalPatchAttribute {type} {methodName}".logDbg();
+			}
+
+			public void setEnabled(bool val, Type type)
+			{
+				if (method == null)
+				{
+					$"OptionalPatchAttribute method is null!".logError();
+					return;
+				}
+
+				var prefix = type.GetMethod("Prefix", bf);
+				var postfix = type.GetMethod("Postfix", bf);
+				var transpiler = type.GetMethod("Transpiler", bf);
+
+				if (val)
+				{
+					Patches patches = harmonyInstance.GetPatchInfo(method);
+
+					bool patched =  patches != null && (patches.Prefixes.FirstOrDefault((p) => p.patch == prefix) != null ||
+														patches.Postfixes.FirstOrDefault((p) => p.patch == postfix) != null ||
+														patches.Transpilers.FirstOrDefault((p) => p.patch == transpiler) != null);
+
+					$"OptionalPatchAttribute {method} is already patched".logDbg(patched);
+
+					if (!patched)
+						harmonyInstance.Patch(method,	(prefix == null)? null: new HarmonyMethod(prefix),
+														(postfix == null)? null: new HarmonyMethod(postfix),
+														(transpiler == null)? null: new HarmonyMethod(transpiler));
+				}
+				else
+				{
+					if (prefix != null)
+						harmonyInstance.Unpatch(method, prefix);
+				
+					if (postfix != null)
+						harmonyInstance.Unpatch(method, postfix);
+				
+					if (transpiler != null)
+						harmonyInstance.Unpatch(method, transpiler);
+				}
+			}
+		}
 		#endregion
 
 
 		#region Private stuff
 		static FieldInfo mainConfigField = null; // for using in transpiler helper functions
+		static HarmonyInstance harmonyInstance = null;
 		
 		static void findConfig(string mainClassName, string configFieldName)
 		{

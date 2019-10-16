@@ -10,14 +10,48 @@ using Common;
 
 namespace GravTrapImproved
 {
-	#region Treader chunk spawning patch
-	// Treader spawn chunk probability
-	[HarmonyPatch(typeof(SeaTreaderSounds), "SpawnChunks")]
-	static class SeaTreaderSounds_SpawnChunks_Patch
+	static class OptionalPatches
 	{
-		static bool Prefix(SeaTreaderSounds __instance, Transform legTr) => UnityEngine.Random.value <= Main.config.treaderSpawnChunkProbability;
+		// Treader spawn chunk probability
+		[HarmonyHelper.OptionalPatch(typeof(SeaTreaderSounds), "SpawnChunks")]
+		static public class SeaTreader_SpawnChunksProb_Patch
+		{
+			static bool Prefix(SeaTreaderSounds __instance, Transform legTr) => UnityEngine.Random.value <= Main.config.treaderSpawnChunkProbability;
+		}
+
+		// Patching work radius of a gravsphere
+		[HarmonyHelper.OptionalPatch(typeof(Gravsphere), "Start")]
+		static public class Gravsphere_MaxRadius_Patch
+		{
+			static void Postfix(Gravsphere __instance)
+			{
+				SphereCollider sphere = __instance.gameObject.GetComponents<SphereCollider>()?.FirstOrDefault((s) => s.isTrigger);
+				if (sphere)
+					sphere.radius = Main.config.maxRadius;
+			}
+		}
+
+		// Patching max count of attracted objects
+		[HarmonyHelper.OptionalPatch(typeof(Gravsphere), "OnTriggerEnter")]
+		static public class Gravsphere_MaxObjects_Patch
+		{
+			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+			{
+				return HarmonyHelper.changeConstToConfigVar(instructions, (sbyte)12, nameof(Main.config.maxObjects));
+			}
+		}
+
+		// Patching max force applied to attracted objects
+		[HarmonyHelper.OptionalPatch(typeof(Gravsphere), "ApplyGravitation")]
+		static public class Gravsphere_MaxForce_Patch
+		{
+			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+			{
+				return HarmonyHelper.changeConstToConfigVar(instructions, 15f, nameof(Main.config.maxForce));
+			}
+		}
 	}
-	#endregion
+	
 
 	#region Gravtrap patches
 	[HarmonyPatch(typeof(Gravsphere), "Start")]
@@ -26,11 +60,6 @@ namespace GravTrapImproved
 		static void Postfix(Gravsphere __instance)
 		{
 			__instance.gameObject.addComponentIfNeeded<GravTrapObjectsType>();
-
-			// patching work radius of a gravsphere
-			SphereCollider sphere = __instance.gameObject.GetComponents<SphereCollider>()?.FirstOrDefault((s) => s.isTrigger);
-			if (sphere)
-				sphere.radius = Main.config.maxRadius;
 		}
 	}
 
@@ -50,26 +79,6 @@ namespace GravTrapImproved
 		{
 			__result = __instance.GetComponent<GravTrapObjectsType>().isValidTarget(obj);
 			return false;
-		}
-	}
-
-	// Patching max count of attracted objects
-	[HarmonyPatch(typeof(Gravsphere), "OnTriggerEnter")]
-	static class Gravsphere_OnTriggerEnter_Patch
-	{
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
-		{
-			return HarmonyHelper.changeConstToConfigVar(instructions, (sbyte)12, nameof(Main.config.maxObjects));
-		}
-	}
-
-	// Patching max force applied to attracted objects
-	[HarmonyPatch(typeof(Gravsphere), "ApplyGravitation")]
-	static class Gravsphere_OnTriggerEnterss_Patch
-	{
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
-		{
-			return HarmonyHelper.changeConstToConfigVar(instructions, 15f, nameof(Main.config.maxForce));
 		}
 	}
 	#endregion

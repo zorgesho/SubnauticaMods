@@ -11,8 +11,16 @@ namespace ConsoleImproved
 		{
 			int delimPos = text.LastIndexOf(' ');
 
-			if (delimPos > 0)
-				return text.Substring(0, delimPos + 1) + tryCompleteString(text.Substring(delimPos + 1), techtypeCache);
+			if (delimPos > 0) // trying complete parameter
+			{
+				string cmd = text.Substring(0, delimPos + 1).Trim();
+				StringCache stringCache = techtypeCache; // default secondary cache
+
+				if (cmd == "setcfgvar") // hack, todo more general
+					stringCache = cfgVarsCache;
+				
+				return cmd + " " + tryCompleteString(text.Substring(delimPos + 1), stringCache);
+			}
 			else
 				return tryCompleteString(text, commandCache);
 		}

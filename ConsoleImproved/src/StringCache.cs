@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using System.Collections.Generic;
 
 using Common;
@@ -20,15 +21,8 @@ namespace ConsoleImproved
 				return strings.FindAll(predicate);
 			}
 
-			public List<string> findByPrefix(string prefix)
-			{
-				return find((s) => s.StartsWith(prefix));
-			}
-
-			public List<string> find(string str)
-			{
-				return find((s) => s.IndexOf(str) >= 0);
-			}
+			public List<string> find(string str)			=> find((s) => s.IndexOf(str) >= 0);
+			public List<string> findByPrefix(string prefix) => find((s) => s.StartsWith(prefix));
 		}
 
 		// console commands
@@ -41,7 +35,7 @@ namespace ConsoleImproved
 					strings.Clear();
 
 					foreach (var cmd in DevConsole.commands)
-						strings.Add(cmd.Key.ToLower());
+						strings.Add(cmd.Key.ToLower() + " "); // add space for convenience
 
 					strings.Sort();										"ConsoleHelper.CommandCache refreshed".logDbg();
 				}
@@ -59,6 +53,36 @@ namespace ConsoleImproved
 						strings.Add(t.AsString().ToLower());
 
 					strings.Sort();
+				}
+			}
+		}
+
+		// config fields exported to console
+		class CfgVarsCache: StringCache
+		{
+			static readonly string exportCfgVarClassName = nameof(Common) + "." + nameof(Common.Config) + "." + nameof(Common.Config.ExportedCfgVarFields);
+
+			// searching exported config fields in current assemblies
+			override protected void refresh()
+			{
+				if (strings.Count == 0)
+				{
+					Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+
+					foreach (var a in assemblies)
+					{
+						Type cfgvars = a.GetType(exportCfgVarClassName, false);
+
+						if (cfgvars != null)
+						{
+							List<string> fields = cfgvars.GetMethod("getFields")?.Invoke(null, null) as List<string>;
+							if (fields != null)
+							{
+								strings.AddRange(fields);
+								fields.logDbg("CfgVarsCache added field ");
+							}
+						}
+					}
 				}
 			}
 		}

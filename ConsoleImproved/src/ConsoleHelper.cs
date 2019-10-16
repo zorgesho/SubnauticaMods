@@ -15,6 +15,7 @@ namespace ConsoleImproved
 		static readonly string historyPath = Common.PathHelper.Paths.modRootPath + "history.txt";
 
 		static readonly CommandCache commandCache = new CommandCache();
+		static readonly CfgVarsCache cfgVarsCache = new CfgVarsCache();
 		static readonly TechTypeCache techtypeCache = new TechTypeCache();
 
 		static void init()

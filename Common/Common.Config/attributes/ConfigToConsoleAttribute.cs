@@ -6,6 +6,16 @@ using UnityEngine;
 
 namespace Common.Config
 {
+	// for use in other mods
+	static public class ExportedCfgVarFields
+	{
+		static readonly List<string> fields = new List<string>();
+
+		static public List<string> getFields() => fields;
+
+		static internal void addField(string fieldName) => fields.Add(fieldName.ToLower());
+	}
+	
 	partial class Config
 	{
 		[AttributeUsage(AttributeTargets.Class)]
@@ -25,7 +35,10 @@ namespace Common.Config
 				foreach (FieldInfo field in fields)
 				{
 					if (field.FieldType.IsPrimitive)
+					{
 						ConfigVarsConsoleCommand.addCfgField(config, field);
+						ExportedCfgVarFields.addField((cfgNamespace != null? cfgNamespace + ".": "") + field.Name);
+					}
 					
 					if (field.FieldType.IsClass)
 						process(field.GetValue(config));
@@ -59,7 +72,7 @@ namespace Common.Config
 				{
 					if (config != null)
 					{
-						consoleObject = PersistentConsoleCommands.createGameObject<SetCfgVarCommand>("ConfigConsoleCommands");
+						consoleObject = PersistentConsoleCommands.createGameObject<SetCfgVarCommand>("ConfigConsoleCommands_" + Strings.modName);
 
 						mainConfig = config;
 						cfgNamespace = _cfgNamespace;

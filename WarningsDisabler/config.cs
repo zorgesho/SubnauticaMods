@@ -7,7 +7,8 @@ namespace WarningsDisabler
 	[Options.Name("Warnings & messages <color=#999999FF>(uncheck boxes to disable)</color>")]
 	class ModConfig: Config
 	{
-		[Options.Field("Oxygen warnings", typeof(OxygenWarnings.HideOxygenHint))]
+		[Options.Field("Oxygen warnings")]
+		[FieldCustomAction(typeof(OxygenWarnings.HideOxygenHint))]
 		public readonly bool oxygenWarningsEnabled = true;
 
 		[Options.Field("Food and water warnings")]

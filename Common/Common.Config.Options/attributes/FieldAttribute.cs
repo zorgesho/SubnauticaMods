@@ -7,23 +7,15 @@ namespace Common.Config
 {
 	partial class Options: ModOptions
 	{
-		// implement this to create custom action when field is changes via options
-		public interface IFieldCustomAction
-		{
-			void fieldCustomAction();
-		}
-		
 		// Attribute for creating options UI elements
 		[AttributeUsage(AttributeTargets.Field)]
 		public class FieldAttribute: Attribute, Config.IFieldAttribute
 		{
 			string label = null;
-			Type customActionType = null;
 
-			public FieldAttribute(string Label = null, Type CustomActionType = null)
+			public FieldAttribute(string _label = null)
 			{
-				label = Label;
-				customActionType = CustomActionType;
+				label = _label;
 			}
 
 			public void process(object config, FieldInfo field)
@@ -36,13 +28,8 @@ namespace Common.Config
 
 				ModOption.InitParams initParams = new ModOption.InitParams{config = config, field = field, label = label};
 
-				if (customActionType != null)
-				{
-					initParams.action = Activator.CreateInstance(customActionType) as IFieldCustomAction;
-					
-					if (initParams.action == null)
-						$"Options.FieldAttribute: '{field.Name}' You need to implement IFieldCustomAction in CustomAction".logError();
-				}
+				if (GetCustomAttribute(field, typeof(Config.FieldCustomActionAttribute)) is Config.FieldCustomActionAttribute action)
+					initParams.action = action.action;
 
 				if (field.FieldType == typeof(bool))
 				{

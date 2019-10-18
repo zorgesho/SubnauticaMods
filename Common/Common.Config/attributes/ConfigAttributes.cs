@@ -43,7 +43,7 @@ namespace Common.Config
 				Attribute[] attrs = Attribute.GetCustomAttributes(field);
 
 				foreach (var attr in attrs)
-					(attr as IFieldAttribute).process(config, field);
+					(attr as IFieldAttribute)?.process(config, field);
 
 				if (field.FieldType.IsClass)
 					processAttributes(field.GetValue(config));

@@ -14,7 +14,7 @@ namespace Common.Config
 				public object config;
 				public FieldInfo field;
 				public string label;
-				public IFieldCustomAction action;
+				public Config.IFieldCustomAction action;
 			}
 
 			public readonly string id;
@@ -22,7 +22,7 @@ namespace Common.Config
 
 			readonly object config;
 			readonly FieldInfo field;
-			readonly IFieldCustomAction action;
+			readonly Config.IFieldCustomAction action;
 
 			protected object fieldValue
 			{

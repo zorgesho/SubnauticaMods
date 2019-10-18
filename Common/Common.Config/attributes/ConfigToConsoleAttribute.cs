@@ -40,8 +40,11 @@ namespace Common.Config
 
 				if (field.FieldType.IsPrimitive)
 				{
-					ConfigVarsConsoleCommand.addCfgField(config, field);
-					ExportedCfgVarFields.addField((cfgNamespace != null? cfgNamespace + ".": "") + field.Name);
+					FieldBoundsAttribute bounds = GetCustomAttribute(field, typeof(FieldBoundsAttribute)) as FieldBoundsAttribute;
+					FieldCustomActionAttribute action = GetCustomAttribute(field, typeof(FieldCustomActionAttribute)) as FieldCustomActionAttribute;
+					
+					if (ConfigVarsConsoleCommand.addConfigField(new ConfigVarsConsoleCommand.ConfigField(config, field, action?.action, bounds)))
+						ExportedCfgVarFields.addField((cfgNamespace != null? cfgNamespace + ".": "") + field.Name);
 				}
 					
 				if (field.FieldType.IsClass)
@@ -63,11 +66,37 @@ namespace Common.Config
 
 			static public bool isInited { get => consoleObject != null; }
 
-			struct ConfigField
+			public class ConfigField
 			{
-				public object config;
-				public FieldInfo field;
+				readonly object config;
+				public readonly FieldInfo field;
+				readonly IFieldCustomAction action;
+				readonly FieldBoundsAttribute bounds;
+
+				public ConfigField(object _config, FieldInfo _field, IFieldCustomAction _action, FieldBoundsAttribute _bounds)
+				{
+					config = _config;
+					field = _field;
+					action = _action;
+					bounds = _bounds;
+				}
+
+				public void setFieldValue(object value)
+				{
+					try
+					{
+						field.SetValue(config, Convert.ChangeType(value, field.FieldType));
+#if !DEBUG
+						bounds?.process(config, field);
+#endif
+						action?.fieldCustomAction();
 					}
+					catch (Exception e)
+					{
+						Log.msg(e);
+					}
+				}
+			}
 
 			static readonly Dictionary<string, ConfigField> cfgFields = new Dictionary<string, ConfigField>();
 
@@ -86,15 +115,22 @@ namespace Common.Config
 						"ConfigVarsConsoleCommand.init mainConfig is null !".logError();
 				}
 			}
-			
-			static public void addCfgField(object config, FieldInfo field)
-			{																									$"ConfigVarsConsoleCommand: adding field {field.Name}".logDbg();
-				string name = field.Name.ToLower();
+
+
+			static public bool addConfigField(ConfigField configField)
+			{																									$"ConfigVarsConsoleCommand: adding field {configField.field.Name}".logDbg();
+				string name = configField.field.Name.ToLower();
 
 				if (cfgFields.ContainsKey(name))
+				{
 					$"ConfigVarsConsoleCommand: field {name} is already added!".logError();
+					return false;
+				}
 				else
-					cfgFields[name] = new ConfigField { config = config, field = field };
+				{
+					cfgFields[name] = configField;
+					return true;
+				}
 			}
 
 			static void setFieldValue(string fieldName, string fieldValue)
@@ -111,7 +147,7 @@ namespace Common.Config
 
 					if (cfgFields.TryGetValue(fieldName, out ConfigField cf))
 					{																							$"ConfigVarsConsoleCommand: field {fieldName} value {fieldValue}".logDbg();
-						cf.field.SetValue(cf.config, Convert.ChangeType(fieldValue, cf.field.FieldType));
+						cf.setFieldValue(fieldValue);
 						mainConfig.save();
 					}
 				}

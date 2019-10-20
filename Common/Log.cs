@@ -69,7 +69,7 @@ namespace Common
 				using (StreamWriter writer = File.AppendText(customLogPath))
 					writer.WriteLine(formattedMsg);
 			}
-			catch (UnauthorizedAccessException e ) {}
+			catch (UnauthorizedAccessException) {}
 #endif
 		}
 

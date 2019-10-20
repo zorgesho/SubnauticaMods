@@ -67,9 +67,9 @@ namespace Common
 				{
 					Patches patches = harmonyInstance.GetPatchInfo(method);
 
-					bool patched =  patches != null && (patches.Prefixes.FirstOrDefault((p) => p.patch == prefix) != null ||
-														patches.Postfixes.FirstOrDefault((p) => p.patch == postfix) != null ||
-														patches.Transpilers.FirstOrDefault((p) => p.patch == transpiler) != null);
+					bool patched =  patches != null && (patches.Prefixes.FirstOrDefault(p => p.patch == prefix) != null ||
+														patches.Postfixes.FirstOrDefault(p => p.patch == postfix) != null ||
+														patches.Transpilers.FirstOrDefault(p => p.patch == transpiler) != null);
 
 					$"OptionalPatchAttribute {method} is already patched".logDbg(patched);
 

@@ -29,8 +29,7 @@ namespace Common.Config
 			{
 				FieldInfo[] fields = config.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
-				foreach (var field in fields)
-					process(config, field);
+				fields.forEach(field => process(config, field));
 			}
 
 			public void process(object config, FieldInfo field)
@@ -58,8 +57,6 @@ namespace Common.Config
 	{
 		static class ConfigVarsConsoleCommand
 		{
-			const string cmdName = "setcfgvar"; // used also in OnConsoleCommand_setcfgvar
-
 			static GameObject consoleObject = null;
 			static string cfgNamespace = null; // optional namespace for use in console in case of duplicate names
 			static Config mainConfig = null;

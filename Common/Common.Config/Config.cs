@@ -7,7 +7,7 @@ namespace Common.Config
 {
 	partial class Config
 	{
-		static bool loadFromFile =
+		static readonly bool loadFromFile =
 #if (DEBUG && !LOAD_CONFIG)
 			false;
 #else

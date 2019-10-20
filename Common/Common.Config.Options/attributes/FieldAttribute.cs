@@ -43,22 +43,13 @@ namespace Common.Config
 				if (field.FieldType == typeof(float) || field.FieldType == typeof(int))
 				{
 					// creating ChoiceOption if we also have choice attribute
-					ChoiceAttribute choice = GetCustomAttribute(field, typeof(ChoiceAttribute)) as ChoiceAttribute;
-					if (choice != null && choice.choices.Length > 0)
-					{
+					if (GetCustomAttribute(field, typeof(ChoiceAttribute)) is ChoiceAttribute choice && choice.choices.Length > 0)
 						add(new ChoiceOption(cfgField, label, choice.choices));
-						return;
-					}
-
-					// creating SliderOption if we also have bounds attribute
-					Config.FieldBoundsAttribute bounds = GetCustomAttribute(field, typeof(Config.FieldBoundsAttribute)) as Config.FieldBoundsAttribute;
-					if (bounds != null && bounds.isBothBoundsSet())
-					{
+					else // creating SliderOption if we also have bounds attribute
+					if (GetCustomAttribute(field, typeof(Config.FieldBoundsAttribute)) is Config.FieldBoundsAttribute bounds && bounds.isBothBoundsSet())
 						add(new SliderOption(cfgField, label, bounds.min, bounds.max));
-						return;
-					}
-
-					$"Options.FieldAttribute: '{field.Name}' For numeric option field you also need to add ChoiceAttribute or FieldBoundsAttribute".logError();
+					else
+						$"Options.FieldAttribute: '{field.Name}' For numeric option field you also need to add ChoiceAttribute or FieldBoundsAttribute".logError();
 				}
 				else
 					$"Options.FieldAttribute: '{field.Name}' Unsupported field type".logError();

@@ -1,5 +1,4 @@
 ﻿using System;
-
 using SMLHelper.V2.Options;
 
 namespace Common.Config

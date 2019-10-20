@@ -12,7 +12,7 @@ namespace Common.Config
 
 		static Config mainConfig = null;
 		static string name = Strings.modName;
-		static List<ModOption> modOptions = new List<ModOption>();
+		static readonly List<ModOption> modOptions = new List<ModOption>();
 
 		static public void init()
 		{																								"Config.Options is already inited!".logDbgError(inited);
@@ -40,7 +40,7 @@ namespace Common.Config
 		{
 			try
 			{
-				modOptions.Find((o) => o.id == id)?.onEvent(e);
+				modOptions.Find(o => o.id == id)?.onEvent(e);
 			}
 			catch (Exception ex)
 			{
@@ -50,7 +50,7 @@ namespace Common.Config
 
 		override public void BuildModOptions()
 		{
-			modOptions.ForEach((o) => o.addOption(this));
+			modOptions.ForEach(o => o.addOption(this));
 		}
 	}	
 }

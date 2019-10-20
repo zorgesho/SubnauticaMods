@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Linq;
+using System.Reflection;
 using System.Collections.Generic;
 
 using UnityEngine;
@@ -20,9 +21,8 @@ namespace Common
 
 			if (list.Count > maxCount)
 				$"List is too large ({list.Count} entries), printing first {maxCount} entries".onScreen();
-			
-			foreach (var s in listToPrint)
-				ErrorMessage.AddDebug(msg + s);
+
+			listToPrint.ForEach(s => ErrorMessage.AddDebug(msg + s));
 		}
 	}
 
@@ -58,10 +58,8 @@ namespace Common
 		{																													"PersistentConsoleCommands.init cmdNames already inited!".logDbgError(cmdNames.Count > 0);
 			// searching for console commands methods in derived class
 			MethodInfo[] methods = GetType().GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-
-			foreach (var m in methods)
-				if (m.Name.StartsWith(cmdPrefix))
-					cmdNames.Add(m.Name.Replace(cmdPrefix, string.Empty));
+			
+			methods.Where(m => m.Name.StartsWith(cmdPrefix)).forEach(m => cmdNames.Add(m.Name.Replace(cmdPrefix, "")));
 		}
 			
 		void registerCommands(bool checkNeedReregister = false)

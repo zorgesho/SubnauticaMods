@@ -1,5 +1,4 @@
 ﻿using System.IO;
-
 using Oculus.Newtonsoft.Json;
 
 namespace Common.GameSerialization

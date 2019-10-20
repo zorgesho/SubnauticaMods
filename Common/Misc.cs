@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Reflection;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
+#region Suppress messages
 [assembly: SuppressMessage("Code Quality", "IDE0051", Scope = "namespaceanddescendants", Target = "Common")]
 [assembly: SuppressMessage("Code Quality", "IDE0060", Scope = "namespaceanddescendants", Target = "Common")]
+[assembly: SuppressMessage("Code Quality", "IDE0052", Scope = "member", Target = "~F:Common.Config.Config.ConfigVarsConsoleCommand.ConfigField.bounds")]
+#endregion
 
 namespace Common
 {
@@ -26,6 +30,20 @@ namespace Common
 			}
 		}
 	}
+
+	static class MiscExtensions
+	{
+		public static void forEach<T>(this IEnumerable<T> sequence, Action<T> action)
+		{
+			if (sequence != null)
+			{
+				var enumerator = sequence.GetEnumerator();
+				while (enumerator.MoveNext())
+					action(enumerator.Current);
+			}
+		}
+	}
+
 
 	static class Debug
 	{

@@ -30,7 +30,7 @@ namespace Common.Config
 
 					if (value != valuePrev)
 					{																			$"BoundsFieldAttribute.process changing field '{field.Name}' from {valuePrev} to {value}".logWarning();
-						field.SetValue(config, Convert.ChangeType(value, field.FieldType));
+						config.setFieldValue(field, value);
 					}
 				}
 				catch (Exception e)

@@ -8,6 +8,25 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Common
 {
+	static class ObjectExtensions
+	{
+		static public int toInt(this object obj) => Convert.ToInt32(obj);
+		static public bool toBool(this object obj) => Convert.ToBoolean(obj);
+		static public float toFloat(this object obj) => Convert.ToSingle(obj);
+
+		static public void setFieldValue(this object obj, FieldInfo field, object value)
+		{
+			try
+			{
+				field.SetValue(obj, Convert.ChangeType(value, field.FieldType));
+			}
+			catch (Exception e)
+			{
+				Log.msg(e);
+			}
+		}
+	}
+
 	static class Debug
 	{
 		// based on code from http://www.csharp-examples.net/reflection-callstack/

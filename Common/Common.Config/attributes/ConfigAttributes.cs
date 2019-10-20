@@ -3,13 +3,6 @@ using System.Reflection;
 
 namespace Common.Config
 {
-	static class ConvertObjectExtensions
-	{
-		static public int toInt(this object obj) => Convert.ToInt32(obj);
-		static public bool toBool(this object obj) => Convert.ToBoolean(obj);
-		static public float toFloat(this object obj) => Convert.ToSingle(obj);
-	}
-
 	partial class Config
 	{
 		public interface IConfigAttribute

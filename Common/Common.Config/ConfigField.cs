@@ -1,5 +1,4 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 
 namespace Common.Config
 {
@@ -27,18 +26,10 @@ namespace Common.Config
 			{
 				get => field.GetValue(config);
 
-				set
+				set 
 				{
-					try
-					{
-						field.SetValue(config, Convert.ChangeType(value, field.FieldType));
-
-						action?.fieldCustomAction();
-					}
-					catch (Exception e)
-					{
-						Log.msg(e);
-					}
+					config.setFieldValue(field, value);
+					action?.fieldCustomAction();
 				}
 			}
 		}

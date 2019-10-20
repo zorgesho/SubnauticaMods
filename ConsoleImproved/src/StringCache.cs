@@ -11,7 +11,7 @@ namespace ConsoleImproved
 		// used for console autocomplete
 		abstract class StringCache
 		{
-			protected List<string> strings = new List<string>();
+			protected readonly List<string> strings = new List<string>();
 
 			abstract protected void refresh();
 
@@ -21,8 +21,8 @@ namespace ConsoleImproved
 				return strings.FindAll(predicate);
 			}
 
-			public List<string> find(string str)			=> find((s) => s.IndexOf(str) >= 0);
-			public List<string> findByPrefix(string prefix) => find((s) => s.StartsWith(prefix));
+			public List<string> find(string str)			=> find(s => s.IndexOf(str) >= 0);
+			public List<string> findByPrefix(string prefix) => find(s => s.StartsWith(prefix));
 		}
 
 		// console commands
@@ -75,8 +75,7 @@ namespace ConsoleImproved
 
 						if (cfgvars != null)
 						{
-							List<string> fields = cfgvars.GetMethod("getFields")?.Invoke(null, null) as List<string>;
-							if (fields != null)
+							if (cfgvars.GetMethod("getFields")?.Invoke(null, null) is List<string> fields)
 							{
 								strings.AddRange(fields);
 								fields.logDbg("CfgVarsCache added field ");

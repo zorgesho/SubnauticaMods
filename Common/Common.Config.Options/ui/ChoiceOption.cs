@@ -9,19 +9,19 @@ namespace Common.Config
 		{
 			readonly string[] choices = null;
 
-			public ChoiceOption(InitParams p, string[] _choices) : base(p)
+			public ChoiceOption(Config.CfgField cfgField, string label, string[] _choices): base(cfgField, label)
 			{
 				choices = _choices;
 			}
 
 			override public void addOption(Options options)
 			{
-				options.AddChoiceOption(id, label, choices, fieldValue.toInt());
+				options.AddChoiceOption(id, label, choices, cfgField.value.toInt());
 			}
 
 			override public void onEvent(EventArgs e)
 			{
-				fieldValue = (e as ChoiceChangedEventArgs)?.Index;
+				cfgField.value = (e as ChoiceChangedEventArgs)?.Index;
 				base.onEvent(e);
 			}
 		}

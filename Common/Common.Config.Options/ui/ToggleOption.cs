@@ -7,16 +7,16 @@ namespace Common.Config
 	{
 		class ToggleOption: ModOption
 		{
-			public ToggleOption(InitParams p): base(p) {}
+			public ToggleOption(Config.CfgField cfgField, string label): base(cfgField, label) {}
 
 			override public void addOption(Options options)
 			{
-				options.AddToggleOption(id, label, fieldValue.toBool());
+				options.AddToggleOption(id, label, cfgField.value.toBool());
 			}
 
 			override public void onEvent(EventArgs e)
 			{
-				fieldValue = (e as ToggleChangedEventArgs)?.Value;
+				cfgField.value = (e as ToggleChangedEventArgs)?.Value;
 				base.onEvent(e);
 			}
 		}

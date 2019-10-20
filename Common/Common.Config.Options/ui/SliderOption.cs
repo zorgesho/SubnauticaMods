@@ -9,7 +9,7 @@ namespace Common.Config
 		{
 			readonly float min, max;
 
-			public SliderOption(InitParams p, float _min, float _max): base(p)
+			public SliderOption(Config.CfgField cfgField, string label, float _min, float _max): base(cfgField, label)
 			{
 				min = _min;
 				max = _max;
@@ -17,12 +17,12 @@ namespace Common.Config
 
 			override public void addOption(Options options)
 			{
-				options.AddSliderOption(id, label, min, max, fieldValue.toFloat());
+				options.AddSliderOption(id, label, min, max, cfgField.value.toFloat());
 			}
 
 			override public void onEvent(EventArgs e)
 			{
-				fieldValue = (e as SliderChangedEventArgs)?.Value;
+				cfgField.value = (e as SliderChangedEventArgs)?.Value;
 				base.onEvent(e);
 			}
 		}

@@ -26,19 +26,18 @@ namespace Common.Config
 				if (label == null)
 					label = field.Name;
 
-				ModOption.InitParams initParams = new ModOption.InitParams{config = config, field = field, label = label};
+				Config.IFieldCustomAction action = (GetCustomAttribute(field, typeof(Config.FieldCustomActionAttribute)) as Config.FieldCustomActionAttribute)?.action;
 
-				if (GetCustomAttribute(field, typeof(Config.FieldCustomActionAttribute)) is Config.FieldCustomActionAttribute action)
-					initParams.action = action.action;
+				Config.CfgField cfgField = new Config.CfgField(config, field, action);
 
 				if (field.FieldType == typeof(bool))
 				{
-					add(new ToggleOption(initParams));
+					add(new ToggleOption(cfgField, label));
 				}
 				else
 				if (field.FieldType == typeof(UnityEngine.KeyCode))
 				{
-					add(new KeyBindOption(initParams));
+					add(new KeyBindOption(cfgField, label));
 				}
 				else
 				if (field.FieldType == typeof(float) || field.FieldType == typeof(int))
@@ -47,7 +46,7 @@ namespace Common.Config
 					ChoiceAttribute choice = GetCustomAttribute(field, typeof(ChoiceAttribute)) as ChoiceAttribute;
 					if (choice != null && choice.choices.Length > 0)
 					{
-						add(new ChoiceOption(initParams, choice.choices));
+						add(new ChoiceOption(cfgField, label, choice.choices));
 						return;
 					}
 
@@ -55,7 +54,7 @@ namespace Common.Config
 					Config.FieldBoundsAttribute bounds = GetCustomAttribute(field, typeof(Config.FieldBoundsAttribute)) as Config.FieldBoundsAttribute;
 					if (bounds != null && bounds.isBothBoundsSet())
 					{
-						add(new SliderOption(initParams, bounds.min, bounds.max));
+						add(new SliderOption(cfgField, label, bounds.min, bounds.max));
 						return;
 					}
 

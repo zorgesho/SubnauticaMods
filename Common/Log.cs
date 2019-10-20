@@ -31,8 +31,7 @@ namespace Common
 		[Conditional("DEBUG")]
 		static public void logDbg(this List<string> strings, string msg = "")
 		{
-			foreach (var s in strings)
-				Log.msg(msg + s, Log.MsgType.DEBUG);
+			strings.ForEach(s => Log.msg(msg + s, Log.MsgType.DEBUG));
 		}
 	}
 
@@ -48,29 +47,40 @@ namespace Common
 			EXCEPTION
 		}
 
-		static string logPrefix = Strings.modName;
+		static readonly string logPrefix = Strings.modName;
 #if DEBUG
-		static string customLogPath = PathHelper.Paths.modRootPath + logPrefix + ".log";
-		static Log() => File.Delete(customLogPath);
+		static readonly string customLogPath = PathHelper.Paths.modRootPath + logPrefix + ".log";
+		static Log()
+		{
+			try
+			{
+				File.Delete(customLogPath);
+			}
+			catch (UnauthorizedAccessException) {}
+		}
 #endif
 		static public void msg(string str, MsgType msgType)
 		{
 			string formattedMsg = $"[{logPrefix}] {msgType}: {str}";
 			Console.WriteLine(formattedMsg);
 #if DEBUG
+			try
+			{
 				using (StreamWriter writer = File.AppendText(customLogPath))
 					writer.WriteLine(formattedMsg);
+			}
+			catch (UnauthorizedAccessException e ) {}
 #endif
 		}
 
 		static public void msg(Exception e, string str = "")
 		{
-			msg(str + "\t" + formatException(e), MsgType.EXCEPTION);
+			msg(str + (str == ""? "": "\t") + formatException(e), MsgType.EXCEPTION);
 		}
 
 		static string formatException(Exception e)
 		{
-			return (e != null)? $"{e.GetType()}\tMessage: {e.Message}\n\tStacktrace: {e.StackTrace}\n" + formatException(e.InnerException): string.Empty;
+			return (e != null)? $"{e.GetType()}\tMESSAGE: {e.Message}\n\tSTACKTRACE:\n{e.StackTrace}\n" + formatException(e.InnerException): "";
 		}
 	}
 }

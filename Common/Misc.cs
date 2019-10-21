@@ -21,7 +21,10 @@ namespace Common
 		{
 			try
 			{
-				field.SetValue(obj, Convert.ChangeType(value, field.FieldType));
+				if (field.FieldType.IsEnum)
+					field.SetValue(obj, Convert.ChangeType(value, Enum.GetUnderlyingType(field.FieldType)));
+				else
+					field.SetValue(obj, Convert.ChangeType(value, field.FieldType));
 			}
 			catch (Exception e)
 			{

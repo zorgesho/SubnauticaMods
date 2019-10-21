@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using System.Collections.Generic;
 
 using SMLHelper.V2.Options;
 
@@ -36,6 +37,16 @@ namespace Common.Config
 				if (field.FieldType == typeof(UnityEngine.KeyCode))
 				{
 					add(new KeyBindOption(cfgField, label));
+				}
+				else
+				if (field.FieldType.IsEnum) // add choice option for enum, works only with default enums (zero-based, increased by 1)
+				{
+					List<string> choices = new List<string>();
+
+					foreach (var e in Enum.GetValues(field.FieldType))
+						choices.Add(e.ToString());
+
+					add(new ChoiceOption(cfgField, label, choices.ToArray()));
 				}
 				else
 				if (field.FieldType == typeof(float) || field.FieldType == typeof(int))

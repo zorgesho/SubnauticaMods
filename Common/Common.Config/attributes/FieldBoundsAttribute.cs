@@ -8,8 +8,7 @@ namespace Common.Config
 		[AttributeUsage(AttributeTargets.Field)]
 		public class FieldBoundsAttribute: Attribute, IFieldAttribute
 		{
-			public readonly float min = float.MinValue;
-			public readonly float max = float.MaxValue;
+			public readonly float min, max;
 
 			public FieldBoundsAttribute(float Min = float.MinValue, float Max = float.MaxValue)
 			{
@@ -19,19 +18,13 @@ namespace Common.Config
 
 			public bool isBothBoundsSet() => min > float.MinValue && max < float.MaxValue;
 
+			public object applyBounds(object value) => UnityEngine.Mathf.Clamp(value.toFloat(), min, max);
+
 			public void process(object config, FieldInfo field)
 			{																					$"BoundsFieldAttribute.process min > max, field '{field.Name}'".logDbgError(min > max);
 				try
 				{
-					float value = field.GetValue(config).toFloat();
-					float valuePrev = value;
-
-					value = UnityEngine.Mathf.Clamp(value, min, max);
-
-					if (value != valuePrev)
-					{																			$"BoundsFieldAttribute.process changing field '{field.Name}' from {valuePrev} to {value}".logWarning();
-						config.setFieldValue(field, value);
-					}
+					config.setFieldValue(field, applyBounds(field.GetValue(config)));
 				}
 				catch (Exception e)
 				{

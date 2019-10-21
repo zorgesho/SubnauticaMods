@@ -7,7 +7,6 @@ using System.Diagnostics.CodeAnalysis;
 #region Suppress messages
 [assembly: SuppressMessage("Code Quality", "IDE0051", Scope = "namespaceanddescendants", Target = "Common")]
 [assembly: SuppressMessage("Code Quality", "IDE0060", Scope = "namespaceanddescendants", Target = "Common")]
-[assembly: SuppressMessage("Code Quality", "IDE0052", Scope = "member", Target = "~F:Common.Config.Config.ConfigVarsConsoleCommand.ConfigField.bounds")]
 #endregion
 
 namespace Common

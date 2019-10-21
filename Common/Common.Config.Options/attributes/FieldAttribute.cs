@@ -11,7 +11,7 @@ namespace Common.Config
 		[AttributeUsage(AttributeTargets.Field)]
 		public class FieldAttribute: Attribute, Config.IFieldAttribute
 		{
-			string label = null;
+			string label;
 
 			public FieldAttribute(string _label = null)
 			{
@@ -26,9 +26,7 @@ namespace Common.Config
 				if (label == null)
 					label = field.Name;
 
-				Config.IFieldCustomAction action = (GetCustomAttribute(field, typeof(Config.FieldCustomActionAttribute)) as Config.FieldCustomActionAttribute)?.action;
-
-				Config.CfgField cfgField = new Config.CfgField(config, field, action);
+				Config.CfgField cfgField = new Config.CfgField(config, field);
 
 				if (field.FieldType == typeof(bool))
 				{

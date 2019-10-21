@@ -21,7 +21,7 @@ namespace Common.Config
 		[AttributeUsage(AttributeTargets.Class | AttributeTargets.Field)]
 		public class AddToConsoleAttribute: Attribute, IConfigAttribute, IFieldAttribute
 		{
-			readonly string cfgNamespace = null;
+			readonly string cfgNamespace;
 
 			public AddToConsoleAttribute(string _cfgNamespace = null) => cfgNamespace = _cfgNamespace;
 
@@ -38,13 +38,8 @@ namespace Common.Config
 					ConfigVarsConsoleCommand.init(config as Config, cfgNamespace);
 
 				if (field.FieldType.IsPrimitive)
-				{
-					FieldBoundsAttribute bounds = GetCustomAttribute(field, typeof(FieldBoundsAttribute)) as FieldBoundsAttribute;
-					FieldCustomActionAttribute action = GetCustomAttribute(field, typeof(FieldCustomActionAttribute)) as FieldCustomActionAttribute;
-					
-					if (ConfigVarsConsoleCommand.addConfigField(new ConfigVarsConsoleCommand.ConfigField(config, field, action?.action, bounds)))
+					if (ConfigVarsConsoleCommand.addConfigField(new ConfigVarsConsoleCommand.CfgField(config, field)))
 						ExportedCfgVarFields.addField((cfgNamespace != null? cfgNamespace + ".": "") + field.Name);
-				}
 					
 				if (field.FieldType.IsClass)
 					process(field.GetValue(config));
@@ -63,39 +58,24 @@ namespace Common.Config
 
 			static public bool isInited { get => consoleObject != null; }
 
-			public class ConfigField
+			public class CfgField: Config.CfgField
 			{
-				readonly object config;
-				public readonly FieldInfo field;
-				readonly IFieldCustomAction action;
-				readonly FieldBoundsAttribute bounds;
+				readonly FieldBoundsAttribute bounds = null;
 
-				public ConfigField(object _config, FieldInfo _field, IFieldCustomAction _action, FieldBoundsAttribute _bounds)
+				public CfgField(object config, FieldInfo field): base(config, field)
 				{
-					config = _config;
-					field = _field;
-					action = _action;
-					bounds = _bounds;
+#if !DEBUG
+					bounds = Attribute.GetCustomAttribute(field, typeof(FieldBoundsAttribute)) as FieldBoundsAttribute;
+#endif
 				}
 
-				public void setFieldValue(object value)
+				override protected void setFieldValue(object value)
 				{
-					try
-					{
-						field.SetValue(config, Convert.ChangeType(value, field.FieldType));
-#if !DEBUG
-						bounds?.process(config, field);
-#endif
-						action?.fieldCustomAction();
-					}
-					catch (Exception e)
-					{
-						Log.msg(e);
-					}
+					base.setFieldValue(bounds != null? bounds.applyBounds(value): value);
 				}
 			}
 
-			static readonly Dictionary<string, ConfigField> cfgFields = new Dictionary<string, ConfigField>();
+			static readonly Dictionary<string, CfgField> cfgFields = new Dictionary<string, CfgField>();
 
 			static public void init(Config config, string _cfgNamespace = null)
 			{
@@ -114,9 +94,9 @@ namespace Common.Config
 			}
 
 
-			static public bool addConfigField(ConfigField configField)
-			{																									$"ConfigVarsConsoleCommand: adding field {configField.field.Name}".logDbg();
-				string name = configField.field.Name.ToLower();
+			static public bool addConfigField(CfgField cfgField)
+			{																									$"ConfigVarsConsoleCommand: adding field {cfgField.name}".logDbg();
+				string name = cfgField.name.ToLower();
 
 				if (cfgFields.ContainsKey(name))
 				{
@@ -125,7 +105,7 @@ namespace Common.Config
 				}
 				else
 				{
-					cfgFields[name] = configField;
+					cfgFields[name] = cfgField;
 					return true;
 				}
 			}
@@ -142,9 +122,9 @@ namespace Common.Config
 							return;
 					}
 
-					if (cfgFields.TryGetValue(fieldName, out ConfigField cf))
+					if (cfgFields.TryGetValue(fieldName, out CfgField cf))
 					{																							$"ConfigVarsConsoleCommand: field {fieldName} value {fieldValue}".logDbg();
-						cf.setFieldValue(fieldValue);
+						cf.value = fieldValue;
 						mainConfig.save();
 					}
 				}
@@ -153,6 +133,7 @@ namespace Common.Config
 					Log.msg(e);
 				}
 			}
+
 
 			class SetCfgVarCommand: PersistentConsoleCommands
 			{

@@ -1,20 +1,23 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 
 namespace Common.Config
 {
 	partial class Config
 	{
-		public class CfgField
+		public partial class CfgField
 		{
-			readonly object config;
-			readonly FieldInfo field;
-			readonly IFieldCustomAction action;
+			protected readonly object config;
+			protected readonly FieldInfo field;
 
-			public CfgField(object _config, FieldInfo _field, IFieldCustomAction _action = null)
+			protected readonly ICustomAction action;
+
+			public CfgField(object _config, FieldInfo _field)
 			{
 				config = _config;
 				field = _field;
-				action = _action;
+
+				action = (Attribute.GetCustomAttribute(field, typeof(CustomActionAttribute)) as CustomActionAttribute)?.action;
 			}
 
 			public string name
@@ -26,11 +29,13 @@ namespace Common.Config
 			{
 				get => field.GetValue(config);
 
-				set 
-				{
-					config.setFieldValue(field, value);
-					action?.fieldCustomAction();
-				}
+				set => setFieldValue(value);
+			}
+
+			virtual protected void setFieldValue(object value)
+			{
+				config.setFieldValue(field, value);
+				action?.customAction();
 			}
 		}
 	}

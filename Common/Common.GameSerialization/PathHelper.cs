@@ -10,14 +10,13 @@ namespace Common.PathHelper
 			{
 #if DEBUG && !GAME_SAVEPATH
 				string path = modRootPath + "{dbgsave}";
-
+#else
+				string path = Path.Combine(SaveLoadManager.GetTemporarySavePath(), Strings.modName);
+#endif
 				if (!Directory.Exists(path))
-					Directory.CreateDirectory(path);														$"Using DEBUG SAVE PATH '{path}'".logWarning();
+					Directory.CreateDirectory(path);														$"Using save path '{path}'".logDbg();
 
 				return path;
-#else
-				return Path.Combine(SaveLoadManager.GetTemporarySavePath(), Strings.modName);
-#endif
 			}
 		}
 	}

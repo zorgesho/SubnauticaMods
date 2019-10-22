@@ -18,6 +18,12 @@ namespace Common.Config
 		{																								"Config.Options is already inited!".logDbgError(inited);
 			if (!inited)
 			{
+				if (modOptions.Count == 0)
+				{
+					"Config.Options.init: options list is empty".logWarning();
+					return;
+				}
+
 				inited = true;
 				OptionsPanelHandler.RegisterModOptions(new Options());
 			}

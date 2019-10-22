@@ -12,6 +12,9 @@ namespace Common
 	static class HarmonyHelper
 	{
 		#region Public interface
+
+		static public HarmonyInstance harmonyInstance { get; private set; } = null;
+
 		// expected to called only from mod entry function
 		static public void patchAll()
 		{
@@ -96,7 +99,6 @@ namespace Common
 
 		#region Private stuff
 		static FieldInfo mainConfigField = null; // for using in transpiler helper functions
-		static HarmonyInstance harmonyInstance = null;
 		
 		static void findConfig(string mainClassName, string configFieldName)
 		{

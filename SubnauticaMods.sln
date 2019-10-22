@@ -25,12 +25,15 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Common.Config.Options", "Co
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleImproved", "ConsoleImproved\ConsoleImproved.csproj", "{3BD3AB93-7001-4322-A0D8-B9DE42ED38AA}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Common.UI", "Common\Common.UI\Common.UI.shproj", "{44795620-2850-4B72-B859-74C5D50E6708}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Common\Common.Config.Options\Common.Config.Options.projitems*{0610f2c1-4b75-45f9-b517-9d747e3edd41}*SharedItemsImports = 13
 		Common\Common.GameSerialization\Common.GameSerialization.projitems*{37c6e8c9-4864-415a-9561-161035212eba}*SharedItemsImports = 13
 		Common\Common.Config\Common.Config.projitems*{3bd3ab93-7001-4322-a0d8-b9de42ed38aa}*SharedItemsImports = 4
 		Common\Common.projitems*{3bd3ab93-7001-4322-a0d8-b9de42ed38aa}*SharedItemsImports = 4
+		Common\Common.UI\Common.UI.projitems*{44795620-2850-4b72-b859-74c5d50e6708}*SharedItemsImports = 13
 		Common\Common.Config.Options\Common.Config.Options.projitems*{4ef61a6d-0c6e-48a9-8625-58d196fd5386}*SharedItemsImports = 4
 		Common\Common.Config\Common.Config.projitems*{4ef61a6d-0c6e-48a9-8625-58d196fd5386}*SharedItemsImports = 4
 		Common\Common.GameSerialization\Common.GameSerialization.projitems*{4ef61a6d-0c6e-48a9-8625-58d196fd5386}*SharedItemsImports = 4
@@ -72,6 +75,7 @@ Global
 		{4EF61A6D-0C6E-48A9-8625-58D196FD5386} = {C49BC122-0A68-48A8-8EA3-737FB7553D8B}
 		{37C6E8C9-4864-415A-9561-161035212EBA} = {EE6D7B7D-F20A-439A-8C01-97B6A16F9B52}
 		{0610F2C1-4B75-45F9-B517-9D747E3EDD41} = {EE6D7B7D-F20A-439A-8C01-97B6A16F9B52}
+		{44795620-2850-4B72-B859-74C5D50E6708} = {EE6D7B7D-F20A-439A-8C01-97B6A16F9B52}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0A745472-1C11-4AB7-B6C4-79A169E0FB35}

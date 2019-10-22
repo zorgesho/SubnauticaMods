@@ -47,9 +47,9 @@ namespace ConsoleImproved
 
 			string prefix = initialPrefix;
 			bool res = true;
-			int pos = prefix.Length;
+			int pos = prefix.Length, maxPos = strings[0].Length;
 
-			while (res && pos < strings[0].Length)
+			while (res && pos < maxPos)
 			{
 				prefix += strings[0][pos++];				$"getCommonPrefix: testing {prefix}".logDbg();
 

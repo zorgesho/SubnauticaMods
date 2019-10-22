@@ -34,8 +34,7 @@ namespace ConsoleImproved
 				{
 					strings.Clear();
 
-					foreach (var cmd in DevConsole.commands)
-						strings.Add(cmd.Key.ToLower() + " "); // add space for convenience
+					DevConsole.commands.forEach(cmd => strings.Add(cmd.Key.ToLower() + " "));  // add space for convenience
 
 					strings.Sort();										"ConsoleHelper.CommandCache refreshed".logDbg();
 				}
@@ -60,7 +59,8 @@ namespace ConsoleImproved
 		// config fields exported to console
 		class CfgVarsCache: StringCache
 		{
-			static readonly string exportCfgVarClassName = nameof(Common) + "." + nameof(Common.Config) + "." + nameof(Common.Config.ExportedCfgVarFields);
+			const string exportCfgVarClassName = nameof(Common) + "." + nameof(Common.Config) + "." + nameof(Common.Config.ExportedCfgVarFields);
+			const string exportCfgVarGetFields = nameof(Common.Config.ExportedCfgVarFields.getFields);
 
 			// searching exported config fields in current assemblies
 			override protected void refresh()
@@ -69,17 +69,14 @@ namespace ConsoleImproved
 				{
 					Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
-					foreach (var a in assemblies)
+					foreach (var assembly in assemblies)
 					{
-						Type cfgvars = a.GetType(exportCfgVarClassName, false);
+						Type cfgvars = assembly.GetType(exportCfgVarClassName, false);
 
-						if (cfgvars != null)
+						if (cfgvars != null && cfgvars.GetMethod(exportCfgVarGetFields)?.Invoke(null, null) is List<string> fields)
 						{
-							if (cfgvars.GetMethod("getFields")?.Invoke(null, null) is List<string> fields)
-							{
-								strings.AddRange(fields);
-								fields.logDbg("CfgVarsCache added field ");
-							}
+							strings.AddRange(fields);
+							fields.logDbg("CfgVarsCache added field ");
 						}
 					}
 				}

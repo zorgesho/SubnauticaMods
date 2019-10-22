@@ -30,19 +30,25 @@ namespace ConsoleImproved
 
 		static void saveHistory()
 		{
-			if (File.Exists(historyPath)) // TODO: check permissions, maybe trycatch
+			try
+			{
 				File.Delete(historyPath);
-			
-			List<string> history = DevConsole.instance.history;
 
-			// save 'historySizeToSave' last history entries or all history if historySizeToSave == 0
-			int i = Main.config.historySizeToSave == 0? 0: Mathf.Max(0, history.Count - Main.config.historySizeToSave);
+				List<string> history = DevConsole.instance.history;
 
-			StringBuilder stringBuilder = new StringBuilder();
-			while (i < history.Count)
-				stringBuilder.AppendLine(history[i++]);
+				// save 'historySizeToSave' last history entries or all history if historySizeToSave == 0
+				int i = Main.config.historySizeToSave == 0? 0: Mathf.Max(0, history.Count - Main.config.historySizeToSave);
 
-			File.WriteAllText(historyPath, stringBuilder.ToString());
+				StringBuilder stringBuilder = new StringBuilder();
+				while (i < history.Count)
+					stringBuilder.AppendLine(history[i++]);
+
+				File.WriteAllText(historyPath, stringBuilder.ToString());
+			}
+			catch (UnauthorizedAccessException e)
+			{
+				Log.msg(e);
+			}
 		}
 
 

@@ -11,11 +11,13 @@ namespace GravTrapImproved
 		{
 			HarmonyHelper.patchAll();
 
-			Options.init();
-
+			//Options.init();
+#if VER_1_2_0
 			checkOptionalPatches();
+#endif
 		}
 
+#if VER_1_2_0
 		static internal void checkOptionalPatches()
 		{
 			if (config.maxRadius != 17f)
@@ -30,5 +32,6 @@ namespace GravTrapImproved
 			if (config.treaderSpawnChunkProbability != 1f)
 				HarmonyHelper.setPatchEnabled(true, typeof(OptionalPatches.SeaTreader_SpawnChunksProb_Patch));
 		}
+#endif
 	}
 }

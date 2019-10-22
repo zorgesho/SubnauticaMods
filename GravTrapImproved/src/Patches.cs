@@ -18,14 +18,14 @@ namespace GravTrapImproved
 		{
 			static bool Prefix(SeaTreaderSounds __instance, Transform legTr) => UnityEngine.Random.value <= Main.config.treaderSpawnChunkProbability;
 		}
-
+#if VER_1_2_0
 		// Patching work radius of a gravsphere
 		[HarmonyHelper.OptionalPatch(typeof(Gravsphere), "Start")]
 		static public class Gravsphere_MaxRadius_Patch
 		{
 			static void Postfix(Gravsphere __instance)
 			{
-				SphereCollider sphere = __instance.gameObject.GetComponents<SphereCollider>()?.FirstOrDefault((s) => s.isTrigger);
+				SphereCollider sphere = __instance.gameObject.GetComponents<SphereCollider>()?.FirstOrDefault(s => s.isTrigger);
 				if (sphere)
 					sphere.radius = Main.config.maxRadius;
 			}
@@ -50,6 +50,7 @@ namespace GravTrapImproved
 				return HarmonyHelper.changeConstToConfigVar(instructions, 15f, nameof(Main.config.maxForce));
 			}
 		}
+#endif
 	}
 	
 
@@ -91,7 +92,7 @@ namespace GravTrapImproved
 		{
 			if (techType == TechType.Gravsphere)
 			{
-				if (Main.config.useWheelScroll && InputHelper.getMouseWheelValue() != 0f) // not exactly right to do it here, but I don't find a better way
+				if (Main.config.useWheelScroll && InputHelper.getMouseWheelValue() != 0f) // not exactly right to do it here, but I didn't find a better way
 					GravTrapObjectsType.getFrom(obj).ObjType += Math.Sign(InputHelper.getMouseWheelValue());
 
 				TooltipFactory.WriteDescription(sb, "Objects type: " + GravTrapObjectsType.getFrom(obj).ObjType);

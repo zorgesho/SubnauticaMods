@@ -12,13 +12,13 @@ namespace Common
 	static class HarmonyHelper
 	{
 		#region Public interface
-
 		static public HarmonyInstance harmonyInstance { get; private set; } = null;
 
 		// expected to called only from mod entry function
-		static public void patchAll()
+		static public void patchAll(bool searchConfig = true)
 		{
-			findConfig("Main", "config"); // need to be called before harmony patching
+			if (searchConfig)
+				findConfig("Main", "config"); // need to be called before harmony patching
 
 			harmonyInstance = HarmonyInstance.Create(Strings.modName);
 			harmonyInstance.PatchAll(Assembly.GetExecutingAssembly());

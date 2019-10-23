@@ -1,0 +1,13 @@
+{
+  "Id": "RenameBeacons",
+  "DisplayName": "RenameBeacons",
+  "Author": "zorgesho",
+  "Version": "1.0.0",
+  "Dependencies": [],
+  "LoadBefore": [],
+  "LoadAfter": [],
+  "Enable": true,
+  "Game": "Subnautica",
+  "AssemblyName": "RenameBeacons.dll",
+  "EntryMethod": "RenameBeacons.Main.patch"
+}

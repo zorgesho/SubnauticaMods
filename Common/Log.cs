@@ -15,14 +15,14 @@ namespace Common
 		static public void logDbg(this string s)		=> Log.msg(s, Log.MsgType.DEBUG);
 		
 		[Conditional("TRACE")]
-		static public void logDbg(this string s, bool condition) // for removing condition check if !DEBUG
+		static public void logDbg(this string s, bool condition) // for removing condition check if !TRACE
 		{
 			if (condition)
 				Log.msg(s, Log.MsgType.DEBUG);
 		}
 		
 		[Conditional("TRACE")]
-		static public void logDbgError(this string s, bool condition) // for removing condition check if !DEBUG
+		static public void logDbgError(this string s, bool condition) // for removing condition check if !TRACE
 		{
 			if (condition)
 				Log.msg(s, Log.MsgType.ERROR);

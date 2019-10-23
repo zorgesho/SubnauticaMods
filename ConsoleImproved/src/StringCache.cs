@@ -59,8 +59,8 @@ namespace ConsoleImproved
 		// config fields exported to console
 		class CfgVarsCache: StringCache
 		{
-			const string exportCfgVarClassName = nameof(Common) + "." + nameof(Common.Config) + "." + nameof(Common.Config.ExportedCfgVarFields);
-			const string exportCfgVarGetFields = nameof(Common.Config.ExportedCfgVarFields.getFields);
+			const string exportCfgVarClassName = nameof(Common) + "." + nameof(Common.Configuration) + "." + nameof(Common.Configuration.ExportedCfgVarFields);
+			const string exportCfgVarGetFields = nameof(Common.Configuration.ExportedCfgVarFields.getFields);
 
 			// searching exported config fields in current assemblies
 			override protected void refresh()

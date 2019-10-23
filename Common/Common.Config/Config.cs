@@ -3,7 +3,7 @@ using System.IO;
 
 using Common.PathHelper;
 
-namespace Common.Config
+namespace Common.Configuration
 {
 	partial class Config
 	{

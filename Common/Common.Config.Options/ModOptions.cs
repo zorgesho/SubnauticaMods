@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using SMLHelper.V2.Options;
 using SMLHelper.V2.Handlers;
 
-namespace Common.Config
+namespace Common.Configuration
 {
 	partial class Options: ModOptions
 	{

@@ -4,7 +4,7 @@ using System.Reflection;
 
 using UnityEngine;
 
-namespace Common.Config
+namespace Common.Configuration
 {
 	// for use in other mods
 	static public class ExportedCfgVarFields

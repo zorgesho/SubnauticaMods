@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Common.Config
+namespace Common.Configuration
 {
 	partial class Config
 	{

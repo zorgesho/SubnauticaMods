@@ -1,5 +1,5 @@
 ﻿using System;
-using Common.Config;
+using Common.Configuration;
 
 namespace WarningsDisabler
 {

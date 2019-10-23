@@ -1,5 +1,5 @@
 ﻿using Common;
-using Common.Config;
+using Common.Configuration;
 
 namespace GravTrapImproved
 {

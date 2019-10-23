@@ -3,7 +3,7 @@
 using Oculus.Newtonsoft.Json;
 using Oculus.Newtonsoft.Json.Serialization;
 
-namespace Common.Config
+namespace Common.Configuration
 {
 	partial class Config
 	{

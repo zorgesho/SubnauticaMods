@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace Common.Config
+namespace Common.Configuration
 {
 	partial class Config
 	{

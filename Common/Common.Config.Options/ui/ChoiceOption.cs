@@ -1,7 +1,7 @@
 ﻿using System;
 using SMLHelper.V2.Options;
 
-namespace Common.Config
+namespace Common.Configuration
 {
 	partial class Options: ModOptions
 	{

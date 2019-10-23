@@ -1,6 +1,6 @@
 ﻿using Harmony;
 
-using Common.Config;
+using Common.Configuration;
 
 namespace WarningsDisabler
 {

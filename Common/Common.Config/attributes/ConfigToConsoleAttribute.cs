@@ -44,107 +44,106 @@ namespace Common.Configuration
 				if (field.FieldType.IsClass)
 					process(field.GetValue(config));
 			}
-		}
-	}
 
-	// internal stuff, used by AddFieldsToConsoleAttribute
-	partial class Config
-	{
-		static class ConfigVarsConsoleCommand
-		{
-			static GameObject consoleObject = null;
-			static string cfgNamespace = null; // optional namespace for use in console in case of duplicate names
-			static Config mainConfig = null;
-
-			static public bool isInited { get => consoleObject != null; }
-
-			public class CfgField: Field
+			#region Internal stuff
+			static class ConfigVarsConsoleCommand
 			{
-				readonly BoundsAttribute bounds = null;
+				static GameObject consoleObject = null;
+				static string cfgNamespace = null; // optional namespace for use in console in case of duplicate names
+				static Config mainConfig = null;
 
-				public CfgField(object config, FieldInfo field): base(config, field)
+				static public bool isInited { get => consoleObject != null; }
+				
+				static readonly Dictionary<string, CfgField> cfgFields = new Dictionary<string, CfgField>();
+
+				public class CfgField: Field
 				{
-#if !DEBUG
-					bounds = Attribute.GetCustomAttribute(field, typeof(BoundsAttribute)) as BoundsAttribute;
-#endif
-				}
+					readonly BoundsAttribute bounds = null;
 
-				override protected void setFieldValue(object value)
-				{
-					base.setFieldValue(bounds != null? bounds.applyBounds(value): value);
-				}
-			}
-
-			static readonly Dictionary<string, CfgField> cfgFields = new Dictionary<string, CfgField>();
-
-			static public void init(Config config, string _cfgNamespace = null)
-			{
-				if (consoleObject == null)
-				{
-					if (config != null)
+					public CfgField(object config, FieldInfo field): base(config, field)
 					{
-						consoleObject = PersistentConsoleCommands.createGameObject<SetCfgVarCommand>("ConfigConsoleCommands_" + Strings.modName);
+#if !DEBUG
+						bounds = Attribute.GetCustomAttribute(field, typeof(BoundsAttribute)) as BoundsAttribute;
+#endif
+					}
 
-						mainConfig = config;
-						cfgNamespace = _cfgNamespace;
+					override protected void setFieldValue(object value)
+					{
+						base.setFieldValue(bounds != null? bounds.applyBounds(value): value);
+					}
+				}
+
+
+				static public void init(Config config, string _cfgNamespace = null)
+				{
+					if (consoleObject == null)
+					{
+						if (config != null)
+						{
+							consoleObject = PersistentConsoleCommands.createGameObject<SetCfgVarCommand>("ConfigConsoleCommands_" + Strings.modName);
+
+							mainConfig = config;
+							cfgNamespace = _cfgNamespace;
+						}
+						else
+							"ConfigVarsConsoleCommand.init mainConfig is null !".logError();
+					}
+				}
+
+
+				static public bool addConfigField(CfgField cfgField)
+				{																									$"ConfigVarsConsoleCommand: adding field {cfgField.name}".logDbg();
+					string name = cfgField.name.ToLower();
+
+					if (cfgFields.ContainsKey(name))
+					{
+						$"ConfigVarsConsoleCommand: field {name} is already added!".logError();
+						return false;
 					}
 					else
-						"ConfigVarsConsoleCommand.init mainConfig is null !".logError();
-				}
-			}
-
-
-			static public bool addConfigField(CfgField cfgField)
-			{																									$"ConfigVarsConsoleCommand: adding field {cfgField.name}".logDbg();
-				string name = cfgField.name.ToLower();
-
-				if (cfgFields.ContainsKey(name))
-				{
-					$"ConfigVarsConsoleCommand: field {name} is already added!".logError();
-					return false;
-				}
-				else
-				{
-					cfgFields[name] = cfgField;
-					return true;
-				}
-			}
-
-			static void setFieldValue(string fieldName, string fieldValue)
-			{
-				try
-				{
-					if (cfgNamespace != null)
 					{
-						if (fieldName.StartsWith(cfgNamespace))
-							fieldName = fieldName.Replace(cfgNamespace + ".", "");
-						else
-							return;
-					}
-
-					if (cfgFields.TryGetValue(fieldName, out CfgField cf))
-					{																							$"ConfigVarsConsoleCommand: field {fieldName} value {fieldValue}".logDbg();
-						cf.value = fieldValue;
-						mainConfig.save();
+						cfgFields[name] = cfgField;
+						return true;
 					}
 				}
-				catch (Exception e)
+
+				static void setFieldValue(string fieldName, string fieldValue)
 				{
-					Log.msg(e);
+					try
+					{
+						if (cfgNamespace != null)
+						{
+							if (fieldName.StartsWith(cfgNamespace))
+								fieldName = fieldName.Replace(cfgNamespace + ".", "");
+							else
+								return;
+						}
+
+						if (cfgFields.TryGetValue(fieldName, out CfgField cf))
+						{																							$"ConfigVarsConsoleCommand: field {fieldName} value {fieldValue}".logDbg();
+							cf.value = fieldValue;
+							mainConfig.save();
+						}
+					}
+					catch (Exception e)
+					{
+						Log.msg(e);
+					}
+				}
+
+
+				class SetCfgVarCommand: PersistentConsoleCommands
+				{
+					void OnConsoleCommand_setcfgvar(NotificationCenter.Notification n)
+					{
+						if (n?.data != null && n.data.Count == 2)
+						{																			$"setcfgvar raw: '{n.data[0]}' '{n.data[1]}'".logDbg();
+							setFieldValue(n.data[0] as string, n.data[1] as string);
+						}
+					}
 				}
 			}
-
-
-			class SetCfgVarCommand: PersistentConsoleCommands
-			{
-				void OnConsoleCommand_setcfgvar(NotificationCenter.Notification n)
-				{
-					if (n?.data != null && n.data.Count == 2)
-					{																			$"setcfgvar raw: '{n.data[0]}' '{n.data[1]}'".logDbg();
-						setFieldValue(n.data[0] as string, n.data[1] as string);
-					}
-				}
-			}
+			#endregion
 		}
 	}
 }

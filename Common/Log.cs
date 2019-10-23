@@ -11,24 +11,24 @@ namespace Common
 		static public void logWarning(this string s)	=> Log.msg(s, Log.MsgType.WARNING);
 		static public void logError(this string s)		=> Log.msg(s, Log.MsgType.ERROR);
 
-		[Conditional("DEBUG")]
+		[Conditional("TRACE")]
 		static public void logDbg(this string s)		=> Log.msg(s, Log.MsgType.DEBUG);
 		
-		[Conditional("DEBUG")]
+		[Conditional("TRACE")]
 		static public void logDbg(this string s, bool condition) // for removing condition check if !DEBUG
 		{
 			if (condition)
 				Log.msg(s, Log.MsgType.DEBUG);
 		}
 		
-		[Conditional("DEBUG")]
+		[Conditional("TRACE")]
 		static public void logDbgError(this string s, bool condition) // for removing condition check if !DEBUG
 		{
 			if (condition)
 				Log.msg(s, Log.MsgType.ERROR);
 		}
 
-		[Conditional("DEBUG")]
+		[Conditional("TRACE")]
 		static public void logDbg(this List<string> strings, string msg = "")
 		{
 			strings.ForEach(s => Log.msg(msg + s, Log.MsgType.DEBUG));
@@ -48,7 +48,7 @@ namespace Common
 		}
 
 		static readonly string logPrefix = Strings.modName;
-#if DEBUG
+#if TRACE
 		static readonly string customLogPath = PathHelper.Paths.modRootPath + logPrefix + ".log";
 		static Log()
 		{
@@ -63,7 +63,7 @@ namespace Common
 		{
 			string formattedMsg = $"[{logPrefix}] {msgType}: {str}";
 			Console.WriteLine(formattedMsg);
-#if DEBUG
+#if TRACE
 			try
 			{
 				using (StreamWriter writer = File.AppendText(customLogPath))

@@ -8,14 +8,14 @@ namespace Common
 	static partial class MiscGameExtensions
 	{
 		// messages with the same prefix will stay in the one message slot
-		[Conditional("DEBUG")]
+		[Conditional("TRACE")]
 		static public void onScreen(this string s, string prefix)
 		{
 			ErrorMessage.AddDebug($"[{prefix}] {s}");
 		}
 	}
 
-#if DEBUG
+
 	namespace UI
 	{
 		[HarmonyPatch(typeof(ErrorMessage), "_AddMessage")]
@@ -24,10 +24,14 @@ namespace Common
 			// patching this only once (hoping that no one is also patching this)
 			static bool Prepare()
 			{
+#if TRACE
 				MethodInfo method = typeof(ErrorMessage).GetMethod("_AddMessage", BindingFlags.NonPublic | BindingFlags.Instance);
 				Patches patches = HarmonyHelper.harmonyInstance.GetPatchInfo(method);
 																													"ErrorMessage.AddMessage is already patched!".logDbg(patches != null);
 				return patches == null;
+#else
+				return false;
+#endif
 			}
 
 			static bool Prefix(ErrorMessage __instance, string messageText)
@@ -55,5 +59,4 @@ namespace Common
 			}
 		}
 	}
-#endif
 }

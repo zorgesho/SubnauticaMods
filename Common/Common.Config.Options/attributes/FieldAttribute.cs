@@ -55,7 +55,7 @@ namespace Common.Configuration
 					if (GetCustomAttribute(field, typeof(ChoiceAttribute)) is ChoiceAttribute choice && choice.choices.Length > 0)
 						add(new ChoiceOption(cfgField, label, choice.choices));
 					else // creating SliderOption if we also have bounds attribute
-					if (GetCustomAttribute(field, typeof(Config.FieldBoundsAttribute)) is Config.FieldBoundsAttribute bounds && bounds.isBothBoundsSet())
+					if (GetCustomAttribute(field, typeof(Config.Field.BoundsAttribute)) is Config.Field.BoundsAttribute bounds && bounds.isBothBoundsSet())
 						add(new SliderOption(cfgField, label, bounds.min, bounds.max));
 					else
 						$"Options.FieldAttribute: '{field.Name}' For numeric option field you also need to add ChoiceAttribute or FieldBoundsAttribute".logError();

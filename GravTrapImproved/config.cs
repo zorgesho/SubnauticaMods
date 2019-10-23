@@ -11,17 +11,17 @@ namespace GravTrapImproved
 
 #if VER_1_2_0
 		[AddToConsole("gt")]
-		[FieldBounds(1, 50)]
+		[Field.Bounds(1, 50)]
 		[Field.CustomAction(typeof(CheckPatches))]
 		public readonly int maxObjects = 12;
 		
 		[AddToConsole("gt")]
-		[FieldBounds(0, 100)]
+		[Field.Bounds(0, 100)]
 		[Field.CustomAction(typeof(CheckPatches))]
 		public readonly float maxForce = 15f;
 		
 		[AddToConsole("gt")]
-		[FieldBounds(0, 50)]
+		[Field.Bounds(0, 50)]
 		[Field.CustomAction(typeof(CheckPatches))]
 		public readonly float maxRadius = 17f;
 

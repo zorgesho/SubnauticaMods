@@ -5,30 +5,33 @@ namespace Common.Configuration
 {
 	partial class Config
 	{
-		[AttributeUsage(AttributeTargets.Field)]
-		public class FieldBoundsAttribute: Attribute, IFieldAttribute
+		public partial class Field
 		{
-			public readonly float min, max;
-
-			public FieldBoundsAttribute(float Min = float.MinValue, float Max = float.MaxValue)
+			[AttributeUsage(AttributeTargets.Field)]
+			public class BoundsAttribute: Attribute, IFieldAttribute
 			{
-				min = Min;
-				max = Max;
-			}
+				public readonly float min, max;
 
-			public bool isBothBoundsSet() => min > float.MinValue && max < float.MaxValue;
-
-			public object applyBounds(object value) => UnityEngine.Mathf.Clamp(value.toFloat(), min, max);
-
-			public void process(object config, FieldInfo field)
-			{																					$"BoundsFieldAttribute.process min > max, field '{field.Name}'".logDbgError(min > max);
-				try
+				public BoundsAttribute(float Min = float.MinValue, float Max = float.MaxValue)
 				{
-					config.setFieldValue(field, applyBounds(field.GetValue(config)));
+					min = Min;
+					max = Max;
 				}
-				catch (Exception e)
-				{
-					Log.msg(e, $"config field {field.Name}");
+
+				public bool isBothBoundsSet() => min > float.MinValue && max < float.MaxValue;
+
+				public object applyBounds(object value) => UnityEngine.Mathf.Clamp(value.toFloat(), min, max);
+
+				public void process(object config, FieldInfo field)
+				{																									$"BoundsFieldAttribute.process min > max, field '{field.Name}'".logDbgError(min > max);
+					try
+					{
+						config.setFieldValue(field, applyBounds(field.GetValue(config)));
+					}
+					catch (Exception e)
+					{
+						Log.msg(e, $"config field {field.Name}");
+					}
 				}
 			}
 		}

@@ -60,12 +60,12 @@ namespace Common.Configuration
 
 			public class CfgField: Field
 			{
-				readonly FieldBoundsAttribute bounds = null;
+				readonly BoundsAttribute bounds = null;
 
 				public CfgField(object config, FieldInfo field): base(config, field)
 				{
 #if !DEBUG
-					bounds = Attribute.GetCustomAttribute(field, typeof(FieldBoundsAttribute)) as FieldBoundsAttribute;
+					bounds = Attribute.GetCustomAttribute(field, typeof(BoundsAttribute)) as BoundsAttribute;
 #endif
 				}
 

@@ -58,7 +58,7 @@ namespace Common.Configuration
 
 			static public bool isInited { get => consoleObject != null; }
 
-			public class CfgField: Config.CfgField
+			public class CfgField: Field
 			{
 				readonly FieldBoundsAttribute bounds = null;
 

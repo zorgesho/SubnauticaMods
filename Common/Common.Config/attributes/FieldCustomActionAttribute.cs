@@ -4,7 +4,7 @@ namespace Common.Configuration
 {
 	partial class Config
 	{
-		public partial class CfgField
+		public partial class Field
 		{
 			// implement this to create custom action when config field is changes
 			public interface ICustomAction
@@ -22,7 +22,7 @@ namespace Common.Configuration
 					action = Activator.CreateInstance(actionType) as ICustomAction;
 
 					if (action == null)
-						$"CfgField.CustomActionAttribute: '{actionType}' You need to implement ICustomAction in CustomActionType".logError();
+						$"Field.CustomActionAttribute: '{actionType}' You need to implement ICustomAction in CustomActionType".logError();
 				}
 			}
 		}

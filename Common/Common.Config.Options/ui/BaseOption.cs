@@ -10,9 +10,9 @@ namespace Common.Configuration
 			public readonly string id;
 			protected readonly string label;
 
-			protected readonly Config.CfgField cfgField;
+			protected readonly Config.Field cfgField;
 
-			public ModOption(Config.CfgField cf, string _label)
+			public ModOption(Config.Field cf, string _label)
 			{
 				cfgField = cf;
 				id = cfgField.name;

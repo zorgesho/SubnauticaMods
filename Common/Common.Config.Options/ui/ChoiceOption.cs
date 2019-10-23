@@ -9,7 +9,7 @@ namespace Common.Configuration
 		{
 			readonly string[] choices = null;
 
-			public ChoiceOption(Config.CfgField cfgField, string label, string[] _choices): base(cfgField, label)
+			public ChoiceOption(Config.Field cfgField, string label, string[] _choices): base(cfgField, label)
 			{
 				choices = _choices;
 			}

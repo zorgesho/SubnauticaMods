@@ -8,7 +8,7 @@ namespace WarningsDisabler
 	class ModConfig: Config
 	{
 		[Options.Field("Oxygen warnings")]
-		[CfgField.CustomAction(typeof(OxygenWarnings.HideOxygenHint))]
+		[Field.CustomAction(typeof(OxygenWarnings.HideOxygenHint))]
 		public readonly bool oxygenWarningsEnabled = true;
 
 		[Options.Field("Food and water warnings")]

@@ -9,7 +9,7 @@ namespace Common.Configuration
 		{
 			readonly float min, max;
 
-			public SliderOption(Config.CfgField cfgField, string label, float _min, float _max): base(cfgField, label)
+			public SliderOption(Config.Field cfgField, string label, float _min, float _max): base(cfgField, label)
 			{
 				min = _min;
 				max = _max;

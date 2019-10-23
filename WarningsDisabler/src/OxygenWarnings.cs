@@ -10,7 +10,7 @@ namespace WarningsDisabler
 		static int hintMessageHash = 0;
 		
 		// for hiding popup message when changing option in game
-		public class HideOxygenHint: Config.CfgField.ICustomAction
+		public class HideOxygenHint: Config.Field.ICustomAction
 		{
 			public void customAction()
 			{

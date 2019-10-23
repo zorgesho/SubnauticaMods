@@ -27,7 +27,7 @@ namespace Common.Configuration
 				if (label == null)
 					label = field.Name;
 
-				Config.CfgField cfgField = new Config.CfgField(config, field);
+				Config.Field cfgField = new Config.Field(config, field);
 
 				if (field.FieldType == typeof(bool))
 				{

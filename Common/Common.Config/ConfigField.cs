@@ -5,14 +5,14 @@ namespace Common.Configuration
 {
 	partial class Config
 	{
-		public partial class CfgField
+		public partial class Field
 		{
 			protected readonly object config;
 			protected readonly FieldInfo field;
 
 			protected readonly ICustomAction action;
 
-			public CfgField(object _config, FieldInfo _field)
+			public Field(object _config, FieldInfo _field)
 			{
 				config = _config;
 				field = _field;

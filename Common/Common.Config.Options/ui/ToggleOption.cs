@@ -7,7 +7,7 @@ namespace Common.Configuration
 	{
 		class ToggleOption: ModOption
 		{
-			public ToggleOption(Config.CfgField cfgField, string label): base(cfgField, label) {}
+			public ToggleOption(Config.Field cfgField, string label): base(cfgField, label) {}
 
 			override public void addOption(Options options)
 			{

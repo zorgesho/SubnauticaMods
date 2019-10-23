@@ -15,10 +15,12 @@ namespace Common.Configuration
 #endif
 		string configPath;
 
+		protected Config() {}
+
 		// try to load config from mod folder. If file not found, create default config and save it to that path
 		static public C tryLoad<C>(string localPath = "config.json", bool processAttributes = true) where C: Config, new()
 		{
-			string configPath = Paths.modRootPath + localPath;
+			string configPath = localPath != null? Paths.modRootPath + localPath: null;
 			C config = null;
 
 			try
@@ -55,7 +57,8 @@ namespace Common.Configuration
 
 			try
 			{
-				File.WriteAllText(configPath, serialize());
+				if (configPath != null)
+					File.WriteAllText(configPath, serialize());
 			}
 			catch (Exception e)
 			{

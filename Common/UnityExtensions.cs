@@ -20,5 +20,11 @@ namespace Common
 	static class InputHelper
 	{
 		static public float getMouseWheelValue() => Input.GetAxis("Mouse ScrollWheel");
+
+		static public void resetCursorToCenter()
+		{
+			Cursor.lockState = CursorLockMode.Locked; // warning: don't set lockState separately, use UWE utils for this if needed
+			Cursor.lockState = CursorLockMode.None;
+		}
 	}
 }

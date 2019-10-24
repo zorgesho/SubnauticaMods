@@ -1,6 +1,7 @@
 ﻿using System.Text;
 
 using UnityEngine;
+using UnityEngine.UI;
 using Harmony;
 
 using Common;
@@ -80,6 +81,11 @@ namespace RenameBeacons
 													Language.main.Get("BeaconSubmit"),
 													beacon.beaconLabel.labelName, 25,
 													new uGUI_UserInput.UserInputCallback(BeaconRenamer.setLabel));
+				
+				// just polish
+				uGUI.main.userInput.gameObject.GetComponentInChildren<Button>()?.OnDeselect(null);
+				uGUI.main.userInput.gameObject.GetComponentInChildren<InputField>()?.OnSelect(null);
+				InputHelper.resetCursorToCenter();
 			}
 		}
 	}

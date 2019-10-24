@@ -41,7 +41,7 @@ namespace Common
 	}
 
 
-	static class Debug
+	static partial class Debug
 	{
 		// based on code from http://www.csharp-examples.net/reflection-callstack/
 		static public void logStack(string msg = "")

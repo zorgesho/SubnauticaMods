@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 
 namespace Common
 {
-	static partial class MiscGameExtensions
+	static partial class StringExtensions
 	{
 		static public string onScreen(this string s)
 		{

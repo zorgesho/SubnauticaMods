@@ -5,7 +5,7 @@ using Harmony;
 
 namespace Common
 {
-	static partial class MiscGameExtensions
+	static partial class StringExtensions
 	{
 		// messages with the same prefix will stay in the one message slot
 		[Conditional("TRACE")]

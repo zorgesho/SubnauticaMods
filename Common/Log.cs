@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Common
 {
-	static class StringLogExtensions
+	static partial class StringExtensions
 	{
 		static public void log(this string s)			=> Log.msg(s, Log.MsgType.INFO);
 		static public void logWarning(this string s)	=> Log.msg(s, Log.MsgType.WARNING);

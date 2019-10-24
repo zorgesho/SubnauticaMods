@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Text;
 using System.Reflection;
 using System.Collections.Generic;
@@ -28,6 +29,7 @@ namespace Common
 		}
 	}
 
+
 	static class MiscExtensions
 	{
 		public static void forEach<T>(this IEnumerable<T> sequence, Action<T> action)
@@ -37,6 +39,28 @@ namespace Common
 				var enumerator = sequence.GetEnumerator();
 				while (enumerator.MoveNext())
 					action(enumerator.Current);
+			}
+		}
+	}
+
+
+	static partial class StringExtensions
+	{
+		static public void saveToFile(this string s, string localPath)
+		{
+			try
+			{
+				if (localPath != null)
+				{
+					if (Path.GetExtension(localPath) == "")
+						localPath += ".txt";
+					
+					File.WriteAllText(Paths.modRootPath + localPath, s);
+				}
+			}
+			catch (Exception e)
+			{
+				Log.msg(e);
 			}
 		}
 	}

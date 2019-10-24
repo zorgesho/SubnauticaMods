@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.Reflection;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -48,16 +49,16 @@ namespace Common
 		{
 			StackTrace stackTrace = new StackTrace();
 			StackFrame[] stackFrames = stackTrace.GetFrames();
-			
-			string output = $"Callstack {msg}:" + Environment.NewLine;
+
+			StringBuilder output = new StringBuilder($"Callstack {msg}:{Environment.NewLine}");
 
 			for (int i = 1; i < stackFrames.Length; ++i) // dont print first item, it is "printStack"
 			{
 				MethodBase method = stackFrames[i].GetMethod();
-				output += $"\t{method.DeclaringType.Name}.{method.Name}" + Environment.NewLine;
+				output.AppendLine($"\t{method.DeclaringType.Name}.{method.Name}");
 			}
 
-			output.log();
+			output.ToString().log();
 		}
 	}
 }

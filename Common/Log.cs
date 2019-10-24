@@ -49,7 +49,7 @@ namespace Common
 
 		static readonly string logPrefix = Strings.modName;
 #if TRACE
-		static readonly string customLogPath = PathHelper.Paths.modRootPath + logPrefix + ".log";
+		static readonly string customLogPath = Paths.modRootPath + logPrefix + ".log";
 		static Log()
 		{
 			try

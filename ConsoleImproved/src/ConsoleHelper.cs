@@ -12,7 +12,7 @@ namespace ConsoleImproved
 	static partial class ConsoleHelper
 	{
 		static GameObject consoleObject = null;
-		static readonly string historyPath = Common.PathHelper.Paths.modRootPath + "history.txt";
+		static readonly string historyPath = Paths.modRootPath + "history.txt";
 
 		static readonly CommandCache commandCache = new CommandCache();
 		static readonly CfgVarsCache cfgVarsCache = new CfgVarsCache();

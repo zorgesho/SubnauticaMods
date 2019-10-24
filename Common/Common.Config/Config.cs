@@ -1,8 +1,6 @@
 ﻿using System;
 using System.IO;
 
-using Common.PathHelper;
-
 namespace Common.Configuration
 {
 	partial class Config

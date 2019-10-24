@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace Common.PathHelper
+namespace Common
 {
 	static partial class Paths
 	{

@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Reflection;
 
-namespace Common.PathHelper
+namespace Common
 {
 	static partial class Paths
 	{

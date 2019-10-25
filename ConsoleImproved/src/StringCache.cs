@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection;
 using System.Collections.Generic;
 
 using Common;
@@ -67,16 +66,13 @@ namespace ConsoleImproved
 			{
 				if (strings.Count == 0)
 				{
-					Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
-
-					foreach (var assembly in assemblies)
+					foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
 					{
 						Type cfgvars = assembly.GetType(exportCfgVarClassName, false);
 
 						if (cfgvars != null && cfgvars.GetMethod(exportCfgVarGetFields)?.Invoke(null, null) is List<string> fields)
 						{
-							strings.AddRange(fields);
-							fields.logDbg("CfgVarsCache added field ");
+							strings.AddRange(fields);																				fields.logDbg("CfgVarsCache added field ");
 						}
 					}
 				}

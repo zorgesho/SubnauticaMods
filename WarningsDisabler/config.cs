@@ -1,12 +1,12 @@
-﻿using System;
-using Common.Configuration;
+﻿using Common.Configuration;
 
 namespace WarningsDisabler
 {
-	[Serializable]
-	[Options.Name("Warnings & messages <color=#999999FF>(uncheck boxes to disable)</color>")]
+	[Options.Name("Warnings & messages <color=#CCCCCCFF>(uncheck boxes to disable)</color>")]
 	class ModConfig: Config
 	{
+		public readonly bool addOptionsToMenu = true;
+
 		[Options.Field("Oxygen warnings")]
 		[Field.CustomAction(typeof(OxygenWarnings.HideOxygenHint))]
 		public readonly bool oxygenWarningsEnabled = true;

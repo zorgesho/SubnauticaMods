@@ -11,7 +11,8 @@ namespace WarningsDisabler
 		{
 			HarmonyHelper.patchAll();
 
-			Options.init();
+			if (config.addOptionsToMenu)
+				Options.init();
 		}
 	}
 }

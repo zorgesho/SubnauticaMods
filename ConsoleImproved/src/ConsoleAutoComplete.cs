@@ -16,7 +16,7 @@ namespace ConsoleImproved
 				string cmd = text.Substring(0, delimPos + 1).Trim();
 				StringCache stringCache = techtypeCache; // default secondary cache
 
-				if (cmd == "setcfgvar") // hack, todo more general
+				if (cmd == "setcfgvar" || cmd == "getcfgvar") // hack, todo more general
 					stringCache = cfgVarsCache;
 				
 				return cmd + " " + tryCompleteString(text.Substring(delimPos + 1), stringCache);

@@ -63,7 +63,7 @@ namespace Common.Configuration
 					public CfgField(object config, FieldInfo field): base(config, field)
 					{
 #if !DEBUG
-						bounds = Attribute.GetCustomAttribute(field, typeof(BoundsAttribute)) as BoundsAttribute;
+						bounds = GetCustomAttribute(field, typeof(BoundsAttribute)) as BoundsAttribute;
 #endif
 					}
 
@@ -80,7 +80,7 @@ namespace Common.Configuration
 					{
 						if (config != null)
 						{
-							consoleObject = PersistentConsoleCommands.createGameObject<SetCfgVarCommand>("ConfigConsoleCommands_" + Strings.modName);
+							consoleObject = PersistentConsoleCommands.createGameObject<SetGetCfgVarCommand>("ConfigConsoleCommands_" + Strings.modName);
 
 							mainConfig = config;
 							cfgNamespace = _cfgNamespace;
@@ -107,38 +107,63 @@ namespace Common.Configuration
 					}
 				}
 
+
+				static CfgField getConfigField(string fieldName)
+				{
+					if (fieldName == null)
+						return null;
+
+					if (cfgNamespace != null)
+					{
+						if (fieldName.StartsWith(cfgNamespace))
+							fieldName = fieldName.Replace(cfgNamespace + ".", "");
+						else
+							return null;
+					}
+
+					cfgFields.TryGetValue(fieldName, out CfgField cf);
+
+					return cf;
+				}
+
+
 				static void setFieldValue(string fieldName, string fieldValue)
 				{
-					try
-					{
-						if (cfgNamespace != null)
-						{
-							if (fieldName.StartsWith(cfgNamespace))
-								fieldName = fieldName.Replace(cfgNamespace + ".", "");
-							else
-								return;
-						}
+					CfgField cf = getConfigField(fieldName);
 
-						if (cfgFields.TryGetValue(fieldName, out CfgField cf))
-						{																							$"ConfigVarsConsoleCommand: field {fieldName} value {fieldValue}".logDbg();
-							cf.value = fieldValue;
-							mainConfig.save();
-						}
-					}
-					catch (Exception e)
+					if (cf != null)
 					{
-						Log.msg(e);
+						cf.value = fieldValue;
+						mainConfig.save();
 					}
 				}
 
 
-				class SetCfgVarCommand: PersistentConsoleCommands
+				static object getFieldValue(string fieldName)
+				{
+					return getConfigField(fieldName)?.value;
+				}
+
+
+				class SetGetCfgVarCommand: PersistentConsoleCommands
 				{
 					void OnConsoleCommand_setcfgvar(NotificationCenter.Notification n)
 					{
 						if (n?.data != null && n.data.Count == 2)
 						{																			$"setcfgvar raw: '{n.data[0]}' '{n.data[1]}'".logDbg();
 							setFieldValue(n.data[0] as string, n.data[1] as string);
+						}
+					}
+					
+					void OnConsoleCommand_getcfgvar(NotificationCenter.Notification n)
+					{
+						if (n?.data != null && n.data.Count == 1)
+						{
+							string fieldName = n.data[0] as string;
+							object value = getFieldValue(fieldName);
+
+							if (value != null)
+								$"{fieldName} = {value}".onScreen();
 						}
 					}
 				}

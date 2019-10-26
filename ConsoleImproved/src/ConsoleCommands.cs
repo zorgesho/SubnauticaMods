@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-
 using Common;
 
 namespace ConsoleImproved
@@ -13,11 +12,13 @@ namespace ConsoleImproved
 				setHistory(new List<string>());
 			}
 
+
 			void OnConsoleCommand_clear(NotificationCenter.Notification n)
 			{
 				foreach (var m in ErrorMessage.main.messages)
 					m.timeToDelete = 0f;
 			}
+
 
 			void OnConsoleCommand_findtech(NotificationCenter.Notification n)
 			{
@@ -30,14 +31,13 @@ namespace ConsoleImproved
 				matched.onScreen("TechType: ");
 			}
 
-			// todo: remove
-			void OnConsoleCommand_test1(NotificationCenter.Notification n)
+
+			void OnConsoleCommand_printcfgvars(NotificationCenter.Notification n)
 			{
-				"TEST1".onScreen();
-			}
-			void OnConsoleCommand_test2(NotificationCenter.Notification n)
-			{
-				"TEST2".onScreen();
+				string prefix = (n?.data != null && n.data.Count == 1)? n.data[0] as string: "";
+
+				foreach (var c in cfgVarsCache.findByPrefix(prefix))
+					DevConsole.SendConsoleCommand($"getcfgvar {c}");
 			}
 		}
 	}

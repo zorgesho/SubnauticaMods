@@ -36,6 +36,9 @@ namespace WarningsDisabler
 			if (!Main.config.foodWaterWarningsEnabled && foodWaterWarnings.Find(s => __instance.text == s) != null)
 				return false;
 
+			if (!Main.config.stillsuitMessageEnabled && __instance.text == "StillsuitEquipped")
+				return false;
+
 			return true;
 		}
 	}

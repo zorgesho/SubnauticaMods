@@ -22,5 +22,8 @@ namespace WarningsDisabler
 
 		[Options.Field("Welcome messages")]
 		public readonly bool welcomeMessagesEnabled = true;
+		
+		[Options.Field("Stillsuit equip message")]
+		public readonly bool stillsuitMessageEnabled = true;
 	}
 }

@@ -31,9 +31,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Tests", "Common.Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RenameBeacons", "RenameBeacons\RenameBeacons.csproj", "{D90FC3B6-6EAA-492D-927F-C7068DA63BD9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrawnSuitGrapplingArmUpgrade", "PrawnSuitGrapplingArmUpgrade\PrawnSuitGrapplingArmUpgrade.csproj", "{2518EDF1-782E-4FAA-B93D-4F9991962144}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Common\Common.Config.Options\Common.Config.Options.projitems*{0610f2c1-4b75-45f9-b517-9d747e3edd41}*SharedItemsImports = 13
+		Common\Common.Config.Options\Common.Config.Options.projitems*{2518edf1-782e-4faa-b93d-4f9991962144}*SharedItemsImports = 4
+		Common\Common.Config\Common.Config.projitems*{2518edf1-782e-4faa-b93d-4f9991962144}*SharedItemsImports = 4
+		Common\Common.projitems*{2518edf1-782e-4faa-b93d-4f9991962144}*SharedItemsImports = 4
 		Common\Common.GameSerialization\Common.GameSerialization.projitems*{37c6e8c9-4864-415a-9561-161035212eba}*SharedItemsImports = 13
 		Common\Common.Config\Common.Config.projitems*{3bd3ab93-7001-4322-a0d8-b9de42ed38aa}*SharedItemsImports = 4
 		Common\Common.projitems*{3bd3ab93-7001-4322-a0d8-b9de42ed38aa}*SharedItemsImports = 4
@@ -78,6 +83,12 @@ Global
 		{D90FC3B6-6EAA-492D-927F-C7068DA63BD9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D90FC3B6-6EAA-492D-927F-C7068DA63BD9}.Publish|Any CPU.ActiveCfg = Publish|Any CPU
 		{D90FC3B6-6EAA-492D-927F-C7068DA63BD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2518EDF1-782E-4FAA-B93D-4F9991962144}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2518EDF1-782E-4FAA-B93D-4F9991962144}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2518EDF1-782E-4FAA-B93D-4F9991962144}.Publish|Any CPU.ActiveCfg = Publish|Any CPU
+		{2518EDF1-782E-4FAA-B93D-4F9991962144}.Publish|Any CPU.Build.0 = Publish|Any CPU
+		{2518EDF1-782E-4FAA-B93D-4F9991962144}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2518EDF1-782E-4FAA-B93D-4F9991962144}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -91,6 +102,7 @@ Global
 		{4EF61A6D-0C6E-48A9-8625-58D196FD5386} = {C49BC122-0A68-48A8-8EA3-737FB7553D8B}
 		{37C6E8C9-4864-415A-9561-161035212EBA} = {EE6D7B7D-F20A-439A-8C01-97B6A16F9B52}
 		{0610F2C1-4B75-45F9-B517-9D747E3EDD41} = {EE6D7B7D-F20A-439A-8C01-97B6A16F9B52}
+		{3BD3AB93-7001-4322-A0D8-B9DE42ED38AA} = {C49BC122-0A68-48A8-8EA3-737FB7553D8B}
 		{44795620-2850-4B72-B859-74C5D50E6708} = {EE6D7B7D-F20A-439A-8C01-97B6A16F9B52}
 		{A581DBE2-97A4-4995-8F23-223D9245C338} = {EE6D7B7D-F20A-439A-8C01-97B6A16F9B52}
 		{D90FC3B6-6EAA-492D-927F-C7068DA63BD9} = {C49BC122-0A68-48A8-8EA3-737FB7553D8B}

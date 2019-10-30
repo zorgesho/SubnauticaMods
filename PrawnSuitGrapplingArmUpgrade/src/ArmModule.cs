@@ -7,59 +7,84 @@ using SMLHelper.V2.Handlers;
 
 namespace PrawnSuitGrapplingArmUpgrade
 {
-	internal class GrapArm: Craftable
+	abstract class CraftObject: ModPrefab
 	{
-		internal static Craftable PatchMe()
+		protected CraftObject(string classID): base(classID, classID + "Prefab") {}
+		
+		abstract protected TechData getTechData();
+		abstract protected GameObject getGameObject();
+		
+		override public GameObject GetGameObject() => getGameObject();
+
+		protected void addToCraftingNode(CraftTree.Type craftTree, string craftPath)
 		{
-			Singleton.Patch();
-			return Singleton;
+			CraftTreeHandler.AddCraftingNode(craftTree, TechType, craftPath.Split('/'));
+		}
+		
+		protected void setPDAGroup(TechGroup group, TechCategory category)
+		{
+			CraftDataHandler.AddToGroup(group, category, TechType);
+
+			if (group >= TechGroup.BasePieces && group <= TechGroup.Miscellaneous) // little hack
+				CraftDataHandler.AddBuildable(TechType);
+		}
+		
+		protected void setEquipmentType(EquipmentType equipmentType, QuickSlotType quickSlotType = QuickSlotType.None)
+		{
+			CraftDataHandler.SetEquipmentType(TechType, equipmentType);
+			
+			if (quickSlotType != QuickSlotType.None)
+				CraftDataHandler.SetQuickSlotType(TechType, quickSlotType);
+		}
+		
+		TechType register(string friendlyName, string description, Atlas.Sprite sprite)
+		{
+			TechType = TechTypeHandler.AddTechType(ClassID, friendlyName, description, sprite);
+			
+			PrefabHandler.RegisterPrefab(this);
+			CraftDataHandler.SetTechData(TechType, getTechData());
+
+			return TechType;
+		}
+		
+		protected TechType register(string friendlyName, string description, TechType spriteFrom) => register(friendlyName, description, SpriteManager.Get(spriteFrom));
+
+		protected TechType register(string friendlyName, string description, string spriteFileName) => 0; // todo implement
+	}
+	
+	
+	class GrapplingArmUpgradeModule: CraftObject
+	{
+		new static public TechType TechType { get; private set; } = 0;
+
+		GrapplingArmUpgradeModule(): base(nameof(GrapplingArmUpgradeModule)) {}
+
+		static public void patch()
+		{
+			if (TechType == 0)
+				new GrapplingArmUpgradeModule().patchMe();
 		}
 
-		internal static TechType TechTypeID => Singleton.TechType;
-
-		private static GrapArm Singleton { get; } = new GrapArm();
-
-		public override CraftTree.Type FabricatorType => CraftTree.Type.SeamothUpgrades;
-		public override TechGroup GroupForPDA => TechGroup.VehicleUpgrades;
-		public override TechCategory CategoryForPDA => TechCategory.VehicleUpgrades;
-		public override string[] StepsToFabricatorTab => new[] { "ExosuitModules" };
-		public override TechType RequiredForUnlock => TechType.BaseUpgradeConsole;
-
-		public override string AssetsFolder => "PrawnSuitJetUpgrade/Assets";
-
-		protected GrapArm(): base(classId: "GrapArm", friendlyName: "GrapArm", description: "GrapArm")
+		override protected TechData getTechData() => new TechData() { craftAmount = 1, Ingredients = new List<Ingredient>
 		{
-			base.OnFinishedPatching += PostPatch;
-		}
+			new Ingredient(TechType.Peeper, 1),
+		}};
 
-		private void PostPatch()
+		override protected GameObject getGameObject()
 		{
-			CraftDataHandler.SetEquipmentType(this.TechType, EquipmentType.ExosuitArm);
-			CraftDataHandler.SetQuickSlotType(this.TechType, QuickSlotType.Selectable);
-		}
-
-		protected override TechData GetBlueprintRecipe() => new TechData()
-		{
-			craftAmount = 1,
-			Ingredients = new List<Ingredient>(new Ingredient[4]
-							 {
-								 new Ingredient(TechType.AdvancedWiringKit, 1),
-								 new Ingredient(TechType.Sulphur, 3),
-								 new Ingredient(TechType.Aerogel, 2),
-								 new Ingredient(TechType.Polyaniline, 1),
-							 })
-		};
-
-		public static GameObject GetGameObjectStatic()
-		{
-			var prefab =  GameObject.Instantiate(CraftData.GetPrefabForTechType(TechType.ExosuitGrapplingArmModule));
+			GameObject prefab = Object.Instantiate(CraftData.GetPrefabForTechType(TechType.ExosuitGrapplingArmModule));
+			prefab.name = ClassID;
 
 			return prefab;
 		}
-		
-		public override GameObject GetGameObject()
+
+		void patchMe()
 		{
-			return GetGameObjectStatic();
+			TechType = register("GrappoArm", "GrappoArm DESCR", TechType.ExosuitGrapplingArmModule);
+
+			setPDAGroup(TechGroup.Workbench, TechCategory.Workbench);
+			addToCraftingNode(CraftTree.Type.Workbench, "ExosuitMenu");
+			setEquipmentType(EquipmentType.ExosuitArm, QuickSlotType.Selectable);
 		}
 	}
 }

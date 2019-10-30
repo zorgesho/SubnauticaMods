@@ -43,7 +43,7 @@ namespace PrawnSuitGrapplingArmUpgrade
 		
 		static bool Prefix(Exosuit __instance, TechType techType, ref GameObject __result)
 		{
-			if (techType == GrapArm.TechTypeID)
+			if (techType == GrapplingArmUpgradeModule.TechType)
 			{
 				if (prefab == null)
 				{
@@ -68,7 +68,7 @@ namespace PrawnSuitGrapplingArmUpgrade
 	{
 		static bool Prefix(Exosuit __instance, int slotID, TechType techType, bool added)
 		{
-			if (techType == GrapArm.TechTypeID)
+			if (techType == GrapplingArmUpgradeModule.TechType)
 			{
 				__instance.MarkArmsDirty();
 				return false;

@@ -35,11 +35,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrawnSuitGrapplingArmUpgrad
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomHotkeys", "CustomHotkeys\CustomHotkeys.csproj", "{CB025D20-0B16-4E80-95E6-3C3FC77935FB}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Common.CraftHelper", "Common\Common.CraftHelper\Common.CraftHelper.shproj", "{E30903DF-6F81-41BC-ADA2-9F50188AAFF5}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Common\Common.Config.Options\Common.Config.Options.projitems*{0610f2c1-4b75-45f9-b517-9d747e3edd41}*SharedItemsImports = 13
 		Common\Common.Config.Options\Common.Config.Options.projitems*{2518edf1-782e-4faa-b93d-4f9991962144}*SharedItemsImports = 4
 		Common\Common.Config\Common.Config.projitems*{2518edf1-782e-4faa-b93d-4f9991962144}*SharedItemsImports = 4
+		Common\Common.CraftHelper\Common.CraftHelper.projitems*{2518edf1-782e-4faa-b93d-4f9991962144}*SharedItemsImports = 4
 		Common\Common.projitems*{2518edf1-782e-4faa-b93d-4f9991962144}*SharedItemsImports = 4
 		Common\Common.GameSerialization\Common.GameSerialization.projitems*{37c6e8c9-4864-415a-9561-161035212eba}*SharedItemsImports = 13
 		Common\Common.Config\Common.Config.projitems*{3bd3ab93-7001-4322-a0d8-b9de42ed38aa}*SharedItemsImports = 4
@@ -58,6 +61,7 @@ Global
 		Common\Common.Config\Common.Config.projitems*{cb025d20-0b16-4e80-95e6-3c3fc77935fb}*SharedItemsImports = 4
 		Common\Common.projitems*{cb025d20-0b16-4e80-95e6-3c3fc77935fb}*SharedItemsImports = 4
 		Common\Common.projitems*{d90fc3b6-6eaa-492d-927f-c7068da63bd9}*SharedItemsImports = 4
+		Common\Common.CraftHelper\Common.CraftHelper.projitems*{e30903df-6f81-41bc-ada2-9f50188aaff5}*SharedItemsImports = 13
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -116,6 +120,7 @@ Global
 		{44795620-2850-4B72-B859-74C5D50E6708} = {EE6D7B7D-F20A-439A-8C01-97B6A16F9B52}
 		{A581DBE2-97A4-4995-8F23-223D9245C338} = {EE6D7B7D-F20A-439A-8C01-97B6A16F9B52}
 		{D90FC3B6-6EAA-492D-927F-C7068DA63BD9} = {C49BC122-0A68-48A8-8EA3-737FB7553D8B}
+		{E30903DF-6F81-41BC-ADA2-9F50188AAFF5} = {EE6D7B7D-F20A-439A-8C01-97B6A16F9B52}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0A745472-1C11-4AB7-B6C4-79A169E0FB35}

@@ -7,6 +7,10 @@ using Common.CraftHelper;
 
 namespace PrawnSuitGrapplingArmUpgrade
 {
+	class GrapplingArmUpgraded: MonoBehaviour
+	{
+	}
+
 	class GrapplingArmUpgradeModule: CraftableObject
 	{
 		new static public TechType TechType { get; private set; } = 0;

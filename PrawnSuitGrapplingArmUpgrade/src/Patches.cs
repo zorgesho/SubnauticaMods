@@ -10,27 +10,61 @@ using Common;
 
 namespace PrawnSuitGrapplingArmUpgrade
 {
-	class UpgradedGrapplingArm: MonoBehaviour
-	{
-	}
-
-	
-	[HarmonyPatch(typeof(ExosuitGrapplingArm), "IExosuitArm.OnUseDown")]
+	//[HarmonyPatch(typeof(ExosuitGrapplingArm), "IExosuitArm.OnUseDown")]
 	static class ExosuitGrapplingArm_OnUseDown_Patch
 	{
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator ilg)
 		{
-			foreach (var instruction in instructions)
-			{
-				if (instruction.opcode.Equals(OpCodes.Ldc_R4) && instruction.operand.Equals(2.0f))
-				{
-					"injected".onScreen().log();
-					yield return new CodeInstruction(OpCodes.Ldc_R4, 0.1f);
-					continue;
-				}
+			return HarmonyHelper.changeConstToConfigVar(instructions, 2.0f, nameof(Main.config.armCooldown));
+			
+			//if (false)
+			//foreach (var instruction in instructions)
+			//{
+			//	if (instruction.opcode.Equals(OpCodes.Ldc_R4) && instruction.operand.Equals(2.0f))
+			//	{
+			//		Label l1 = ilg.DefineLabel();
+			//		Label l2 = ilg.DefineLabel();
 
-				yield return instruction;
-			}
+			//		yield return new CodeInstruction(OpCodes.Ldarg_0);
+			//		yield return new CodeInstruction(OpCodes.Callvirt,
+			//			AccessTools.Method(typeof(Component), "GetComponent").MakeGenericMethod(typeof(GrapplingArmUpgraded)));
+
+			//		yield return new CodeInstruction(OpCodes.Ldnull);
+			//		yield return new CodeInstruction(OpCodes.Call,
+			//			AccessTools.Method(typeof(UnityEngine.Object), "op_Inequality"));
+
+			//		yield return new CodeInstruction(OpCodes.Brtrue_S, l1);
+			//		yield return new CodeInstruction(OpCodes.Ldc_R4, 2.0f);
+			//		yield return new CodeInstruction(OpCodes.Br_S, l2);
+
+			//		if (false)
+			//		{
+			//			var ci1 = new CodeInstruction(OpCodes.Ldc_R4, 0.1f);
+			//			ci1.labels.Add(l1);
+			//			yield return ci1;
+
+			//		}
+			//		else
+			//		{
+			//			var ci1 = new CodeInstruction(OpCodes.Ldsfld, AccessTools.Field(typeof(Main), nameof(Main.config)));
+			//			ci1.labels.Add(l1);
+			//			yield return ci1;
+
+			//			yield return new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(ModConfig), nameof(Main.config.armCooldown)));
+
+			//		}
+					
+			//		var ci2 = new CodeInstruction(OpCodes.Nop);
+			//		ci2.labels.Add(l2);
+			//		yield return ci2;
+
+			//		//yield return new CodeInstruction(OpCodes.Ldc_R4, 0.1f);
+					
+			//		continue;
+			//	}
+
+			//	yield return instruction;
+			//}
 		}
 	}
 
@@ -48,7 +82,7 @@ namespace PrawnSuitGrapplingArmUpgrade
 				if (prefab == null)
 				{
 					prefab = UnityEngine.Object.Instantiate(__instance.GetArmPrefab(TechType.ExosuitGrapplingArmModule));
-					prefab.AddComponent<UpgradedGrapplingArm>();
+					prefab.AddComponent<GrapplingArmUpgraded>();
 				}
 
 				__result = prefab;
@@ -82,6 +116,56 @@ namespace PrawnSuitGrapplingArmUpgrade
 	//[HarmonyPatch(typeof(ExosuitGrapplingArm), "FixedUpdate")]
 	static class ExosuitGrapplingArm_FixedUpdate_Patch
 	{
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator ilg)
+		{
+			Label l1 = ilg.DefineLabel();
+			Label l2 = ilg.DefineLabel();
+
+			yield return new CodeInstruction(OpCodes.Ldarg_0);
+			yield return new CodeInstruction(OpCodes.Callvirt,
+				AccessTools.Method(typeof(Component), "GetComponent").MakeGenericMethod(typeof(GrapplingArmUpgraded)));
+
+			yield return new CodeInstruction(OpCodes.Ldnull);
+			yield return new CodeInstruction(OpCodes.Call,
+				AccessTools.Method(typeof(UnityEngine.Object), "op_Inequality"));
+
+			yield return new CodeInstruction(OpCodes.Brtrue_S, l1);
+			yield return new CodeInstruction(OpCodes.Ldc_R4, 35f);
+			yield return new CodeInstruction(OpCodes.Br_S, l2);
+					
+			var c1 = new CodeInstruction(OpCodes.Ldsfld, AccessTools.Field(typeof(Main), "config"));
+			c1.labels.Add(l1);
+			yield return c1;
+					
+			yield return new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(ModConfig), "armLength"));
+
+			//var c1 = new CodeInstruction(OpCodes.Ldc_R4, 100f);
+			//c1.labels.Add(l1);
+			//yield return c1;
+
+			var c2 = new CodeInstruction(OpCodes.Nop);
+			c2.labels.Add(l2);
+			yield return c2;
+			
+			
+			foreach (var instruction in instructions)
+			{
+				if (instruction.opcode.Equals(OpCodes.Ldc_R4) && instruction.operand.Equals(35f))
+				{
+
+					continue;
+				}
+
+				yield return instruction;
+			}
+		}
+	}
+
+
+
+	//[HarmonyPatch(typeof(ExosuitGrapplingArm), "FixedUpdate")]
+	static class ExosuitGrapplingArm_FixedUpdate_Patch1
+	{
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator il0)
 		{
 			foreach (var instruction in instructions)
@@ -93,7 +177,7 @@ namespace PrawnSuitGrapplingArmUpgrade
 
 					yield return new CodeInstruction(OpCodes.Ldarg_0);
 					yield return new CodeInstruction(OpCodes.Callvirt,
-						AccessTools.Method(typeof(Component), "GetComponent").MakeGenericMethod(typeof(UpgradedGrapplingArm)));
+						AccessTools.Method(typeof(Component), "GetComponent").MakeGenericMethod(typeof(GrapplingArmUpgraded)));
 
 					yield return new CodeInstruction(OpCodes.Ldnull);
 					yield return new CodeInstruction(OpCodes.Call,
@@ -126,14 +210,14 @@ namespace PrawnSuitGrapplingArmUpgrade
 	}
 
 
-	[HarmonyPatch(typeof(ExosuitGrapplingArm), "FixedUpdate")]
+	//[HarmonyPatch(typeof(ExosuitGrapplingArm), "FixedUpdate")]
 	static class HintSwimToSurface_OnLanguageChanged_Patch
 	{
 		static bool Prefix(ExosuitGrapplingArm __instance)
 		{
 			//bool upgraded = __instance.GetComponent<UpgradedGrapplingArm>() != null;
 
-			float ttt = (__instance.GetComponent<UpgradedGrapplingArm>() != null) ? 100f : 35f;
+			float ttt = (__instance.GetComponent<GrapplingArmUpgraded>() != null) ? 100f : 35f;
 			//float ttt1 = ((__instance.GetComponent<UpgradedGrapplingArm>() != null) ? Main.config.armLength : 35f);
 
 			if (__instance.hook.attached)

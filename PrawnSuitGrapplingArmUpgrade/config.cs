@@ -2,8 +2,12 @@
 
 namespace PrawnSuitGrapplingArmUpgrade
 {
+	[AddToConsole("ps_ga")]
 	class ModConfig: Config
 	{
+		[Field.Bounds(Min: 0)]
+		public float armCooldown = 0.2f;
+
 		[Options.Field]
 		[Field.Bounds(1, 900)]
 		public float armLength = 42f;

@@ -81,21 +81,28 @@ namespace ModsOptionsAdjusted
 
 		static void processSliderOption(Transform option)
 		{
+			const float sliderValueWidth = 85f;
+
+			// changing width for slider value label
+			RectTransform sliderValueRect = option.Find("Slider/Value").GetComponent<RectTransform>();
+			Vector2 valueSize = sliderValueRect.sizeDelta;
+			valueSize.x = sliderValueWidth;
+			sliderValueRect.sizeDelta = valueSize;
+
+			// changing width for slider
 			Transform slider = option.Find("Slider/Background");
 			Text text = option.GetComponentInChildren<Text>();
 
 			RectTransform rect = slider.GetComponent<RectTransform>();
 
 			float widthAll = option.GetComponent<RectTransform>().rect.width;
-			float widthValue = option.Find("Slider/Value").GetComponent<RectTransform>().rect.width;
 			float widthSlider = rect.rect.width;
-
 			float widthText = text.getTextWidth() + 25;
 
-			if (widthText + widthSlider + widthValue > widthAll)
+			if (widthText + widthSlider + sliderValueWidth > widthAll)
 			{
 				Vector2 size = rect.sizeDelta;
-				size.x = widthAll - widthText - widthValue - widthSlider;
+				size.x = widthAll - widthText - sliderValueWidth - widthSlider;
 				rect.sizeDelta = size;
 			}
 		}

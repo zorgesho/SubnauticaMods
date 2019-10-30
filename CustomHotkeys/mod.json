@@ -1,0 +1,13 @@
+{
+  "Id": "CustomHotkeys",
+  "DisplayName": "CustomHotkeys",
+  "Author": "zorgesho",
+  "Version": "1.0.0",
+  "Dependencies": [],
+  "LoadBefore": [],
+  "LoadAfter": [],
+  "Enable": true,
+  "Game": "Subnautica",
+  "AssemblyName": "CustomHotkeys.dll",
+  "EntryMethod": "CustomHotkeys.Main.patch"
+}

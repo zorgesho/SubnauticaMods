@@ -10,6 +10,10 @@ namespace PrawnSuitGrapplingArmUpgrade
 		static public void patch()
 		{
 			HarmonyHelper.patchAll();
+
+			Options.init();
+
+			GrapArm.PatchMe();
 		}
 	}
 }

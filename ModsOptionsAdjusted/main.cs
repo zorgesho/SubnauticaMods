@@ -50,6 +50,9 @@ namespace ModsOptionsAdjusted
 						else
 						if (option.name.Contains("uGUI_ChoiceOption"))
 							processChoiceOption(option);
+						else
+						if (option.name.Contains("uGUI_BindingOption"))
+							processBindingOption(option);
 					}
 				}
 				catch (Exception e)
@@ -79,6 +82,7 @@ namespace ModsOptionsAdjusted
 			}
 		}
 
+
 		static void processSliderOption(Transform option)
 		{
 			const float sliderValueWidth = 85f;
@@ -107,6 +111,7 @@ namespace ModsOptionsAdjusted
 			}
 		}
 
+
 		static void processChoiceOption(Transform option)
 		{
 			Transform choice = option.Find("Choice/Background");
@@ -126,6 +131,43 @@ namespace ModsOptionsAdjusted
 				rect.sizeDelta = size;
 			}
 		}
+		
+		
+		static void processBindingOption(Transform option)
+		{
+			// changing width for keybinding option
+			Transform binding = option.Find("Bindings");
+			Text text = option.GetComponentInChildren<Text>();
+
+			RectTransform rect = binding.GetComponent<RectTransform>();
+
+			float widthAll = option.GetComponent<RectTransform>().rect.width;
+			float widthBinding = rect.rect.width;
+
+			float widthText = text.getTextWidth() + 10;
+
+			if (widthText + widthBinding > widthAll)
+			{
+				Vector2 size = rect.sizeDelta;
+				size.x = widthAll - widthText - widthBinding;
+				rect.sizeDelta = size;
+			}
+
+			// fixing bug where all keybinds show 'D' (after reselecting tab)
+			Transform primaryBinding = binding.Find("Primary Binding"); // bug only on primary bindings
+			Text bindingText = primaryBinding.Find("Label").GetComponent<Text>();
+
+			if (bindingText.text == "D")
+			{
+				string buttonRawText = primaryBinding.GetComponent<uGUI_Binding>().value;
+				
+				if (uGUI.buttonCharacters.TryGetValue(buttonRawText, out string buttonText))
+					bindingText.text = buttonText;
+				else
+					bindingText.text = buttonRawText;
+			}
+		}
+
 
 		static public int getTextWidth(this Text text)
 		{

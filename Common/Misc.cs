@@ -85,4 +85,39 @@ namespace Common
 			output.ToString().log();
 		}
 	}
+
+	// TODO: move to separate file with logStack
+	static partial class Debug
+	{
+		static Stopwatch stopwatch = null;
+		static int nestLevel = 0;
+
+		public static void startStopwatch()
+		{
+			++nestLevel;
+			
+			if (stopwatch == null)
+				stopwatch = Stopwatch.StartNew();
+		}
+		
+		public static void stopStopwatch(string msg, string filename = null)
+		{
+			if (--nestLevel == 0)
+			{
+				stopwatch.Stop();
+				string result = $"{msg}: {stopwatch.Elapsed.TotalMilliseconds} ms";
+				$"STOPWATCH: {result}".logDbg();
+
+				if (filename != null)
+				{
+					if (Path.GetExtension(filename) == "")
+						filename += ".prf";
+
+					File.AppendAllText(Paths.modRootPath + filename, $"{result}{System.Environment.NewLine}");
+				}
+
+				stopwatch = null;
+			}
+		}
+	}
 }

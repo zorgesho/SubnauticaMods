@@ -28,7 +28,7 @@ namespace WarningsDisabler
 			"WaterVeryLow"		// "Seek fluid intake."
 		};
 
-		static bool Prefix(PDANotification __instance, object[] args)
+		static bool Prefix(PDANotification __instance)
 		{																											$"PDANotification.Play {__instance.text}".onScreen().logDbg();
 			if (!Main.config.depthWarningsEnabled && depthWarnings.Find(s => __instance.text == s) != null)
 				return false;

@@ -30,7 +30,7 @@ namespace WarningsDisabler
 			//"BaseWelcomeNoPower"				//  Moved to powerWarnings list
 		};
 		
-		static bool Prefix(VoiceNotification __instance, object[] args, bool __result)
+		static bool Prefix(VoiceNotification __instance)
 		{																											$"VoiceNotification.Play {__instance.text}, interval:{__instance.minInterval}".onScreen().logDbg();
 			if (!Main.config.powerWarningsEnabled && powerWarnings.Find(s => __instance.text == s) != null)
 				return false;

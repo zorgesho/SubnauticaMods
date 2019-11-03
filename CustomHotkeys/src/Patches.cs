@@ -8,7 +8,7 @@ namespace CustomHotkeys
 	[HarmonyPatch(typeof(MainGameController), "Update")]
 	class MainGameController_Update_Patch
 	{
-		static void Postfix(MainGameController __instance)
+		static void Postfix()
 		{
 			if (Main.config.disableDevTools)
 			{
@@ -26,7 +26,7 @@ namespace CustomHotkeys
 	[HarmonyPatch(typeof(GUIController), "Update")]
 	class GUIController_Update_Patch
 	{
-		static bool Prefix(GUIController __instance)
+		static bool Prefix()
 		{
 			return !Main.config.disableDevTools;
 		}

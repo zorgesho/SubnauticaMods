@@ -10,7 +10,7 @@ namespace ConsoleImproved
 	[HarmonyPatch(typeof(ErrorMessage), "Update")]
 	static class ErrorMessage_Update_Patch
 	{
-		static bool Prefix(ErrorMessage __instance)
+		static bool Prefix()
 		{
 			return !(Main.config.keepMessagesOnScreen && DevConsole.instance.state);
 		}
@@ -50,7 +50,7 @@ namespace ConsoleImproved
 		[HarmonyPatch(typeof(DevConsole), "Awake")]
 		static class DevConsole_Awake_Patch
 		{
-			static void Postfix(DevConsole __instance)
+			static void Postfix()
 			{
 				init();
 				loadHistory();
@@ -61,7 +61,7 @@ namespace ConsoleImproved
 		[HarmonyPatch(typeof(DevConsole), "OnDisable")]
 		static class DevConsole_OnDisable_Patch
 		{
-			static void Postfix(DevConsole __instance)
+			static void Postfix()
 			{
 				saveHistory();
 			}
@@ -71,7 +71,7 @@ namespace ConsoleImproved
 		[HarmonyPatch(typeof(ConsoleInput), "KeyPressedOverride")]
 		static class ConsoleInput_KeyPressedOverride_Patch
 		{
-			static bool Prefix(ConsoleInput __instance, Event evt, ref bool __result)
+			static bool Prefix(ConsoleInput __instance, ref bool __result)
 			{
 				KeyCode keyCode = __instance.processingEvent.keyCode;
 

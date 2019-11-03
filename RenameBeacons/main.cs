@@ -40,7 +40,7 @@ namespace RenameBeacons
 	[HarmonyPatch(typeof(Beacon), "OnPickedUp")]
 	static class Beacon_OnPickedUp_Patch
 	{
-		static void Postfix(Beacon __instance, Pickupable p)
+		static void Postfix(Beacon __instance)
 		{
 			__instance.label = __instance.beaconLabel.GetLabel();
 		}

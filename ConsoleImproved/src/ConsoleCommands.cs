@@ -7,13 +7,13 @@ namespace ConsoleImproved
 	{
 		class ConsoleCommands: PersistentConsoleCommands
 		{
-			void OnConsoleCommand_clearhistory(NotificationCenter.Notification n)
+			void OnConsoleCommand_clearhistory(NotificationCenter.Notification _)
 			{
 				setHistory(new List<string>());
 			}
 
 
-			void OnConsoleCommand_clear(NotificationCenter.Notification n)
+			void OnConsoleCommand_clear(NotificationCenter.Notification _)
 			{
 				foreach (var m in ErrorMessage.main.messages)
 					m.timeToDelete = 0f;

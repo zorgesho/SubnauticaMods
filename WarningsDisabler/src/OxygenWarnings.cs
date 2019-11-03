@@ -34,13 +34,13 @@ namespace WarningsDisabler
 		[HarmonyPatch(typeof(HintSwimToSurface), "Update")]
 		static class HintSwimToSurface_Update_Patch
 		{
-			static bool Prefix(HintSwimToSurface __instance) => Main.config.oxygenWarningsEnabled;
+			static bool Prefix() => Main.config.oxygenWarningsEnabled;
 		}
 	
 		[HarmonyPatch(typeof(LowOxygenAlert), "Update")]
 		static class LowOxygenAlert_Update_Patch
 		{
-			static bool Prefix(LowOxygenAlert __instance) => Main.config.oxygenWarningsEnabled;
+			static bool Prefix() => Main.config.oxygenWarningsEnabled;
 		}
 	}
 }

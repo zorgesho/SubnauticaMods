@@ -16,7 +16,7 @@ namespace GravTrapImproved
 		[HarmonyHelper.OptionalPatch(typeof(SeaTreaderSounds), "SpawnChunks")]
 		public static class SeaTreader_SpawnChunksProb_Patch
 		{
-			static bool Prefix(SeaTreaderSounds __instance, Transform legTr) => UnityEngine.Random.value <= Main.config.treaderSpawnChunkProbability;
+			static bool Prefix() => UnityEngine.Random.value <= Main.config.treaderSpawnChunkProbability;
 		}
 #if VER_1_2_0
 		// Patching work radius of a gravsphere

@@ -8,6 +8,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WarningsDisabler", "WarningsDisabler\WarningsDisabler.csproj", "{93C2CDD8-5D48-451F-A5C1-35A0B48DDBE6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{EE6D7B7D-F20A-439A-8C01-97B6A16F9B52}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Common.Config", "Common\Common.Config\Common.Config.shproj", "{B39DE674-737E-4F48-A1F7-A26B7E3D501F}"
 EndProject
@@ -31,9 +34,19 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Tests", "Common.Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RenameBeacons", "RenameBeacons\RenameBeacons.csproj", "{D90FC3B6-6EAA-492D-927F-C7068DA63BD9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrawnSuitGrapplingArmUpgrade", "PrawnSuitGrapplingArmUpgrade\PrawnSuitGrapplingArmUpgrade.csproj", "{2518EDF1-782E-4FAA-B93D-4F9991962144}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomHotkeys", "CustomHotkeys\CustomHotkeys.csproj", "{CB025D20-0B16-4E80-95E6-3C3FC77935FB}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Common.CraftHelper", "Common\Common.CraftHelper\Common.CraftHelper.shproj", "{E30903DF-6F81-41BC-ADA2-9F50188AAFF5}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Common\Common.Config.Options\Common.Config.Options.projitems*{0610f2c1-4b75-45f9-b517-9d747e3edd41}*SharedItemsImports = 13
+		Common\Common.Config.Options\Common.Config.Options.projitems*{2518edf1-782e-4faa-b93d-4f9991962144}*SharedItemsImports = 4
+		Common\Common.Config\Common.Config.projitems*{2518edf1-782e-4faa-b93d-4f9991962144}*SharedItemsImports = 4
+		Common\Common.CraftHelper\Common.CraftHelper.projitems*{2518edf1-782e-4faa-b93d-4f9991962144}*SharedItemsImports = 4
+		Common\Common.projitems*{2518edf1-782e-4faa-b93d-4f9991962144}*SharedItemsImports = 4
 		Common\Common.GameSerialization\Common.GameSerialization.projitems*{37c6e8c9-4864-415a-9561-161035212eba}*SharedItemsImports = 13
 		Common\Common.Config\Common.Config.projitems*{3bd3ab93-7001-4322-a0d8-b9de42ed38aa}*SharedItemsImports = 4
 		Common\Common.projitems*{3bd3ab93-7001-4322-a0d8-b9de42ed38aa}*SharedItemsImports = 4
@@ -48,7 +61,10 @@ Global
 		Common\Common.projitems*{a581dbe2-97a4-4995-8f23-223d9245c338}*SharedItemsImports = 4
 		Common\Common.projitems*{acfe8ab0-f047-44b1-8b43-d918f5ecad77}*SharedItemsImports = 13
 		Common\Common.Config\Common.Config.projitems*{b39de674-737e-4f48-a1f7-a26b7e3d501f}*SharedItemsImports = 13
+		Common\Common.Config\Common.Config.projitems*{cb025d20-0b16-4e80-95e6-3c3fc77935fb}*SharedItemsImports = 4
+		Common\Common.projitems*{cb025d20-0b16-4e80-95e6-3c3fc77935fb}*SharedItemsImports = 4
 		Common\Common.projitems*{d90fc3b6-6eaa-492d-927f-c7068da63bd9}*SharedItemsImports = 4
+		Common\Common.CraftHelper\Common.CraftHelper.projitems*{e30903df-6f81-41bc-ada2-9f50188aaff5}*SharedItemsImports = 13
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -78,6 +94,18 @@ Global
 		{D90FC3B6-6EAA-492D-927F-C7068DA63BD9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D90FC3B6-6EAA-492D-927F-C7068DA63BD9}.Publish|Any CPU.ActiveCfg = Publish|Any CPU
 		{D90FC3B6-6EAA-492D-927F-C7068DA63BD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2518EDF1-782E-4FAA-B93D-4F9991962144}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2518EDF1-782E-4FAA-B93D-4F9991962144}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2518EDF1-782E-4FAA-B93D-4F9991962144}.Publish|Any CPU.ActiveCfg = Publish|Any CPU
+		{2518EDF1-782E-4FAA-B93D-4F9991962144}.Publish|Any CPU.Build.0 = Publish|Any CPU
+		{2518EDF1-782E-4FAA-B93D-4F9991962144}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2518EDF1-782E-4FAA-B93D-4F9991962144}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CB025D20-0B16-4E80-95E6-3C3FC77935FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CB025D20-0B16-4E80-95E6-3C3FC77935FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CB025D20-0B16-4E80-95E6-3C3FC77935FB}.Publish|Any CPU.ActiveCfg = Publish|Any CPU
+		{CB025D20-0B16-4E80-95E6-3C3FC77935FB}.Publish|Any CPU.Build.0 = Publish|Any CPU
+		{CB025D20-0B16-4E80-95E6-3C3FC77935FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CB025D20-0B16-4E80-95E6-3C3FC77935FB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -91,9 +119,11 @@ Global
 		{4EF61A6D-0C6E-48A9-8625-58D196FD5386} = {C49BC122-0A68-48A8-8EA3-737FB7553D8B}
 		{37C6E8C9-4864-415A-9561-161035212EBA} = {EE6D7B7D-F20A-439A-8C01-97B6A16F9B52}
 		{0610F2C1-4B75-45F9-B517-9D747E3EDD41} = {EE6D7B7D-F20A-439A-8C01-97B6A16F9B52}
+		{3BD3AB93-7001-4322-A0D8-B9DE42ED38AA} = {C49BC122-0A68-48A8-8EA3-737FB7553D8B}
 		{44795620-2850-4B72-B859-74C5D50E6708} = {EE6D7B7D-F20A-439A-8C01-97B6A16F9B52}
 		{A581DBE2-97A4-4995-8F23-223D9245C338} = {EE6D7B7D-F20A-439A-8C01-97B6A16F9B52}
 		{D90FC3B6-6EAA-492D-927F-C7068DA63BD9} = {C49BC122-0A68-48A8-8EA3-737FB7553D8B}
+		{E30903DF-6F81-41BC-ADA2-9F50188AAFF5} = {EE6D7B7D-F20A-439A-8C01-97B6A16F9B52}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0A745472-1C11-4AB7-B6C4-79A169E0FB35}

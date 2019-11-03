@@ -5,10 +5,13 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Collections.Generic;
 
+using UnityEngine;
 using Harmony;
 
 namespace Common
 {
+	using Instructions = IEnumerable<CodeInstruction>;
+
 	static class HarmonyHelper
 	{
 		#region Public interface
@@ -24,8 +27,9 @@ namespace Common
 			harmonyInstance.PatchAll(Assembly.GetExecutingAssembly());
 		}
 
+		
 		// for using in transpilers
-		static public IEnumerable<CodeInstruction> changeConstToConfigVar<T>(IEnumerable<CodeInstruction> instructions, T val, string configVar)
+		public static Instructions changeConstToConfigVar<T>(Instructions instructions, T val, string configVar)
 		{
 			FieldInfo varField = mainConfigField?.FieldType.GetField(configVar, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
@@ -34,7 +38,8 @@ namespace Common
 
 			return varField != null? changeConstToVar(instructions, val, mainConfigField, varField): null;
 		}
-
+		
+		
 		// dynamic patching/unpatching, for use with OptionalPatch attribute
 		static public void setPatchEnabled(bool val, Type type)
 		{
@@ -42,6 +47,12 @@ namespace Common
 				patchAttribute.setEnabled(val, type);
 		}
 
+
+		public static bool isLDC<T>(this CodeInstruction instruction, T val)
+		{
+			return instruction.opcode.Equals(OpCodeByType.get<T>()) && instruction.operand.Equals(val);
+		}
+		
 		
 		[AttributeUsage(AttributeTargets.Class)]
 		public class OptionalPatchAttribute: Attribute
@@ -96,8 +107,7 @@ namespace Common
 		}
 		#endregion
 
-
-		#region Private stuff
+		
 		static FieldInfo mainConfigField = null; // for using in transpiler helper functions
 		
 		static void findConfig(string mainClassName, string configFieldName)
@@ -112,7 +122,7 @@ namespace Common
 				"HarmonyHelper: main config was not found".logWarning();
 		}
 
-		// Clearly an overkill, simple typeof() comparision would be enough, just wanted to test template specialization in C#
+		// Clearly an overkill, just wanted to test template specialization in C#
 		// https://stackoverflow.com/questions/600978/how-to-do-template-specialization-in-c-sharp
 		static class OpCodeByType
 		{
@@ -137,17 +147,13 @@ namespace Common
 		}
 
 
-		static IEnumerable<CodeInstruction> changeConstToVar<T>(IEnumerable<CodeInstruction> instructions,
-																 T val,
-																 FieldInfo staticObject,
-																 FieldInfo objectField)
+		static Instructions changeConstToVar<T>(Instructions instructions, T val, FieldInfo staticObject, FieldInfo objectField)
 		{																												"HarmonyHelper.changeConstToVar".logDbg();
 			bool injected = false;
-			OpCode opcodeToCheck = OpCodeByType.get<T>();																$"HarmonyHelper.changeConstToVar: searching opcode:{opcodeToCheck}, val:{val}".logDbg();
 
 			foreach (var instruction in instructions)
-			{																											
-				if (!injected && instruction.opcode.Equals(opcodeToCheck) && instruction.operand.Equals(val))
+			{
+				if (!injected && instruction.isLDC(val))
 				{																										"HarmonyHelper.changeConstToVar: injected".logDbg();
 					injected = true;
 					yield return new CodeInstruction(OpCodes.Ldsfld, staticObject);
@@ -159,6 +165,63 @@ namespace Common
 				yield return instruction;
 			}
 		}
-		#endregion
+
+		
+		public static Instructions changeConstToConfigVar<T, C>(Instructions instructions, T val, string configVar, ILGenerator ilg) where C: Component
+		{
+			bool injected = false;																						"HarmonyHelper.changeConstToVar".logDbg();
+
+			foreach (var instruction in instructions)
+			{																											
+				if (!injected && instruction.isLDC(val))
+				{																										"HarmonyHelper.changeConstToVar: injected".logDbg();
+					injected = true;
+
+					foreach (var i in _codeForChangeConstToConfigVar<T, C>(val, configVar, ilg))
+						yield return i;
+
+					continue;
+				}
+
+				yield return instruction;
+			}
+		}
+
+
+		public static Instructions _codeForChangeConstToConfigVar<T, C>(T value, string configVar, ILGenerator ilg) where C: Component
+		{
+			FieldInfo varField = mainConfigField?.FieldType.GetField(configVar, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+
+			if (varField == null)
+			{
+				$"changeConstToConfigVar: varField for {configVar} is not found".logError();
+				yield break;
+			}
+
+			Label lb1 = ilg.DefineLabel();
+			Label lb2 = ilg.DefineLabel();
+
+			yield return new CodeInstruction(OpCodes.Ldarg_0);
+			yield return new CodeInstruction(OpCodes.Callvirt,
+				AccessTools.Method(typeof(Component), "GetComponent").MakeGenericMethod(typeof(C)));
+
+			yield return new CodeInstruction(OpCodes.Ldnull);
+			yield return new CodeInstruction(OpCodes.Call,
+				AccessTools.Method(typeof(UnityEngine.Object), "op_Inequality"));
+
+			yield return new CodeInstruction(OpCodes.Brtrue_S, lb1);
+			yield return new CodeInstruction(OpCodeByType.get<T>(), value);
+			yield return new CodeInstruction(OpCodes.Br_S, lb2);
+
+			var ci1 = new CodeInstruction(OpCodes.Ldsfld, mainConfigField);
+			ci1.labels.Add(lb1);
+			yield return ci1;
+
+			yield return new CodeInstruction(OpCodes.Ldfld, varField);
+
+			var ci2 = new CodeInstruction(OpCodes.Nop);
+			ci2.labels.Add(lb2);
+			yield return ci2;
+		}
 	}
 }

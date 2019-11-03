@@ -38,7 +38,7 @@ namespace Common
 		static public readonly string modName = Assembly.GetExecutingAssembly().GetName().Name;
 	}
 
-	
+
 	// base class for console commands which are exists between scenes
 	abstract class PersistentConsoleCommands: MonoBehaviour
 	{
@@ -62,14 +62,12 @@ namespace Common
 			methods.Where(m => m.Name.StartsWith(cmdPrefix)).forEach(m => cmdNames.Add(m.Name.Replace(cmdPrefix, "")));
 		}
 			
-		void registerCommands(bool checkNeedReregister = false)
+		void registerCommands()
 		{
 			foreach (var cmdName in cmdNames)
 			{
-				if (!checkNeedReregister || NotificationCenter.DefaultCenter.notifications[cmdPrefix + cmdName] == null)
-				{																											$"PersistentConsoleCommands: {cmdName} is registered".logDbg();
-					DevConsole.RegisterConsoleCommand(this, cmdName);
-				}
+				// double registration is checked inside DevConsole
+				DevConsole.RegisterConsoleCommand(this, cmdName);															$"PersistentConsoleCommands: {cmdName} is registered".logDbg();
 			}
 		}
 			
@@ -89,7 +87,7 @@ namespace Common
 		// notifications are cleared between some scenes, so we need to reregister commands
 		void onSceneUnloaded(Scene scene)
 		{
-			registerCommands(true);
+			registerCommands();
 		}
 	}
 }

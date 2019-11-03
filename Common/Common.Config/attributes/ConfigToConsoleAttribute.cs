@@ -15,7 +15,7 @@ namespace Common.Configuration
 
 		static internal void addField(string fieldName) => fields.Add(fieldName.ToLower());
 	}
-	
+
 	partial class Config
 	{
 		[AttributeUsage(AttributeTargets.Class | AttributeTargets.Field)]
@@ -156,7 +156,7 @@ namespace Common.Configuration
 					}
 					
 					void OnConsoleCommand_getcfgvar(NotificationCenter.Notification n)
-					{
+					{																				$"getcfgvar: '{n.data[0]}'".logDbg();
 						if (n?.data != null && n.data.Count == 1)
 						{
 							string fieldName = n.data[0] as string;

@@ -10,10 +10,10 @@ namespace Common.CraftHelper
 	{
 		protected CraftableObject(string classID): base(classID, classID + "Prefab") {}
 		
-		abstract protected TechData getTechData();
-		abstract protected GameObject getGameObject();
+		protected abstract TechData getTechData();
+		protected abstract GameObject getGameObject();
 		
-		override public GameObject GetGameObject() => getGameObject();
+		public override GameObject GetGameObject() => getGameObject();
 
 
 		protected void addToCraftingNode(CraftTree.Type craftTree, string craftPath)

@@ -40,8 +40,4 @@ namespace CustomHotkeys
 			__instance.enabled = false;
 		}
 	}
-
-	
-
-	
 }

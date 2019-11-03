@@ -3,11 +3,11 @@ using Common.Configuration;
 
 namespace CustomHotkeys
 {
-	static public class Main
+	public static class Main
 	{
-		static internal ModConfig config = Config.tryLoad<ModConfig>();
+		internal static ModConfig config = Config.tryLoad<ModConfig>();
 
-		static public void patch()
+		public static void patch()
 		{
 			HarmonyHelper.patchAll();
 

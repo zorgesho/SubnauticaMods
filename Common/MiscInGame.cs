@@ -9,13 +9,13 @@ namespace Common
 {
 	static partial class StringExtensions
 	{
-		static public string onScreen(this string s)
+		public static string onScreen(this string s)
 		{
 			ErrorMessage.AddDebug(s);
 			return s;
 		}
 		
-		static public void onScreen(this List<string> list, string msg = "", int maxCount = 30)
+		public static void onScreen(this List<string> list, string msg = "", int maxCount = 30)
 		{
 			List<string> listToPrint = list.Count > maxCount? list.GetRange(0, maxCount): list;
 
@@ -28,14 +28,14 @@ namespace Common
 
 	static class Strings
 	{
-		static public class Mouse
+		public static class Mouse
 		{
-			static public readonly string middleButton	= "<color=#ADF8FFFF>" + char.ConvertFromUtf32(57405) + "</color>";
-			static public readonly string scrollUp		= "<color=#ADF8FFFF>" + char.ConvertFromUtf32(57406) + "</color>";
-			static public readonly string scrollDown	= "<color=#ADF8FFFF>" + char.ConvertFromUtf32(57407) + "</color>";
+			public static readonly string middleButton	= "<color=#ADF8FFFF>" + char.ConvertFromUtf32(57405) + "</color>";
+			public static readonly string scrollUp		= "<color=#ADF8FFFF>" + char.ConvertFromUtf32(57406) + "</color>";
+			public static readonly string scrollDown	= "<color=#ADF8FFFF>" + char.ConvertFromUtf32(57407) + "</color>";
 		}
 		
-		static public readonly string modName = Assembly.GetExecutingAssembly().GetName().Name;
+		public static readonly string modName = Assembly.GetExecutingAssembly().GetName().Name;
 	}
 
 
@@ -46,7 +46,7 @@ namespace Common
 
 		readonly List<string> cmdNames = new List<string>();
 
-		static public GameObject createGameObject<T>(string name = "ConsoleCommands") where T: PersistentConsoleCommands
+		public static GameObject createGameObject<T>(string name = "ConsoleCommands") where T: PersistentConsoleCommands
 		{
 			GameObject obj = new GameObject(name, typeof(T), typeof(SceneCleanerPreserve));
 			DontDestroyOnLoad(obj);

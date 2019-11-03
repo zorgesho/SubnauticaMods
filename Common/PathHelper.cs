@@ -5,6 +5,6 @@ namespace Common
 {
 	static partial class Paths
 	{
-		static public readonly string modRootPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + Path.DirectorySeparatorChar.ToString();
+		public static readonly string modRootPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + Path.DirectorySeparatorChar.ToString();
 	}
 }

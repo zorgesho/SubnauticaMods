@@ -16,7 +16,7 @@ namespace Common.Configuration
 		protected Config() {}
 
 		// try to load config from mod folder. If file not found, create default config and save it to that path
-		static public C tryLoad<C>(string localPath = "config.json", bool processAttributes = true) where C: Config, new()
+		public static C tryLoad<C>(string localPath = "config.json", bool processAttributes = true) where C: Config, new()
 		{
 			string configPath = localPath != null? Paths.modRootPath + localPath: null;
 			C config = null;

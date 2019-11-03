@@ -3,11 +3,11 @@ using Common.Configuration;
 
 namespace WarningsDisabler
 {
-	static public class Main
+	public static class Main
 	{
-		static internal readonly ModConfig config = Config.tryLoad<ModConfig>();
+		internal static readonly ModConfig config = Config.tryLoad<ModConfig>();
 
-		static public void patch()
+		public static void patch()
 		{
 			HarmonyHelper.patchAll();
 

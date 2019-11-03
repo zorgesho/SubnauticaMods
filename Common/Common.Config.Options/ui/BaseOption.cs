@@ -19,9 +19,9 @@ namespace Common.Configuration
 				label = _label;
 			}
 
-			abstract public void addOption(Options options);
+			public abstract void addOption(Options options);
 
-			virtual public void onEvent(EventArgs e)
+			public virtual void onEvent(EventArgs e)
 			{
 				mainConfig?.save();
 			}

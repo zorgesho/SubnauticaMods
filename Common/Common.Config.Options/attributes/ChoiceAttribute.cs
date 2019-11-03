@@ -11,9 +11,9 @@ namespace Common.Configuration
 		{
 			public readonly string[] choices = null;
 
-			public ChoiceAttribute(params string[] choices_)
+			public ChoiceAttribute(params string[] _choices)
 			{
-				choices = choices_;
+				choices = _choices;
 
 				if (choices == null || choices.Length == 0)
 					$"Options.ChoiceAttribute.process:  Choices not set".logError();

@@ -9,7 +9,7 @@ namespace Common
 	{
 		// messages with the same prefix will stay in the one message slot
 		[Conditional("TRACE")]
-		static public void onScreen(this string s, string prefix)
+		public static void onScreen(this string s, string prefix)
 		{
 			ErrorMessage.AddDebug($"[{prefix}] {s}");
 		}

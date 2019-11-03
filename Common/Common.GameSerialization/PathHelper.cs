@@ -4,7 +4,7 @@ namespace Common
 {
 	static partial class Paths
 	{
-		static public string savesPath
+		public static string savesPath
 		{
 			get
 			{

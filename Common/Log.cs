@@ -7,29 +7,29 @@ namespace Common
 {
 	static partial class StringExtensions
 	{
-		static public void log(this string s)			=> Log.msg(s, Log.MsgType.INFO);
-		static public void logWarning(this string s)	=> Log.msg(s, Log.MsgType.WARNING);
-		static public void logError(this string s)		=> Log.msg(s, Log.MsgType.ERROR);
+		public static void log(this string s)			=> Log.msg(s, Log.MsgType.INFO);
+		public static void logWarning(this string s)	=> Log.msg(s, Log.MsgType.WARNING);
+		public static void logError(this string s)		=> Log.msg(s, Log.MsgType.ERROR);
 
 		[Conditional("TRACE")]
-		static public void logDbg(this string s)		=> Log.msg(s, Log.MsgType.DEBUG);
+		public static void logDbg(this string s)		=> Log.msg(s, Log.MsgType.DEBUG);
 		
 		[Conditional("TRACE")]
-		static public void logDbg(this string s, bool condition) // for removing condition check if !TRACE
+		public static void logDbg(this string s, bool condition) // for removing condition check if !TRACE
 		{
 			if (condition)
 				Log.msg(s, Log.MsgType.DEBUG);
 		}
 		
 		[Conditional("TRACE")]
-		static public void logDbgError(this string s, bool condition) // for removing condition check if !TRACE
+		public static void logDbgError(this string s, bool condition) // for removing condition check if !TRACE
 		{
 			if (condition)
 				Log.msg(s, Log.MsgType.ERROR);
 		}
 
 		[Conditional("TRACE")]
-		static public void logDbg(this List<string> strings, string msg = "")
+		public static void logDbg(this List<string> strings, string msg = "")
 		{
 			strings.ForEach(s => Log.msg(msg + s, Log.MsgType.DEBUG));
 		}
@@ -59,7 +59,7 @@ namespace Common
 			catch (UnauthorizedAccessException) {}
 		}
 #endif
-		static public void msg(string str, MsgType msgType)
+		public static void msg(string str, MsgType msgType)
 		{
 			string formattedMsg = $"[{logPrefix}] {msgType}: {str}";
 			Console.WriteLine(formattedMsg);
@@ -73,7 +73,7 @@ namespace Common
 #endif
 		}
 
-		static public void msg(Exception e, string str = "")
+		public static void msg(Exception e, string str = "")
 		{
 			msg(str + (str == ""? "": "\t") + formatException(e), MsgType.EXCEPTION);
 		}

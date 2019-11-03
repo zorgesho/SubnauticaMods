@@ -12,7 +12,7 @@ namespace ConsoleImproved
 		{
 			protected readonly List<string> strings = new List<string>();
 
-			abstract protected void refresh();
+			protected abstract void refresh();
 
 			List<string> find(Predicate<string> predicate)
 			{
@@ -27,7 +27,7 @@ namespace ConsoleImproved
 		// console commands
 		class CommandCache: StringCache
 		{
-			override protected void refresh()
+			protected override void refresh()
 			{
 				if (strings.Count != DevConsole.commands.Count)
 				{
@@ -43,7 +43,7 @@ namespace ConsoleImproved
 		// tech types as strings
 		class TechTypeCache: StringCache
 		{
-			override protected void refresh()
+			protected override void refresh()
 			{
 				if (strings.Count == 0) // techtypes don't change in runtime, so we need refresh this only once
 				{
@@ -62,7 +62,7 @@ namespace ConsoleImproved
 			const string exportCfgVarGetFields = nameof(Common.Configuration.ExportedCfgVarFields.getFields);
 
 			// searching exported config fields in current assemblies
-			override protected void refresh()
+			protected override void refresh()
 			{
 				if (strings.Count == 0)
 				{

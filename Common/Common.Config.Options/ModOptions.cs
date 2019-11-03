@@ -14,7 +14,7 @@ namespace Common.Configuration
 		static string name = Strings.modName;
 		static readonly List<ModOption> modOptions = new List<ModOption>();
 
-		static public void init()
+		public static void init()
 		{																								"Config.Options is already inited!".logDbgError(inited);
 			if (!inited)
 			{
@@ -54,7 +54,7 @@ namespace Common.Configuration
 			}
 		}
 
-		override public void BuildModOptions()
+		public override void BuildModOptions()
 		{
 			modOptions.ForEach(o => o.addOption(this));
 		}

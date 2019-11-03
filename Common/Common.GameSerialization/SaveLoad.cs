@@ -5,12 +5,12 @@ namespace Common.GameSerialization
 {
 	static class SaveLoad
 	{
-		static public void save<T>(string id, T saveData)
+		public static void save<T>(string id, T saveData)
 		{
 			File.WriteAllText(getPath(id), JsonConvert.SerializeObject(saveData, Formatting.None));
 		}
 
-		static public T load<T>(string id)
+		public static T load<T>(string id)
 		{
 			string filePath = getPath(id);
 

@@ -15,12 +15,12 @@ namespace Common.Configuration
 				max = _max;
 			}
 
-			override public void addOption(Options options)
+			public override void addOption(Options options)
 			{
 				options.AddSliderOption(id, label, min, max, cfgField.value.toFloat());
 			}
 
-			override public void onEvent(EventArgs e)
+			public override void onEvent(EventArgs e)
 			{
 				cfgField.value = (e as SliderChangedEventArgs)?.Value;
 				base.onEvent(e);

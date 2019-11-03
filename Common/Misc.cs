@@ -9,11 +9,11 @@ namespace Common
 {
 	static class ObjectExtensions
 	{
-		static public int toInt(this object obj) => Convert.ToInt32(obj);
-		static public bool toBool(this object obj) => Convert.ToBoolean(obj);
-		static public float toFloat(this object obj) => Convert.ToSingle(obj);
+		public static int toInt(this object obj) => Convert.ToInt32(obj);
+		public static bool toBool(this object obj) => Convert.ToBoolean(obj);
+		public static float toFloat(this object obj) => Convert.ToSingle(obj);
 
-		static public void setFieldValue(this object obj, FieldInfo field, object value)
+		public static void setFieldValue(this object obj, FieldInfo field, object value)
 		{
 			try
 			{
@@ -46,7 +46,7 @@ namespace Common
 
 	static partial class StringExtensions
 	{
-		static public void saveToFile(this string s, string localPath)
+		public static void saveToFile(this string s, string localPath)
 		{
 			try
 			{
@@ -69,7 +69,7 @@ namespace Common
 	static partial class Debug
 	{
 		// based on code from http://www.csharp-examples.net/reflection-callstack/
-		static public void logStack(string msg = "")
+		public static void logStack(string msg = "")
 		{
 			StackTrace stackTrace = new StackTrace();
 			StackFrame[] stackFrames = stackTrace.GetFrames();

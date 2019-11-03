@@ -7,13 +7,13 @@ using UnityEngine;
 namespace Common.Configuration
 {
 	// for use in other mods
-	static public class ExportedCfgVarFields
+	public static class ExportedCfgVarFields
 	{
 		static readonly List<string> fields = new List<string>();
 
-		static public List<string> getFields() => fields;
+		public static List<string> getFields() => fields;
 
-		static internal void addField(string fieldName) => fields.Add(fieldName.ToLower());
+		internal static void addField(string fieldName) => fields.Add(fieldName.ToLower());
 	}
 
 	partial class Config
@@ -52,7 +52,7 @@ namespace Common.Configuration
 				static string cfgNamespace = null; // optional namespace for use in console in case of duplicate names
 				static Config mainConfig = null;
 
-				static public bool isInited { get => consoleObject != null; }
+				public static bool isInited { get => consoleObject != null; }
 				
 				static readonly Dictionary<string, CfgField> cfgFields = new Dictionary<string, CfgField>();
 
@@ -67,14 +67,14 @@ namespace Common.Configuration
 #endif
 					}
 
-					override protected void setFieldValue(object value)
+					protected override void setFieldValue(object value)
 					{
 						base.setFieldValue(bounds != null? bounds.applyBounds(value): value);
 					}
 				}
 
 
-				static public void init(Config config, string _cfgNamespace = null)
+				public static void init(Config config, string _cfgNamespace = null)
 				{
 					if (consoleObject == null)
 					{
@@ -91,7 +91,7 @@ namespace Common.Configuration
 				}
 
 
-				static public bool addConfigField(CfgField cfgField)
+				public static bool addConfigField(CfgField cfgField)
 				{																									$"ConfigVarsConsoleCommand: adding field {cfgField.name}".logDbg();
 					string name = cfgField.name.ToLower();
 

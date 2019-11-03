@@ -9,12 +9,12 @@ namespace Common
 {
 	static class ObjectAndComponentExtensions
 	{
-		static public T getOrAddComponent<T>(this GameObject go) where T: Component
+		public static T getOrAddComponent<T>(this GameObject go) where T: Component
 		{
 			return go.GetComponent<T>() ?? go.AddComponent<T>();
 		}
 
-		static public void addComponentIfNeeded<T>(this GameObject go) where T: Component
+		public static void addComponentIfNeeded<T>(this GameObject go) where T: Component
 		{
 			if (!go.GetComponent<T>())
 				go.AddComponent<T>();
@@ -24,9 +24,9 @@ namespace Common
 
 	static class InputHelper
 	{
-		static public float getMouseWheelValue() => Input.GetAxis("Mouse ScrollWheel");
+		public static float getMouseWheelValue() => Input.GetAxis("Mouse ScrollWheel");
 
-		static public void resetCursorToCenter()
+		public static void resetCursorToCenter()
 		{
 			Cursor.lockState = CursorLockMode.Locked; // warning: don't set lockState separately, use UWE utils for this if needed
 			Cursor.lockState = CursorLockMode.None;
@@ -36,7 +36,7 @@ namespace Common
 
 	static partial class Debug
 	{
-		static public string dumpGameObject(GameObject go, bool dumpProperties = true, bool dumpFields = false)
+		public static string dumpGameObject(GameObject go, bool dumpProperties = true, bool dumpFields = false)
 		{
 			return ObjectDumper.dump(go, dumpProperties, dumpFields);
 		}
@@ -50,7 +50,7 @@ namespace Common
 			static bool dumpFields = true;
 			static bool dumpProperties = true;
 			
-			static public string dump(GameObject go, bool _dumpProperties, bool _dumpFields)
+			public static string dump(GameObject go, bool _dumpProperties, bool _dumpFields)
 			{
 				output.Length = 0;
 				dumpProperties = _dumpProperties;

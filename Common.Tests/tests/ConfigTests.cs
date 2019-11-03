@@ -33,15 +33,15 @@ namespace CommonTests
 		{
 			[Field.Bounds(Min: 20)]
 			public int testMin20;
-			static public int testMinInitial;
+			public static int testMinInitial;
 
 			[Field.Bounds(Max: 50)]
 			public float testMax50;
-			static public float testMaxInitial;
+			public static float testMaxInitial;
 
 			[Field.Bounds(-100, 100)]
 			public float testRange_m100_100;
-			static public float testRangeInitial;
+			public static float testRangeInitial;
 
 			public VariableTestConfig()
 			{

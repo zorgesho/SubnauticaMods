@@ -14,14 +14,14 @@ namespace GravTrapImproved
 	{
 		// Treader spawn chunk probability
 		[HarmonyHelper.OptionalPatch(typeof(SeaTreaderSounds), "SpawnChunks")]
-		static public class SeaTreader_SpawnChunksProb_Patch
+		public static class SeaTreader_SpawnChunksProb_Patch
 		{
 			static bool Prefix(SeaTreaderSounds __instance, Transform legTr) => UnityEngine.Random.value <= Main.config.treaderSpawnChunkProbability;
 		}
 #if VER_1_2_0
 		// Patching work radius of a gravsphere
 		[HarmonyHelper.OptionalPatch(typeof(Gravsphere), "Start")]
-		static public class Gravsphere_MaxRadius_Patch
+		public static class Gravsphere_MaxRadius_Patch
 		{
 			static void Postfix(Gravsphere __instance)
 			{
@@ -33,7 +33,7 @@ namespace GravTrapImproved
 
 		// Patching max count of attracted objects
 		[HarmonyHelper.OptionalPatch(typeof(Gravsphere), "OnTriggerEnter")]
-		static public class Gravsphere_MaxObjects_Patch
+		public static class Gravsphere_MaxObjects_Patch
 		{
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
 			{
@@ -43,7 +43,7 @@ namespace GravTrapImproved
 
 		// Patching max force applied to attracted objects
 		[HarmonyHelper.OptionalPatch(typeof(Gravsphere), "ApplyGravitation")]
-		static public class Gravsphere_MaxForce_Patch
+		public static class Gravsphere_MaxForce_Patch
 		{
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
 			{

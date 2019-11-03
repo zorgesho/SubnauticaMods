@@ -8,9 +8,9 @@ using Harmony;
 
 namespace ModsOptionsAdjusted
 {
-	static public class Main
+	public static class Main
 	{
-		static public void patch()
+		public static void patch()
 		{
 			HarmonyInstance.Create("ModsOptionsAdjusted").PatchAll(Assembly.GetExecutingAssembly());
 		}
@@ -169,7 +169,7 @@ namespace ModsOptionsAdjusted
 		}
 
 
-		static public int getTextWidth(this Text text)
+		public static int getTextWidth(this Text text)
 		{
 			int width = 0;
  

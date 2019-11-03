@@ -11,17 +11,17 @@ namespace PrawnSuitGrapplingArmUpgrade
 
 	class GrapplingArmUpgradeModule: CraftableObject
 	{
-		new static public TechType TechType { get; private set; } = 0;
+		public static new TechType TechType { get; private set; } = 0;
 
 		GrapplingArmUpgradeModule(): base(nameof(GrapplingArmUpgradeModule)) {}
 
-		static public void patch()
+		public static void patch()
 		{
 			if (TechType == 0)
 				new GrapplingArmUpgradeModule().patchMe();
 		}
 
-		override protected TechData getTechData() => new TechData() { craftAmount = 1, Ingredients = new List<Ingredient>
+		protected override TechData getTechData() => new TechData() { craftAmount = 1, Ingredients = new List<Ingredient>
 		{
 			new Ingredient(TechType.ExosuitGrapplingArmModule, 1),
 			new Ingredient(TechType.Polyaniline, 2),
@@ -30,7 +30,7 @@ namespace PrawnSuitGrapplingArmUpgrade
 			new Ingredient(TechType.AluminumOxide, 1),
 		}};
 
-		override protected GameObject getGameObject()
+		protected override GameObject getGameObject()
 		{
 			GameObject prefab = Object.Instantiate(CraftData.GetPrefabForTechType(TechType.ExosuitGrapplingArmModule));
 			prefab.name = ClassID;

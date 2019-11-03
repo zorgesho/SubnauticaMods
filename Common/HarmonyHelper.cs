@@ -15,10 +15,10 @@ namespace Common
 	static class HarmonyHelper
 	{
 		#region Public interface
-		static public HarmonyInstance harmonyInstance { get; private set; } = null;
+		public static HarmonyInstance harmonyInstance { get; private set; } = null;
 
 		// expected to called only from mod entry function
-		static public void patchAll(bool searchConfig = true)
+		public static void patchAll(bool searchConfig = true)
 		{
 			if (searchConfig)
 				findConfig("Main", "config"); // need to be called before harmony patching
@@ -41,7 +41,7 @@ namespace Common
 		
 		
 		// dynamic patching/unpatching, for use with OptionalPatch attribute
-		static public void setPatchEnabled(bool val, Type type)
+		public static void setPatchEnabled(bool val, Type type)
 		{
 			if (Attribute.GetCustomAttribute(type, typeof(OptionalPatchAttribute)) is OptionalPatchAttribute patchAttribute)
 				patchAttribute.setEnabled(val, type);
@@ -143,7 +143,7 @@ namespace Common
 				OpCode IGetOpCode<T>.get() => OpCodes.Nop;
 			}
 
-			static public OpCode get<T>() => GetOpCode<T>.S.get();
+			public static OpCode get<T>() => GetOpCode<T>.S.get();
 		}
 
 

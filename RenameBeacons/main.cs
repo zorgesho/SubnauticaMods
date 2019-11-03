@@ -8,9 +8,9 @@ using Common;
 
 namespace RenameBeacons
 {
-	static public class Main
+	public static class Main
 	{
-		static public void patch()
+		public static void patch()
 		{
 			HarmonyHelper.patchAll(false);
 		}
@@ -53,14 +53,14 @@ namespace RenameBeacons
 		{
 			static Beacon beacon = null;
 
-			static public void init(Beacon b)
+			public static void init(Beacon b)
 			{
 				beacon = b;
 				if (beacon)
 					beacon.beaconLabel.SetLabel(beacon.label);
 			}
 
-			static public void setLabel(string label)
+			public static void setLabel(string label)
 			{
 				if (beacon)
 				{

@@ -36,7 +36,7 @@ namespace GravTrapImproved
 		ObjectsType objType = ObjectsType.All;
 
 		// we may add this component while gameobject is inactive (while in inventory) and Awake for it is not calling, so we need init it that way
-		static public GravTrapObjectsType getFrom(GameObject go)
+		public static GravTrapObjectsType getFrom(GameObject go)
 		{
 			GravTrapObjectsType cmp = go.GetComponent<GravTrapObjectsType>();
 			if (!cmp)

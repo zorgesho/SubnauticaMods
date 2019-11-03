@@ -14,12 +14,12 @@ namespace Common.Configuration
 				choices = _choices;
 			}
 
-			override public void addOption(Options options)
+			public override void addOption(Options options)
 			{
 				options.AddChoiceOption(id, label, choices, cfgField.value.toInt());
 			}
 
-			override public void onEvent(EventArgs e)
+			public override void onEvent(EventArgs e)
 			{
 				cfgField.value = (e as ChoiceChangedEventArgs)?.Index;
 				base.onEvent(e);

@@ -32,7 +32,7 @@ namespace Common.Configuration
 				set => setFieldValue(value);
 			}
 
-			virtual protected void setFieldValue(object value)
+			protected virtual void setFieldValue(object value)
 			{
 				config.setFieldValue(field, value);
 				action?.customAction();

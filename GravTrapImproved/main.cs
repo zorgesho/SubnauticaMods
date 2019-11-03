@@ -3,11 +3,11 @@ using Common.Configuration;
 
 namespace GravTrapImproved
 {
-	static public class Main
+	public static class Main
 	{
-		static internal readonly ModConfig config = Config.tryLoad<ModConfig>();
+		internal static readonly ModConfig config = Config.tryLoad<ModConfig>();
 
-		static public void patch()
+		public static void patch()
 		{
 			HarmonyHelper.patchAll();
 
@@ -18,7 +18,7 @@ namespace GravTrapImproved
 		}
 
 #if VER_1_2_0
-		static internal void checkOptionalPatches()
+		internal static void checkOptionalPatches()
 		{
 			if (config.maxRadius != 17f)
 				HarmonyHelper.setPatchEnabled(true, typeof(OptionalPatches.Gravsphere_MaxRadius_Patch));

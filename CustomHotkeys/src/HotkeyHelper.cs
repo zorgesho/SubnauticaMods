@@ -44,7 +44,7 @@ namespace CustomHotkeys
 		}
 
 
-		static public void init()
+		public static void init()
 		{
 			if (gameObject == null)
 			{

@@ -9,12 +9,12 @@ namespace Common.Configuration
 		{
 			public ToggleOption(Config.Field cfgField, string label): base(cfgField, label) {}
 
-			override public void addOption(Options options)
+			public override void addOption(Options options)
 			{
 				options.AddToggleOption(id, label, cfgField.value.toBool());
 			}
 
-			override public void onEvent(EventArgs e)
+			public override void onEvent(EventArgs e)
 			{
 				cfgField.value = (e as ToggleChangedEventArgs)?.Value;
 				base.onEvent(e);

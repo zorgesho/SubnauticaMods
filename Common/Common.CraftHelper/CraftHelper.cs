@@ -44,11 +44,20 @@ namespace Common.CraftHelper
 		{
 			CraftDataHandler.SetBackgroundType(TechType, backgroundType);
 		}
+		
+		protected void unlockOnStart()
+		{
+			KnownTechHandler.UnlockOnStart(TechType);
+		}
 
+		//protected void setAllTechTypesForUnlock(TechType t1, TechType t2)
+		//{
+		//	UnlockTechHelper.setTechTypesForUnlock(UnlockTechHelper.UnlockType.All, TechType, new TechType[] { t1, t2 });
+		//}
 
 		TechType register(string friendlyName, string description, Atlas.Sprite sprite)
 		{
-			TechType = TechTypeHandler.AddTechType(ClassID, friendlyName, description, sprite);
+			TechType = TechTypeHandler.AddTechType(ClassID, friendlyName, description, sprite, false);
 			
 			PrefabHandler.RegisterPrefab(this);
 			CraftDataHandler.SetTechData(TechType, getTechData());

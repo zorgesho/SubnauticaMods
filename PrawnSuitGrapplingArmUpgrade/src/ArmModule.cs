@@ -7,9 +7,7 @@ using Common.CraftHelper;
 
 namespace PrawnSuitGrapplingArmUpgrade
 {
-	class GrapplingArmUpgraded: MonoBehaviour
-	{
-	}
+	class GrapplingArmUpgraded: MonoBehaviour {} // just to distinguish between vanilla arm and upgraded
 
 	class GrapplingArmUpgradeModule: CraftableObject
 	{
@@ -26,7 +24,10 @@ namespace PrawnSuitGrapplingArmUpgrade
 		override protected TechData getTechData() => new TechData() { craftAmount = 1, Ingredients = new List<Ingredient>
 		{
 			new Ingredient(TechType.ExosuitGrapplingArmModule, 1),
-			new Ingredient(TechType.Peeper, 5),
+			new Ingredient(TechType.Polyaniline, 2),
+			new Ingredient(TechType.Lithium, 2),
+			new Ingredient(TechType.AramidFibers, 1),
+			new Ingredient(TechType.AluminumOxide, 1),
 		}};
 
 		override protected GameObject getGameObject()
@@ -39,12 +40,13 @@ namespace PrawnSuitGrapplingArmUpgrade
 
 		void patchMe()
 		{
-			TechType = register("Prawn suit grappling arm MK2", "Upgraded grappling arm", TechType.ExosuitGrapplingArmModule);
+			TechType = register("Prawn suit grappling arm MK2", "[todo description]", TechType.ExosuitGrapplingArmModule);
 
 			setPDAGroup(TechGroup.Workbench, TechCategory.Workbench);
 			addToCraftingNode(CraftTree.Type.Workbench, "ExosuitMenu");
 			setEquipmentType(EquipmentType.ExosuitArm, QuickSlotType.Selectable);
 			setBackgroundType(CraftData.BackgroundType.ExosuitArm);
+			unlockOnStart();
 		}
 	}
 }

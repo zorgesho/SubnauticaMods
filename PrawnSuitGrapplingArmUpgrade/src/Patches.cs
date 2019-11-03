@@ -13,7 +13,7 @@ namespace PrawnSuitGrapplingArmUpgrade
 	[HarmonyPatch(typeof(Exosuit), "OnUpgradeModuleChange")]
 	static class Exosuit_OnUpgradeModuleChange_Patch
 	{
-		static bool Prefix(Exosuit __instance, int slotID, TechType techType, bool added)
+		static bool Prefix(Exosuit __instance, TechType techType)
 		{
 			if (techType == GrapplingArmUpgradeModule.TechType)
 			{
@@ -25,30 +25,18 @@ namespace PrawnSuitGrapplingArmUpgrade
 		}
 	}
 
-
-	[HarmonyPatch(typeof(Exosuit), "GetArmPrefab")]
-	static class Exosuit_GetArmPrefab_Patch
+	[HarmonyPatch(typeof(Exosuit), "SpawnArm")]
+	static class Exosuit_SpawnArm_Patch
 	{
-		static GameObject prefab = null;
-		
-		static bool Prefix(Exosuit __instance, TechType techType, ref GameObject __result)
+		static bool Prefix(Exosuit __instance, TechType techType, Transform parent, ref IExosuitArm __result)
 		{
-			if (techType == GrapplingArmUpgradeModule.TechType)
-			{
-				if (prefab == null)
-				{
-					prefab = Object.Instantiate(__instance.GetArmPrefab(TechType.ExosuitGrapplingArmModule));
-					prefab.AddComponent<GrapplingArmUpgraded>();
-				}
+			if (techType != GrapplingArmUpgradeModule.TechType)
+				return true;
 
-				__result = prefab;
-				
-				//GameObject arm = __result.transform.Find("exosuit_01_armRight/ArmRig/exosuit_grapplingHook_geo")?.gameObject;
+			__result = __instance.SpawnArm(TechType.ExosuitGrapplingArmModule, parent);
+			__result.GetGameObject().AddComponent<GrapplingArmUpgraded>();
 
-				return false;
-			}
-			
-			return true;
+			return false;
 		}
 	}
 

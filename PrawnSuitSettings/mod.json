@@ -1,0 +1,13 @@
+{
+  "Id": "PrawnSuitSettings",
+  "DisplayName": "PrawnSuitSettings",
+  "Author": "zorgesho",
+  "Version": "1.0.0",
+  "Dependencies": [],
+  "LoadBefore": [],
+  "LoadAfter": [],
+  "Enable": true,
+  "Game": "Subnautica",
+  "AssemblyName": "PrawnSuitSettings.dll",
+  "EntryMethod": "PrawnSuitSettings.Main.patch"
+}

@@ -10,6 +10,8 @@ namespace PrawnSuitSettings
 		public static void patch()
 		{
 			HarmonyHelper.patchAll();
+
+			Options.init();
 		}
 	}
 }

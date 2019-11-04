@@ -13,7 +13,7 @@ namespace Common.Configuration
 
 		public static List<string> getFields() => fields;
 
-		internal static void addField(string fieldName) => fields.Add(fieldName.ToLower());
+		internal static void addField(string fieldName) => fields.Add(fieldName);
 	}
 
 	partial class Config
@@ -21,9 +21,11 @@ namespace Common.Configuration
 		[AttributeUsage(AttributeTargets.Class | AttributeTargets.Field)]
 		public class AddToConsoleAttribute: Attribute, IConfigAttribute, IFieldAttribute
 		{
-			readonly string cfgNamespace;
+			static Config mainConfig = null;
+			
+			readonly string cfgNamespace = ""; // optional namespace for use in console in case of duplicate names
 
-			public AddToConsoleAttribute(string _cfgNamespace = null) => cfgNamespace = _cfgNamespace;
+			public AddToConsoleAttribute(string _cfgNamespace = null) => cfgNamespace = _cfgNamespace + ".";
 
 			public void process(object config)
 			{
@@ -34,23 +36,34 @@ namespace Common.Configuration
 
 			public void process(object config, FieldInfo field)
 			{
-				if (!ConfigVarsConsoleCommand.isInited && config is Config)
-					ConfigVarsConsoleCommand.init(config as Config, cfgNamespace);
+				if (mainConfig == null)
+				{
+					mainConfig = config as Config;
+					ConfigVarsConsoleCommand.init();
+				}
 
 				if (field.FieldType.IsPrimitive)
-					if (ConfigVarsConsoleCommand.addConfigField(new ConfigVarsConsoleCommand.CfgField(config, field)))
-						ExportedCfgVarFields.addField((cfgNamespace != null? cfgNamespace + ".": "") + field.Name);
+				{
+					string nameForConsole = getFieldNameForConsole(config, field);
+
+					if (ConfigVarsConsoleCommand.addConfigField(nameForConsole, new ConfigVarsConsoleCommand.CfgField(config, field)))
+						ExportedCfgVarFields.addField(nameForConsole);
+				}
 					
 				if (field.FieldType.IsClass)
 					process(field.GetValue(config));
 			}
 
 			#region Internal stuff
+
+			string getFieldNameForConsole(object _, FieldInfo field) // todo implement nested naming
+			{
+				return (cfgNamespace + field.Name).ToLower();
+			}
+
 			static class ConfigVarsConsoleCommand
 			{
 				static GameObject consoleObject = null;
-				static string cfgNamespace = null; // optional namespace for use in console in case of duplicate names
-				static Config mainConfig = null;
 
 				public static bool isInited { get => consoleObject != null; }
 				
@@ -74,35 +87,23 @@ namespace Common.Configuration
 				}
 
 
-				public static void init(Config config, string _cfgNamespace = null)
+				public static void init()
 				{
-					if (consoleObject == null)
-					{
-						if (config != null)
-						{
-							consoleObject = PersistentConsoleCommands.createGameObject<SetGetCfgVarCommand>("ConfigConsoleCommands_" + Strings.modName);
-
-							mainConfig = config;
-							cfgNamespace = _cfgNamespace;
-						}
-						else
-							"ConfigVarsConsoleCommand.init mainConfig is null !".logError();
-					}
+					if (consoleObject == null && mainConfig != null)
+						consoleObject = PersistentConsoleCommands.createGameObject<SetGetCfgVarCommand>("ConfigConsoleCommands_" + Strings.modName);
 				}
 
 
-				public static bool addConfigField(CfgField cfgField)
-				{																									$"ConfigVarsConsoleCommand: adding field {cfgField.name}".logDbg();
-					string name = cfgField.name.ToLower();
-
-					if (cfgFields.ContainsKey(name))
+				public static bool addConfigField(string nameForConsole, CfgField cfgField)
+				{																									$"ConfigVarsConsoleCommand: adding field {nameForConsole}".logDbg();
+					if (cfgFields.ContainsKey(nameForConsole))
 					{
-						$"ConfigVarsConsoleCommand: field {name} is already added!".logError();
+						$"ConfigVarsConsoleCommand: field {nameForConsole} is already added!".logError();
 						return false;
 					}
 					else
 					{
-						cfgFields[name] = cfgField;
+						cfgFields[nameForConsole] = cfgField;
 						return true;
 					}
 				}
@@ -112,14 +113,6 @@ namespace Common.Configuration
 				{
 					if (fieldName == null)
 						return null;
-
-					if (cfgNamespace != null)
-					{
-						if (fieldName.StartsWith(cfgNamespace))
-							fieldName = fieldName.Replace(cfgNamespace + ".", "");
-						else
-							return null;
-					}
 
 					cfgFields.TryGetValue(fieldName, out CfgField cf);
 

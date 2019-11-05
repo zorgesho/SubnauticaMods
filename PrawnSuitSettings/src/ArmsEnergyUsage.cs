@@ -12,13 +12,17 @@ namespace PrawnSuitSettings
 	{
 		public class SettingChanged: Config.Field.ICustomAction
 		{
-			public void customAction() => refresh();
+			public void customAction()
+			{
+				Main.config.armsEnergyUsage.enabled = Main.config.armsEnergyUsage._enabled_1;
+				refresh();
+			}
 		}
 
 
 		public static void refresh()
-		{																													$"ArmsEnergyUsage: {Main.config.armsEnergyUsage.usageEnabled}".logDbg();
-			float grapplingArmEnergyCost = Main.config.armsEnergyUsage.usageEnabled? Main.config.armsEnergyUsage.grapplingArmShoot: 0f;
+		{																													$"ArmsEnergyUsage: {Main.config.armsEnergyUsage.enabled}".logDbg();
+			float grapplingArmEnergyCost = Main.config.armsEnergyUsage.enabled? Main.config.armsEnergyUsage.grapplingArmShoot: 0f;
 
 			CraftData.energyCost[TechType.ExosuitGrapplingArmModule] = grapplingArmEnergyCost;
 			
@@ -45,7 +49,7 @@ namespace PrawnSuitSettings
 		{
 			static void Postfix(ExosuitDrillArm __instance)
 			{
-				if (Main.config.armsEnergyUsage.usageEnabled && __instance.drilling)
+				if (Main.config.armsEnergyUsage.enabled && __instance.drilling)
 					consumeEnergyForArmOrStop(__instance.GetComponentInParent<Exosuit>(), __instance, Main.config.armsEnergyUsage.drillArm);
 			}
 		}
@@ -58,7 +62,7 @@ namespace PrawnSuitSettings
 			
 			static void Postfix(ExosuitGrapplingArm __instance)
 			{
-				if (Main.config.armsEnergyUsage.usageEnabled &&
+				if (Main.config.armsEnergyUsage.enabled &&
 					__instance.hook.attached &&
 					(__instance.hook.transform.position - __instance.front.position).sqrMagnitude > sqrMagnitudeGrapplingArm)
 				{

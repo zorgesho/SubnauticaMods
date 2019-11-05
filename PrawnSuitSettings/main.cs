@@ -13,7 +13,7 @@ namespace PrawnSuitSettings
 
 			Options.init();
 
-			if (config.armsEnergyUsage.usageEnabled)
+			if (config.armsEnergyUsage.enabled)
 				ArmsEnergyUsage.refresh();
 		}
 	}

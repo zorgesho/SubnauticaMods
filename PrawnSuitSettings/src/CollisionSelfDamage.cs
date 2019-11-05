@@ -12,7 +12,11 @@ namespace PrawnSuitSettings
 	{
 		public class SettingChanged: Config.Field.ICustomAction
 		{
-			public void customAction() => Object.FindObjectsOfType<Exosuit>()?.forEach(ex => refresh(ex));
+			public void customAction()
+			{
+				Main.config.collisionSelfDamage.enabled = Main.config.collisionSelfDamage._enabled_0;
+				Object.FindObjectsOfType<Exosuit>()?.forEach(ex => refresh(ex));
+			}
 		}
 
 
@@ -22,7 +26,7 @@ namespace PrawnSuitSettings
 			{
 				DealDamageOnImpact damage = exosuit.GetComponent<DealDamageOnImpact>();
 
-				damage.mirroredSelfDamage = Main.config.collisionSelfDamage.damageEnabled;
+				damage.mirroredSelfDamage = Main.config.collisionSelfDamage.enabled;
 				damage.speedMinimumForSelfDamage = Main.config.collisionSelfDamage.speedMinimumForDamage;
 
 				int armorCount = exosuit.modules.GetCount(TechType.VehicleArmorPlating);

@@ -1,4 +1,5 @@
-﻿using Common.Configuration;
+﻿using System;
+using Common.Configuration;
 
 namespace PrawnSuitSettings
 {
@@ -8,19 +9,25 @@ namespace PrawnSuitSettings
 	{
 		public class CollisionSelfDamageSettings
 		{
+			[NonSerialized]
 			[Options.Field("Damage from collisions")]
 			[Field.CustomAction(typeof(CollisionSelfDamage.SettingChanged))]
-			public readonly bool damageEnabled = true; // can't use just 'enabled' now to avoid name collision in mod options
+			public readonly bool _enabled_0 = true; // can't use just 'enabled' now to avoid name collision in mod options
 			
+			public bool enabled = true;
+
 			public readonly float speedMinimumForDamage = 20f;
 			public readonly float mirroredSelfDamageFraction = 0.1f;
 		}
 		
 		public class ArmsEnergyUsageSettings
 		{
+			[NonSerialized]
 			[Options.Field("Arms additional energy usage")]
 			[Field.CustomAction(typeof(ArmsEnergyUsage.SettingChanged))]
-			public readonly bool usageEnabled = true;
+			public readonly bool _enabled_1 = true; // temporary workaround
+			
+			public bool enabled = true;
 			
 			public readonly float drillArm = 0.3f;
 			public readonly float grapplingArmShoot = 0.5f;

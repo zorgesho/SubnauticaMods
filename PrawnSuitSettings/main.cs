@@ -13,8 +13,8 @@ namespace PrawnSuitSettings
 
 			Options.init();
 
-			if (config.armEnergyDrain.drainEnabled)
-				ArmsEnergyDrain.refresh();
+			if (config.armsEnergyUsage.usageEnabled)
+				ArmsEnergyUsage.refresh();
 		}
 	}
 }

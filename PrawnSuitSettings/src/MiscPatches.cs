@@ -11,7 +11,7 @@ namespace PrawnSuitSettings
 
 		static void Postfix(Exosuit __instance)
 		{
-			if (!Main.config.accessToPrawnSuitPartsWhenDocked)
+			if (!Main.config.fullAccessToPrawnSuitWhileDocked)
 				return;
 
 			for (int i = 0; i < __instance.disableDockedColliders.Length; i++)
@@ -23,13 +23,14 @@ namespace PrawnSuitSettings
 	}
 
 
+	// don't play propulsion cannon arm 'ready' animation when pointed on pickable object
 	[HarmonyPatch(typeof(PropulsionCannon), "UpdateActive")]
-	static class PropulsionCannonExosuit_UpdateActive_Patch
+	static class PropulsionCannon_UpdateActive_Patch
 	{
 		static void Postfix(PropulsionCannon __instance)
 		{
-			if (Main.config.passivePropulsionCannon && Player.main.GetVehicle() != null)
-				__instance.animator.SetBool("cangrab_propulsioncannon", false);
+			if (!Main.config.readyAnimationForPropulsionCannon && Player.main.GetVehicle() != null)
+				__instance.animator.SetBool("cangrab_propulsioncannon", __instance.grabbedObject != null);
 		}
 	}
 }

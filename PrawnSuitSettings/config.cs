@@ -6,15 +6,9 @@ namespace PrawnSuitSettings
 	[AddToConsole("pss")]
 	class ModConfig: Config
 	{
-		[Options.Field]
-		public readonly bool accessToPrawnSuitPartsWhenDocked = true;
-		
-		[Options.Field]
-		public readonly bool passivePropulsionCannon = true;
-		
 		public class CollisionSelfDamageSettings
 		{
-			[Options.Field("CollisionSelfDamage")]
+			[Options.Field("Damage from collisions")]
 			[Field.CustomAction(typeof(CollisionSelfDamage.SettingChanged))]
 			public readonly bool damageEnabled = true; // can't use just 'enabled' now to avoid name collision in mod options
 			
@@ -22,11 +16,11 @@ namespace PrawnSuitSettings
 			public readonly float mirroredSelfDamageFraction = 0.1f;
 		}
 		
-		public class ArmEnergyDrainSettings
+		public class ArmsEnergyUsageSettings
 		{
-			[Options.Field("ArmsEnergyDrain")]
-			[Field.CustomAction(typeof(ArmsEnergyDrain.SettingChanged))]
-			public readonly bool drainEnabled = true;
+			[Options.Field("Arms additional energy usage")]
+			[Field.CustomAction(typeof(ArmsEnergyUsage.SettingChanged))]
+			public readonly bool usageEnabled = true;
 			
 			public readonly float drillArm = 0.3f;
 			public readonly float grapplingArmShoot = 0.5f;
@@ -38,6 +32,12 @@ namespace PrawnSuitSettings
 		}
 		
 		public readonly CollisionSelfDamageSettings collisionSelfDamage = new CollisionSelfDamageSettings();
-		public readonly ArmEnergyDrainSettings armEnergyDrain = new ArmEnergyDrainSettings();
+		public readonly ArmsEnergyUsageSettings armsEnergyUsage = new ArmsEnergyUsageSettings();
+
+		[Options.Field("Full access in moonpool")]
+		public readonly bool fullAccessToPrawnSuitWhileDocked = true;
+		
+		[Options.Field("Propulsion arm 'ready' animation")]
+		public readonly bool readyAnimationForPropulsionCannon = false;
 	}
 }

@@ -15,6 +15,9 @@ namespace PrawnSuitSettings
 
 			if (config.armsEnergyUsage.enabled)
 				ArmsEnergyUsage.refresh();
+
+			if (!config.autoPickupDrillableResources)
+				DrillableResourcesPickup.refresh();
 		}
 	}
 }

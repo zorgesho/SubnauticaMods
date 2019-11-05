@@ -46,5 +46,9 @@ namespace PrawnSuitSettings
 		
 		[Options.Field("Propulsion arm 'ready' animation")]
 		public readonly bool readyAnimationForPropulsionCannon = false;
+		
+		[Options.Field("Auto pickup resources after drilling")]
+		[Field.CustomAction(typeof(DrillableResourcesPickup.SettingChanged))]
+		public readonly bool autoPickupDrillableResources = true;
 	}
 }

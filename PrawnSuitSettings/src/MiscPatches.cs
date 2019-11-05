@@ -1,5 +1,12 @@
 ﻿using System;
+using System.Linq;
+using System.Reflection.Emit;
+using System.Collections.Generic;
+
 using Harmony;
+
+using Common;
+using Common.Configuration;
 
 namespace PrawnSuitSettings
 {
@@ -31,6 +38,35 @@ namespace PrawnSuitSettings
 		{
 			if (!Main.config.readyAnimationForPropulsionCannon && Player.main.GetVehicle() != null)
 				__instance.animator.SetBool("cangrab_propulsioncannon", __instance.grabbedObject != null);
+		}
+	}
+
+	
+	// don't auto pickup resources after drilling
+	[HarmonyHelper.OptionalPatch(typeof(Drillable), "ManagedUpdate")]
+	static class DrillableResourcesPickup
+	{
+		public class SettingChanged: Config.Field.ICustomAction
+		{
+			public void customAction() => refresh();
+		}
+		
+		public static void refresh() => HarmonyHelper.setPatchEnabled(!Main.config.autoPickupDrillableResources, typeof(DrillableResourcesPickup));
+		
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+		{
+			var list = new List<CodeInstruction>(instructions);
+
+			for (int i = 0; i < list.Count - 1; i++)
+			{
+				if (list[i].opcode == OpCodes.Ldloc_1 && list[i + 1].opcode == OpCodes.Ldnull)
+				{
+					list.RemoveRange(i, 4);
+					break;
+				}
+			}
+
+			return list.AsEnumerable();
 		}
 	}
 }

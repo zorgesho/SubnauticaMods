@@ -1,51 +1,57 @@
 ﻿using UnityEngine;
 using Harmony;
 
+using SMLHelper.V2.Handlers;
+
 using Common;
 using Common.Configuration;
 
 namespace PrawnSuitSettings
 {
-	// TODO: find better place
-	[HarmonyPatch(typeof(Player), "Start")]
-	static class Player_Start_Patch
+	static class ArmsEnergyDrain
 	{
-		static void Postfix() => CraftData.energyCost[TechType.ExosuitGrapplingArmModule] = Main.config.armEnergyDrain.grapplingArmShoot;
-	}
-
-	
-	static class ArmsEnergyDrainPatches
-	{
-		const float sqrMagnitudeGrapplingArm = 16f;	// if hook attached and its sqr length less than it, then dont drain power
-
 		public class SettingChanged: Config.Field.ICustomAction
 		{
 			public void customAction()
 			{
-				$"ArmsEnergyDrain {Main.config.armEnergyDrain.armsEnergyAdditionalDrain}".onScreen();
+				refresh();
+
+				$"ArmsEnergyDrain {Main.config.armEnergyDrain.drainEnabled}".onScreen();
 			}
 		}
 
-		static void exosuitConsumeEnergyForArmOrStop(Exosuit exosuit, IExosuitArm arm, float energyPerSec)
+
+		public static void refresh()
+		{
+			float grapplingArmEnergyCost = Main.config.armEnergyDrain.drainEnabled? Main.config.armEnergyDrain.grapplingArmShoot: 0f;
+
+			CraftData.energyCost[TechType.ExosuitGrapplingArmModule] = grapplingArmEnergyCost;
+			
+			if (TechTypeHandler.TryGetModdedTechType("GrapplingArmUpgradeModule", out TechType upgradedGrapplingArm))
+				CraftData.energyCost[upgradedGrapplingArm] = grapplingArmEnergyCost;
+
+			CraftData.energyCost[TechType.ExosuitTorpedoArmModule] = Main.config.armEnergyDrain.torpedoArm;
+			CraftData.energyCost[TechType.ExosuitClawArmModule] = Main.config.armEnergyDrain.clawArm;
+		}
+
+
+		static void consumeEnergyForArmOrStop(Exosuit exosuit, IExosuitArm arm, float energyPerSec)
 		{
 			if (exosuit != null)
 			{
-				float needEnergy = energyPerSec * Time.deltaTime;
-				if (exosuit.HasEnoughEnergy(needEnergy))
-					exosuit.ConsumeEnergy(needEnergy);
-				else
+				if (!exosuit.ConsumeEnergy(energyPerSec * Time.deltaTime))
 					arm.OnUseUp(out _);
 			}
 		}
-		
-		
+
+
 		[HarmonyPatch(typeof(ExosuitDrillArm), "IExosuitArm.Update")]
 		static class ExosuitDrillArm_Update_Patch
 		{
 			static void Postfix(ExosuitDrillArm __instance)
 			{
-				if (__instance.drilling)
-					exosuitConsumeEnergyForArmOrStop(__instance.GetComponentInParent<Exosuit>(), __instance, Main.config.armEnergyDrain.drillArm);
+				if (Main.config.armEnergyDrain.drainEnabled && __instance.drilling)
+					consumeEnergyForArmOrStop(__instance.GetComponentInParent<Exosuit>(), __instance, Main.config.armEnergyDrain.drillArm);
 			}
 		}
 
@@ -53,10 +59,16 @@ namespace PrawnSuitSettings
 		[HarmonyPatch(typeof(ExosuitGrapplingArm), "FixedUpdate")]
 		static class ExosuitGrapplingArm_FixedUpdate_Patch
 		{
+			const float sqrMagnitudeGrapplingArm = 16f; // if hook attached and its sqr length less than that, then don't consume power
+			
 			static void Postfix(ExosuitGrapplingArm __instance)
 			{
-				if (__instance.hook.attached && (__instance.hook.transform.position - __instance.front.position).sqrMagnitude > sqrMagnitudeGrapplingArm)
-					exosuitConsumeEnergyForArmOrStop(__instance.GetComponentInParent<Exosuit>(), __instance, Main.config.armEnergyDrain.grapplingArmPull);
+				if (Main.config.armEnergyDrain.drainEnabled &&
+					__instance.hook.attached &&
+					(__instance.hook.transform.position - __instance.front.position).sqrMagnitude > sqrMagnitudeGrapplingArm)
+				{
+					consumeEnergyForArmOrStop(__instance.GetComponentInParent<Exosuit>(), __instance, Main.config.armEnergyDrain.grapplingArmPull);
+				}
 			}
 		}
 	}

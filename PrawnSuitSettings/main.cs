@@ -12,6 +12,9 @@ namespace PrawnSuitSettings
 			HarmonyHelper.patchAll();
 
 			Options.init();
+
+			if (config.armEnergyDrain.drainEnabled)
+				ArmsEnergyDrain.refresh();
 		}
 	}
 }

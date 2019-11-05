@@ -1,32 +1,45 @@
-﻿using Harmony;
+﻿using UnityEngine;
+
+using Harmony;
 
 using Common;
 using Common.Configuration;
 
 namespace PrawnSuitSettings
 {
-	static class CollisionSelfDamagePatches
+	// Enables damage to prawn suit from collisions with terrain
+	static class CollisionSelfDamage
 	{
 		public class SettingChanged: Config.Field.ICustomAction
 		{
 			public void customAction()
 			{
-				$"CollisionSelfDamage {Main.config.selfDamage.prawnSuitCollisionsDamage}".onScreen();
+				foreach (var ex in Object.FindObjectsOfType<Exosuit>())
+					refresh(ex);
+
+				$"CollisionSelfDamage {Main.config.collisionSelfDamage.damageEnabled}".onScreen().logDbg();
 			}
 		}
 
-		// Enables damage to prawn suit from collisions with terrain
+		static void refresh(Exosuit exosuit)
+		{
+			if (exosuit != null)
+			{
+				DealDamageOnImpact damage = exosuit.GetComponent<DealDamageOnImpact>();
+
+				damage.mirroredSelfDamage = Main.config.collisionSelfDamage.damageEnabled;
+				damage.speedMinimumForDamage = Main.config.collisionSelfDamage.speedMinimumForDamage;
+
+				int armorCount = exosuit.modules.GetCount(TechType.VehicleArmorPlating);
+				damage.mirroredSelfDamageFraction =
+					Main.config.collisionSelfDamage.mirroredSelfDamageFraction * Mathf.Pow(0.5f, armorCount);
+			}
+		}
+
 		[HarmonyPatch(typeof(Exosuit), "Start")]
 		static class Exosuit_Start_Patch
 		{
-			static void Postfix(Exosuit __instance)
-			{
-				DealDamageOnImpact damage = __instance.GetComponent<DealDamageOnImpact>();
-
-				damage.mirroredSelfDamage = true;
-				damage.speedMinimumForDamage = Main.config.selfDamage.speedMinimumForDamage;
-				damage.mirroredSelfDamageFraction = Main.config.selfDamage.mirroredSelfDamageFraction;
-			}
+			static void Postfix(Exosuit __instance) => refresh(__instance);
 		}
 
 		[HarmonyPatch(typeof(Exosuit), "OnUpgradeModuleChange")]
@@ -35,10 +48,7 @@ namespace PrawnSuitSettings
 			static void Postfix(Exosuit __instance, TechType techType)
 			{
 				if (techType == TechType.VehicleArmorPlating)
-				{
-					DealDamageOnImpact component = __instance.GetComponent<DealDamageOnImpact>();
-					component.mirroredSelfDamageFraction = Main.config.selfDamage.mirroredSelfDamageFraction * UnityEngine.Mathf.Pow(0.5f, (float)__instance.modules.GetCount(TechType.VehicleArmorPlating));
-				}
+					refresh(__instance);
 			}
 		}
 	}

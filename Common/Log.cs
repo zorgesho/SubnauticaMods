@@ -12,13 +12,13 @@ namespace Common
 		public static void logError(this string s)		=> Log.msg(s, Log.MsgType.ERROR);
 
 		[Conditional("TRACE")]
-		public static void logDbg(this string s)		=> Log.msg(s, Log.MsgType.DEBUG);
+		public static void logDbg(this string s)		=> Log.msg(s, Log.MsgType.DBG);
 		
 		[Conditional("TRACE")]
 		public static void logDbg(this string s, bool condition) // for removing condition check if !TRACE
 		{
 			if (condition)
-				Log.msg(s, Log.MsgType.DEBUG);
+				Log.msg(s, Log.MsgType.DBG);
 		}
 		
 		[Conditional("TRACE")]
@@ -31,7 +31,7 @@ namespace Common
 		[Conditional("TRACE")]
 		public static void logDbg(this List<string> strings, string msg = "")
 		{
-			strings.ForEach(s => Log.msg(msg + s, Log.MsgType.DEBUG));
+			strings.ForEach(s => Log.msg(msg + s, Log.MsgType.DBG));
 		}
 	}
 
@@ -40,7 +40,7 @@ namespace Common
 	{
 		public enum MsgType
 		{
-			DEBUG,
+			DBG,
 			INFO,
 			WARNING,
 			ERROR,

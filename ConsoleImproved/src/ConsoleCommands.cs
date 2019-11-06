@@ -16,7 +16,7 @@ namespace ConsoleImproved
 			void OnConsoleCommand_clear(NotificationCenter.Notification _)
 			{
 				foreach (var m in ErrorMessage.main.messages)
-					m.timeToDelete = 0f;
+					m.timeEnd = UnityEngine.Time.time - 1;
 			}
 
 

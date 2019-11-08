@@ -4,16 +4,23 @@ using SMLHelper.V2.Assets;
 using SMLHelper.V2.Crafting;
 using SMLHelper.V2.Handlers;
 
-namespace Common.CraftHelper
+namespace Common.Crafting
 {
 	abstract class CraftableObject: ModPrefab
 	{
+		protected CraftableObject(): this(new System.Diagnostics.StackTrace().GetFrame(1).GetMethod().ReflectedType.Name) {}
 		protected CraftableObject(string classID): base(classID, classID + "Prefab") {}
 		
 		protected abstract TechData getTechData();
 		protected abstract GameObject getGameObject();
-		
-		public override GameObject GetGameObject() => getGameObject();
+
+		public override GameObject GetGameObject()
+		{
+			GameObject prefab = getGameObject();
+			prefab.name = ClassID;
+			
+			return prefab;
+		}
 
 
 		protected void addToCraftingNode(CraftTree.Type craftTree, string craftPath)
@@ -55,8 +62,11 @@ namespace Common.CraftHelper
 		//	UnlockTechHelper.setTechTypesForUnlock(UnlockTechHelper.UnlockType.All, TechType, new TechType[] { t1, t2 });
 		//}
 
-		TechType register(string friendlyName, string description, Atlas.Sprite sprite)
+		public TechType register(string friendlyName, string description, Atlas.Sprite sprite = null)
 		{
+			if (sprite == null)
+				sprite = SpriteManager._defaultSprite;
+			
 			TechType = TechTypeHandler.AddTechType(ClassID, friendlyName, description, sprite, false);
 			
 			PrefabHandler.RegisterPrefab(this);
@@ -64,9 +74,5 @@ namespace Common.CraftHelper
 
 			return TechType;
 		}
-		
-		protected TechType register(string friendlyName, string description, TechType spriteFrom) => register(friendlyName, description, SpriteManager.Get(spriteFrom));
-
-		protected TechType register(string friendlyName, string description, string spriteFileName) => 0; // todo implement
 	}
 }

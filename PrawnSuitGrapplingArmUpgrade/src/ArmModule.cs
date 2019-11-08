@@ -3,7 +3,7 @@ using UnityEngine;
 
 using SMLHelper.V2.Crafting;
 
-using Common.CraftHelper;
+using Common.Crafting;
 
 namespace PrawnSuitGrapplingArmUpgrade
 {
@@ -12,8 +12,6 @@ namespace PrawnSuitGrapplingArmUpgrade
 	class GrapplingArmUpgradeModule: CraftableObject
 	{
 		public static new TechType TechType { get; private set; } = 0;
-
-		GrapplingArmUpgradeModule(): base(nameof(GrapplingArmUpgradeModule)) {}
 
 		public static void patch()
 		{
@@ -30,17 +28,11 @@ namespace PrawnSuitGrapplingArmUpgrade
 			new Ingredient(TechType.AluminumOxide, 1),
 		}};
 
-		protected override GameObject getGameObject()
-		{
-			GameObject prefab = Object.Instantiate(CraftData.GetPrefabForTechType(TechType.ExosuitGrapplingArmModule));
-			prefab.name = ClassID;
-
-			return prefab;
-		}
+		protected override GameObject getGameObject() => Object.Instantiate(CraftData.GetPrefabForTechType(TechType.ExosuitGrapplingArmModule));
 
 		void patchMe()
 		{
-			TechType = register("Prawn suit grappling arm MK2", "[todo description]", TechType.ExosuitGrapplingArmModule);
+			TechType = register("Prawn suit grappling arm MK2", "[todo description]", SpriteManager.Get(TechType.ExosuitGrapplingArmModule));
 
 			setPDAGroup(TechGroup.Workbench, TechCategory.Workbench);
 			addToCraftingNode(CraftTree.Type.Workbench, "ExosuitMenu");

@@ -9,7 +9,7 @@
     <Import_RootNamespace>Common.CraftHelper</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)CraftHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CraftableObject.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UnlockTechHelper.cs" />
   </ItemGroup>
 </Project>

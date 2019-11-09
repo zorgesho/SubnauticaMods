@@ -28,9 +28,7 @@ namespace PrawnSuitSonarUpgrade
 			addToCraftingNode(CraftTree.Type.Workbench, "ExosuitMenu");
 			setEquipmentType(EquipmentType.ExosuitModule, QuickSlotType.SelectableChargeable);
 
-			//public override TechType RequiredForUnlock => TechType.SeamothSonarModule;
-
-			unlockOnStart();
+			setTechTypeForUnlock(TechType.SeamothSonarModule);
 		}
 	}
 }

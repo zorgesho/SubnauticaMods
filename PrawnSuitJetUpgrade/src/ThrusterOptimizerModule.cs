@@ -29,10 +29,8 @@ namespace PrawnSuitJetUpgrade
 			setPDAGroup(TechGroup.VehicleUpgrades, TechCategory.VehicleUpgrades);
 			addToCraftingNode(CraftTree.Type.SeamothUpgrades, "ExosuitModules");
 			setEquipmentType(EquipmentType.ExosuitModule, QuickSlotType.Passive);
-				
-//				public override TechType RequiredForUnlock => TechType.BaseUpgradeConsole;
 
-			unlockOnStart();
+			setTechTypeForUnlock(TechType.BaseUpgradeConsole);
 		}
 	}
 }

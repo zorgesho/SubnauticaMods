@@ -59,6 +59,14 @@ namespace Common.Crafting
 			KnownTechHandler.UnlockOnStart(TechType);
 		}
 
+		protected void setTechTypeForUnlock(TechType techType, string message = null)
+		{
+			if (message == null)
+				message = "NotificationBlueprintUnlocked";
+			
+			KnownTechHandler.SetAnalysisTechEntry(techType, new TechType[1] { TechType }, message);
+		}
+
 		//protected void setAllTechTypesForUnlock(TechType t1, TechType t2)
 		//{
 		//	UnlockTechHelper.setTechTypesForUnlock(UnlockTechHelper.UnlockType.All, TechType, new TechType[] { t1, t2 });

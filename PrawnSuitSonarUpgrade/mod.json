@@ -1,0 +1,13 @@
+{
+  "Id": "PrawnSuitSonarUpgrade",
+  "DisplayName": "PrawnSuitSonarUpgrade",
+  "Author": "zorgesho",
+  "Version": "1.0.2",
+  "Dependencies": ["SMLHelper"],
+  "LoadBefore": [],
+  "LoadAfter": [],
+  "Enable": true,
+  "Game": "Subnautica",
+  "AssemblyName": "PrawnSuitSonarUpgrade.dll",
+  "EntryMethod": "PrawnSuitSonarUpgrade.Main.patch"
+}

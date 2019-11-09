@@ -6,6 +6,7 @@ using SMLHelper.V2.Handlers;
 
 namespace Common.Crafting
 {
+	[CraftHelper.NoAutoPatch]
 	abstract class CraftableObject: ModPrefab
 	{
 		protected CraftableObject(): this(new System.Diagnostics.StackTrace().GetFrame(1).GetMethod().ReflectedType.Name) {}
@@ -13,6 +14,7 @@ namespace Common.Crafting
 		
 		protected abstract TechData getTechData();
 		protected abstract GameObject getGameObject();
+		public abstract void patch();
 
 		public override GameObject GetGameObject()
 		{

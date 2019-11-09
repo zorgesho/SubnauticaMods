@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)CraftableObject.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CraftHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UnlockTechHelper.cs" />
   </ItemGroup>
 </Project>

@@ -1,4 +1,5 @@
 ﻿using Common;
+using Common.Crafting;
 
 namespace PrawnSuitSonarUpgrade
 {
@@ -8,7 +9,7 @@ namespace PrawnSuitSonarUpgrade
 		{
 			HarmonyHelper.patchAll(false);
 
-			PrawnSonarModule.patch();
+			CraftHelper.patchAll();
 		}
 	}
 }

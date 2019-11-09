@@ -2,7 +2,7 @@
 
 using Harmony;
 
-namespace Common.CraftHelper
+namespace Common.Crafting
 {
 	static class UnlockTechHelper
 	{

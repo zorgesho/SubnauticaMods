@@ -13,12 +13,6 @@ namespace PrawnSuitGrapplingArmUpgrade
 	{
 		public static new TechType TechType { get; private set; } = 0;
 
-		public static void patch()
-		{
-			if (TechType == 0)
-				new GrapplingArmUpgradeModule().patchMe();
-		}
-
 		protected override TechData getTechData() => new TechData() { craftAmount = 1, Ingredients = new List<Ingredient>
 		{
 			new Ingredient(TechType.ExosuitGrapplingArmModule, 1),
@@ -30,7 +24,7 @@ namespace PrawnSuitGrapplingArmUpgrade
 
 		protected override GameObject getGameObject() => Object.Instantiate(CraftData.GetPrefabForTechType(TechType.ExosuitGrapplingArmModule));
 
-		void patchMe()
+		public override void patch()
 		{
 			TechType = register("Prawn suit grappling arm MK2", "[todo description]", SpriteManager.Get(TechType.ExosuitGrapplingArmModule));
 

@@ -1,4 +1,5 @@
 ﻿using Common;
+using Common.Crafting;
 using Common.Configuration;
 
 namespace PrawnSuitGrapplingArmUpgrade
@@ -12,7 +13,7 @@ namespace PrawnSuitGrapplingArmUpgrade
 			HarmonyHelper.patchAll();
 			Options.init();
 
-			GrapplingArmUpgradeModule.patch();
+			CraftHelper.patchAll();
 		}
 	}
 }

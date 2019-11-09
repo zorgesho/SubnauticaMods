@@ -1,4 +1,5 @@
 ﻿using Common;
+using Common.Crafting;
 using Common.Configuration;
 
 namespace PrawnSuitJetUpgrade
@@ -11,7 +12,7 @@ namespace PrawnSuitJetUpgrade
 		{
 			HarmonyHelper.patchAll();
 
-			PrawnThrustersOptimizer.patch();
+			CraftHelper.patchAll();
 		}
 	}
 }

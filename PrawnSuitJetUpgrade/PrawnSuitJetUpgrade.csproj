@@ -7,7 +7,7 @@
     <ProjectGuid>{83C36088-5678-4A99-91D6-D5751E789482}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>PSJetUpgrade</RootNamespace>
+    <RootNamespace>PrawnSuitJetUpgrade</RootNamespace>
     <AssemblyName>PrawnSuitJetUpgrade</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -89,9 +89,7 @@
     <Content Include="assets\prawnthrustersoptimizer.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="mod.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <None Include="mod.json" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="..\Common\Common.projitems" Label="Shared" />

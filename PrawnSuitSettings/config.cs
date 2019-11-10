@@ -7,6 +7,8 @@ namespace PrawnSuitSettings
 	[AddToConsole("pss")]
 	class ModConfig: Config
 	{
+		public readonly bool addOptionsToMenu = true;
+
 		public class CollisionSelfDamageSettings
 		{
 			[NonSerialized]
@@ -19,6 +21,7 @@ namespace PrawnSuitSettings
 			public readonly float speedMinimumForDamage = 20f;
 			public readonly float mirroredSelfDamageFraction = 0.1f;
 		}
+		public readonly CollisionSelfDamageSettings collisionSelfDamage = new CollisionSelfDamageSettings();
 		
 		public class ArmsEnergyUsageSettings
 		{
@@ -37,15 +40,13 @@ namespace PrawnSuitSettings
 			public readonly float torpedoArm = 0f;
 			public readonly float clawArm = 0.1f;
 		}
-		
-		public readonly CollisionSelfDamageSettings collisionSelfDamage = new CollisionSelfDamageSettings();
 		public readonly ArmsEnergyUsageSettings armsEnergyUsage = new ArmsEnergyUsageSettings();
-
-		[Options.Field("Full access in moonpool")]
-		public readonly bool fullAccessToPrawnSuitWhileDocked = true;
 		
 		[Options.Field("Propulsion arm 'ready' animation")]
 		public readonly bool readyAnimationForPropulsionCannon = false;
+		
+		[Options.Field("Toggleable drill arm")]
+		public readonly bool toggleableDrillArm = true;
 		
 		[Options.Field("Auto pickup resources after drilling")]
 		[Field.CustomAction(typeof(DrillableResourcesPickup.SettingChanged))]

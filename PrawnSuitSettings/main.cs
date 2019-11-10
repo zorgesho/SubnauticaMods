@@ -11,7 +11,8 @@ namespace PrawnSuitSettings
 		{
 			HarmonyHelper.patchAll();
 
-			Options.init();
+			if (config.addOptionsToMenu)
+				Options.init();
 
 			if (config.armsEnergyUsage.enabled)
 				ArmsEnergyUsage.refresh();

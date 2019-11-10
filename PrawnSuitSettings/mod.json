@@ -1,9 +1,9 @@
 {
   "Id": "PrawnSuitSettings",
   "DisplayName": "PrawnSuitSettings",
-  "Author": "zorgesho",
+  "Author": "Modding Advent Calendar 2019",
   "Version": "1.0.0",
-  "Dependencies": [],
+  "Dependencies": ["SMLHelper"],
   "LoadBefore": [],
   "LoadAfter": [],
   "Enable": true,

@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Collections.Generic;
 
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Common
 {
@@ -18,6 +19,36 @@ namespace Common
 		{
 			if (!go.GetComponent<T>())
 				go.AddComponent<T>();
+		}
+
+		public static GameObject getChild(this GameObject go, string name)
+		{
+			return go.transform.Find(name)?.gameObject;
+		}
+
+		public static void destroyComponent<T>(this GameObject go, bool immediate = true) where T: Component
+		{
+			if (immediate)
+				Object.DestroyImmediate(go.GetComponent<T>());
+			else
+				Object.Destroy(go.GetComponent<T>());
+		}
+
+
+		public static void copyValuesFrom<CT, CF>(this CT cmpTo, CF cmpFrom, params string[] fields) where CT: Component where CF: Component
+		{
+			try
+			{
+				Type typeTo = cmpTo.GetType(), typeFrom = cmpFrom.GetType();
+				BindingFlags bf = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
+
+				foreach (var fieldName in fields)
+					typeTo.GetField(fieldName, bf).SetValue(cmpTo, typeFrom.GetField(fieldName, bf).GetValue(cmpFrom), bf, null, null);
+			}
+			catch (Exception e)
+			{
+				Log.msg(e);
+			}
 		}
 	}
 

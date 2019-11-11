@@ -12,9 +12,9 @@ namespace Common.Crafting
 		protected CraftableObject(): this(new System.Diagnostics.StackTrace().GetFrame(1).GetMethod().ReflectedType.Name) {}
 		protected CraftableObject(string classID): base(classID, classID + "Prefab") {}
 		
+		public abstract void patch();
 		protected abstract TechData getTechData();
 		protected abstract GameObject getGameObject();
-		public abstract void patch();
 
 		public override GameObject GetGameObject()
 		{
@@ -24,53 +24,6 @@ namespace Common.Crafting
 			return prefab;
 		}
 
-
-		protected void addToCraftingNode(CraftTree.Type craftTree, string craftPath)
-		{
-			CraftTreeHandler.AddCraftingNode(craftTree, TechType, craftPath.Split('/'));
-		}
-
-
-		protected void setPDAGroup(TechGroup group, TechCategory category)
-		{
-			CraftDataHandler.AddToGroup(group, category, TechType);
-
-			if (group >= TechGroup.BasePieces && group <= TechGroup.Miscellaneous) // little hack
-				CraftDataHandler.AddBuildable(TechType);
-		}
-
-
-		protected void setEquipmentType(EquipmentType equipmentType, QuickSlotType quickSlotType = QuickSlotType.None)
-		{
-			CraftDataHandler.SetEquipmentType(TechType, equipmentType);
-			
-			if (quickSlotType != QuickSlotType.None)
-				CraftDataHandler.SetQuickSlotType(TechType, quickSlotType);
-		}
-
-
-		protected void setBackgroundType(CraftData.BackgroundType backgroundType)
-		{
-			CraftDataHandler.SetBackgroundType(TechType, backgroundType);
-		}
-		
-		protected void unlockOnStart()
-		{
-			KnownTechHandler.UnlockOnStart(TechType);
-		}
-
-		protected void setTechTypeForUnlock(TechType techType, string message = null)
-		{
-			if (message == null)
-				message = "NotificationBlueprintUnlocked";
-			
-			KnownTechHandler.SetAnalysisTechEntry(techType, new TechType[1] { TechType }, message);
-		}
-
-		//protected void setAllTechTypesForUnlock(TechType t1, TechType t2)
-		//{
-		//	UnlockTechHelper.setTechTypesForUnlock(UnlockTechHelper.UnlockType.All, TechType, new TechType[] { t1, t2 });
-		//}
 
 		public TechType register(string friendlyName, string description, Atlas.Sprite sprite = null)
 		{
@@ -84,5 +37,47 @@ namespace Common.Crafting
 
 			return TechType;
 		}
+
+		
+		protected void setPDAGroup(TechGroup group, TechCategory category)
+		{
+			CraftDataHandler.AddToGroup(group, category, TechType);
+
+			if (group >= TechGroup.BasePieces && group <= TechGroup.Miscellaneous) // little hack
+				CraftDataHandler.AddBuildable(TechType);
+		}
+
+		
+		protected void setEquipmentType(EquipmentType equipmentType, QuickSlotType quickSlotType = QuickSlotType.None)
+		{
+			CraftDataHandler.SetEquipmentType(TechType, equipmentType);
+			
+			if (quickSlotType != QuickSlotType.None)
+				CraftDataHandler.SetQuickSlotType(TechType, quickSlotType);
+		}
+
+
+		protected void setTechTypeForUnlock(TechType techType, string message = null)
+		{
+			if (message == null)
+				message = "NotificationBlueprintUnlocked";
+			
+			KnownTechHandler.SetAnalysisTechEntry(techType, new TechType[1] { TechType }, message);
+		}
+
+		//protected void setAllTechTypesForUnlock(TechType t1, TechType t2)
+		//{
+		//	UnlockTechHelper.setTechTypesForUnlock(UnlockTechHelper.UnlockType.All, TechType, new TechType[] { t1, t2 });
+		//}
+		
+		protected void addToCraftingNode(CraftTree.Type craftTree, string craftPath) => CraftTreeHandler.AddCraftingNode(craftTree, TechType, craftPath.Split('/'));
+
+		protected void setBackgroundType(CraftData.BackgroundType backgroundType) => CraftDataHandler.SetBackgroundType(TechType, backgroundType);
+		
+		protected void setItemSize(int width, int height) => CraftDataHandler.SetItemSize(TechType, width, height);
+		
+		protected void setCraftingTime(float time) => CraftDataHandler.SetCraftingTime(TechType, time);
+		
+		protected void unlockOnStart() => KnownTechHandler.UnlockOnStart(TechType);
 	}
 }

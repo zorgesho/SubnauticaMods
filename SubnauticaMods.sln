@@ -48,6 +48,8 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Common.AssetsHelper", "Comm
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrawnSuitSonarUpgrade", "PrawnSuitSonarUpgrade\PrawnSuitSonarUpgrade.csproj", "{F93D86EE-3055-407B-8AF2-5F2A06319AF8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TerraformerBuilder", "TerraformerBuilder\TerraformerBuilder.csproj", "{2EF87EAC-0967-4C91-B79D-B52FC6F32739}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Common\Common.Config.Options\Common.Config.Options.projitems*{0610f2c1-4b75-45f9-b517-9d747e3edd41}*SharedItemsImports = 13
@@ -55,6 +57,10 @@ Global
 		Common\Common.Config\Common.Config.projitems*{2518edf1-782e-4faa-b93d-4f9991962144}*SharedItemsImports = 4
 		Common\Common.CraftHelper\Common.CraftHelper.projitems*{2518edf1-782e-4faa-b93d-4f9991962144}*SharedItemsImports = 4
 		Common\Common.projitems*{2518edf1-782e-4faa-b93d-4f9991962144}*SharedItemsImports = 4
+		Common\Common.AssetsHelper\Common.AssetsHelper.projitems*{2ef87eac-0967-4c91-b79d-b52fc6f32739}*SharedItemsImports = 4
+		Common\Common.Config\Common.Config.projitems*{2ef87eac-0967-4c91-b79d-b52fc6f32739}*SharedItemsImports = 4
+		Common\Common.CraftHelper\Common.CraftHelper.projitems*{2ef87eac-0967-4c91-b79d-b52fc6f32739}*SharedItemsImports = 4
+		Common\Common.projitems*{2ef87eac-0967-4c91-b79d-b52fc6f32739}*SharedItemsImports = 4
 		Common\Common.GameSerialization\Common.GameSerialization.projitems*{37c6e8c9-4864-415a-9561-161035212eba}*SharedItemsImports = 13
 		Common\Common.Config\Common.Config.projitems*{3bd3ab93-7001-4322-a0d8-b9de42ed38aa}*SharedItemsImports = 4
 		Common\Common.projitems*{3bd3ab93-7001-4322-a0d8-b9de42ed38aa}*SharedItemsImports = 4
@@ -142,6 +148,12 @@ Global
 		{F93D86EE-3055-407B-8AF2-5F2A06319AF8}.Publish|Any CPU.Build.0 = Publish|Any CPU
 		{F93D86EE-3055-407B-8AF2-5F2A06319AF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F93D86EE-3055-407B-8AF2-5F2A06319AF8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2EF87EAC-0967-4C91-B79D-B52FC6F32739}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2EF87EAC-0967-4C91-B79D-B52FC6F32739}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2EF87EAC-0967-4C91-B79D-B52FC6F32739}.Publish|Any CPU.ActiveCfg = Publish|Any CPU
+		{2EF87EAC-0967-4C91-B79D-B52FC6F32739}.Publish|Any CPU.Build.0 = Publish|Any CPU
+		{2EF87EAC-0967-4C91-B79D-B52FC6F32739}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2EF87EAC-0967-4C91-B79D-B52FC6F32739}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -25,7 +25,11 @@ namespace Common.Configuration
 			
 			readonly string cfgNamespace = ""; // optional namespace for use in console in case of duplicate names
 
-			public AddToConsoleAttribute(string _cfgNamespace = null) => cfgNamespace = _cfgNamespace + ".";
+			public AddToConsoleAttribute(string _cfgNamespace = null)
+			{
+				if (_cfgNamespace != null && _cfgNamespace != "")
+					cfgNamespace = _cfgNamespace + ".";
+			}
 
 			public void process(object config)
 			{

@@ -1,15 +1,13 @@
 ﻿using UnityEngine;
 
+using Common;
 using Common.GameSerialization;
 
 namespace GravTrapImproved
 {
 	class GravTrapObjectsType: MonoBehaviour, IProtoEventListener
 	{
-		class SaveData
-		{
-			public ObjectsType trapObjType;
-		}
+		class SaveData { public ObjectsType trapObjType; }
 
 		static readonly int[] techIndex = new int[] {0, 26, 82, 122}; // indexes in GravSphere.allowedTechTypes[]
 
@@ -35,6 +33,10 @@ namespace GravTrapImproved
 		}
 		ObjectsType objType = ObjectsType.All;
 
+		public void OnProtoDeserialize(ProtobufSerializer serializer) => objType = SaveLoad.load<SaveData>(id)?.trapObjType ?? 0;
+		
+		public void OnProtoSerialize(ProtobufSerializer serializer) => SaveLoad.save(id, new SaveData { trapObjType = objType });
+
 		// we may add this component while gameobject is inactive (while in inventory) and Awake for it is not calling, so we need init it that way
 		public static GravTrapObjectsType getFrom(GameObject go)
 		{
@@ -48,12 +50,9 @@ namespace GravTrapImproved
 			return cmp;
 		}
 		
-		public void Awake()
-		{
-			init();
-		}
+		void Awake() => init();
 		
-		public void init()
+		void init()
 		{
 			if (!inited)
 			{
@@ -62,18 +61,6 @@ namespace GravTrapImproved
 				OnProtoDeserialize(null);
 			}
 		}
-
-		public void OnProtoDeserialize(ProtobufSerializer serializer)
-		{
-			SaveData saveData = SaveLoad.load<SaveData>(id);
-			objType = saveData?.trapObjType ?? 0;
-		}
-		
-		public void OnProtoSerialize(ProtobufSerializer serializer)
-		{
-			SaveLoad.save(id, new SaveData { trapObjType = objType });
-		}
-
 
 		public void handleAttracted(Rigidbody r)
 		{
@@ -99,9 +86,12 @@ namespace GravTrapImproved
 
 		public bool isValidTarget(GameObject obj)
 		{
+			if (obj.GetComponent<Pickupable>()?.attached ?? false)
+				return false;
+
 			if (obj.GetComponentInParent<SinkingGroundChunk>() || obj.name.Contains("TreaderShale"))
 				return (objType == ObjectsType.All || objType == ObjectsType.Resources);
-		
+
 			TechType techType = CraftData.GetTechType(obj);
 
 			if (techType == TechType.Crash)
@@ -109,20 +99,11 @@ namespace GravTrapImproved
 			
 			if (techType == TechType.CrashPowder)
 				return false;
-			
-			Pickupable component = obj.GetComponent<Pickupable>();
 
-			if (!component || !component.attached)
-			{
-				int begin = (objType == ObjectsType.All)? 0: techIndex[(int)objType - 1];
-				int end = (objType == ObjectsType.All)? Gravsphere.allowedTechTypes.Length: techIndex[(int)objType];
-		
-				for (int i = begin; i < end; ++i)
-					if (Gravsphere.allowedTechTypes[i] == techType)
-						return true;
-			}
-		
-			return false;
+			int begin = (objType == ObjectsType.All)? 0: techIndex[(int)objType - 1];
+			int end = (objType == ObjectsType.All)? Gravsphere.allowedTechTypes.Length: techIndex[(int)objType];
+
+			return 0 <= Gravsphere.allowedTechTypes.findIndex(begin, end, t => t == techType);
 		}
 	}
 }

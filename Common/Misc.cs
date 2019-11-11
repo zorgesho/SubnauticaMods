@@ -48,6 +48,11 @@ namespace Common
 				array[i] = new T();
 			return array;
 		}
+		
+		public static int findIndex<T>(this T[] array, int beginIndex, int endIndex, Predicate<T> predicate)
+		{
+			return Array.FindIndex(array, beginIndex, endIndex - beginIndex, predicate);
+		}
 	}
 
 

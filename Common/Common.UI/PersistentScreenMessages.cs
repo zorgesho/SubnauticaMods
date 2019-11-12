@@ -9,10 +9,7 @@ namespace Common
 	{
 		// messages with the same prefix will stay in the one message slot
 		[Conditional("TRACE")]
-		public static void onScreen(this string s, string prefix)
-		{
-			ErrorMessage.AddDebug($"[{prefix}] {s}");
-		}
+		public static void onScreen(this string s, string prefix) => ErrorMessage.AddDebug($"[{prefix}] {s}");
 	}
 
 
@@ -47,7 +44,7 @@ namespace Common
 
 						if (msg != null)
 						{
-							msg.timeToDelete = UnityEngine.Time.time + __instance.fadeTime + __instance.fadeDelay;
+							msg.timeEnd = UnityEngine.Time.time + __instance.timeFadeOut + __instance.timeDelay;
 							msg.entry.text = messageText;
 
 							return false;

@@ -1,4 +1,6 @@
 ﻿//#define DBG_CPOINTS
+using System;
+using System.Collections.Generic;
 
 using UnityEngine;
 using Common;
@@ -44,8 +46,8 @@ namespace TerraformerBuilder
 					constructionTime = 0f;
 					return;
 				}
-				
-				constructionInterval = Random.Range(pointSwitchTimeMin, pointSwitchTimeMax);
+
+				constructionInterval = UnityEngine.Random.Range(pointSwitchTimeMin, pointSwitchTimeMax);
 				constructionPoint = constructable.GetRandomConstructionPoint();
 				constructionTime %= constructionInterval;
 #if DBG_CPOINTS
@@ -121,15 +123,67 @@ namespace TerraformerBuilder
 			}
 		}
 
+		static class AnimationHelper
+		{
+			public enum Anim
+			{
+				terF_idle,
+				terF_panels_up,
+				terF_panels_down,
+				terF_use_open_panel_start,
+				terF_use_open_panel_end,
+				terF_use_open_panel_loop,
+			};
+
+			struct Info
+			{
+				public int hash;
+				public float speed;
+
+				public Info(float _speed) { hash = 0; speed = _speed; }
+			}
+
+			static readonly Info[] animInfo = new Info[]
+			{
+				new Info(1f),	// terF_idle
+				new Info(3f),	// terF_panels_up
+				new Info(3f),	// terF_panels_down
+				new Info(1f),	// terF_use_open_panel_start
+				new Info(1f),	// terF_use_open_panel_end
+				new Info(0.5f)	// terF_use_open_panel_loop
+			};
+		
+			static Dictionary<int, float> animSpeeds = null;
+
+			public static int   getAnimHash(Anim anim) => animInfo[(int)anim].hash;
+			public static float getAnimSpeed(int hash) => animSpeeds.TryGetValue(hash, out float speed)? speed: 1.0f;
+
+			public static void init()
+			{
+				if (animSpeeds != null)
+					return;
+
+				animSpeeds =  new Dictionary<int, float>();
+
+				foreach (Anim anim in Enum.GetValues(typeof(Anim)))
+				{
+					int hash = Animator.StringToHash("Base Layer." + anim.ToString());
+				
+					animSpeeds[hash] = animInfo[(int)anim].speed;
+					animInfo[(int)anim].hash = hash;
+				}
+			}
+		}
+
 		const int beamsCount = 3;
-		const int constructionPointsCount = 3;
+		const int pointsCount = 3;
 
 		const float pointSwitchTimeMin = 0.5f;
 		const float pointSwitchTimeMax = 1.5f;
 		const float portRotationSpeed  = 10f;
-		
-		readonly ConstructionPoint[] cpoints = new ConstructionPoint[constructionPointsCount].init();
-		readonly ConstructionBeam[]  cbeams  = new ConstructionBeam[beamsCount];
+
+		readonly ConstructionPoint[] cpoints = new ConstructionPoint[pointsCount].init();
+		readonly ConstructionBeam[] cbeams = new ConstructionBeam[beamsCount];
 
 		Animator animator;
 		BuilderTool builderTool;
@@ -142,11 +196,12 @@ namespace TerraformerBuilder
 				return;
 
 			inited = true;
+			AnimationHelper.init();
 
 			//cbeams[0] = new ConstructionBeam(builderTool.beamLeft, builderTool.nozzleLeft);
 			//cbeams[1] = new ConstructionBeam(builderTool.beamRight, builderTool.nozzleRight);
 
-			GameObject beamsRoot = gameObject.getChild("terraformer_anim/Terraformer_Export_Skele/root_jnt/body_jnt/head_jnt");	
+			GameObject beamsRoot = gameObject.getChild("terraformer_anim/Terraformer_Export_Skele/root_jnt/body_jnt/head_jnt");
 			GameObject beamPrefab = CraftData.GetPrefabForTechType(TechType.Builder).getChild("builder/builder_FP/Root/r_nozzle_root/r_nozzle/R_laser/beamRight");
 
 			cbeams[0] = new ConstructionBeam(beamsRoot, beamPrefab, "Left", new Vector3(-0.1813f, -0.007f, 0.06f));
@@ -156,7 +211,7 @@ namespace TerraformerBuilder
 
 			setBeamsActive(false);
 		}
-		
+
 		void Awake()
 		{
 			builderTool = gameObject.GetComponent<BuilderTool>();
@@ -173,7 +228,7 @@ namespace TerraformerBuilder
 		{
 			cbeams.ForEach(cbeam => cbeam.setActive(state));
 		}
-		
+
 		void setAnimationEnabled(bool state)
 		{
 			if (animator && animator.isActiveAndEnabled)
@@ -182,49 +237,16 @@ namespace TerraformerBuilder
 				SafeAnimator.SetBool(animator, "terraformer_mode_on", state);
 			}
 		}
-
-		void updateAnimationSpeed()
-		{
-			string anim = animator.GetCurrentAnimatorClipInfo(0)[0].clip.name;
-
-			//int num = Animator.StringToHash(layer + "." + state);
-			ErrorMessage.AddDebug("isanim " + (animator.GetCurrentAnimatorStateInfo(0).fullPathHash == Animator.StringToHash("Base Layer" + "." + "terF_idle")));
-		
-			if (anim == "terF_idle")
-			{
-				animator.speed = 1f;
-				ErrorMessage.AddDebug("speed " + animator.speed);
-			}
-			else if (anim == "terF_panels_up" || anim == "terF_panels_down")
-			{
-				animator.speed = 3f;
-				ErrorMessage.AddDebug("speed " + animator.speed);
-			}
-			else if (anim == "terF_use_open_panel_start" || anim == "terF_use_open_panel_end")
-			{
-				animator.speed = 1f;
-			}
-			else if (anim == "terF_use_open_panel_loop")
-			{
-				animator.speed = 1;//0.5f;
-				ErrorMessage.AddDebug("speed " + animator.speed);
-			}
-			else
-			{
-				animator.speed = 1f;
-				ErrorMessage.AddDebug("speed " + animator.speed);
-			}
-		}
 		
 		public void updateBeams()
 		{
-			updateAnimationSpeed();
+			int animHash = animator.GetCurrentAnimatorStateInfo(0).fullPathHash;
+			animator.speed = AnimationHelper.getAnimSpeed(animHash);								$"anim: {animator.GetCurrentAnimatorClipInfo(0)[0].clip.name}\tspeed: {animator.speed}".onScreen("anim info");
 			
-			bool flag = builderTool.constructable != null;
-
-			if (builderTool.isConstructing != flag)
+			bool isConstructing = builderTool.constructable != null;
+			if (builderTool.isConstructing != isConstructing)
 			{
-				builderTool.isConstructing = flag;
+				builderTool.isConstructing = isConstructing;
 
 				foreach (var cpoint in cpoints)
 					cpoint.reset(builderTool.constructable);
@@ -233,18 +255,16 @@ namespace TerraformerBuilder
 			setBeamsActive(builderTool.isConstructing);
 			setAnimationEnabled(builderTool.isConstructing);
 
-			string anim = animator.GetCurrentAnimatorClipInfo(0)[0].clip.name;
-			bool aa = (anim == "terF_use_open_panel_loop");
-			
 			if (builderTool.isConstructing)
 			{
 				foreach (var cpoint in cpoints)
 					cpoint.update(Time.deltaTime, builderTool.constructable);
+				
+				bool isRotating = (animHash == AnimationHelper.getAnimHash(AnimationHelper.Anim.terF_use_open_panel_loop));
+				cbeams[0].setActive(isRotating);
+				cbeams[1].setActive(isRotating);
 
-				cbeams[0].setActive(aa);
-				cbeams[1].setActive(aa);
-
-				for (int i = 0; i < beamsCount; ++i)
+				for (int i = 0; i < beamsCount; i++)
 					cbeams[i].update(Time.deltaTime, cpoints[i]);
 			}
 
@@ -253,7 +273,7 @@ namespace TerraformerBuilder
 			//else
 			//	builderTool.buildSound.Stop();
 
-			builderTool.constructable = null;
+			builderTool.constructable = null; // ???????
 		}
 	}
 }

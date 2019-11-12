@@ -1,0 +1,5 @@
+﻿using Harmony;
+
+namespace DayNightSpeed
+{
+}

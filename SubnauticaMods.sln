@@ -50,6 +50,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrawnSuitSonarUpgrade", "Pr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TerraformerBuilder", "TerraformerBuilder\TerraformerBuilder.csproj", "{2EF87EAC-0967-4C91-B79D-B52FC6F32739}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DayNightSpeed", "DayNightSpeed\DayNightSpeed.csproj", "{655A27D7-F0E2-480C-B875-96312B41EF0F}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Common\Common.Config.Options\Common.Config.Options.projitems*{0610f2c1-4b75-45f9-b517-9d747e3edd41}*SharedItemsImports = 13
@@ -69,6 +71,11 @@ Global
 		Common\Common.Config\Common.Config.projitems*{4ef61a6d-0c6e-48a9-8625-58d196fd5386}*SharedItemsImports = 4
 		Common\Common.GameSerialization\Common.GameSerialization.projitems*{4ef61a6d-0c6e-48a9-8625-58d196fd5386}*SharedItemsImports = 4
 		Common\Common.projitems*{4ef61a6d-0c6e-48a9-8625-58d196fd5386}*SharedItemsImports = 4
+		Common\Common.Config.Options\Common.Config.Options.projitems*{655a27d7-f0e2-480c-b875-96312b41ef0f}*SharedItemsImports = 4
+		Common\Common.Config\Common.Config.projitems*{655a27d7-f0e2-480c-b875-96312b41ef0f}*SharedItemsImports = 4
+		Common\Common.GameSerialization\Common.GameSerialization.projitems*{655a27d7-f0e2-480c-b875-96312b41ef0f}*SharedItemsImports = 4
+		Common\Common.projitems*{655a27d7-f0e2-480c-b875-96312b41ef0f}*SharedItemsImports = 4
+		Common\Common.UI\Common.UI.projitems*{655a27d7-f0e2-480c-b875-96312b41ef0f}*SharedItemsImports = 4
 		Common\Common.AssetsHelper\Common.AssetsHelper.projitems*{7575770c-9962-4bd2-bbbe-e440b9437c03}*SharedItemsImports = 13
 		Common\Common.AssetsHelper\Common.AssetsHelper.projitems*{83c36088-5678-4a99-91d6-d5751e789482}*SharedItemsImports = 4
 		Common\Common.Config\Common.Config.projitems*{83c36088-5678-4a99-91d6-d5751e789482}*SharedItemsImports = 4
@@ -155,6 +162,12 @@ Global
 		{2EF87EAC-0967-4C91-B79D-B52FC6F32739}.Publish|Any CPU.Build.0 = Publish|Any CPU
 		{2EF87EAC-0967-4C91-B79D-B52FC6F32739}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2EF87EAC-0967-4C91-B79D-B52FC6F32739}.Release|Any CPU.Build.0 = Release|Any CPU
+		{655A27D7-F0E2-480C-B875-96312B41EF0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{655A27D7-F0E2-480C-B875-96312B41EF0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{655A27D7-F0E2-480C-B875-96312B41EF0F}.Publish|Any CPU.ActiveCfg = Publish|Any CPU
+		{655A27D7-F0E2-480C-B875-96312B41EF0F}.Publish|Any CPU.Build.0 = Publish|Any CPU
+		{655A27D7-F0E2-480C-B875-96312B41EF0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{655A27D7-F0E2-480C-B875-96312B41EF0F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

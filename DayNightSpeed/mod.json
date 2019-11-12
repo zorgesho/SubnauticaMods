@@ -1,0 +1,13 @@
+{
+  "Id": "DayNightSpeed",
+  "DisplayName": "DayNightSpeed",
+  "Author": "zorgesho",
+  "Version": "1.0.0",
+  "Dependencies": ["SMLHelper"],
+  "LoadBefore": [],
+  "LoadAfter": [],
+  "Enable": true,
+  "Game": "Subnautica",
+  "AssemblyName": "DayNightSpeed.dll",
+  "EntryMethod": "DayNightSpeed.Main.patch"
+}

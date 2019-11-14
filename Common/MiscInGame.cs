@@ -48,10 +48,7 @@ namespace Common
 
 		public static GameObject createGameObject<T>(string name = "ConsoleCommands") where T: PersistentConsoleCommands
 		{
-			GameObject obj = new GameObject(name, typeof(T), typeof(SceneCleanerPreserve));
-			DontDestroyOnLoad(obj);
-
-			return obj;
+			return UnityHelper.createPersistentGameObject<T>(name);
 		}
 
 		void init()

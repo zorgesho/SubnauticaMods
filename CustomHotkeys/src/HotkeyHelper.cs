@@ -5,8 +5,6 @@ using UnityEngine;
 
 using Common;
 
-using Object = UnityEngine.Object;
-
 namespace CustomHotkeys
 {
 	static class HotkeyHelper
@@ -47,10 +45,7 @@ namespace CustomHotkeys
 		public static void init()
 		{
 			if (gameObject == null)
-			{
-				gameObject = new GameObject("CustomHotkeys", typeof(Hotkeys), typeof(SceneCleanerPreserve));
-				Object.DontDestroyOnLoad(gameObject);
-			}
+				gameObject = UnityHelper.createPersistentGameObject<Hotkeys>("CustomHotkeys");
 		}
 	}
 }

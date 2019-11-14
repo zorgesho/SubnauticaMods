@@ -53,6 +53,18 @@ namespace Common
 	}
 
 
+	static class UnityHelper
+	{
+		public static GameObject createPersistentGameObject<T>(string name) where T: Component
+		{
+			GameObject obj = new GameObject(name, typeof(SceneCleanerPreserve), typeof(T));
+			Object.DontDestroyOnLoad(obj);
+
+			return obj;
+		}
+	}
+
+
 	static class InputHelper
 	{
 		public static float getMouseWheelValue() => Input.GetAxis("Mouse ScrollWheel");

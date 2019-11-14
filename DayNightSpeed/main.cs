@@ -1,4 +1,5 @@
-﻿using Common;
+﻿using System;
+using Common;
 using Common.Configuration;
 
 namespace DayNightSpeed
@@ -10,6 +11,11 @@ namespace DayNightSpeed
 		public static void patch()
 		{
 			HarmonyHelper.patchAll();
+
+			Options.init();
+
+			DayNightSpeedWatcher.init();
+			DayNightCyclePatches.init();
 		}
 	}
 }

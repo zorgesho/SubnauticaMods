@@ -1,0 +1,13 @@
+{
+  "Id": "FloatingCargoCrate",
+  "DisplayName": "FloatingCargoCrate",
+  "Author": "zorgesho",
+  "Version": "1.1.1",
+  "Dependencies": ["SMLHelper"],
+  "LoadBefore": [],
+  "LoadAfter": [],
+  "Enable": true,
+  "Game": "Subnautica",
+  "AssemblyName": "FloatingCargoCrate.dll",
+  "EntryMethod": "FloatingCargoCrate.Main.Patch"
+}

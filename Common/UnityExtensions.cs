@@ -15,16 +15,28 @@ namespace Common
 			return go.GetComponent<T>() ?? go.AddComponent<T>();
 		}
 
+
 		public static void addComponentIfNeeded<T>(this GameObject go) where T: Component
 		{
 			if (!go.GetComponent<T>())
 				go.AddComponent<T>();
 		}
 
+
 		public static GameObject getChild(this GameObject go, string name)
 		{
 			return go.transform.Find(name)?.gameObject;
 		}
+
+
+		public static void destroyChild(this GameObject go, string name, bool immediate = true)
+		{
+			if (immediate)
+				Object.DestroyImmediate(go.getChild(name));
+			else
+				Object.Destroy(go.getChild(name));
+		}
+
 
 		public static void destroyComponent<T>(this GameObject go, bool immediate = true) where T: Component
 		{
@@ -32,6 +44,15 @@ namespace Common
 				Object.DestroyImmediate(go.GetComponent<T>());
 			else
 				Object.Destroy(go.GetComponent<T>());
+		}
+
+
+		public static void destroyComponentInChildren<T>(this GameObject go, bool immediate = true) where T: Component
+		{
+			if (immediate)
+				Object.DestroyImmediate(go.GetComponentInChildren<T>());
+			else
+				Object.Destroy(go.GetComponentInChildren<T>());
 		}
 
 

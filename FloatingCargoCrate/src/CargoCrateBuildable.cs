@@ -1,75 +1,45 @@
 ﻿using System.Collections.Generic;
 
 using UnityEngine;
-
-using SMLHelper.V2.Assets;
 using SMLHelper.V2.Crafting;
 
 using Common;
+using Common.Crafting;
 
 namespace FloatingCargoCrate
 {
-	public class FloatingCargoCrate: Buildable
+	class FloatingCargoCrate: CraftableObject
 	{
-		internal static Buildable PatchMe()
+		public static new TechType TechType { get; private set; } = 0;
+
+		protected override TechData getTechData() => new TechData() { craftAmount = 1, Ingredients = new List<Ingredient>
 		{
-			Singleton.Patch();
-			return Singleton;
+			new Ingredient(TechType.Titanium, Main.config.cheapBlueprint? 3: 6),
+			new Ingredient(TechType.Silicone, Main.config.cheapBlueprint? 1: 2),
+			new Ingredient(TechType.AirBladder, Main.config.cheapBlueprint? 1: 2)
+		}};
+
+		public override void patch()
+		{
+			TechType = register("Floating cargo crate", "Big cargo crate that floats and maintains position in the water.", AssetsHelper.loadSprite(ClassID));
+
+			setPDAGroup(TechGroup.ExteriorModules, TechCategory.ExteriorOther);
+			setTechTypeForUnlock(TechType.AirBladder);
 		}
 
-		internal static TechType TechTypeID => Singleton.TechType;
-
-		private static FloatingCargoCrate Singleton { get; } = new FloatingCargoCrate();
-		
-		public override TechGroup GroupForPDA { get; } = TechGroup.ExteriorModules;
-		public override TechCategory CategoryForPDA { get; } = TechCategory.ExteriorOther;
-		public override string AssetsFolder { get; } = "FloatingCargoCrate/Assets";
-		public override TechType RequiredForUnlock { get; } = TechType.AirBladder;
-
-		public FloatingCargoCrate():	base(classId: "FloatingCargoCrate",
-										friendlyName: "Floating cargo crate",
-										description: "Big cargo crate that floats and maintains position in the water.")
+		protected override GameObject getGameObject()
 		{
-		}
-	
-		protected override TechData GetBlueprintRecipe()
-		{
-			if (Main.config.cheapBlueprint)
-				return new TechData()
-				{
-					Ingredients = new List<Ingredient>
-					{
-						new Ingredient(TechType.Titanium, 3),
-						new Ingredient(TechType.Silicone, 1),
-						new Ingredient(TechType.AirBladder, 1)
-					}
-				};
-			else
-				return new TechData()
-				{
-					Ingredients = new List<Ingredient>
-					{
-						new Ingredient(TechType.Titanium, 6),
-						new Ingredient(TechType.Silicone, 2),
-						new Ingredient(TechType.AirBladder, 2),
-					}
-				};
-		}
-
-		
-		public override GameObject GetGameObject()
-		{
-			var prefab = GameObject.Instantiate(Resources.Load<GameObject>("WorldEntities/tools/smallstorage"));
+			var prefab = Object.Instantiate(Resources.Load<GameObject>("WorldEntities/tools/smallstorage"));
 			GameObject model = prefab.FindChild("3rd_person_model");
 
 			string crateModelName = "Starship_cargo" + ((Main.config.cargoModelType == 2)? "_02": "");
 			var prefabCargo = Resources.Load<GameObject>("WorldEntities/Doodads/Debris/Wrecks/Decoration/" + crateModelName);
-			GameObject modelCargo = GameObject.Instantiate(prefabCargo.FindChild(crateModelName));
+			GameObject modelCargo = Object.Instantiate(prefabCargo.FindChild(crateModelName));
 		
 			modelCargo.transform.parent = model.transform;
 			modelCargo.transform.localScale *= 2.1f;
 
-			prefab.GetComponent<PrefabIdentifier>().ClassId = this.ClassID;
+			prefab.GetComponent<PrefabIdentifier>().ClassId = ClassID;
 
 			Animator anim = model.GetComponentInChildren<Animator>();
 			anim.enabled = false;
@@ -99,8 +69,8 @@ namespace FloatingCargoCrate
 			storageContainer.height = Main.config.storageHeight;
 			storageContainer.preventDeconstructionIfNotEmpty = true;
 			
-			prefab.GetComponent<TechTag>().type = FloatingCargoCrate.TechTypeID;
-			
+
+			prefab.GetComponent<TechTag>().type = TechType;
 		
 			prefab.destroyChild("LidLabel");
 			prefab.destroyChild("1st_person_model");
@@ -108,7 +78,6 @@ namespace FloatingCargoCrate
 			model.destroyChild("floating_storage_cube_tp/Floating_storage_container_geo");
 			model.destroyChild("floating_storage_cube_tp/Floating_storage_lid_geo");
 			
-
 			var storagePillow = model.getChild("floating_storage_cube_tp");
 			storagePillow.transform.localPosition = new Vector3(0f, 1.155f, 0.18f);
 			storagePillow.transform.localScale = new Vector3(3.4f, 7.0f, 8.1f);
@@ -127,22 +96,10 @@ namespace FloatingCargoCrate
 		
 			prefab.GetComponent<SkyApplier>().renderers = new Renderer[] { model.GetComponentInChildren<Renderer>(), modelCargo.GetComponent<Renderer>() };
 
-			Constructable constructible = prefab.AddComponent<Constructable>();
 
-			constructible.allowedInBase = false;
-			constructible.allowedInSub = false;
+			Constructable constructible = prefab.AddComponent<Constructable>().initDefault(model, TechType);
 			constructible.allowedOutside = true;
-			constructible.allowedOnCeiling = false;
-			constructible.allowedOnGround = false;
-			constructible.allowedOnWall = false;
-			constructible.allowedOnConstructables = false;
-			constructible.controlModelState = true;
-			constructible.rotationEnabled = true;
-			constructible.techType = this.TechType;
 			constructible.forceUpright = true;
-			constructible.model = model;
-
-			constructible.enabled = true;
 			
 			constructible.placeMaxDistance = 7f;
 			constructible.placeMinDistance = 5f;

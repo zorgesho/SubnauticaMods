@@ -1,42 +1,18 @@
-﻿using System;
-using System.IO;
-using System.Text;
-using System.Reflection;
-
-using UnityEngine;
-using Harmony;
-using Oculus.Newtonsoft.Json;
+﻿using Common;
+using Common.Crafting;
+using Common.Configuration;
 
 namespace FloatingCargoCrate
 {
 	public static class Main
 	{
-		public static Config config;
+		internal static ModConfig config = Config.tryLoad<ModConfig>();
 
-		public static void Patch()
+		public static void patch()
 		{
-			HarmonyInstance.Create("FloatingCargoCrate").PatchAll(Assembly.GetExecutingAssembly());
-
-			string configPath = Environment.CurrentDirectory + "\\QMods\\FloatingCargoCrate\\config.json";
-
-			if (File.Exists(configPath))
-			{
-				string configJson = File.ReadAllText(configPath);
-				config = JsonConvert.DeserializeObject<Config>(configJson);
-			}
-			else
-			{
-				config = new Config();
-				File.WriteAllText(configPath, JsonConvert.SerializeObject(config, Formatting.Indented));
-			}
-
-			config.storageWidth = Math.Min(8, config.storageWidth);
-			config.storageHeight = Math.Min(10, config.storageHeight);
-
-			FloatingCargoCrateControl.massEmpty = config.crateMassEmpty;
-			FloatingCargoCrateControl.massFull = config.crateMassFull;
-
-			FloatingCargoCrate.PatchMe();
+			HarmonyHelper.patchAll();
+			
+			CraftHelper.patchAll();
 		}
 	}
 }

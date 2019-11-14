@@ -1,15 +1,28 @@
-﻿namespace FloatingCargoCrate
+﻿using Common.Configuration;
+
+namespace FloatingCargoCrate
 {
-	[System.Serializable]
-	public class Config
+	class ModConfig: Config
 	{
-		public int cargoModelType = 1;
-		public int storageWidth = 8;
-		public int storageHeight = 8;
-		public float crateMass = 600.0f;
-		public bool cheapBlueprint = true;
-		public bool experimentalFeaturesOn = true;
-		public float crateMassEmpty = 400.0f;
-		public float crateMassFull = 1200.0f;
+		[Field.Bounds(1, 2)]
+		public readonly int cargoModelType = 1;
+
+		[Field.Bounds(1, 8)]
+		public readonly int storageWidth = 8;
+		
+		[Field.Bounds(1, 10)]
+		public readonly int storageHeight = 8;
+
+		[Field.Bounds(Min: 100f)]
+		public readonly float crateMass = 600.0f;
+
+		public readonly bool cheapBlueprint = true;
+		public readonly bool experimentalFeaturesOn = true;
+
+		[Field.Bounds(Min: 100f)]
+		public readonly float crateMassEmpty = 400.0f;
+		
+		[Field.Bounds(Min: 100f)]
+		public readonly float crateMassFull = 1200.0f;
 	}
 }

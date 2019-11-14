@@ -9,5 +9,5 @@
   "Enable": true,
   "Game": "Subnautica",
   "AssemblyName": "FloatingCargoCrate.dll",
-  "EntryMethod": "FloatingCargoCrate.Main.Patch"
+  "EntryMethod": "FloatingCargoCrate.Main.patch"
 }

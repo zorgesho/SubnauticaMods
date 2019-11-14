@@ -39,6 +39,31 @@ namespace Common
 	}
 
 
+	static class MiscInGameExtensions
+	{
+		public static Constructable initDefault(this Constructable c, GameObject model, TechType techType)
+		{
+			c.allowedInBase = false;
+			c.allowedInSub = false;
+			c.allowedOutside = false;
+			c.allowedOnWall = false;
+			c.allowedOnGround = false;
+			c.allowedOnCeiling = false;
+			c.allowedOnConstructables = false;
+
+			c.enabled = true;
+			c.rotationEnabled = true;
+			c.controlModelState = true;
+			c.deconstructionAllowed = true;
+			
+			c.model = model;
+			c.techType = techType;
+			
+			return c;
+		}
+	}
+
+
 	// base class for console commands which are exists between scenes
 	abstract class PersistentConsoleCommands: MonoBehaviour
 	{

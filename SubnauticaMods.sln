@@ -54,6 +54,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DayNightSpeed", "DayNightSp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloatingCargoCrate", "FloatingCargoCrate\FloatingCargoCrate.csproj", "{9E3D5F87-C19E-482B-AC15-7E56DEED70FA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VehicleCameraDrone", "VehicleCameraDrone\VehicleCameraDrone.csproj", "{83158211-2490-4CDC-86DD-D865E9394ED9}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Common\Common.Config.Options\Common.Config.Options.projitems*{0610f2c1-4b75-45f9-b517-9d747e3edd41}*SharedItemsImports = 13
@@ -79,6 +81,7 @@ Global
 		Common\Common.projitems*{655a27d7-f0e2-480c-b875-96312b41ef0f}*SharedItemsImports = 4
 		Common\Common.UI\Common.UI.projitems*{655a27d7-f0e2-480c-b875-96312b41ef0f}*SharedItemsImports = 4
 		Common\Common.AssetsHelper\Common.AssetsHelper.projitems*{7575770c-9962-4bd2-bbbe-e440b9437c03}*SharedItemsImports = 13
+		Common\Common.projitems*{83158211-2490-4cdc-86dd-d865e9394ed9}*SharedItemsImports = 4
 		Common\Common.AssetsHelper\Common.AssetsHelper.projitems*{83c36088-5678-4a99-91d6-d5751e789482}*SharedItemsImports = 4
 		Common\Common.Config\Common.Config.projitems*{83c36088-5678-4a99-91d6-d5751e789482}*SharedItemsImports = 4
 		Common\Common.CraftHelper\Common.CraftHelper.projitems*{83c36088-5678-4a99-91d6-d5751e789482}*SharedItemsImports = 4
@@ -181,6 +184,12 @@ Global
 		{9E3D5F87-C19E-482B-AC15-7E56DEED70FA}.Publish|Any CPU.Build.0 = Publish|Any CPU
 		{9E3D5F87-C19E-482B-AC15-7E56DEED70FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9E3D5F87-C19E-482B-AC15-7E56DEED70FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83158211-2490-4CDC-86DD-D865E9394ED9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83158211-2490-4CDC-86DD-D865E9394ED9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83158211-2490-4CDC-86DD-D865E9394ED9}.Publish|Any CPU.ActiveCfg = Publish|Any CPU
+		{83158211-2490-4CDC-86DD-D865E9394ED9}.Publish|Any CPU.Build.0 = Publish|Any CPU
+		{83158211-2490-4CDC-86DD-D865E9394ED9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83158211-2490-4CDC-86DD-D865E9394ED9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

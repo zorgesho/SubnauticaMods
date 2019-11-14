@@ -1,0 +1,13 @@
+{
+  "Id": "VehicleCameraDrone",
+  "DisplayName": "VehicleCameraDrone",
+  "Author": "zorgesho",
+  "Version": "1.0.0",
+  "Dependencies": [],
+  "LoadBefore": [],
+  "LoadAfter": [],
+  "Enable": true,
+  "Game": "Subnautica",
+  "AssemblyName": "VehicleCameraDrone.dll",
+  "EntryMethod": "VehicleCameraDrone.Main.patch"
+}

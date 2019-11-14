@@ -28,18 +28,6 @@ namespace Common
 		}
 
 		
-		// for using in transpilers
-		public static Instructions changeConstToConfigVar<T>(Instructions instructions, T val, string configVar)
-		{
-			FieldInfo varField = mainConfigField?.FieldType.GetField(configVar, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-
-			if (varField == null)
-				$"changeConstToConfigVar: varField for {configVar} is not found".logError();
-
-			return varField != null? changeConstToVar(instructions, val, mainConfigField, varField): null;
-		}
-		
-		
 		// dynamic patching/unpatching, for use with OptionalPatch attribute
 		public static void setPatchEnabled(bool val, Type type)
 		{
@@ -146,24 +134,40 @@ namespace Common
 			public static OpCode get<T>() => GetOpCode<T>.S.get();
 		}
 
-
-		static Instructions changeConstToVar<T>(Instructions instructions, T val, FieldInfo staticObject, FieldInfo objectField)
-		{																												"HarmonyHelper.changeConstToVar".logDbg();
+		public static Instructions changeConstToConfigVar<T>(Instructions instructions, T val, string configVar)
+		{
 			bool injected = false;
 
 			foreach (var instruction in instructions)
 			{
 				if (!injected && instruction.isLDC(val))
-				{																										"HarmonyHelper.changeConstToVar: injected".logDbg();
+				{																												"HarmonyHelper.changeConstToConfigVar: injected".logDbg();
 					injected = true;
-					yield return new CodeInstruction(OpCodes.Ldsfld, staticObject);
-					yield return new CodeInstruction(OpCodes.Ldfld, objectField);
+
+					foreach (var i in _codeForChangeConstToConfigVar(configVar))
+						yield return i;
 
 					continue;
 				}
-				
+
 				yield return instruction;
 			}
+		}
+
+		public static CodeInstruction _codeForMainConfig() => new CodeInstruction(OpCodes.Ldsfld, mainConfigField);
+
+		public static Instructions _codeForChangeConstToConfigVar(string configVar)
+		{
+			FieldInfo varField = mainConfigField?.FieldType.GetField(configVar, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+
+			if (varField == null)
+			{
+				$"changeConstToConfigVar: varField for {configVar} is not found".logError();
+				yield break;
+			}
+
+			yield return new CodeInstruction(OpCodes.Ldsfld, mainConfigField);
+			yield return new CodeInstruction(OpCodes.Ldfld, varField);
 		}
 
 		

@@ -58,9 +58,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VehicleCameraDrone", "Vehic
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeamothStorageSlots", "SeamothStorageSlots\SeamothStorageSlots.csproj", "{BFB9336C-F678-4AF1-8B10-0BDDCD3AEAC8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteTorpedoDetonator", "RemoteTorpedoDetonator\RemoteTorpedoDetonator.csproj", "{1C1E62E2-282E-48EE-BF91-54A1E0180B96}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Common\Common.Config.Options\Common.Config.Options.projitems*{0610f2c1-4b75-45f9-b517-9d747e3edd41}*SharedItemsImports = 13
+		Common\Common.AssetsHelper\Common.AssetsHelper.projitems*{1c1e62e2-282e-48ee-bf91-54a1e0180b96}*SharedItemsImports = 4
+		Common\Common.Config\Common.Config.projitems*{1c1e62e2-282e-48ee-bf91-54a1e0180b96}*SharedItemsImports = 4
+		Common\Common.CraftHelper\Common.CraftHelper.projitems*{1c1e62e2-282e-48ee-bf91-54a1e0180b96}*SharedItemsImports = 4
+		Common\Common.projitems*{1c1e62e2-282e-48ee-bf91-54a1e0180b96}*SharedItemsImports = 4
 		Common\Common.Config.Options\Common.Config.Options.projitems*{2518edf1-782e-4faa-b93d-4f9991962144}*SharedItemsImports = 4
 		Common\Common.Config\Common.Config.projitems*{2518edf1-782e-4faa-b93d-4f9991962144}*SharedItemsImports = 4
 		Common\Common.CraftHelper\Common.CraftHelper.projitems*{2518edf1-782e-4faa-b93d-4f9991962144}*SharedItemsImports = 4
@@ -199,6 +205,12 @@ Global
 		{BFB9336C-F678-4AF1-8B10-0BDDCD3AEAC8}.Publish|Any CPU.Build.0 = Publish|Any CPU
 		{BFB9336C-F678-4AF1-8B10-0BDDCD3AEAC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BFB9336C-F678-4AF1-8B10-0BDDCD3AEAC8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C1E62E2-282E-48EE-BF91-54A1E0180B96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C1E62E2-282E-48EE-BF91-54A1E0180B96}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C1E62E2-282E-48EE-BF91-54A1E0180B96}.Publish|Any CPU.ActiveCfg = Publish|Any CPU
+		{1C1E62E2-282E-48EE-BF91-54A1E0180B96}.Publish|Any CPU.Build.0 = Publish|Any CPU
+		{1C1E62E2-282E-48EE-BF91-54A1E0180B96}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C1E62E2-282E-48EE-BF91-54A1E0180B96}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -222,6 +234,7 @@ Global
 		{F93D86EE-3055-407B-8AF2-5F2A06319AF8} = {C49BC122-0A68-48A8-8EA3-737FB7553D8B}
 		{9E3D5F87-C19E-482B-AC15-7E56DEED70FA} = {C49BC122-0A68-48A8-8EA3-737FB7553D8B}
 		{BFB9336C-F678-4AF1-8B10-0BDDCD3AEAC8} = {C49BC122-0A68-48A8-8EA3-737FB7553D8B}
+		{1C1E62E2-282E-48EE-BF91-54A1E0180B96} = {C49BC122-0A68-48A8-8EA3-737FB7553D8B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0A745472-1C11-4AB7-B6C4-79A169E0FB35}

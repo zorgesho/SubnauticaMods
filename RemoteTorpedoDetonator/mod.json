@@ -1,0 +1,13 @@
+{
+  "Id": "RemoteTorpedoDetonator",
+  "DisplayName": "RemoteTorpedoDetonator",
+  "Author": "zorgesho",
+  "Version": "1.0.1",
+  "Dependencies": ["SMLHelper"],
+  "LoadBefore": [],
+  "LoadAfter": [],
+  "Enable": true,
+  "Game": "Subnautica",
+  "AssemblyName": "RemoteTorpedoDetonator.dll",
+  "EntryMethod": "RemoteTorpedoDetonator.Main.patch"
+}

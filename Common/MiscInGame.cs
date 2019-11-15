@@ -41,6 +41,9 @@ namespace Common
 
 	static class MiscInGameExtensions
 	{
+		// can't use vanilla GetVehicle in OnPlayerModeChange after 06.11 update :(
+		public static Vehicle getVehicle(this Player player) => player.GetComponentInParent<Vehicle>();
+		
 		public static Constructable initDefault(this Constructable c, GameObject model, TechType techType)
 		{
 			c.allowedInBase = false;

@@ -42,7 +42,7 @@ namespace MiscObjects
 					 "Nutrient block cooked from local ingridients. Less nutritious and more salty than original.",
 					 AssetsHelper.loadSprite(ClassID));
 
-			setPDAGroup(TechGroup.Survival, TechCategory.CookedFood);
+			addToGroup(TechGroup.Survival, TechCategory.CookedFood);
 			addToCraftingNode(CraftTree.Type.Fabricator, "Survival");
 			setTechTypeForUnlock(TechType.PurpleVegetable);
 		}

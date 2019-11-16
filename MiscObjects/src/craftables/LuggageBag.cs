@@ -30,7 +30,7 @@ namespace MiscObjects
 		{
 			register(TechType.LuggageBag);
 
-			setPDAGroup(TechGroup.Personal, TechCategory.Equipment);
+			addToGroup(TechGroup.Personal, TechCategory.Equipment);
 			addToCraftingNode(CraftTree.Type.Fabricator, "Personal/Equipment");
 			setTechTypeForUnlock(TechType.LuggageBag);
 		}

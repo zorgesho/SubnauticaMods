@@ -23,7 +23,7 @@ namespace FloatingCargoCrate
 		{
 			TechType = register("Floating cargo crate", "Big cargo crate that floats and maintains position in the water.", AssetsHelper.loadSprite(ClassID));
 
-			setPDAGroup(TechGroup.ExteriorModules, TechCategory.ExteriorOther);
+			addToGroup(TechGroup.ExteriorModules, TechCategory.ExteriorOther);
 			setTechTypeForUnlock(TechType.AirBladder);
 		}
 
@@ -35,7 +35,7 @@ namespace FloatingCargoCrate
 			string crateModelName = "Starship_cargo" + ((Main.config.cargoModelType == 2)? "_02": "");
 			var prefabCargo = Resources.Load<GameObject>("WorldEntities/Doodads/Debris/Wrecks/Decoration/" + crateModelName);
 			GameObject modelCargo = Object.Instantiate(prefabCargo.FindChild(crateModelName));
-		
+
 			modelCargo.transform.parent = model.transform;
 			modelCargo.transform.localScale *= 2.1f;
 
@@ -59,7 +59,7 @@ namespace FloatingCargoCrate
 			prefab.destroyComponent<LiveMixin>();
 			prefab.destroyComponentInChildren<SmallStorage>();
 
-			
+
 			StorageContainer storageContainer = prefab.GetComponentInChildren<StorageContainer>();
 			storageContainer.modelSizeRadius *= 3f;
 			storageContainer.hoverText = "Open crate";
@@ -68,7 +68,7 @@ namespace FloatingCargoCrate
 			storageContainer.width =  Main.config.storageWidth;
 			storageContainer.height = Main.config.storageHeight;
 			storageContainer.preventDeconstructionIfNotEmpty = true;
-			
+
 
 			prefab.GetComponent<TechTag>().type = TechType;
 		
@@ -97,13 +97,13 @@ namespace FloatingCargoCrate
 			prefab.GetComponent<SkyApplier>().renderers = new Renderer[] { model.GetComponentInChildren<Renderer>(), modelCargo.GetComponent<Renderer>() };
 
 
-			Constructable constructible = prefab.AddComponent<Constructable>().initDefault(model, TechType);
-			constructible.allowedOutside = true;
-			constructible.forceUpright = true;
+			Constructable constructable = prefab.AddComponent<Constructable>().initDefault(model, TechType);
+			constructable.allowedOutside = true;
+			constructable.forceUpright = true;
 			
-			constructible.placeMaxDistance = 7f;
-			constructible.placeMinDistance = 5f;
-			constructible.placeDefaultDistance = 6f;
+			constructable.placeMaxDistance = 7f;
+			constructable.placeMinDistance = 5f;
+			constructable.placeDefaultDistance = 6f;
 
 			prefab.AddComponent<FloatingCargoCrateControl>();
 

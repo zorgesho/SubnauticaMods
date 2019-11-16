@@ -15,7 +15,7 @@ namespace MiscObjects
 		{
 			register("Cargo box", "Small cargo box.", AssetsHelper.loadSprite(ClassID));
 
-			setPDAGroup(TechGroup.InteriorModules, TechCategory.InteriorModule, TechType.Locker);
+			addToGroup(TechGroup.InteriorModules, TechCategory.InteriorModule, TechType.Locker);
 			unlockOnStart();
 		}
 

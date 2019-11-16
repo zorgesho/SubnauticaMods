@@ -16,7 +16,7 @@ namespace MiscObjects
 		{
 			register("Counter", "Counter with drawers.", SpriteManager.Get(TechType.LabCounter));
 
-			setPDAGroup(TechGroup.Miscellaneous, TechCategory.Misc, TechType.CoffeeVendingMachine);
+			addToGroup(TechGroup.Miscellaneous, TechCategory.Misc, TechType.CoffeeVendingMachine);
 			
 			if (Main.config.removeVanillaCounter)
 				CraftDataHandler.RemoveFromGroup(TechGroup.Miscellaneous, TechCategory.Misc, TechType.LabCounter);

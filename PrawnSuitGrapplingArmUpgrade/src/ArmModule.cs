@@ -28,7 +28,7 @@ namespace PrawnSuitGrapplingArmUpgrade
 		{
 			TechType = register("Prawn suit grappling arm MK2", "[todo description]", SpriteManager.Get(TechType.ExosuitGrapplingArmModule));
 
-			setPDAGroup(TechGroup.Workbench, TechCategory.Workbench);
+			addToGroup(TechGroup.Workbench, TechCategory.Workbench);
 			addToCraftingNode(CraftTree.Type.Workbench, "ExosuitMenu");
 			setEquipmentType(EquipmentType.ExosuitArm, QuickSlotType.Selectable);
 			setBackgroundType(CraftData.BackgroundType.ExosuitArm);

@@ -26,7 +26,7 @@ namespace PrawnSuitJetUpgrade
 		{
 			TechType = register("Prawn suit thrusters optimizer", "Thrusters work longer before need to recharge.", AssetsHelper.loadSprite(ClassID));
 
-			setPDAGroup(TechGroup.VehicleUpgrades, TechCategory.VehicleUpgrades);
+			addToGroup(TechGroup.VehicleUpgrades, TechCategory.VehicleUpgrades);
 			addToCraftingNode(CraftTree.Type.SeamothUpgrades, "ExosuitModules");
 			setEquipmentType(EquipmentType.ExosuitModule, QuickSlotType.Passive);
 

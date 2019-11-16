@@ -26,7 +26,7 @@ namespace RemoteTorpedoDetonator
 								"Allows detonate launched torpedoes remotely. Seamoth/Prawn compatible.",
 								AssetsHelper.loadSprite(ClassID));
 
-			setPDAGroup(TechGroup.VehicleUpgrades, TechCategory.VehicleUpgrades);
+			addToGroup(TechGroup.VehicleUpgrades, TechCategory.VehicleUpgrades);
 			addToCraftingNode(CraftTree.Type.SeamothUpgrades, "CommonModules");
 			setEquipmentType(EquipmentType.VehicleModule, QuickSlotType.Instant);
 

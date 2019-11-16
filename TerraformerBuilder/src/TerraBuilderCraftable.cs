@@ -47,7 +47,7 @@ namespace TerraformerBuilder
 								"Fabricates habitat compartments and appliances from raw materials.",
 								AssetsHelper.loadSprite(ClassID));
 
-			setPDAGroup(TechGroup.Personal, TechCategory.Tools);
+			addToGroup(TechGroup.Personal, TechCategory.Tools);
 			addToCraftingNode(CraftTree.Type.Fabricator, "Personal/Tools");
 			setEquipmentType(EquipmentType.Hand);
 				

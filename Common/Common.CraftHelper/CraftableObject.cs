@@ -52,7 +52,7 @@ namespace Common.Crafting
 		}
 
 
-		protected void setPDAGroup(TechGroup group, TechCategory category, TechType after = TechType.None)
+		protected void addToGroup(TechGroup group, TechCategory category, TechType after = TechType.None)
 		{
 			CraftDataHandler.AddToGroup(group, category, TechType, after);
 

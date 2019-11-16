@@ -15,7 +15,7 @@ namespace MiscObjects
 		{
 			register("Locker", "Metal locker.", AssetsHelper.loadSprite(ClassID));
 
-			setPDAGroup(TechGroup.InteriorModules, TechCategory.InteriorModule, TechType.SmallLocker);
+			addToGroup(TechGroup.InteriorModules, TechCategory.InteriorModule, TechType.SmallLocker);
 			unlockOnStart();
 		}
 

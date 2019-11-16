@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-using UnityEngine;
+﻿using UnityEngine;
 
 using SMLHelper.V2.Crafting;
 using SMLHelper.V2.Handlers;
@@ -69,7 +67,7 @@ namespace DebrisRecycling
 
 		protected override TechData getTechData()
 		{
-			var techData = new TechData() { craftAmount = 0, Ingredients = new List<Ingredient> {new Ingredient(sourceTech, sourceCount)}};
+			var techData = new TechData(new Ingredient(sourceTech, sourceCount));
 			techData.LinkedItems.add(TechType.Titanium, resultCount);
 
 			return techData;

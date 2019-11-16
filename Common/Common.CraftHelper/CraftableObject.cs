@@ -24,27 +24,37 @@ namespace Common.Crafting
 			return prefab;
 		}
 
+		void registerPrefabAndTechData()
+		{
+			PrefabHandler.RegisterPrefab(this);
 
-		public TechType register(string friendlyName, string description, Atlas.Sprite sprite = null)
+			TechData techData = getTechData();
+			if (techData != null)
+				CraftDataHandler.SetTechData(TechType, techData);
+		}
+
+		protected void register(TechType techType) // for already existing techtypes
+		{
+			TechType = techType;
+			registerPrefabAndTechData();
+		}
+
+		protected TechType register(string friendlyName, string description, Atlas.Sprite sprite = null)
 		{
 			if (sprite == null)
 				sprite = SpriteManager._defaultSprite;
 
 			TechType = TechTypeHandler.AddTechType(ClassID, friendlyName, description, sprite, false);
 			
-			PrefabHandler.RegisterPrefab(this);
-
-			TechData techData = getTechData();
-			if (techData != null)
-				CraftDataHandler.SetTechData(TechType, techData);
+			registerPrefabAndTechData();
 
 			return TechType;
 		}
 
 
-		protected void setPDAGroup(TechGroup group, TechCategory category)
+		protected void setPDAGroup(TechGroup group, TechCategory category, TechType after = TechType.None)
 		{
-			CraftDataHandler.AddToGroup(group, category, TechType);
+			CraftDataHandler.AddToGroup(group, category, TechType, after);
 
 			if (group >= TechGroup.BasePieces && group <= TechGroup.Miscellaneous) // little hack
 				CraftDataHandler.AddBuildable(TechType);

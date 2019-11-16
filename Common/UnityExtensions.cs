@@ -23,6 +23,19 @@ namespace Common
 		}
 
 
+		public static void setParent(this GameObject go, GameObject parent, bool resetLocalTransform = true)
+		{
+			go.transform.parent = parent.transform;
+
+			if (resetLocalTransform)
+			{
+				go.transform.localRotation = Quaternion.identity;
+				go.transform.localPosition = Vector3.zero;
+				go.transform.localScale = Vector3.one;
+			}
+		}
+
+
 		public static GameObject getChild(this GameObject go, string name)
 		{
 			return go.transform.Find(name)?.gameObject;

@@ -60,6 +60,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeamothStorageSlots", "Seam
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteTorpedoDetonator", "RemoteTorpedoDetonator\RemoteTorpedoDetonator.csproj", "{1C1E62E2-282E-48EE-BF91-54A1E0180B96}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DebrisRecycling", "DebrisRecycling\DebrisRecycling.csproj", "{B574E84F-E5BF-4E99-ABAC-3698B6643E5A}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Common\Common.Config.Options\Common.Config.Options.projitems*{0610f2c1-4b75-45f9-b517-9d747e3edd41}*SharedItemsImports = 13
@@ -109,6 +111,10 @@ Global
 		Common\Common.projitems*{a581dbe2-97a4-4995-8f23-223d9245c338}*SharedItemsImports = 4
 		Common\Common.projitems*{acfe8ab0-f047-44b1-8b43-d918f5ecad77}*SharedItemsImports = 13
 		Common\Common.Config\Common.Config.projitems*{b39de674-737e-4f48-a1f7-a26b7e3d501f}*SharedItemsImports = 13
+		Common\Common.Config.Options\Common.Config.Options.projitems*{b574e84f-e5bf-4e99-abac-3698b6643e5a}*SharedItemsImports = 4
+		Common\Common.Config\Common.Config.projitems*{b574e84f-e5bf-4e99-abac-3698b6643e5a}*SharedItemsImports = 4
+		Common\Common.CraftHelper\Common.CraftHelper.projitems*{b574e84f-e5bf-4e99-abac-3698b6643e5a}*SharedItemsImports = 4
+		Common\Common.projitems*{b574e84f-e5bf-4e99-abac-3698b6643e5a}*SharedItemsImports = 4
 		Common\Common.projitems*{bfb9336c-f678-4af1-8b10-0bddcd3aeac8}*SharedItemsImports = 4
 		Common\Common.Config\Common.Config.projitems*{cb025d20-0b16-4e80-95e6-3c3fc77935fb}*SharedItemsImports = 4
 		Common\Common.projitems*{cb025d20-0b16-4e80-95e6-3c3fc77935fb}*SharedItemsImports = 4
@@ -211,6 +217,12 @@ Global
 		{1C1E62E2-282E-48EE-BF91-54A1E0180B96}.Publish|Any CPU.Build.0 = Publish|Any CPU
 		{1C1E62E2-282E-48EE-BF91-54A1E0180B96}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1C1E62E2-282E-48EE-BF91-54A1E0180B96}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B574E84F-E5BF-4E99-ABAC-3698B6643E5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B574E84F-E5BF-4E99-ABAC-3698B6643E5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B574E84F-E5BF-4E99-ABAC-3698B6643E5A}.Publish|Any CPU.ActiveCfg = Publish|Any CPU
+		{B574E84F-E5BF-4E99-ABAC-3698B6643E5A}.Publish|Any CPU.Build.0 = Publish|Any CPU
+		{B574E84F-E5BF-4E99-ABAC-3698B6643E5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B574E84F-E5BF-4E99-ABAC-3698B6643E5A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -235,6 +247,7 @@ Global
 		{9E3D5F87-C19E-482B-AC15-7E56DEED70FA} = {C49BC122-0A68-48A8-8EA3-737FB7553D8B}
 		{BFB9336C-F678-4AF1-8B10-0BDDCD3AEAC8} = {C49BC122-0A68-48A8-8EA3-737FB7553D8B}
 		{1C1E62E2-282E-48EE-BF91-54A1E0180B96} = {C49BC122-0A68-48A8-8EA3-737FB7553D8B}
+		{B574E84F-E5BF-4E99-ABAC-3698B6643E5A} = {C49BC122-0A68-48A8-8EA3-737FB7553D8B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0A745472-1C11-4AB7-B6C4-79A169E0FB35}

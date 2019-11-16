@@ -11,9 +11,9 @@ namespace Common.Crafting
 	{
 		protected CraftableObject(): this(new System.Diagnostics.StackTrace().GetFrame(1).GetMethod().ReflectedType.Name) {}
 		protected CraftableObject(string classID): base(classID, classID + "Prefab") {}
-		
+
 		public abstract void patch();
-		protected abstract TechData getTechData();
+		protected abstract TechData   getTechData();
 		protected abstract GameObject getGameObject();
 
 		public override GameObject GetGameObject()
@@ -29,16 +29,19 @@ namespace Common.Crafting
 		{
 			if (sprite == null)
 				sprite = SpriteManager._defaultSprite;
-			
+
 			TechType = TechTypeHandler.AddTechType(ClassID, friendlyName, description, sprite, false);
 			
 			PrefabHandler.RegisterPrefab(this);
-			CraftDataHandler.SetTechData(TechType, getTechData());
+
+			TechData techData = getTechData();
+			if (techData != null)
+				CraftDataHandler.SetTechData(TechType, techData);
 
 			return TechType;
 		}
 
-		
+
 		protected void setPDAGroup(TechGroup group, TechCategory category)
 		{
 			CraftDataHandler.AddToGroup(group, category, TechType);
@@ -47,7 +50,7 @@ namespace Common.Crafting
 				CraftDataHandler.AddBuildable(TechType);
 		}
 
-		
+
 		protected void setEquipmentType(EquipmentType equipmentType, QuickSlotType quickSlotType = QuickSlotType.None)
 		{
 			CraftDataHandler.SetEquipmentType(TechType, equipmentType);
@@ -57,11 +60,8 @@ namespace Common.Crafting
 		}
 
 
-		protected void setTechTypeForUnlock(TechType techType, string message = null)
+		protected void setTechTypeForUnlock(TechType techType, string message = "NotificationBlueprintUnlocked")
 		{
-			if (message == null)
-				message = "NotificationBlueprintUnlocked";
-			
 			KnownTechHandler.SetAnalysisTechEntry(techType, new TechType[1] { TechType }, message);
 		}
 
@@ -69,15 +69,15 @@ namespace Common.Crafting
 		//{
 		//	UnlockTechHelper.setTechTypesForUnlock(UnlockTechHelper.UnlockType.All, TechType, new TechType[] { t1, t2 });
 		//}
-		
+
 		protected void addToCraftingNode(CraftTree.Type craftTree, string craftPath) => CraftTreeHandler.AddCraftingNode(craftTree, TechType, craftPath.Split('/'));
 
 		protected void setBackgroundType(CraftData.BackgroundType backgroundType) => CraftDataHandler.SetBackgroundType(TechType, backgroundType);
-		
+
 		protected void setItemSize(int width, int height) => CraftDataHandler.SetItemSize(TechType, width, height);
-		
+
 		protected void setCraftingTime(float time) => CraftDataHandler.SetCraftingTime(TechType, time);
-		
+
 		protected void unlockOnStart() => KnownTechHandler.UnlockOnStart(TechType);
 	}
 }

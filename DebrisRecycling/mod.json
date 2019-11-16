@@ -1,0 +1,13 @@
+{
+  "Id": "DebrisRecycling",
+  "DisplayName": "DebrisRecycling",
+  "Author": "zorgesho",
+  "Version": "1.0.0",
+  "Dependencies": ["SMLHelper"],
+  "LoadBefore": [],
+  "LoadAfter": [],
+  "Enable": true,
+  "Game": "Subnautica",
+  "AssemblyName": "DebrisRecycling.dll",
+  "EntryMethod": "DebrisRecycling.Main.patch"
+}

@@ -29,6 +29,20 @@ namespace Common
 		}
 
 
+		public static T getComponentInHierarchy<T>(this GameObject go, bool checkChildren = true, bool checkParent = true) where T: Component
+		{
+			T cmp = go.GetComponent<T>();
+			
+			if (checkChildren && cmp == null)
+				cmp = go.GetComponentInChildren<T>();
+			
+			if (checkParent && cmp == null)
+				cmp = go.GetComponentInParent<T>();
+			
+			return cmp;
+		}
+
+
 		public static void destroyChild(this GameObject go, string name, bool immediate = true)
 		{
 			if (immediate)
@@ -104,7 +118,7 @@ namespace Common
 		{
 			return ObjectDumper.dump(go, dumpProperties, dumpFields);
 		}
-		
+
 		//based on Yossarian King SceneDumper: http://wiki.unity3d.com/index.php?title=SceneDumper
 		static class ObjectDumper
 		{
@@ -113,7 +127,7 @@ namespace Common
 
 			static bool dumpFields = true;
 			static bool dumpProperties = true;
-			
+
 			public static string dump(GameObject go, bool _dumpProperties, bool _dumpFields)
 			{
 				output.Length = 0;

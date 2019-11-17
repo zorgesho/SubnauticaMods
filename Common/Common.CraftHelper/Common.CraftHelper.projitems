@@ -11,6 +11,7 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)CraftableObject.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CraftHelper.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)UnlockTechHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CraftNodesCustomOrder.cs" />
+    <None Include="$(MSBuildThisFileDirectory)UnlockTechHelper.cs" />
   </ItemGroup>
 </Project>

@@ -79,8 +79,12 @@ namespace Common.Crafting
 		//{
 		//	UnlockTechHelper.setTechTypesForUnlock(UnlockTechHelper.UnlockType.All, TechType, new TechType[] { t1, t2 });
 		//}
+		
+		protected void addToCraftingNode(CraftTree.Type craftTree, string craftPath) =>
+			CraftTreeHandler.AddCraftingNode(craftTree, TechType, craftPath.Split('/'));
 
-		protected void addToCraftingNode(CraftTree.Type craftTree, string craftPath) => CraftTreeHandler.AddCraftingNode(craftTree, TechType, craftPath.Split('/'));
+		protected void addToCraftingNode(CraftTree.Type craftTree, string craftPath, TechType after) =>
+			CraftNodesCustomOrder.addNode(craftTree, TechType, craftPath, after);
 
 		protected void setBackgroundType(CraftData.BackgroundType backgroundType) => CraftDataHandler.SetBackgroundType(TechType, backgroundType);
 

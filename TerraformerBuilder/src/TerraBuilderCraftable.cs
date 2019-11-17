@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+
 using SMLHelper.V2.Crafting;
+using SMLHelper.V2.Handlers;
 
 using Common;
 using Common.Crafting;
@@ -33,7 +35,7 @@ namespace TerraformerBuilder
 
 			return prefab;
 		}
-		
+
 		protected override TechData getTechData() => new TechData() { craftAmount = 1, Ingredients = new List<Ingredient>
 		{
 			new Ingredient(TechType.ComputerChip, 1),
@@ -47,12 +49,18 @@ namespace TerraformerBuilder
 								"Fabricates habitat compartments and appliances from raw materials.",
 								AssetsHelper.loadSprite(ClassID));
 
-			addToGroup(TechGroup.Personal, TechCategory.Tools);
-			addToCraftingNode(CraftTree.Type.Fabricator, "Personal/Tools");
+			addToGroup(TechGroup.Personal, TechCategory.Tools, TechType.Flare);
+			addToCraftingNode(CraftTree.Type.Fabricator, "Personal/Tools", TechType.Flare);
+
+			if (Main.config.removeVanillaBuilder)
+			{
+				CraftTreeHandler.RemoveNode(CraftTree.Type.Fabricator, "Personal", "Tools", "Builder");
+				CraftDataHandler.RemoveFromGroup(TechGroup.Personal, TechCategory.Tools, TechType.Builder);
+			}
+
 			setEquipmentType(EquipmentType.Hand);
-				
 			setCraftingTime(7f);
-			
+
 			if (Main.config.bigInInventory)
 				setItemSize(2, 2);
 

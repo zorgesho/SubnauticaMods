@@ -50,7 +50,7 @@ namespace TerraformerBuilder
 								AssetsHelper.loadSprite(ClassID));
 
 			addToGroup(TechGroup.Personal, TechCategory.Tools, TechType.Flare);
-			addToCraftingNode(CraftTree.Type.Fabricator, "Personal/Tools", TechType.Flare);
+			addCraftingNode(CraftTree.Type.Fabricator, "Personal/Tools", TechType.Flare);
 
 			if (Main.config.removeVanillaBuilder)
 			{

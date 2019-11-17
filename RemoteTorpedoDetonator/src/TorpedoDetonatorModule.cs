@@ -27,7 +27,7 @@ namespace RemoteTorpedoDetonator
 								AssetsHelper.loadSprite(ClassID));
 
 			addToGroup(TechGroup.VehicleUpgrades, TechCategory.VehicleUpgrades);
-			addToCraftingNode(CraftTree.Type.SeamothUpgrades, "CommonModules");
+			addCraftingNode(CraftTree.Type.SeamothUpgrades, "CommonModules");
 			setEquipmentType(EquipmentType.VehicleModule, QuickSlotType.Instant);
 
 			setTechTypeForUnlock(TechType.GasTorpedo);

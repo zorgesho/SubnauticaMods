@@ -25,7 +25,7 @@ namespace PrawnSuitSonarUpgrade
 			TechType = register("Prawn suit sonar", "Seamoth sonar modified to use on prawn suit.", SpriteManager.Get(TechType.SeamothSonarModule));
 
 			addToGroup(TechGroup.Workbench, TechCategory.Workbench);
-			addToCraftingNode(CraftTree.Type.Workbench, "ExosuitMenu");
+			addCraftingNode(CraftTree.Type.Workbench, "ExosuitMenu");
 			setEquipmentType(EquipmentType.ExosuitModule, QuickSlotType.SelectableChargeable);
 
 			setTechTypeForUnlock(TechType.SeamothSonarModule);

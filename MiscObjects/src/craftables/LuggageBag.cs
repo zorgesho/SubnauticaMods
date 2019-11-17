@@ -31,7 +31,7 @@ namespace MiscObjects
 			register(TechType.LuggageBag);
 
 			addToGroup(TechGroup.Personal, TechCategory.Equipment);
-			addToCraftingNode(CraftTree.Type.Fabricator, "Personal/Equipment");
+			addCraftingNode(CraftTree.Type.Fabricator, "Personal/Equipment");
 			setTechTypeForUnlock(TechType.LuggageBag);
 		}
 	}

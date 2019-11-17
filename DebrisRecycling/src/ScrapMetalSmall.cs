@@ -82,7 +82,7 @@ namespace DebrisRecycling
 
 			register($"Titanium (x{resultCount})", "Ti. Basic building material.", SpriteManager.Get(TechType.Titanium));
 			setCraftingTime(0.7f * resultCount);
-			addToCraftingNode(CraftTree.Type.Fabricator, "Resources/Titanium");
+			addCraftingNode(CraftTree.Type.Fabricator, "Resources/Titanium");
 		}
 
 		static void initNodes()

@@ -43,7 +43,7 @@ namespace MiscObjects
 					 AssetsHelper.loadSprite(ClassID));
 
 			addToGroup(TechGroup.Survival, TechCategory.CookedFood);
-			addToCraftingNode(CraftTree.Type.Fabricator, "Survival");
+			addCraftingNode(CraftTree.Type.Fabricator, "Survival");
 			setTechTypeForUnlock(TechType.PurpleVegetable);
 		}
 	}

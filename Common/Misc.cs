@@ -92,13 +92,16 @@ namespace Common
 		{
 			try
 			{
-				if (localPath == null || localPath == "")
+				if (string.IsNullOrEmpty(localPath))
 					return;
 
 				if (Path.GetExtension(localPath) == "")
 					localPath += ".txt";
 
-				File.WriteAllText(Paths.modRootPath + localPath, s);
+				if (!Path.IsPathRooted(localPath))
+					localPath = Paths.modRootPath + localPath;
+
+				File.WriteAllText(localPath, s);
 			}
 			catch (Exception e)
 			{

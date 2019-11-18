@@ -127,10 +127,22 @@ namespace Common
 
 	static partial class Debug
 	{
-		public static string dumpGameObject(GameObject go, bool dumpProperties = true, bool dumpFields = false)
+#if DEBUG
+		const string pathForDumps = "c:/projects/subnautica/prefab_dumps/";
+#endif
+		public static string dumpGameObject(GameObject go, bool dumpProperties = true, bool dumpFields = false) =>
+			ObjectDumper.dump(go, dumpProperties, dumpFields);
+
+		public static void dump(this GameObject go, string filename = null)
 		{
-			return ObjectDumper.dump(go, dumpProperties, dumpFields);
+			if (filename == null)
+				filename = go.name.Replace("(Clone)", "").ToLower();
+#if DEBUG
+			filename = pathForDumps + filename;
+#endif
+			ObjectDumper.dump(go, true, true).saveToFile(filename + ".yml");
 		}
+
 
 		//based on Yossarian King SceneDumper: http://wiki.unity3d.com/index.php?title=SceneDumper
 		static class ObjectDumper
@@ -154,7 +166,7 @@ namespace Common
  
 			static void dump(GameObject go, string indent)
 			{
-				output.AppendLine($"{indent}obj: {go.name} active:{go.activeSelf}");
+				output.AppendLine($"{indent}object: {go.name} active:{go.activeSelf}");
  
 				foreach (var cmp in go.GetComponents<Component>())
 					dump(cmp, indent + "\t");
@@ -165,19 +177,32 @@ namespace Common
  
 			static void dump(Component cmp, string indent)
 			{
+				string _formatValue(object value) // used in properties now, it seems that fields don't need it
+				{
+					if (value == null)
+						return "";
+
+					string result = value.ToString();
+					if (!string.IsNullOrEmpty(result))
+						result = result.Replace("\n", " ").Replace("\t", " ").TrimEnd();
+
+					return result;
+				}
+
+
 				Type cmpType = cmp.GetType();
 
-				output.AppendLine($"{indent}cmp: {cmpType} {cmp.name}");
+				output.AppendLine($"{indent}component: {cmpType}");
 
 				if (dumpProperties)
 				{
 					var properties = new List<PropertyInfo>(cmpType.GetProperties(bf));
 					properties.Sort((p1, p2) => p1.Name.CompareTo(p2.Name));
 
-					output.AppendLine($"{indent}properties:");
+					output.AppendLine($"{indent}\tPROPERTIES:");
 
 					foreach (var prop in properties)
-						output.AppendLine($"{indent}\t{prop.Name}: {prop.GetValue(cmp, null)}");
+						output.AppendLine($"{indent}\t{prop.Name}: \"{_formatValue(prop.GetValue(cmp, null))}\"");
 				}
 
 				if (dumpFields)
@@ -185,10 +210,10 @@ namespace Common
 					var fields = new List<FieldInfo>(cmpType.GetFields(bf));
 					fields.Sort((f1, f2) => f1.Name.CompareTo(f2.Name));
 					
-					output.AppendLine($"{indent}fields:");
+					output.AppendLine($"{indent}\tFIELDS:");
 					
 					foreach (var field in fields)
-						output.AppendLine($"{indent}\t{field.Name}: {field.GetValue(cmp)}");
+						output.AppendLine($"{indent}\t{field.Name}: \"{field.GetValue(cmp)}\"");
 				}
 			}
 		}

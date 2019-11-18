@@ -32,6 +32,16 @@ namespace ConsoleImproved
 			}
 
 
+			void OnConsoleCommand_prefabdump(NotificationCenter.Notification n)
+			{
+				if (n?.data == null || n.data.Count == 0)
+					return;
+
+				if (UWE.Utils.TryParseEnum(n.data[0] as string, out TechType techType))
+					CraftData.GetPrefabForTechType(techType)?.dump();
+			}
+
+
 			void OnConsoleCommand_printcfgvars(NotificationCenter.Notification n)
 			{
 				string prefix = (n?.data != null && n.data.Count == 1)? n.data[0] as string: "";

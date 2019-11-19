@@ -216,11 +216,12 @@ namespace TerraformerBuilder
 		{
 			builderTool = gameObject.GetComponent<BuilderTool>();
 			animator = builderTool.animator;
+
+			init();
 		}
 
 		void Start()
 		{
-			init();
 			builderTool.UpdateText();
 		}
 
@@ -237,7 +238,7 @@ namespace TerraformerBuilder
 				SafeAnimator.SetBool(animator, "terraformer_mode_on", state);
 			}
 		}
-		
+
 		public void updateBeams()
 		{
 			int animHash = animator.GetCurrentAnimatorStateInfo(0).fullPathHash;

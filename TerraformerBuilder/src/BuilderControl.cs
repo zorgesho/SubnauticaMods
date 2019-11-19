@@ -268,12 +268,12 @@ namespace TerraformerBuilder
 					cbeams[i].update(Time.deltaTime, cpoints[i]);
 			}
 
-			//if (builderTool.isConstructing)
-			//	builderTool.buildSound.Play();
-			//else
-			//	builderTool.buildSound.Stop();
+			if (builderTool.isConstructing)
+				builderTool.buildSound.Play();
+			else
+				builderTool.buildSound.Stop();
 
-			builderTool.constructable = null; // ???????
+			builderTool.constructable = null;
 		}
 	}
 }

@@ -20,7 +20,8 @@ namespace TerraformerBuilder
 			Terraformer trfCmp = prefab.GetComponent<Terraformer>();
 			BuilderTool bldCmp = prefab.AddComponent<BuilderTool>();
 
-			bldCmp.copyValuesFrom(trfCmp, "rightHandIKTarget", "leftHandIKTarget", "ikAimRightArm", "ikAimLeftArm", "mainCollider", "pickupable", "useLeftAimTargetOnPlayer");
+			bldCmp.copyValuesFrom(trfCmp, "rightHandIKTarget", "leftHandIKTarget", "ikAimRightArm", "ikAimLeftArm", "mainCollider", "pickupable", "useLeftAimTargetOnPlayer", "drawSound");
+			bldCmp.buildSound = trfCmp.placeLoopSound;
 
 			Object.DestroyImmediate(trfCmp);
 

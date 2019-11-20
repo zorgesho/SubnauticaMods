@@ -83,16 +83,23 @@ namespace Common
 		{
 			return Array.FindIndex(array, beginIndex, endIndex - beginIndex, predicate);
 		}
+
+		public static int findIndex<T>(this T[] array, Predicate<T> predicate)
+		{
+			return Array.FindIndex(array, predicate);
+		}
 	}
 
 
 	static partial class StringExtensions
 	{
+		public static bool isNullOrEmpty(this string s) => (s == null || s == "");
+
 		public static void saveToFile(this string s, string localPath)
 		{
 			try
 			{
-				if (string.IsNullOrEmpty(localPath))
+				if (localPath.isNullOrEmpty())
 					return;
 
 				if (Path.GetExtension(localPath) == "")

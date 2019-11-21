@@ -71,18 +71,14 @@ namespace DebrisRecycling
 		static bool isValidForPatching(GameObject go)
 		{
 			// checking both DebrisDeconstructable and Constructable because we can delete Constructable later in special processing
-			if (go && !go.getComponentInHierarchy<DebrisDeconstructable>(false) && !go.getComponentInHierarchy<Constructable>(false))
-			{
-				if (Main.config.patchStaticObjects)
-					return true;
+			if (!go || go.getComponentInHierarchy<DebrisDeconstructable>(false) || go.getComponentInHierarchy<Constructable>(false))
+				return false;
 
-				Rigidbody rigidbody = go.getComponentInHierarchy<Rigidbody>(false);
-				
-				if (rigidbody && !rigidbody.isKinematic) // and if object movable
-					return true;
-			}
-			
-			return false;
+			if (Main.config.patchStaticObjects)
+				return true;
+
+			Rigidbody rigidbody = go.getComponentInHierarchy<Rigidbody>(false);
+			return (rigidbody && !rigidbody.isKinematic); // and if object movable
 		}
 
 

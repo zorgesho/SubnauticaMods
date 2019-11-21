@@ -146,17 +146,17 @@ namespace Common.Configuration
 				{
 					void OnConsoleCommand_setcfgvar(NotificationCenter.Notification n)
 					{
-						if (n?.data != null && n.data.Count == 2)
-						{																			$"setcfgvar raw: '{n.data[0]}' '{n.data[1]}'".logDbg();
-							setFieldValue(n.data[0] as string, n.data[1] as string);
+						if (n.getArgsCount() == 2)
+						{																			$"setcfgvar raw: '{n.getArg(0)}' '{n.getArg(1)}'".logDbg();
+							setFieldValue(n.getArg(0) as string, n.getArg(1) as string);
 						}
 					}
 					
 					void OnConsoleCommand_getcfgvar(NotificationCenter.Notification n)
-					{																				$"getcfgvar: '{n.data[0]}'".logDbg();
-						if (n?.data != null && n.data.Count == 1)
+					{																				$"getcfgvar: '{n.getArg(0)}'".logDbg();
+						if (n.getArgsCount() == 1)
 						{
-							string fieldName = n.data[0] as string;
+							string fieldName = n.getArg(0) as string;
 							object value = getFieldValue(fieldName);
 
 							if (value != null)

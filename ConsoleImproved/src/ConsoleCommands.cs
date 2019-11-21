@@ -22,10 +22,10 @@ namespace ConsoleImproved
 
 			void OnConsoleCommand_findtech(NotificationCenter.Notification n)
 			{
-				if (n?.data == null || n.data.Count == 0)
+				if (n.getArgsCount() == 0)
 					return;
 
-				List<string> matched = techtypeCache.find(n.data[0] as string);
+				List<string> matched = techtypeCache.find(n.getArg(0) as string);
 
 				$"Finded {matched.Count} entries".onScreen();
 				matched.onScreen("TechType: ");
@@ -34,17 +34,17 @@ namespace ConsoleImproved
 
 			void OnConsoleCommand_prefabdump(NotificationCenter.Notification n)
 			{
-				if (n?.data == null || n.data.Count == 0)
+				if (n.getArgsCount() == 0)
 					return;
 
-				if (UWE.Utils.TryParseEnum(n.data[0] as string, out TechType techType))
+				if (UWE.Utils.TryParseEnum(n.getArg(0) as string, out TechType techType))
 					CraftData.GetPrefabForTechType(techType)?.dump();
 			}
 
 
 			void OnConsoleCommand_printcfgvars(NotificationCenter.Notification n)
 			{
-				string prefix = (n?.data != null && n.data.Count == 1)? n.data[0] as string: "";
+				string prefix = (n.getArgsCount() == 1)? n.getArg(0) as string: "";
 
 				foreach (var c in cfgVarsCache.findByPrefix(prefix))
 					DevConsole.SendConsoleCommand($"getcfgvar {c}");

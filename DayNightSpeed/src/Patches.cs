@@ -54,21 +54,21 @@ namespace DayNightSpeed
 			Tuple.New(patch1, _dncMethod("OnConsoleCommand_day")),
 			Tuple.New(patch1, _dncMethod("OnConsoleCommand_night")),
 			Tuple.New(patch1, _dncMethod("OnConsoleCommand_daynight")),
-			
+
 			// deltaTime
 			//Tuple.New(patch2, AccessTools.Method(typeof(Charger), "Update")),
 			//Tuple.New(patch2, AccessTools.Method(typeof(SolarPanel), "Update")),
 			//Tuple.New(patch2, AccessTools.Method(typeof(BaseBioReactor), "Update")),
 			//Tuple.New(patch2, AccessTools.Method(typeof(BaseNuclearReactor), "Update")),
 			//Tuple.New(patch2, AccessTools.Method(typeof(ToggleLights), "UpdateLightEnergy")),
-			
+
 			// dayNightSpeed
 			Tuple.New(patch2, AccessTools.Method(typeof(BaseRoot), "ConsumePower")),
 			Tuple.New(patch2, AccessTools.Method(typeof(ThermalPlant), "AddPower")),
 			Tuple.New(patch2, AccessTools.Method(typeof(FiltrationMachine), "UpdateFiltering")),
 		};
-		
-		
+
+
 		public static void init()
 		{
 			if (!inited)
@@ -84,10 +84,16 @@ namespace DayNightSpeed
 	[HarmonyPatch(typeof(DayNightCycle), "Awake")]
 	static class DayNightCycle_Awake_Patch
 	{
-		static void Postfix(DayNightCycle __instance) => __instance._dayNightSpeed = Main.config.dayNightSpeed;
+		static void Postfix(DayNightCycle __instance)
+		{
+			__instance._dayNightSpeed = Main.config.dayNightSpeed;
+
+			// unregistering vanilla daynightspeed console command, replacing with ours in DayNightSpeedControl
+			NotificationCenter.DefaultCenter.RemoveObserver(__instance, "OnConsoleCommand_daynightspeed");
+		}
 	}
 
-	
+
 	[HarmonyPatch(typeof(CreatureEgg), "Awake")]
 	static class CreatureEgg_Awake_Patch
 	{
@@ -113,8 +119,8 @@ namespace DayNightSpeed
 					}
 				}
 
-				tryChangeVal(1800f, nameof(Main.config.thristSec));
-				tryChangeVal(2520f, nameof(Main.config.hungerSec));
+				tryChangeVal(ModConfig.hungerTimeInitial, nameof(Main.config.hungerTime));
+				tryChangeVal(ModConfig.thristTimeInitial, nameof(Main.config.thristTime));
 			}
 			
 			return list.AsEnumerable();

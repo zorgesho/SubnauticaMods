@@ -1,5 +1,4 @@
-﻿using System;
-using Common;
+﻿using Common;
 using Common.Configuration;
 
 namespace DayNightSpeed
@@ -14,7 +13,7 @@ namespace DayNightSpeed
 
 			Options.init();
 
-			DayNightSpeedWatcher.init();
+			DayNightSpeedControl.init();
 			DayNightCyclePatches.init();
 		}
 	}

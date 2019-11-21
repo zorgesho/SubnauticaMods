@@ -93,7 +93,6 @@
   <Import Project="..\Common\Common.projitems" Label="Shared" />
   <Import Project="..\Common\Common.Config\Common.Config.projitems" Label="Shared" />
   <Import Project="..\Common\Common.Config.Options\Common.Config.Options.projitems" Label="Shared" />
-  <Import Project="..\Common\Common.GameSerialization\Common.GameSerialization.projitems" Label="Shared" />
   <Import Project="..\Common\Common.UI\Common.UI.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

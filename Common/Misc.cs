@@ -42,6 +42,10 @@ namespace Common
 		}
 	}
 
+	static class _BindingFlags
+	{
+		public static BindingFlags all = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
+	}
 
 	static class MiscExtensions
 	{

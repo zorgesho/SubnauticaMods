@@ -12,15 +12,18 @@ namespace DayNightSpeed
 #endif
 		static GameObject commandsGO = null;
 
+		// called after dayNightSpeed changed via options menu or console
 		public class SettingChanged: Config.Field.ICustomAction
 		{
 			public void customAction()
 			{
-				if (DayNightCycle.main == null)
-					return;
+				Main.config.updateValues();
 
-				DayNightCycle.main._dayNightSpeed = Main.config.dayNightSpeed;
-				DayNightCycle.main.skipTimeMode = false;
+				if (DayNightCycle.main != null)
+				{
+					DayNightCycle.main._dayNightSpeed = Main.config.dayNightSpeed;
+					DayNightCycle.main.skipTimeMode = false;
+				}
 			}
 		}
 
@@ -47,8 +50,23 @@ namespace DayNightSpeed
 				if (DayNightCycle.main != null)
 					$"Day/night speed is {DayNightCycle.main.dayNightSpeed}".onScreen();
 			}
-		}
 
+#if DEBUG
+			void OnConsoleCommand_dischargebatts(NotificationCenter.Notification _)
+			{
+				if (Inventory.main == null)
+					return;
+
+				foreach (InventoryItem item in Inventory.main.container)
+				{
+					Battery battery = item.item.gameObject.GetComponent<Battery>();
+
+					if (battery != null)
+						battery.charge = 0;
+				}
+			}
+#endif
+		}
 
 		public static void init()
 		{

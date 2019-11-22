@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Collections.Generic;
@@ -11,63 +10,63 @@ namespace DayNightSpeed
 {
 	using Instructions = IEnumerable<CodeInstruction>;
 	using static Common.HarmonyHelper;
-	
+
 	static class DayNightCyclePatches
 	{
 		static bool inited = false;
-		
-		static Instructions transpiler1(Instructions ins) => changeConstToConfigVar(ins, 1.0f, nameof(Main.config.dayNightSpeed));
-		static readonly MethodInfo patch1 = AccessTools.Method(typeof(DayNightCyclePatches), "transpiler1");
 
-		static Instructions transpiler2(Instructions ins)
+		// simple transpiler for changing 1.0 to current value of dayNightSpeed
+		static Instructions transpilerSpeed(Instructions ins) => changeConstToConfigVar(ins, 1.0f, nameof(Main.config.dayNightSpeed));
+		static readonly MethodInfo patchSpeedSimple = AccessTools.Method(typeof(DayNightCyclePatches), nameof(transpilerSpeed));
+
+		// transpiler for correcting time if daynightspeed < 1
+		static Instructions transpilerSpeedClamped01(Instructions ins)
 		{
 			MethodInfo deltaTime = AccessTools.Method(typeof(DayNightCycle), "get_deltaTime");
 			MethodInfo dayNightSpeed = AccessTools.Method(typeof(DayNightCycle), "get_dayNightSpeed");
-			
+
 			foreach (var i in ins)
 			{
 				if (i.opcode.Equals(OpCodes.Callvirt) && (i.operand.Equals(deltaTime) || i.operand.Equals(dayNightSpeed)))
 				{
 					yield return i;
-					yield return _codeForMainConfig();
-					yield return new CodeInstruction(OpCodes.Callvirt,
-						AccessTools.Method(typeof(ModConfig), nameof(ModConfig.getDayNightSpeedInverse)));
 
-					yield return new CodeInstruction(OpCodes.Mul);
+					foreach (var j in _codeForChangeConstToConfigMethodCall(nameof(ModConfig.getDayNightSpeedClamped01)))
+						yield return j;
 
-					"!!!!!!!!!!!!".log();
+					yield return new CodeInstruction(OpCodes.Div);
 					continue;
 				}
 				yield return i;
 			}
 		}
-		static readonly MethodInfo patch2 = AccessTools.Method(typeof(DayNightCyclePatches), "transpiler2");
+		static readonly MethodInfo patchSpeedClamped01 = AccessTools.Method(typeof(DayNightCyclePatches), nameof(transpilerSpeedClamped01));
 
 
 		static MethodInfo _dncMethod(string method) => AccessTools.Method(typeof(DayNightCycle), method);
 
 		static readonly Tuple<MethodInfo, MethodInfo>[] patches = new Tuple<MethodInfo, MethodInfo>[]
 		{
-			Tuple.New(patch1, _dncMethod("Update")),
-			Tuple.New(patch1, _dncMethod("Resume")),
-			Tuple.New(patch1, _dncMethod("StopSkipTimeMode")),
-			Tuple.New(patch1, _dncMethod("OnConsoleCommand_day")),
-			Tuple.New(patch1, _dncMethod("OnConsoleCommand_night")),
-			Tuple.New(patch1, _dncMethod("OnConsoleCommand_daynight")),
+			// 1.0 -> dayNightSpeed
+			Tuple.New(patchSpeedSimple, _dncMethod("Update")),
+			Tuple.New(patchSpeedSimple, _dncMethod("Resume")),
+			Tuple.New(patchSpeedSimple, _dncMethod("StopSkipTimeMode")),
+			Tuple.New(patchSpeedSimple, _dncMethod("OnConsoleCommand_day")),
+			Tuple.New(patchSpeedSimple, _dncMethod("OnConsoleCommand_night")),
+			Tuple.New(patchSpeedSimple, _dncMethod("OnConsoleCommand_daynight")),
 
-			// deltaTime
-			//Tuple.New(patch2, AccessTools.Method(typeof(Charger), "Update")),
-			//Tuple.New(patch2, AccessTools.Method(typeof(SolarPanel), "Update")),
-			//Tuple.New(patch2, AccessTools.Method(typeof(BaseBioReactor), "Update")),
-			//Tuple.New(patch2, AccessTools.Method(typeof(BaseNuclearReactor), "Update")),
-			//Tuple.New(patch2, AccessTools.Method(typeof(ToggleLights), "UpdateLightEnergy")),
+			// deltaTime -> deltaTime/dayNightSpeed01
+			Tuple.New(patchSpeedClamped01, AccessTools.Method(typeof(Charger), "Update")),
+			Tuple.New(patchSpeedClamped01, AccessTools.Method(typeof(SolarPanel), "Update")),
+			Tuple.New(patchSpeedClamped01, AccessTools.Method(typeof(BaseBioReactor), "Update")),
+			Tuple.New(patchSpeedClamped01, AccessTools.Method(typeof(BaseNuclearReactor), "Update")),
+			Tuple.New(patchSpeedClamped01, AccessTools.Method(typeof(ToggleLights), "UpdateLightEnergy")),
 
-			// dayNightSpeed
-			Tuple.New(patch2, AccessTools.Method(typeof(BaseRoot), "ConsumePower")),
-			Tuple.New(patch2, AccessTools.Method(typeof(ThermalPlant), "AddPower")),
-			Tuple.New(patch2, AccessTools.Method(typeof(FiltrationMachine), "UpdateFiltering")),
+			// dayNightSpeed -> dayNightSpeed/dayNightSpeed01
+			Tuple.New(patchSpeedClamped01, AccessTools.Method(typeof(BaseRoot), "ConsumePower")),
+			Tuple.New(patchSpeedClamped01, AccessTools.Method(typeof(ThermalPlant), "AddPower")),
+			Tuple.New(patchSpeedClamped01, AccessTools.Method(typeof(FiltrationMachine), "UpdateFiltering")),
 		};
-
 
 		public static void init()
 		{
@@ -81,6 +80,7 @@ namespace DayNightSpeed
 		}
 	}
 
+
 	[HarmonyPatch(typeof(DayNightCycle), "Awake")]
 	static class DayNightCycle_Awake_Patch
 	{
@@ -88,19 +88,12 @@ namespace DayNightSpeed
 		{
 			__instance._dayNightSpeed = Main.config.dayNightSpeed;
 
-			// unregistering vanilla daynightspeed console command, replacing with ours in DayNightSpeedControl
+			// unregistering vanilla daynightspeed console command, replacing it with ours in DayNightSpeedControl
 			NotificationCenter.DefaultCenter.RemoveObserver(__instance, "OnConsoleCommand_daynightspeed");
 		}
 	}
 
-
-	[HarmonyPatch(typeof(CreatureEgg), "Awake")]
-	static class CreatureEgg_Awake_Patch
-	{
-		static void Postfix(CreatureEgg __instance) => $"egg: {__instance.daysBeforeHatching}".onScreen().log();
-	}
-
-
+	// fixing hunger/thrist timers
 	[HarmonyPatch(typeof(Survival), "UpdateStats")]
 	static class Survival_UpdateStats_Patch
 	{
@@ -110,24 +103,24 @@ namespace DayNightSpeed
 
 			for (int i = list.Count - 1; i >= 0; i--) // changing list in the process, so iterate it backwards
 			{
-				void tryChangeVal(float val, string configVar)
+				void tryChangeVal(float val, string configMethod)
 				{
 					if (list[i].isLDC(val))
 					{
 						list.RemoveAt(i);
-						list.InsertRange(i, _codeForChangeConstToConfigVar(configVar));
+						list.InsertRange(i, _codeForChangeConstToConfigMethodCall(configMethod));
 					}
 				}
 
-				tryChangeVal(ModConfig.hungerTimeInitial, nameof(Main.config.hungerTime));
-				tryChangeVal(ModConfig.thristTimeInitial, nameof(Main.config.thristTime));
+				tryChangeVal(ModConfig.hungerTimeInitial, nameof(Main.config.getHungerTime));
+				tryChangeVal(ModConfig.thristTimeInitial, nameof(Main.config.getThristTime));
 			}
-			
+
 			return list.AsEnumerable();
 		}
 	}
 
-
+	// fixing crafting times
 	[HarmonyPatch(typeof(CrafterLogic), "Craft")]
 	static class CrafterLogic_Craft_Patch
 	{
@@ -139,20 +132,20 @@ namespace DayNightSpeed
 				if ((i.opcode.Equals(OpCodes.Ldarg_2) && ++ld == 2) || i.isLDC(0.1f))
 				{
 					yield return i;
-					yield return _codeForMainConfig();
-					yield return new CodeInstruction(OpCodes.Callvirt,
-						AccessTools.Method(typeof(ModConfig), nameof(ModConfig.getDayNightSpeed2)));
+
+					foreach (var j in _codeForChangeConstToConfigVar(nameof(ModConfig.dayNightSpeed)))
+						yield return j;
 
 					yield return new CodeInstruction(OpCodes.Mul);
-
 					continue;
 				}
+
 				yield return i;
 			}
 		}
 	}
 
-
+	// fixing sunbeam counter so it shows realtime seconds regardless of daynightspeed
 	[HarmonyPatch(typeof(uGUI_SunbeamCountdown), "UpdateInterface")]
 	static class uGUISunbeamCountdown_UpdateInterface_Patch
 	{
@@ -163,12 +156,11 @@ namespace DayNightSpeed
 				if (i.opcode.Equals(OpCodes.Sub))
 				{
 					yield return i;
-					
-					foreach (var i1 in _codeForChangeConstToConfigVar(nameof(ModConfig.dayNightSpeed)))
-						yield return i1;
+
+					foreach (var j in _codeForChangeConstToConfigVar(nameof(ModConfig.dayNightSpeed)))
+						yield return j;
 
 					yield return new CodeInstruction(OpCodes.Div);
-					
 					continue;
 				}
 
@@ -177,9 +169,69 @@ namespace DayNightSpeed
 		}
 	}
 
+	#region Optional patches with config multipliers
+	// optionally modifying egg hatching time
+	[HarmonyPatch(typeof(CreatureEgg), "Awake")]
+	static class CreatureEgg_Awake_Patch
+	{
+#if !DEBUG
+		static bool Prepare() => Main.config.multEggsHatching != 1.0f;
+#endif
+		static void Postfix(CreatureEgg __instance)
+		{
+			__instance.daysBeforeHatching *= Main.config.multEggsHatching;
 
-#if DEBUG
-	// for debugging
+			 $"egg: {__instance.daysBeforeHatching}".onScreen().log();
+		}
+	}
+
+	// optionally modifying plants grow time
+	//[HarmonyPatch(typeof(GrowingPlant), "GetGrowthDuration")]
+	static class GrowingPlant_GetGrowthDuration_Patch
+	{
+#if !DEBUG
+		static bool Prepare() => Main.config.multPlantsGrow != 1.0f;
+#endif
+		//static Instructions Transpiler(Instructions ins)
+		//{
+		//	//return changeConstToConfigVar(ins, 1.0f, nameof(ModConfig.multPlantsGrow));
+		//}
+	}
+
+	// optionally modifying fruits grow time (on lantern tree)
+	//private void Initialize()
+//	[HarmonyPatch(typeof(FruitPlant), "Start")]
+//	static class FruitPlant_Start_Patch
+//	{
+//#if !DEBUG
+//		static bool Prepare() => Main.config.multPlantsGrow != 1.0f;
+//#endif
+//		static void Prefix(FruitPlant __instance)
+//		{
+//			//__instance.fruitSpawnInterval *= Main.config.multPlantsGrow;
+
+//			$"fruit: {__instance.fruitSpawnInterval}".log();
+//		}
+//	}
+
+	// optionally modifying medkit autocraft time
+//	[HarmonyPatch(typeof(MedicalCabinet), "Start")]
+//	static class MedicalCabinet_Start_Patch
+//	{
+//#if !DEBUG
+//		static bool Prepare() => Main.config.multMedkitInterval != 1.0f;
+//#endif
+//		static void Prefix(MedicalCabinet __instance)
+//		{
+//			__instance.medKitSpawnInterval *= Main.config.multMedkitInterval;
+
+//			$"medkit: {__instance.medKitSpawnInterval}".log();
+//		}
+//	}
+	#endregion
+
+	#region Debug patches
+	#if DEBUG
 	[HarmonyPatch(typeof(Bed), "GetCanSleep")]
 	static class Bed_GetCanSleep_Patch
 	{
@@ -207,5 +259,6 @@ namespace DayNightSpeed
 			$"food: {__instance.food} water: {__instance.water}".onScreen("survival stats");
 		}
 	}
-#endif
+	#endif
+	#endregion
 }

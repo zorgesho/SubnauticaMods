@@ -9,6 +9,8 @@ namespace DayNightSpeed
 
 		public static void patch()
 		{
+			config.updateValues();
+
 			HarmonyHelper.patchAll();
 
 			Options.init();

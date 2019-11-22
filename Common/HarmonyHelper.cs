@@ -45,7 +45,7 @@ namespace Common
 		[AttributeUsage(AttributeTargets.Class)]
 		public class OptionalPatchAttribute: Attribute
 		{
-			const BindingFlags bf = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static;
+			static readonly BindingFlags bf = _BindingFlags.all;
 			readonly MethodInfo method;
 
 			public OptionalPatchAttribute(Type type, string methodName)
@@ -134,31 +134,30 @@ namespace Common
 			public static OpCode get<T>() => GetOpCode<T>.S.get();
 		}
 
-		public static Instructions changeConstToConfigVar<T>(Instructions instructions, T val, string configVar)
+		public static Instructions changeConstToConfigVar<T>(Instructions ins, T val, string configVar)
 		{
 			bool injected = false;
 
-			foreach (var instruction in instructions)
+			foreach (var i in ins)
 			{
-				if (!injected && instruction.isLDC(val))
+				if (!injected && i.isLDC(val))
 				{																												"HarmonyHelper.changeConstToConfigVar: injected".logDbg();
 					injected = true;
 
-					foreach (var i in _codeForChangeConstToConfigVar(configVar))
-						yield return i;
+					foreach (var j in _codeForChangeConstToConfigVar(configVar))
+						yield return j;
 
 					continue;
 				}
 
-				yield return instruction;
+				yield return i;
 			}
 		}
 
-		public static CodeInstruction _codeForMainConfig() => new CodeInstruction(OpCodes.Ldsfld, mainConfigField);
 
 		public static Instructions _codeForChangeConstToConfigVar(string configVar)
 		{
-			FieldInfo varField = mainConfigField?.FieldType.GetField(configVar, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+			FieldInfo varField = mainConfigField?.FieldType.GetField(configVar, _BindingFlags.all);
 
 			if (varField == null)
 			{
@@ -170,31 +169,46 @@ namespace Common
 			yield return new CodeInstruction(OpCodes.Ldfld, varField);
 		}
 
-		
-		public static Instructions changeConstToConfigVar<T, C>(Instructions instructions, T val, string configVar, ILGenerator ilg) where C: Component
+
+		public static Instructions _codeForChangeConstToConfigMethodCall(string configMethod)
+		{
+			MethodInfo method = mainConfigField?.FieldType.GetMethod(configMethod, _BindingFlags.all);
+			
+			if (method == null)
+			{
+				$"changeConstToConfigMethodCall: method '{configMethod}' is not found".logError();
+				yield break;
+			}
+
+			yield return new CodeInstruction(OpCodes.Ldsfld, mainConfigField);
+			yield return new CodeInstruction(OpCodes.Callvirt, method);
+		}
+
+		// changing constant to config field if gameobject have component C
+		public static Instructions changeConstToConfigVar<T, C>(Instructions ins, T val, string configVar, ILGenerator ilg) where C: Component
 		{
 			bool injected = false;																						"HarmonyHelper.changeConstToVar".logDbg();
 
-			foreach (var instruction in instructions)
+			foreach (var i in ins)
 			{																											
-				if (!injected && instruction.isLDC(val))
+				if (!injected && i.isLDC(val))
 				{																										"HarmonyHelper.changeConstToVar: injected".logDbg();
 					injected = true;
 
-					foreach (var i in _codeForChangeConstToConfigVar<T, C>(val, configVar, ilg))
-						yield return i;
+					foreach (var j in _codeForChangeConstToConfigVar<T, C>(val, configVar, ilg))
+						yield return j;
 
 					continue;
 				}
 
-				yield return instruction;
+				yield return i;
 			}
 		}
 
 
 		public static Instructions _codeForChangeConstToConfigVar<T, C>(T value, string configVar, ILGenerator ilg) where C: Component
 		{
-			FieldInfo varField = mainConfigField?.FieldType.GetField(configVar, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+			FieldInfo varField = mainConfigField?.FieldType.GetField(configVar, _BindingFlags.all);
 
 			if (varField == null)
 			{

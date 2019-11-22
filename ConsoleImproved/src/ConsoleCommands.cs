@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+
 using Common;
 
 namespace ConsoleImproved
@@ -37,10 +40,27 @@ namespace ConsoleImproved
 				if (n.getArgsCount() == 0)
 					return;
 
-				if (UWE.Utils.TryParseEnum(n.getArg(0) as string, out TechType techType))
-					CraftData.GetPrefabForTechType(techType)?.dump();
+				if (n.getArg(0) as string == "all")
+				{
+					StartCoroutine(nameof(_dumpAllPrefabs));
+				}
+				else
+				{
+					if (UWE.Utils.TryParseEnum(n.getArg(0) as string, out TechType techType))
+						CraftData.GetPrefabForTechType(techType)?.dump(techType.AsString());
+				}
 			}
 
+			IEnumerator _dumpAllPrefabs()
+			{
+				foreach (TechType techType in Enum.GetValues(typeof(TechType)))
+				{
+					CraftData.GetPrefabForTechType(techType)?.dump(techType.AsString());
+					yield return null;
+				}
+
+				"Dump complete".onScreen();
+			}
 
 			void OnConsoleCommand_printcfgvars(NotificationCenter.Notification n)
 			{

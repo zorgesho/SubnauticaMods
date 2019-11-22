@@ -147,7 +147,7 @@ namespace Common
 		//based on Yossarian King SceneDumper: http://wiki.unity3d.com/index.php?title=SceneDumper
 		static class ObjectDumper
 		{
-			const BindingFlags bf = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.FlattenHierarchy;
+			static readonly BindingFlags bf = _BindingFlags.all;// | BindingFlags.FlattenHierarchy;
 			static readonly StringBuilder output = new StringBuilder();
 
 			static bool dumpFields = true;
@@ -189,31 +189,43 @@ namespace Common
 					return result;
 				}
 
-
 				Type cmpType = cmp.GetType();
-
 				output.AppendLine($"{indent}component: {cmpType}");
 
-				if (dumpProperties)
+				try
 				{
-					var properties = new List<PropertyInfo>(cmpType.GetProperties(bf));
-					properties.Sort((p1, p2) => p1.Name.CompareTo(p2.Name));
+					if (dumpProperties)
+					{
+						var properties = new List<PropertyInfo>(cmpType.GetProperties(bf));
+						if (properties.Count > 0)
+						{
+							properties.Sort((p1, p2) => p1.Name.CompareTo(p2.Name));
+							output.AppendLine($"{indent}\tPROPERTIES:");
 
-					output.AppendLine($"{indent}\tPROPERTIES:");
+							foreach (var prop in properties)
+							{
+								if (prop.GetGetMethod() != null)
+									output.AppendLine($"{indent}\t{prop.Name}: \"{_formatValue(prop.GetValue(cmp, null))}\"");
+							}
+						}
+					}
 
-					foreach (var prop in properties)
-						output.AppendLine($"{indent}\t{prop.Name}: \"{_formatValue(prop.GetValue(cmp, null))}\"");
+					if (dumpFields)
+					{
+						var fields = new List<FieldInfo>(cmpType.GetFields(bf));
+						if (fields.Count > 0)
+						{
+							fields.Sort((f1, f2) => f1.Name.CompareTo(f2.Name));
+							output.AppendLine($"{indent}\tFIELDS:");
+
+							foreach (var field in fields)
+								output.AppendLine($"{indent}\t{field.Name}: \"{_formatValue(field.GetValue(cmp))}\"");
+						}
+					}
 				}
-
-				if (dumpFields)
+				catch (Exception e)
 				{
-					var fields = new List<FieldInfo>(cmpType.GetFields(bf));
-					fields.Sort((f1, f2) => f1.Name.CompareTo(f2.Name));
-					
-					output.AppendLine($"{indent}\tFIELDS:");
-					
-					foreach (var field in fields)
-						output.AppendLine($"{indent}\t{field.Name}: \"{field.GetValue(cmp)}\"");
+					Log.msg(e);
 				}
 			}
 		}

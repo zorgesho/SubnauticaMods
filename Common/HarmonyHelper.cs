@@ -144,7 +144,7 @@ namespace Common
 				{																												"HarmonyHelper.changeConstToConfigVar: injected".logDbg();
 					injected = true;
 
-					foreach (var j in _codeForChangeConstToConfigVar(configVar))
+					foreach (var j in _codeForChangeInstructionToConfigVar(configVar, i))
 						yield return j;
 
 					continue;
@@ -155,17 +155,21 @@ namespace Common
 		}
 
 
-		public static Instructions _codeForChangeConstToConfigVar(string configVar)
+		public static Instructions _codeForChangeInstructionToConfigVar(string configVar, CodeInstruction instruction = null)
 		{
 			FieldInfo varField = mainConfigField?.FieldType.GetField(configVar, _BindingFlags.all);
 
 			if (varField == null)
 			{
 				$"changeConstToConfigVar: varField for {configVar} is not found".logError();
-				yield break;
+				yield return instruction;
 			}
 
-			yield return new CodeInstruction(OpCodes.Ldsfld, mainConfigField);
+			CodeInstruction ldsfld = new CodeInstruction(OpCodes.Ldsfld, mainConfigField);
+			if (instruction != null && instruction.labels.Count > 0)
+				ldsfld.labels.AddRange(instruction.labels);
+
+			yield return ldsfld;
 			yield return new CodeInstruction(OpCodes.Ldfld, varField);
 		}
 

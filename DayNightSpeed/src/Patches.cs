@@ -133,7 +133,7 @@ namespace DayNightSpeed
 				{
 					yield return i;
 
-					foreach (var j in _codeForChangeConstToConfigVar(nameof(ModConfig.dayNightSpeed)))
+					foreach (var j in _codeForChangeInstructionToConfigVar(nameof(ModConfig.dayNightSpeed)))
 						yield return j;
 
 					yield return new CodeInstruction(OpCodes.Mul);
@@ -157,7 +157,7 @@ namespace DayNightSpeed
 				{
 					yield return i;
 
-					foreach (var j in _codeForChangeConstToConfigVar(nameof(ModConfig.dayNightSpeed)))
+					foreach (var j in _codeForChangeInstructionToConfigVar(nameof(ModConfig.dayNightSpeed)))
 						yield return j;
 
 					yield return new CodeInstruction(OpCodes.Div);
@@ -177,61 +177,53 @@ namespace DayNightSpeed
 #if !DEBUG
 		static bool Prepare() => Main.config.multEggsHatching != 1.0f;
 #endif
-		static void Postfix(CreatureEgg __instance)
-		{
-			__instance.daysBeforeHatching *= Main.config.multEggsHatching;
-
-			 $"egg: {__instance.daysBeforeHatching}".onScreen().log();
-		}
+		static void Postfix(CreatureEgg __instance) => __instance.daysBeforeHatching *= Main.config.multEggsHatching;
 	}
 
 	// optionally modifying plants grow time
-	//[HarmonyPatch(typeof(GrowingPlant), "GetGrowthDuration")]
+	[HarmonyPatch(typeof(GrowingPlant), "GetGrowthDuration")]
 	static class GrowingPlant_GetGrowthDuration_Patch
 	{
 #if !DEBUG
 		static bool Prepare() => Main.config.multPlantsGrow != 1.0f;
 #endif
-		//static Instructions Transpiler(Instructions ins)
-		//{
-		//	//return changeConstToConfigVar(ins, 1.0f, nameof(ModConfig.multPlantsGrow));
-		//}
+		static Instructions Transpiler(Instructions ins) => changeConstToConfigVar(ins, 1.0f, nameof(ModConfig.multPlantsGrow));
 	}
 
 	// optionally modifying fruits grow time (on lantern tree)
-	//private void Initialize()
-//	[HarmonyPatch(typeof(FruitPlant), "Start")]
-//	static class FruitPlant_Start_Patch
-//	{
-//#if !DEBUG
-//		static bool Prepare() => Main.config.multPlantsGrow != 1.0f;
-//#endif
-//		static void Prefix(FruitPlant __instance)
-//		{
-//			//__instance.fruitSpawnInterval *= Main.config.multPlantsGrow;
-
-//			$"fruit: {__instance.fruitSpawnInterval}".log();
-//		}
-//	}
+	[HarmonyPatch(typeof(FruitPlant), "Initialize")]
+	static class FruitPlant_Initialize_Patch
+	{
+#if !DEBUG
+		static bool Prepare() => Main.config.multPlantsGrow != 1.0f;
+#endif
+		static void Prefix(FruitPlant __instance)
+		{
+			if (!__instance.initialized)
+				__instance.fruitSpawnInterval *= Main.config.multPlantsGrow;
+		}
+	}
 
 	// optionally modifying medkit autocraft time
-//	[HarmonyPatch(typeof(MedicalCabinet), "Start")]
-//	static class MedicalCabinet_Start_Patch
-//	{
-//#if !DEBUG
-//		static bool Prepare() => Main.config.multMedkitInterval != 1.0f;
-//#endif
-//		static void Prefix(MedicalCabinet __instance)
-//		{
-//			__instance.medKitSpawnInterval *= Main.config.multMedkitInterval;
+	[HarmonyPatch(typeof(MedicalCabinet), "Start")]
+	static class MedicalCabinet_Start_Patch
+	{
+		static float medKitSpawnInterval = 0f;
+#if !DEBUG
+		static bool Prepare() => Main.config.multMedkitInterval != 1.0f;
+#endif
+		static void Prefix(MedicalCabinet __instance)
+		{
+			if (medKitSpawnInterval == 0f)
+				medKitSpawnInterval = __instance.medKitSpawnInterval;
 
-//			$"medkit: {__instance.medKitSpawnInterval}".log();
-//		}
-//	}
+			__instance.medKitSpawnInterval = medKitSpawnInterval * Main.config.multMedkitInterval;
+		}
+	}
 	#endregion
 
 	#region Debug patches
-	#if DEBUG
+#if DEBUG
 	[HarmonyPatch(typeof(Bed), "GetCanSleep")]
 	static class Bed_GetCanSleep_Patch
 	{

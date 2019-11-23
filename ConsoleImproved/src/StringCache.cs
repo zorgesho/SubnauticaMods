@@ -29,14 +29,13 @@ namespace ConsoleImproved
 		{
 			protected override void refresh()
 			{
-				if (strings.Count != DevConsole.commands.Count)
-				{
-					strings.Clear();
+				if (strings.Count == DevConsole.commands.Count)
+					return;
 
-					DevConsole.commands.forEach(cmd => strings.Add(cmd.Key.ToLower() + " "));  // add space for convenience
+				strings.Clear();
+				DevConsole.commands.forEach(cmd => strings.Add(cmd.Key.ToLower() + " ")); // adding space for convenience
 
-					strings.Sort();										"ConsoleHelper.CommandCache refreshed".logDbg();
-				}
+				strings.Sort();																		"ConsoleHelper.CommandCache refreshed".logDbg();
 			}
 		}
 
@@ -45,13 +44,13 @@ namespace ConsoleImproved
 		{
 			protected override void refresh()
 			{
-				if (strings.Count == 0) // techtypes don't change in runtime, so we need refresh this only once
-				{
-					foreach (TechType t in Enum.GetValues(typeof(TechType)))
-						strings.Add(t.AsString().ToLower());
+				if (strings.Count > 0) // techtypes don't change in runtime, so we need refresh this only once
+					return;
 
-					strings.Sort();
-				}
+				foreach (TechType t in Enum.GetValues(typeof(TechType)))
+					strings.Add(t.AsString().ToLower());
+
+				strings.Sort();
 			}
 		}
 
@@ -64,16 +63,19 @@ namespace ConsoleImproved
 			// searching exported config fields in current assemblies
 			protected override void refresh()
 			{
-				if (strings.Count == 0)
-				{
-					foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
-					{
-						Type cfgvars = assembly.GetType(exportCfgVarClassName, false);
+				if (strings.Count > 0)
+					return;
 
-						if (cfgvars != null && cfgvars.GetMethod(exportCfgVarGetFields)?.Invoke(null, null) is List<string> fields)
-						{
-							strings.AddRange(fields);																				fields.logDbg("CfgVarsCache added field ");
-						}
+				foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+				{
+					Type cfgvars = assembly.GetType(exportCfgVarClassName, false);
+
+					if (cfgvars != null && cfgvars.GetMethod(exportCfgVarGetFields)?.Invoke(null, null) is List<string> fields)
+					{																													fields.logDbg("CfgVarsCache added field ");
+						for (int i = 0; i < fields.Count; i++)
+							fields[i] += " "; // adding space for convenience
+
+						strings.AddRange(fields);
 					}
 				}
 			}

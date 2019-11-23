@@ -27,7 +27,13 @@ namespace Common
 			harmonyInstance.PatchAll(Assembly.GetExecutingAssembly());
 		}
 
-		
+		public static void patch(MethodBase original, MethodInfo prefix = null, MethodInfo postfix = null, MethodInfo transpiler = null)
+		{
+			harmonyInstance.Patch(original, (prefix == null)? null: new HarmonyMethod(prefix),
+											(postfix == null)? null: new HarmonyMethod(postfix),
+											(transpiler == null)? null: new HarmonyMethod(transpiler));
+		}
+
 		// dynamic patching/unpatching, for use with OptionalPatch attribute
 		public static void setPatchEnabled(bool val, Type type)
 		{

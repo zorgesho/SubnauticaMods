@@ -47,6 +47,12 @@ namespace Common
 		public static BindingFlags all = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
 	}
 
+	static class TypeExtensions
+	{
+		public static FieldInfo field(this Type type, string name) => type.GetField(name, _BindingFlags.all);
+		public static MethodInfo method(this Type type, string name) => type.GetMethod(name, _BindingFlags.all);
+	}
+
 	static class MiscExtensions
 	{
 		public static void add<T>(this List<T> target, T item, int count)

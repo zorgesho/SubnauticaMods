@@ -27,16 +27,27 @@ namespace DayNightSpeed
 		[AddToConsole] public readonly float multEggsHatching   = 1.0f;
 		[AddToConsole] public readonly float multMedkitInterval = 1.0f;
 
-		public void updateValues()
+		public void updateValues(float dnSpeed)
 		{
-			if (dayNightSpeed > float.Epsilon)
+			if (dnSpeed > float.Epsilon)
 			{
-				hungerTime = hungerTimeInitial * multHungerThrist / dayNightSpeed;
-				thristTime = thristTimeInitial * multHungerThrist / dayNightSpeed;							$"Hunger/thrist times changed: {hungerTime} {thristTime}".logDbg();
+				hungerTime = hungerTimeInitial * multHungerThrist / dnSpeed;
+				thristTime = thristTimeInitial * multHungerThrist / dnSpeed;							$"Hunger/thrist times changed: {hungerTime} {thristTime}".logDbg();
 			}
 		}
 
 		// for transpilers
 		public float getDayNightSpeedClamped01() => (dayNightSpeed > float.Epsilon && dayNightSpeed < 1.0f)? dayNightSpeed: 1.0f;
+
+#if DEBUG
+		[AddToConsole]
+		public class DbgCfg
+		{
+			public readonly bool showGoals = true;
+			public readonly bool showSurvivalStats = false;
+			public readonly bool showToggleLightStats = false;
+		}
+		public readonly DbgCfg dbgCfg = new DbgCfg();
+#endif
 	}
 }

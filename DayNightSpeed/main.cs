@@ -9,7 +9,7 @@ namespace DayNightSpeed
 
 		public static void patch()
 		{
-			config.updateValues();
+			config.updateValues(config.dayNightSpeed);
 
 			HarmonyHelper.patchAll();
 

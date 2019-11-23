@@ -1,23 +1,39 @@
-﻿using UnityEngine;
-using Common;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
+using Common;
 using Common.Configuration;
 
 namespace DayNightSpeed
 {
 	static class DayNightSpeedControl
 	{
-#if DEBUG
-		static GameObject watcherGO = null;
-#endif
-		static GameObject commandsGO = null;
+		static bool inited = false;
+		static GameObject gameObject;
+
+		// need to force normal speed during most story events
+		public static bool forcedNormalSpeed
+		{
+			get => _forcedNormalSpeed;
+
+			set
+			{
+				_forcedNormalSpeed = value;
+				DayNightCycle.main._dayNightSpeed = _forcedNormalSpeed? 1.0f: Main.config.dayNightSpeed;
+				Main.config.updateValues(DayNightCycle.main._dayNightSpeed);											$"forcedNormalSpeed: {_forcedNormalSpeed}".logDbg();
+			}
+		}
+		static bool _forcedNormalSpeed = false;
 
 		// called after dayNightSpeed changed via options menu or console
 		public class SettingChanged: Config.Field.ICustomAction
 		{
 			public void customAction()
 			{
-				Main.config.updateValues();
+				if (forcedNormalSpeed)
+					return;
+
+				Main.config.updateValues(Main.config.dayNightSpeed);
 
 				if (DayNightCycle.main != null)
 				{
@@ -26,6 +42,37 @@ namespace DayNightSpeed
 				}
 			}
 		}
+
+
+		static class StoryGoalsListener
+		{
+			const float shortGoalDelay = 60f;
+			static readonly List<string> goals = new List<string>(); // goals with time shorter than shortGoalDelay
+
+			static void onAddGoal(Story.StoryGoal goal) // postfix for StoryGoalScheduler.Schedule(StoryGoal goal)
+			{
+				if (goal == null || goal.delay > shortGoalDelay)
+					return;
+
+				if (goals.Count == 0) // if this a first added goal
+					forcedNormalSpeed = true;
+
+				goals.Add(goal.key);	$"StoryGoalsListener: goal added '{goal.key}'".logDbg();
+			}
+
+			static void onRemoveGoal(string key) // postfix for StoryGoal.Execute(string key, GoalType goalType)
+			{
+				if (goals.Remove(key) && goals.Count == 0)
+					forcedNormalSpeed = false;
+			}
+
+			public static void init()
+			{
+				HarmonyHelper.patch(typeof(Story.StoryGoalScheduler).method("Schedule"), postfix: typeof(StoryGoalsListener).method(nameof(onAddGoal)));
+				HarmonyHelper.patch(typeof(Story.StoryGoal).method("Execute"), postfix: typeof(StoryGoalsListener).method(nameof(onRemoveGoal)));
+			}
+		}
+
 
 		class DayNightSpeedWatch: MonoBehaviour
 		{
@@ -37,6 +84,13 @@ namespace DayNightSpeed
 				$"<color=#CCCCCCFF>game:</color>{DayNightCycle.main.dayNightSpeed} <color=#CCCCCCFF>cfg:</color>{Main.config.dayNightSpeed}".onScreen("dayNightSpeed");
 				$"{DayNightCycle.main.timePassed}".onScreen("time passed");
 				$"{DayNightCycle.ToGameDateTime(DayNightCycle.main.timePassedAsFloat)}".onScreen("date/time");
+#if DEBUG
+				if (Main.config.dbgCfg.showGoals && DayNightCycle.main != null)
+				{
+					foreach (var goal in Story.StoryGoalScheduler.main.schedule)
+						$"{goal.timeExecute - DayNightCycle.main.timePassed}".onScreen("<color=#BBBBFFFF>" + goal.goalKey + "</color>");
+				}
+#endif
 			}
 		}
 
@@ -50,32 +104,20 @@ namespace DayNightSpeed
 				if (DayNightCycle.main != null)
 					$"Day/night speed is {DayNightCycle.main.dayNightSpeed}".onScreen();
 			}
-
-#if DEBUG
-			void OnConsoleCommand_dischargebatts(NotificationCenter.Notification _)
-			{
-				if (Inventory.main == null)
-					return;
-
-				foreach (InventoryItem item in Inventory.main.container)
-				{
-					Battery battery = item.item.gameObject.GetComponent<Battery>();
-
-					if (battery != null)
-						battery.charge = 0;
-				}
-			}
-#endif
 		}
 
 		public static void init()
 		{
-			if (commandsGO == null)
-				commandsGO = PersistentConsoleCommands.createGameObject<DayNightSpeedCommands>("DayNightSpeedConsoleCommands");
+			if (inited)
+				return;
+
+			inited = true;
+
+			gameObject = UnityHelper.createPersistentGameObject<DayNightSpeedCommands>("DayNightSpeedControl");
 #if DEBUG
-			if (watcherGO == null)
-				watcherGO = UnityHelper.createPersistentGameObject<DayNightSpeedWatch>("DayNightSpeedWatcher");
+			gameObject.AddComponent<DayNightSpeedWatch>();
 #endif
+			StoryGoalsListener.init();
 		}
 	}
 }

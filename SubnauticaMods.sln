@@ -64,6 +64,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DebrisRecycling", "DebrisRe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiscObjects", "MiscObjects\MiscObjects.csproj", "{EC26571A-5A2B-4B0B-9431-93F9B6E639D4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HabitatPlatform", "HabitatPlatform\HabitatPlatform.csproj", "{C504563A-B554-4A91-AE30-14CFCD626007}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "prototypes", "prototypes", "{51F4A336-ADD0-4AD9-BBCF-336DAAB8EF4D}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Common\Common.Config.Options\Common.Config.Options.projitems*{0610f2c1-4b75-45f9-b517-9d747e3edd41}*SharedItemsImports = 13
@@ -117,6 +121,9 @@ Global
 		Common\Common.CraftHelper\Common.CraftHelper.projitems*{b574e84f-e5bf-4e99-abac-3698b6643e5a}*SharedItemsImports = 4
 		Common\Common.projitems*{b574e84f-e5bf-4e99-abac-3698b6643e5a}*SharedItemsImports = 4
 		Common\Common.projitems*{bfb9336c-f678-4af1-8b10-0bddcd3aeac8}*SharedItemsImports = 4
+		Common\Common.Config\Common.Config.projitems*{c504563a-b554-4a91-ae30-14cfcd626007}*SharedItemsImports = 4
+		Common\Common.CraftHelper\Common.CraftHelper.projitems*{c504563a-b554-4a91-ae30-14cfcd626007}*SharedItemsImports = 4
+		Common\Common.projitems*{c504563a-b554-4a91-ae30-14cfcd626007}*SharedItemsImports = 4
 		Common\Common.Config\Common.Config.projitems*{cb025d20-0b16-4e80-95e6-3c3fc77935fb}*SharedItemsImports = 4
 		Common\Common.projitems*{cb025d20-0b16-4e80-95e6-3c3fc77935fb}*SharedItemsImports = 4
 		Common\Common.projitems*{d90fc3b6-6eaa-492d-927f-c7068da63bd9}*SharedItemsImports = 4
@@ -234,6 +241,12 @@ Global
 		{EC26571A-5A2B-4B0B-9431-93F9B6E639D4}.Publish|Any CPU.Build.0 = Publish|Any CPU
 		{EC26571A-5A2B-4B0B-9431-93F9B6E639D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EC26571A-5A2B-4B0B-9431-93F9B6E639D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C504563A-B554-4A91-AE30-14CFCD626007}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C504563A-B554-4A91-AE30-14CFCD626007}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C504563A-B554-4A91-AE30-14CFCD626007}.Publish|Any CPU.ActiveCfg = Publish|Any CPU
+		{C504563A-B554-4A91-AE30-14CFCD626007}.Publish|Any CPU.Build.0 = Publish|Any CPU
+		{C504563A-B554-4A91-AE30-14CFCD626007}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C504563A-B554-4A91-AE30-14CFCD626007}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -251,14 +264,17 @@ Global
 		{44795620-2850-4B72-B859-74C5D50E6708} = {EE6D7B7D-F20A-439A-8C01-97B6A16F9B52}
 		{A581DBE2-97A4-4995-8F23-223D9245C338} = {EE6D7B7D-F20A-439A-8C01-97B6A16F9B52}
 		{D90FC3B6-6EAA-492D-927F-C7068DA63BD9} = {C49BC122-0A68-48A8-8EA3-737FB7553D8B}
+		{CB025D20-0B16-4E80-95E6-3C3FC77935FB} = {51F4A336-ADD0-4AD9-BBCF-336DAAB8EF4D}
 		{E30903DF-6F81-41BC-ADA2-9F50188AAFF5} = {EE6D7B7D-F20A-439A-8C01-97B6A16F9B52}
 		{83C36088-5678-4A99-91D6-D5751E789482} = {C49BC122-0A68-48A8-8EA3-737FB7553D8B}
 		{7575770C-9962-4BD2-BBBE-E440B9437C03} = {EE6D7B7D-F20A-439A-8C01-97B6A16F9B52}
 		{F93D86EE-3055-407B-8AF2-5F2A06319AF8} = {C49BC122-0A68-48A8-8EA3-737FB7553D8B}
 		{9E3D5F87-C19E-482B-AC15-7E56DEED70FA} = {C49BC122-0A68-48A8-8EA3-737FB7553D8B}
+		{83158211-2490-4CDC-86DD-D865E9394ED9} = {51F4A336-ADD0-4AD9-BBCF-336DAAB8EF4D}
 		{BFB9336C-F678-4AF1-8B10-0BDDCD3AEAC8} = {C49BC122-0A68-48A8-8EA3-737FB7553D8B}
 		{1C1E62E2-282E-48EE-BF91-54A1E0180B96} = {C49BC122-0A68-48A8-8EA3-737FB7553D8B}
 		{B574E84F-E5BF-4E99-ABAC-3698B6643E5A} = {C49BC122-0A68-48A8-8EA3-737FB7553D8B}
+		{C504563A-B554-4A91-AE30-14CFCD626007} = {51F4A336-ADD0-4AD9-BBCF-336DAAB8EF4D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0A745472-1C11-4AB7-B6C4-79A169E0FB35}

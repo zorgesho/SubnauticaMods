@@ -81,14 +81,14 @@ namespace DayNightSpeed
 				if (DayNightCycle.main == null)
 					return;
 
-				$"<color=#CCCCCCFF>game:</color>{DayNightCycle.main.dayNightSpeed} <color=#CCCCCCFF>cfg:</color>{Main.config.dayNightSpeed}".onScreen("dayNightSpeed");
-				$"{DayNightCycle.main.timePassed}".onScreen("time passed");
+				$"<color=#CCCCCCFF>game:</color>{DayNightCycle.main.dayNightSpeed} <color=#CCCCCCFF>cfg:</color>{Main.config.dayNightSpeed}".onScreen("day/night speed");
+				$"{DayNightCycle.main.timePassed:#.###}".onScreen("time passed");
 				$"{DayNightCycle.ToGameDateTime(DayNightCycle.main.timePassedAsFloat)}".onScreen("date/time");
 #if DEBUG
 				if (Main.config.dbgCfg.showGoals && DayNightCycle.main != null)
 				{
 					foreach (var goal in Story.StoryGoalScheduler.main.schedule)
-						$"{goal.timeExecute - DayNightCycle.main.timePassed}".onScreen("<color=#BBBBFFFF>" + goal.goalKey + "</color>");
+						$"{(goal.timeExecute - DayNightCycle.main.timePassed):#.###}".onScreen("<color=#FFFF00FF>" + goal.goalKey + "</color>");
 				}
 #endif
 			}

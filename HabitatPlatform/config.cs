@@ -2,8 +2,9 @@
 
 namespace HabitatPlatform
 {
+	[AddToConsole]
 	class ModConfig: Config
 	{
-		public readonly int field = 42;
+		public readonly float step = 1f;
 	}
 }

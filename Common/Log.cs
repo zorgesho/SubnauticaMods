@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Diagnostics;
+using System.Globalization;
 using System.Collections.Generic;
 
 namespace Common
@@ -61,7 +62,7 @@ namespace Common
 #endif
 		public static void msg(string str, MsgType msgType)
 		{
-			string formattedMsg = $"[{logPrefix}] {msgType}: {str}";
+			string formattedMsg = $"[{logPrefix}] {DateTime.Now.ToString("hh:mm:ss.fff")}   {msgType}: {str}";
 			Console.WriteLine(formattedMsg);
 #if TRACE
 			try

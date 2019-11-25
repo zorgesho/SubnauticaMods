@@ -11,5 +11,6 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)PathHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SaveLoad.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SaveLoadHelper.cs" />
   </ItemGroup>
 </Project>

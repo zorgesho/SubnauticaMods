@@ -93,6 +93,7 @@ Global
 		Common\Common.projitems*{4ef61a6d-0c6e-48a9-8625-58d196fd5386}*SharedItemsImports = 4
 		Common\Common.Config.Options\Common.Config.Options.projitems*{655a27d7-f0e2-480c-b875-96312b41ef0f}*SharedItemsImports = 4
 		Common\Common.Config\Common.Config.projitems*{655a27d7-f0e2-480c-b875-96312b41ef0f}*SharedItemsImports = 4
+		Common\Common.GameSerialization\Common.GameSerialization.projitems*{655a27d7-f0e2-480c-b875-96312b41ef0f}*SharedItemsImports = 4
 		Common\Common.projitems*{655a27d7-f0e2-480c-b875-96312b41ef0f}*SharedItemsImports = 4
 		Common\Common.UI\Common.UI.projitems*{655a27d7-f0e2-480c-b875-96312b41ef0f}*SharedItemsImports = 4
 		Common\Common.AssetsHelper\Common.AssetsHelper.projitems*{7575770c-9962-4bd2-bbbe-e440b9437c03}*SharedItemsImports = 13

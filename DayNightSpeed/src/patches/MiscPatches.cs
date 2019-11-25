@@ -8,18 +8,6 @@ namespace DayNightSpeed
 {
 	using Instructions = IEnumerable<CodeInstruction>;
 	using static Common.HarmonyHelper;
-
-	[HarmonyPatch(typeof(DayNightCycle), "Awake")]
-	static class DayNightCycle_Awake_Patch
-	{
-		static void Postfix(DayNightCycle __instance)
-		{
-			__instance._dayNightSpeed = Main.config.dayNightSpeed;
-
-			// unregistering vanilla daynightspeed console command, replacing it with ours in DayNightSpeedControl
-			NotificationCenter.DefaultCenter.RemoveObserver(__instance, "OnConsoleCommand_daynightspeed");
-		}
-	}
 	
 	// fixing hunger/thrist timers
 	[HarmonyPatch(typeof(Survival), "UpdateStats")]

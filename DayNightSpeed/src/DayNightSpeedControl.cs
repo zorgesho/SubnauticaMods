@@ -6,7 +6,7 @@ using Common.Configuration;
 
 namespace DayNightSpeed
 {
-	static class DayNightSpeedControl
+	static partial class DayNightSpeedControl
 	{
 		static bool inited = false;
 		static GameObject gameObject;
@@ -17,13 +17,27 @@ namespace DayNightSpeed
 			get => _forcedNormalSpeed;
 
 			set
-			{
+			{																											"DayNightCycle.main == null".logDbgError((DayNightCycle.main == null));
 				_forcedNormalSpeed = value;
+
 				DayNightCycle.main._dayNightSpeed = _forcedNormalSpeed? 1.0f: Main.config.dayNightSpeed;
 				Main.config.updateValues(DayNightCycle.main._dayNightSpeed);											$"forcedNormalSpeed: {_forcedNormalSpeed}".logDbg();
 			}
 		}
 		static bool _forcedNormalSpeed = false;
+
+		static void initDayNightCycle(DayNightCycle __instance) // postfix for DayNightCycle.Awake
+		{
+			__instance._dayNightSpeed = Main.config.dayNightSpeed;
+
+			StoryGoalsListener.load(); // need load that after DayNightCycle is created
+
+			// unregistering vanilla daynightspeed console command, replacing it with ours in DayNightSpeedControl
+			NotificationCenter.DefaultCenter.RemoveObserver(__instance, "OnConsoleCommand_daynightspeed");
+		}
+
+		// for transpilers
+		//public static float getDayNightSpeedClamped01() => forcedNormalSpeed? 1.0f: Main.config._getDayNightSpeedClamped01();
 
 		// called after dayNightSpeed changed via options menu or console
 		public class SettingChanged: Config.Field.ICustomAction
@@ -43,57 +57,6 @@ namespace DayNightSpeed
 			}
 		}
 
-
-		static class StoryGoalsListener
-		{
-			const float shortGoalDelay = 60f;
-			static readonly List<string> goals = new List<string>(); // goals with time shorter than shortGoalDelay
-
-			static void onAddGoal(Story.StoryGoal goal) // postfix for StoryGoalScheduler.Schedule(StoryGoal goal)
-			{
-				if (goal == null || goal.delay > shortGoalDelay)
-					return;
-
-				if (goals.Count == 0) // if this a first added goal
-					forcedNormalSpeed = true;
-
-				goals.Add(goal.key);	$"StoryGoalsListener: goal added '{goal.key}'".logDbg();
-			}
-
-			static void onRemoveGoal(string key) // postfix for StoryGoal.Execute(string key, GoalType goalType)
-			{
-				if (goals.Remove(key) && goals.Count == 0)
-					forcedNormalSpeed = false;
-			}
-
-			public static void init()
-			{
-				HarmonyHelper.patch(typeof(Story.StoryGoalScheduler).method("Schedule"), postfix: typeof(StoryGoalsListener).method(nameof(onAddGoal)));
-				HarmonyHelper.patch(typeof(Story.StoryGoal).method("Execute"), postfix: typeof(StoryGoalsListener).method(nameof(onRemoveGoal)));
-			}
-		}
-
-
-		class DayNightSpeedWatch: MonoBehaviour
-		{
-			void Update()
-			{
-				if (DayNightCycle.main == null)
-					return;
-
-				$"<color=#CCCCCCFF>game:</color>{DayNightCycle.main.dayNightSpeed} <color=#CCCCCCFF>cfg:</color>{Main.config.dayNightSpeed}".onScreen("day/night speed");
-				$"{DayNightCycle.main.timePassed:#.###}".onScreen("time passed");
-				$"{DayNightCycle.ToGameDateTime(DayNightCycle.main.timePassedAsFloat)}".onScreen("date/time");
-#if DEBUG
-				if (Main.config.dbgCfg.showGoals && DayNightCycle.main != null)
-				{
-					foreach (var goal in Story.StoryGoalScheduler.main.schedule)
-						$"{(goal.timeExecute - DayNightCycle.main.timePassed):#.###}".onScreen("<color=#FFFF00FF>" + goal.goalKey + "</color>");
-				}
-#endif
-			}
-		}
-
 		class DayNightSpeedCommands: PersistentConsoleCommands
 		{
 			void OnConsoleCommand_daynightspeed(NotificationCenter.Notification n)
@@ -106,6 +69,42 @@ namespace DayNightSpeed
 			}
 		}
 
+		// for debugging
+		class DayNightSpeedWatch: MonoBehaviour
+		{
+			readonly HashSet<string> goals = new HashSet<string>(); // for ignoring duplicates
+
+			void Update()
+			{
+				if (DayNightCycle.main == null)
+					return;
+
+				string clr = forcedNormalSpeed? "<color=#00FF00FF>": "<color=#CCCCCCFF>";
+				$"{clr}game:</color>{DayNightCycle.main.dayNightSpeed} <color=#CCCCCCFF>cfg:</color>{Main.config.dayNightSpeed}".onScreen("day/night speed");
+				$"{DayNightCycle.main.timePassed:#.###}".onScreen("time passed");
+				$"{DayNightCycle.ToGameDateTime(DayNightCycle.main.timePassedAsFloat)}".onScreen("date/time");
+#if DEBUG
+				if (Main.config.dbgCfg.showGoals && DayNightCycle.main != null) // show current goals
+				{
+					goals.Clear();
+					foreach (var goal in Story.StoryGoalScheduler.main.schedule)
+					{
+						if (goals.Add(goal.goalKey))
+						{
+							const string colorCompleted = "<color=#999900CC>", colorNotCompleted = "<color=#FFFF00FF>";
+							
+							bool completed = Story.StoryGoalManager.main.completedGoals.Contains(goal.goalKey);
+							string goalName = (completed? colorCompleted: colorNotCompleted) + goal.goalKey + "</color>";
+
+							$"{(goal.timeExecute - DayNightCycle.main.timePassed):#.###}".onScreen(goalName);
+						}
+					}
+				}
+#endif
+			}
+		}
+
+
 		public static void init()
 		{
 			if (inited)
@@ -114,10 +113,12 @@ namespace DayNightSpeed
 			inited = true;
 
 			gameObject = UnityHelper.createPersistentGameObject<DayNightSpeedCommands>("DayNightSpeedControl");
+			gameObject.AddComponent<StoryGoalsListener>();
+
+			HarmonyHelper.patch(typeof(DayNightCycle).method("Awake"), postfix: typeof(DayNightSpeedControl).method(nameof(initDayNightCycle)));
 #if DEBUG
 			gameObject.AddComponent<DayNightSpeedWatch>();
 #endif
-			StoryGoalsListener.init();
 		}
 	}
 }

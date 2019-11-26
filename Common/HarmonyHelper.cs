@@ -42,12 +42,6 @@ namespace Common
 		}
 
 
-		public static bool isLDC<T>(this CodeInstruction instruction, T val)
-		{
-			return instruction.opcode.Equals(OpCodeByType.get<T>()) && instruction.operand.Equals(val);
-		}
-		
-		
 		[AttributeUsage(AttributeTargets.Class)]
 		public class OptionalPatchAttribute: Attribute
 		{
@@ -124,12 +118,13 @@ namespace Common
 
 			class GetOpCode<T>: IGetOpCode<T>
 			{
-				class GetOpSpec: IGetOpCode<float>, IGetOpCode<sbyte>
+				class GetOpSpec: IGetOpCode<float>, IGetOpCode<double>, IGetOpCode<sbyte>
 				{
 					public static readonly GetOpSpec S = new GetOpSpec();
 
-					OpCode IGetOpCode<float>.get() => OpCodes.Ldc_R4;
-					OpCode IGetOpCode<sbyte>.get() => OpCodes.Ldc_I4_S;
+					OpCode IGetOpCode<float>.get()  => OpCodes.Ldc_R4;
+					OpCode IGetOpCode<double>.get() => OpCodes.Ldc_R8;
+					OpCode IGetOpCode<sbyte>.get()  => OpCodes.Ldc_I4_S;
 				}
 
 				public static readonly IGetOpCode<T> S = GetOpSpec.S as IGetOpCode<T> ?? new GetOpCode<T>();
@@ -251,5 +246,20 @@ namespace Common
 			ci2.labels.Add(lb2);
 			yield return ci2;
 		}
+
+		#region CodeInstruction extensions
+
+		public static bool isLDC<T>(this CodeInstruction instruction, T val)
+		{
+			return instruction.opcode.Equals(OpCodeByType.get<T>()) && instruction.operand.Equals(val);
+		}
+
+		public static bool isOp(this CodeInstruction ci, OpCode opcode, object operand = null) =>
+			ci.opcode == opcode && (operand == null || ci.operand.Equals(operand));
+
+		public static void log(this CodeInstruction ci) =>
+			$"{ci.opcode} {ci.operand} {(ci.labels.Count > 0? "->labels:" + ci.labels.Count:"")}".log();
+
+		#endregion
 	}
 }

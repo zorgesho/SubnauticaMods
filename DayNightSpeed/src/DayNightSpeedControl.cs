@@ -18,6 +18,9 @@ namespace DayNightSpeed
 
 			set
 			{																											"DayNightCycle.main == null".logDbgError((DayNightCycle.main == null));
+				if (_forcedNormalSpeed == value || DayNightCycle.main.IsInSkipTimeMode())
+					return;
+
 				_forcedNormalSpeed = value;
 
 				DayNightCycle.main._dayNightSpeed = _forcedNormalSpeed? 1.0f: Main.config.dayNightSpeed;
@@ -37,7 +40,14 @@ namespace DayNightSpeed
 		}
 
 		// for transpilers
-		//public static float getDayNightSpeedClamped01() => forcedNormalSpeed? 1.0f: Main.config._getDayNightSpeedClamped01();
+		public static float getDayNightSpeedClamped01()
+		{																												"DayNightCycle.main == null".logDbgError((DayNightCycle.main == null));
+			if (_forcedNormalSpeed)
+				return 1.0f;
+
+			float speed = DayNightCycle.main.dayNightSpeed;
+			return (speed > float.Epsilon && speed < 1.0f)? speed: 1.0f;
+		}
 
 		// called after dayNightSpeed changed via options menu or console
 		public class SettingChanged: Config.Field.ICustomAction
@@ -119,6 +129,16 @@ namespace DayNightSpeed
 #if DEBUG
 			gameObject.AddComponent<DayNightSpeedWatch>();
 #endif
+		}
+	}
+
+	// helper for transpilers
+	static class _dayNightSpeedClamped01
+	{
+		public static Harmony.CodeInstruction ci
+		{
+			get => new Harmony.CodeInstruction(System.Reflection.Emit.OpCodes.Call,
+				typeof(DayNightSpeedControl).method(nameof(DayNightSpeedControl.getDayNightSpeedClamped01)));
 		}
 	}
 }

@@ -57,8 +57,7 @@ namespace DayNightSpeed
 				if (goal == null || goal.delay > shortGoalDelay)
 					return;
 
-				if (instance.goals.Count == 0) // if this a first added goal
-					forcedNormalSpeed = true;
+				forcedNormalSpeed = true;
 
 				instance.goals.Add(goal.key);	$"StoryGoalsListener: goal added '{goal.key}'".logDbg();
 			}

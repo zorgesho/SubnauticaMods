@@ -31,8 +31,8 @@ namespace DayNightSpeed
 				{
 					yield return i;
 
-					foreach (var j in _codeForChangeConstToConfigMethodCall(nameof(ModConfig.getDayNightSpeedClamped01)))
-						yield return j;
+					yield return new CodeInstruction(OpCodes.Call,
+						typeof(DayNightSpeedControl).method(nameof(DayNightSpeedControl.getDayNightSpeedClamped01)));
 
 					yield return new CodeInstruction(OpCodes.Div);
 					continue;

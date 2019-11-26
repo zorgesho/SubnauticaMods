@@ -66,6 +66,29 @@ namespace DayNightSpeed
 			}
 		}
 	}
+	
+	// fixing maproom scan times
+	[HarmonyPatch(typeof(MapRoomFunctionality), "GetScanInterval")]
+	static class MapRoomFunctionality_GetScanInterval_Patch
+	{
+		static Instructions Transpiler(Instructions cins)
+		{
+			foreach (var ci in cins)
+			{
+				if (ci.opcode == OpCodes.Call)
+				{
+					yield return ci;
+
+					yield return _dayNightSpeedClamped01.ci;
+					yield return new CodeInstruction(OpCodes.Mul);
+
+					continue;
+				}
+
+				yield return ci;
+			}
+		}
+	}
 
 	// fixing sunbeam counter so it shows realtime seconds regardless of daynightspeed
 	[HarmonyPatch(typeof(uGUI_SunbeamCountdown), "UpdateInterface")]

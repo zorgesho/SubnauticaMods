@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Reflection.Emit;
+﻿using System.Reflection.Emit;
 using System.Collections.Generic;
 
 using Harmony;
@@ -15,24 +14,31 @@ namespace DayNightSpeed
 	{
 		static Instructions Transpiler(Instructions ins)
 		{
-			var list = new List<CodeInstruction>(ins);
-
-			for (int i = list.Count - 1; i >= 0; i--) // changing list in the process, so iterate it backwards
+			int ldc100 = 0;
+			foreach (var i in ins)
 			{
-				void tryChangeVal(float val, string configMethod)
+				if (i.isLDC(100f) && ++ldc100 <= 2)
 				{
-					if (list[i].isLDC(val))
+					yield return i;
+
+					foreach (var j in _codeForChangeInstructionToConfigVar(nameof(ModConfig.dayNightSpeed)))
+						yield return j;
+
+					yield return new CodeInstruction(OpCodes.Mul);
+
+					if (Main.config.multHungerThrist != 1f)
 					{
-						list.RemoveAt(i);
-						list.InsertRange(i, _codeForChangeConstToConfigMethodCall(configMethod));
+						foreach (var j in _codeForChangeInstructionToConfigVar(nameof(ModConfig.multHungerThrist)))
+							yield return j;
+
+						yield return new CodeInstruction(OpCodes.Div);
 					}
+
+					continue;
 				}
 
-				tryChangeVal(ModConfig.hungerTimeInitial, nameof(Main.config.getHungerTime));
-				tryChangeVal(ModConfig.thristTimeInitial, nameof(Main.config.getThristTime));
+				yield return i;
 			}
-
-			return list.AsEnumerable();
 		}
 	}
 

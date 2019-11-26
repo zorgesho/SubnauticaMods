@@ -9,12 +9,10 @@ namespace DayNightSpeed
 
 		public static void patch()
 		{
-			config.updateValues(config.dayNightSpeed);
-
 			HarmonyHelper.patchAll();
 
 			Options.init();
-
+			
 			DayNightSpeedControl.init();
 			DayNightCyclePatches.init();
 		}

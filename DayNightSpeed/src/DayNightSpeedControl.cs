@@ -24,7 +24,6 @@ namespace DayNightSpeed
 				_forcedNormalSpeed = value;
 
 				DayNightCycle.main._dayNightSpeed = _forcedNormalSpeed? 1.0f: Main.config.dayNightSpeed;
-				Main.config.updateValues(DayNightCycle.main._dayNightSpeed);											$"forcedNormalSpeed: {_forcedNormalSpeed}".logDbg();
 			}
 		}
 		static bool _forcedNormalSpeed = false;
@@ -57,8 +56,6 @@ namespace DayNightSpeed
 				if (forcedNormalSpeed)
 					return;
 
-				Main.config.updateValues(Main.config.dayNightSpeed);
-
 				if (DayNightCycle.main != null)
 				{
 					DayNightCycle.main._dayNightSpeed = Main.config.dayNightSpeed;
@@ -72,7 +69,7 @@ namespace DayNightSpeed
 			void OnConsoleCommand_daynightspeed(NotificationCenter.Notification n)
 			{
 				if (n.getArgsCount() > 0)
-					DevConsole.SendConsoleCommand($"setcfgvar {nameof(Main.config.dayNightSpeed)} {n.getArg(0)}");
+					DevConsole.SendConsoleCommand($"setcfgvar dns.{nameof(Main.config.dayNightSpeed)} {n.getArg(0)}");
 
 				if (DayNightCycle.main != null)
 					$"Day/night speed is {DayNightCycle.main.dayNightSpeed}".onScreen();

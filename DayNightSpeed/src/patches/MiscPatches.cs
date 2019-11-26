@@ -12,24 +12,24 @@ namespace DayNightSpeed
 	[HarmonyPatch(typeof(Survival), "UpdateStats")]
 	static class Survival_UpdateStats_Patch
 	{
-		static Instructions Transpiler(Instructions ins)
+		static Instructions Transpiler(Instructions cins)
 		{
 			int ldc100 = 0;
-			foreach (var i in ins)
+			foreach (var ci in cins)
 			{
-				if (i.isLDC(100f) && ++ldc100 <= 2)
+				if (ci.isLDC(100f) && ++ldc100 <= 2)
 				{
-					yield return i;
+					yield return ci;
 
-					foreach (var j in _codeForChangeInstructionToConfigVar(nameof(ModConfig.dayNightSpeed)))
-						yield return j;
+					foreach (var i in _codeForChangeInstructionToConfigVar(nameof(ModConfig.dayNightSpeed)))
+						yield return i;
 
 					yield return new CodeInstruction(OpCodes.Mul);
 
 					if (Main.config.multHungerThrist != 1f)
 					{
-						foreach (var j in _codeForChangeInstructionToConfigVar(nameof(ModConfig.multHungerThrist)))
-							yield return j;
+						foreach (var i in _codeForChangeInstructionToConfigVar(nameof(ModConfig.multHungerThrist)))
+							yield return i;
 
 						yield return new CodeInstruction(OpCodes.Div);
 					}
@@ -37,7 +37,7 @@ namespace DayNightSpeed
 					continue;
 				}
 
-				yield return i;
+				yield return ci;
 			}
 		}
 	}
@@ -46,23 +46,23 @@ namespace DayNightSpeed
 	[HarmonyPatch(typeof(CrafterLogic), "Craft")]
 	static class CrafterLogic_Craft_Patch
 	{
-		static Instructions Transpiler(Instructions ins)
+		static Instructions Transpiler(Instructions cins)
 		{
 			int ld = 0;
-			foreach (var i in ins)
+			foreach (var ci in cins)
 			{
-				if ((i.opcode.Equals(OpCodes.Ldarg_2) && ++ld == 2) || i.isLDC(0.1f))
+				if ((ci.opcode == OpCodes.Ldarg_2 && ++ld == 2) || ci.isLDC(0.1f))
 				{
-					yield return i;
+					yield return ci;
 
-					foreach (var j in _codeForChangeInstructionToConfigVar(nameof(ModConfig.dayNightSpeed)))
-						yield return j;
+					foreach (var i in _codeForChangeInstructionToConfigVar(nameof(ModConfig.dayNightSpeed)))
+						yield return i;
 
 					yield return new CodeInstruction(OpCodes.Mul);
 					continue;
 				}
 
-				yield return i;
+				yield return ci;
 			}
 		}
 	}
@@ -71,22 +71,22 @@ namespace DayNightSpeed
 	[HarmonyPatch(typeof(uGUI_SunbeamCountdown), "UpdateInterface")]
 	static class uGUISunbeamCountdown_UpdateInterface_Patch
 	{
-		static Instructions Transpiler(Instructions ins)
+		static Instructions Transpiler(Instructions cins)
 		{
-			foreach (var i in ins)
+			foreach (var ci in cins)
 			{
-				if (i.opcode.Equals(OpCodes.Sub))
+				if (ci.opcode == OpCodes.Sub)
 				{
-					yield return i;
+					yield return ci;
 
-					foreach (var j in _codeForChangeInstructionToConfigVar(nameof(ModConfig.dayNightSpeed)))
-						yield return j;
+					foreach (var i in _codeForChangeInstructionToConfigVar(nameof(ModConfig.dayNightSpeed)))
+						yield return i;
 
 					yield return new CodeInstruction(OpCodes.Div);
 					continue;
 				}
 
-				yield return i;
+				yield return ci;
 			}
 		}
 	}
@@ -95,13 +95,13 @@ namespace DayNightSpeed
 	[HarmonyPatch(typeof(PropulseCannonAmmoHandler), "Update")]
 	static class PropulseCannonAmmoHandler_Update_Patch
 	{
-		static Instructions Transpiler(Instructions ins)
+		static Instructions Transpiler(Instructions cins)
 		{
-			foreach (var i in ins)
+			foreach (var ci in cins)
 			{
-				if (i.isLDC(3.0f))
+				if (ci.isLDC(3.0f))
 				{
-					yield return i;
+					yield return ci;
 
 					yield return _dayNightSpeedClamped01.ci;
 					yield return new CodeInstruction(OpCodes.Mul);
@@ -109,7 +109,7 @@ namespace DayNightSpeed
 					continue;
 				}
 
-				yield return i;
+				yield return ci;
 			}
 		}
 	}
@@ -132,13 +132,13 @@ namespace DayNightSpeed
 	[HarmonyPatch(typeof(WorldForces), "AddExplosion")]
 	static class WorldForces_AddExplosion_Patch
 	{
-		static Instructions Transpiler(Instructions ins)
+		static Instructions Transpiler(Instructions cins)
 		{
-			foreach (var i in ins)
+			foreach (var ci in cins)
 			{
-				if (i.isLDC(500f))
+				if (ci.isLDC(500f))
 				{
-					yield return i;
+					yield return ci;
 
 					yield return _dayNightSpeedClamped01.ci;
 					yield return new CodeInstruction(OpCodes.Div);
@@ -146,7 +146,7 @@ namespace DayNightSpeed
 					continue;
 				}
 
-				yield return i;
+				yield return ci;
 			}
 		}
 	}
@@ -155,13 +155,13 @@ namespace DayNightSpeed
 	[HarmonyPatch(typeof(WorldForces), "AddCurrent")]
 	static class WorldForces_AddCurrent_Patch
 	{
-		static Instructions Transpiler(Instructions ins)
+		static Instructions Transpiler(Instructions cins)
 		{
-			foreach (var i in ins)
+			foreach (var ci in cins)
 			{
-				if (i.isOp(OpCodes.Ldarg_S, (byte)5))
+				if (ci.isOp(OpCodes.Ldarg_S, (byte)5))
 				{
-					yield return i;
+					yield return ci;
 
 					yield return _dayNightSpeedClamped01.ci;
 					yield return new CodeInstruction(OpCodes.Mul);
@@ -169,7 +169,7 @@ namespace DayNightSpeed
 					continue;
 				}
 
-				yield return i;
+				yield return ci;
 			}
 		}
 	}
@@ -178,14 +178,14 @@ namespace DayNightSpeed
 	[HarmonyPatch(typeof(WorldForces), "DoFixedUpdate")]
 	static class WorldForces_DoFixedUpdate_Patch
 	{
-		static Instructions Transpiler(Instructions ins)
+		static Instructions Transpiler(Instructions cins)
 		{
 			bool injected500 = false;
-			foreach (var i in ins)
+			foreach (var ci in cins)
 			{
-				if (i.isLDC<double>(0.03f))
+				if (ci.isLDC<double>(0.03f)) // is it safe ?
 				{
-					yield return i;
+					yield return ci;
 
 					yield return _dayNightSpeedClamped01.ci;
 					yield return new CodeInstruction(OpCodes.Mul);
@@ -193,10 +193,10 @@ namespace DayNightSpeed
 					continue;
 				}
 				
-				if (!injected500 && i.isLDC(500f))
+				if (!injected500 && ci.isLDC(500f))
 				{
 					injected500 = true;
-					yield return i;
+					yield return ci;
 
 					yield return _dayNightSpeedClamped01.ci;
 					yield return new CodeInstruction(OpCodes.Div);
@@ -204,7 +204,7 @@ namespace DayNightSpeed
 					continue;
 				}
 
-				yield return i;
+				yield return ci;
 			}
 		}
 	}

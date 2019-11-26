@@ -22,8 +22,8 @@ namespace DayNightSpeed
 #if !DEBUG
 		static bool Prepare() => Main.config.multPlantsGrow != 1.0f;
 #endif
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> ins) =>
-			HarmonyHelper.changeConstToConfigVar(ins, 1.0f, nameof(ModConfig.multPlantsGrow));
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins) =>
+			HarmonyHelper.changeConstToConfigVar(cins, 1.0f, nameof(ModConfig.multPlantsGrow));
 	}
 
 

@@ -15,29 +15,28 @@ namespace DayNightSpeed
 		static bool inited = false;
 
 		// simple transpiler for changing 1.0 to current value of dayNightSpeed
-		static Instructions transpilerSpeed(Instructions ins) => changeConstToConfigVar(ins, 1.0f, nameof(Main.config.dayNightSpeed));
+		static Instructions transpilerSpeed(Instructions cins) => changeConstToConfigVar(cins, 1.0f, nameof(Main.config.dayNightSpeed));
 		static readonly MethodInfo patchSpeedSimple = typeof(DayNightCyclePatches).method(nameof(transpilerSpeed));
 
 
 		// transpiler for correcting time if daynightspeed < 1
-		static Instructions transpilerSpeedClamped01(Instructions ins)
+		static Instructions transpilerSpeedClamped01(Instructions cins)
 		{
 			MethodInfo deltaTime = AccessTools.Method(typeof(DayNightCycle), "get_deltaTime");
 			MethodInfo dayNightSpeed = AccessTools.Method(typeof(DayNightCycle), "get_dayNightSpeed");
 
-			foreach (var i in ins)
+			foreach (var ci in cins)
 			{
-				if (i.opcode.Equals(OpCodes.Callvirt) && (i.operand.Equals(deltaTime) || i.operand.Equals(dayNightSpeed)))
+				if (ci.opcode == OpCodes.Callvirt && (ci.operand.Equals(deltaTime) || ci.operand.Equals(dayNightSpeed)))
 				{
-					yield return i;
+					yield return ci;
 
-					yield return new CodeInstruction(OpCodes.Call,
-						typeof(DayNightSpeedControl).method(nameof(DayNightSpeedControl.getDayNightSpeedClamped01)));
-
+					yield return _dayNightSpeedClamped01.ci;
 					yield return new CodeInstruction(OpCodes.Div);
+
 					continue;
 				}
-				yield return i;
+				yield return ci;
 			}
 		}
 		static readonly MethodInfo patchSpeedClamped01 = typeof(DayNightCyclePatches).method(nameof(transpilerSpeedClamped01));

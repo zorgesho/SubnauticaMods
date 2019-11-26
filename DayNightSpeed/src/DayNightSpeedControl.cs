@@ -17,11 +17,11 @@ namespace DayNightSpeed
 			get => _forcedNormalSpeed;
 
 			set
-			{																											"DayNightCycle.main == null".logDbgError((DayNightCycle.main == null));
-				if (_forcedNormalSpeed == value || DayNightCycle.main.IsInSkipTimeMode())
+			{																															"DayNightCycle.main == null".logDbgError((DayNightCycle.main == null));
+				if (_forcedNormalSpeed == value || DayNightCycle.main.IsInSkipTimeMode() || DayNightCycle.main._dayNightSpeed == 0)
 					return;
 
-				_forcedNormalSpeed = value;
+				_forcedNormalSpeed = value;																	$"forcedNormalSpeed: {_forcedNormalSpeed} current speed:{DayNightCycle.main._dayNightSpeed}".logDbg();
 
 				DayNightCycle.main._dayNightSpeed = _forcedNormalSpeed? 1.0f: Main.config.dayNightSpeed;
 			}

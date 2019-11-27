@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Reflection.Emit;
+using System.Collections.Generic;
 using Harmony;
 using Common;
 
@@ -13,7 +15,34 @@ namespace DayNightSpeed
 #endif
 		static void Postfix(CreatureEgg __instance) => __instance.daysBeforeHatching *= Main.config.multEggsHatching;
 	}
+	
+	// modifying creature grow and breed time (breed time is half of grow time)
+	[HarmonyPatch(typeof(WaterParkCreatureParameters), MethodType.Constructor)]
+	[HarmonyPatch(new Type[] { typeof(float), typeof(float), typeof(float), typeof(float), typeof(bool)})]
+	static class WaterParkCreature_Constructor_Patch
+	{
+#if !DEBUG
+		static bool Prepare() => Main.config.multCreaturesGrow != 1.0f;
+#endif
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins)
+		{
+			foreach (var ci in cins)
+			{
+				if (ci.isLDC(1200f))
+				{
+					yield return ci;
 
+					foreach (var i in HarmonyHelper._codeForChangeInstructionToConfigVar(nameof(ModConfig.multCreaturesGrow)))
+						yield return i;
+					yield return new CodeInstruction(OpCodes.Mul);
+
+					continue;
+				}
+
+				yield return ci;
+			}
+		}
+	}
 
 	// modifying plants grow time
 	[HarmonyPatch(typeof(GrowingPlant), "GetGrowthDuration")]
@@ -25,7 +54,6 @@ namespace DayNightSpeed
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins) =>
 			HarmonyHelper.changeConstToConfigVar(cins, 1.0f, nameof(ModConfig.multPlantsGrow));
 	}
-
 
 	// modifying fruits grow time (on lantern tree)
 	[HarmonyPatch(typeof(FruitPlant), "Initialize")]
@@ -40,7 +68,6 @@ namespace DayNightSpeed
 				__instance.fruitSpawnInterval *= Main.config.multPlantsGrow;
 		}
 	}
-
 
 	// modifying medkit autocraft time
 	[HarmonyPatch(typeof(MedicalCabinet), "Start")]

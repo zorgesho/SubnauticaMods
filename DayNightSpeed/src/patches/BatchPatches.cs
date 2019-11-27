@@ -22,8 +22,8 @@ namespace DayNightSpeed
 		// transpiler for correcting time if daynightspeed < 1
 		static Instructions transpilerSpeedClamped01(Instructions cins)
 		{
-			MethodInfo deltaTime = AccessTools.Method(typeof(DayNightCycle), "get_deltaTime");
-			MethodInfo dayNightSpeed = AccessTools.Method(typeof(DayNightCycle), "get_dayNightSpeed");
+			MethodInfo deltaTime = typeof(DayNightCycle).method("get_deltaTime");
+			MethodInfo dayNightSpeed = typeof(DayNightCycle).method("get_dayNightSpeed");
 
 			foreach (var ci in cins)
 			{

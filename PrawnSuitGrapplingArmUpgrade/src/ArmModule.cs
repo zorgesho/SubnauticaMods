@@ -26,13 +26,13 @@ namespace PrawnSuitGrapplingArmUpgrade
 
 		public override void patch()
 		{
-			TechType = register("Prawn suit grappling arm MK2", "[todo description]", SpriteManager.Get(TechType.ExosuitGrapplingArmModule));
+			TechType = register("Prawn suit grappling arm MK2", "Enhances various parameters of grappling hook.", SpriteManager.Get(TechType.ExosuitGrapplingArmModule));
 
 			addToGroup(TechGroup.Workbench, TechCategory.Workbench);
 			addCraftingNode(CraftTree.Type.Workbench, "ExosuitMenu");
 			setEquipmentType(EquipmentType.ExosuitArm, QuickSlotType.Selectable);
 			setBackgroundType(CraftData.BackgroundType.ExosuitArm);
-			unlockOnStart();
+			setTechTypeForUnlock(TechType.ExosuitGrapplingArmModule);
 		}
 	}
 }

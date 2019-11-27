@@ -44,9 +44,9 @@ namespace PrawnSuitGrapplingArmUpgrade
 	[HarmonyPatch(typeof(ExosuitGrapplingArm), "FixedUpdate")]
 	static class ExosuitGrapplingArm_FixedUpdate_Patch
 	{
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator ilg)
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cis, ILGenerator ilg)
 		{
-			var list = new List<CodeInstruction>(instructions);
+			var list = new List<CodeInstruction>(cis);
 
 			for (int i = list.Count - 1; i >= 0; --i) // changing list in the process, so iterate it backwards
 			{
@@ -72,9 +72,9 @@ namespace PrawnSuitGrapplingArmUpgrade
 	[HarmonyPatch(typeof(ExosuitGrapplingArm), "OnHit")]
 	static class ExosuitGrapplingArm_OnHit_Patch
 	{
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator ilg)
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cis, ILGenerator ilg)
 		{
-			var list = new List<CodeInstruction>(instructions);
+			var list = new List<CodeInstruction>(cis);
 
 			for (int i = list.Count - 1; i >= 0; --i) // we need last 25f, so we going backwards
 			{
@@ -94,9 +94,7 @@ namespace PrawnSuitGrapplingArmUpgrade
 	[HarmonyPatch(typeof(ExosuitGrapplingArm), "IExosuitArm.OnUseDown")]
 	static class ExosuitGrapplingArm_OnUseDown_Patch
 	{
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator ilg)
-		{
-			return changeConstToConfigVar<float, GrapplingArmUpgraded>(instructions, 2.0f, nameof(Main.config.armCooldown), ilg);
-		}
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cis, ILGenerator ilg) =>
+			changeConstToConfigVar<float, GrapplingArmUpgraded>(cis, 2.0f, nameof(Main.config.armCooldown), ilg);
 	}
 }

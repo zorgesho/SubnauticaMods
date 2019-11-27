@@ -21,9 +21,9 @@ namespace PrawnSuitSettings
 		
 		public static void refresh() => HarmonyHelper.setPatchEnabled(!Main.config.autoPickupDrillableResources, typeof(DrillableResourcesPickup));
 		
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins)
 		{
-			var list = new List<CodeInstruction>(instructions);
+			var list = new List<CodeInstruction>(cins);
 
 			for (int i = 0; i < list.Count - 1; i++)
 			{
@@ -37,7 +37,6 @@ namespace PrawnSuitSettings
 			return list.AsEnumerable();
 		}
 	}
-
 
 	// Toggleable drill arm
 	class PrawnSuitDrillArmToggle: MonoBehaviour
@@ -72,9 +71,7 @@ namespace PrawnSuitSettings
 	[HarmonyPatch(typeof(ExosuitDrillArm), "IExosuitArm.OnUseUp")]
 	static class ExosuitDrillArm_OnUseUp_Patch
 	{
-		static bool Prefix(ExosuitDrillArm __instance)
-		{
-			return !(Main.config.toggleableDrillArm && __instance.gameObject.getOrAddComponent<PrawnSuitDrillArmToggle>().isUsingArm());
-		}
+		static bool Prefix(ExosuitDrillArm __instance) =>
+			!(Main.config.toggleableDrillArm && __instance.gameObject.getOrAddComponent<PrawnSuitDrillArmToggle>().isUsingArm());
 	}
 }

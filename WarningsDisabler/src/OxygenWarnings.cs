@@ -1,5 +1,4 @@
 ﻿using Harmony;
-
 using Common.Configuration;
 
 namespace WarningsDisabler

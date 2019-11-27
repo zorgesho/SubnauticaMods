@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 
 using Harmony;
-
 using Common;
 
 namespace WarningsDisabler

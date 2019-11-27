@@ -1,7 +1,7 @@
 {
   "Id": "TerraformerBuilder",
   "DisplayName": "TerraformerBuilder",
-  "Author": "Modding Advent Calendar 2019",
+  "Author": "zorgesho",
   "Version": "1.0.0",
   "Dependencies": ["SMLHelper"],
   "LoadBefore": [],

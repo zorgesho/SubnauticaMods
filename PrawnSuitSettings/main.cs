@@ -11,6 +11,8 @@ namespace PrawnSuitSettings
 		{
 			HarmonyHelper.patchAll();
 
+			config._refreshAfterLoad();
+
 			if (config.addOptionsToMenu)
 				Options.init();
 

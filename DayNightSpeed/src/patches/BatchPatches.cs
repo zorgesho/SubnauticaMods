@@ -27,16 +27,13 @@ namespace DayNightSpeed
 
 			foreach (var ci in cins)
 			{
+				yield return ci;
+
 				if (ci.opcode == OpCodes.Callvirt && (ci.operand.Equals(deltaTime) || ci.operand.Equals(dayNightSpeed)))
 				{
-					yield return ci;
-
 					yield return _dayNightSpeedClamped01.ci;
 					yield return new CodeInstruction(OpCodes.Div);
-
-					continue;
 				}
-				yield return ci;
 			}
 		}
 		static readonly MethodInfo patchSpeedClamped01 = typeof(DayNightCyclePatches).method(nameof(transpilerSpeedClamped01));

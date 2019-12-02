@@ -17,10 +17,10 @@ namespace DayNightSpeed
 			int ldc100 = 0;
 			foreach (var ci in cins)
 			{
+				yield return ci;
+
 				if (ci.isLDC(100f) && ++ldc100 <= 2)
 				{
-					yield return ci;
-
 					foreach (var i in _codeForChangeInstructionToConfigVar(nameof(ModConfig.dayNightSpeed)))
 						yield return i;
 
@@ -33,11 +33,7 @@ namespace DayNightSpeed
 
 						yield return new CodeInstruction(OpCodes.Div);
 					}
-
-					continue;
 				}
-
-				yield return ci;
 			}
 		}
 	}
@@ -51,18 +47,15 @@ namespace DayNightSpeed
 			int ld = 0;
 			foreach (var ci in cins)
 			{
+				yield return ci;
+
 				if ((ci.opcode == OpCodes.Ldarg_2 && ++ld == 2) || ci.isLDC(0.1f))
 				{
-					yield return ci;
-
 					foreach (var i in _codeForChangeInstructionToConfigVar(nameof(ModConfig.dayNightSpeed)))
 						yield return i;
 
 					yield return new CodeInstruction(OpCodes.Mul);
-					continue;
 				}
-
-				yield return ci;
 			}
 		}
 	}
@@ -75,17 +68,13 @@ namespace DayNightSpeed
 		{
 			foreach (var ci in cins)
 			{
+				yield return ci;
+
 				if (ci.opcode == OpCodes.Call)
 				{
-					yield return ci;
-
 					yield return _dayNightSpeedClamped01.ci;
 					yield return new CodeInstruction(OpCodes.Mul);
-
-					continue;
 				}
-
-				yield return ci;
 			}
 		}
 	}
@@ -98,18 +87,15 @@ namespace DayNightSpeed
 		{
 			foreach (var ci in cins)
 			{
+				yield return ci;
+
 				if (ci.opcode == OpCodes.Sub)
 				{
-					yield return ci;
-
 					foreach (var i in _codeForChangeInstructionToConfigVar(nameof(ModConfig.dayNightSpeed)))
 						yield return i;
 
 					yield return new CodeInstruction(OpCodes.Div);
-					continue;
 				}
-
-				yield return ci;
 			}
 		}
 	}
@@ -122,17 +108,13 @@ namespace DayNightSpeed
 		{
 			foreach (var ci in cins)
 			{
+				yield return ci;
+
 				if (ci.isLDC(3.0f))
 				{
-					yield return ci;
-
 					yield return _dayNightSpeedClamped01.ci;
 					yield return new CodeInstruction(OpCodes.Mul);
-
-					continue;
 				}
-
-				yield return ci;
 			}
 		}
 	}
@@ -159,17 +141,13 @@ namespace DayNightSpeed
 		{
 			foreach (var ci in cins)
 			{
+				yield return ci;
+
 				if (ci.isLDC(500f))
 				{
-					yield return ci;
-
 					yield return _dayNightSpeedClamped01.ci;
 					yield return new CodeInstruction(OpCodes.Div);
-
-					continue;
 				}
-
-				yield return ci;
 			}
 		}
 	}
@@ -182,17 +160,13 @@ namespace DayNightSpeed
 		{
 			foreach (var ci in cins)
 			{
+				yield return ci;
+
 				if (ci.isOp(OpCodes.Ldarg_S, (byte)5))
 				{
-					yield return ci;
-
 					yield return _dayNightSpeedClamped01.ci;
 					yield return new CodeInstruction(OpCodes.Mul);
-
-					continue;
 				}
-
-				yield return ci;
 			}
 		}
 	}
@@ -204,30 +178,23 @@ namespace DayNightSpeed
 		static Instructions Transpiler(Instructions cins)
 		{
 			bool injected500 = false;
+
 			foreach (var ci in cins)
 			{
+				yield return ci;
+
 				if (ci.isLDC<double>(0.03f)) // is it safe ?
 				{
-					yield return ci;
-
 					yield return _dayNightSpeedClamped01.ci;
 					yield return new CodeInstruction(OpCodes.Mul);
-
-					continue;
 				}
-				
-				if (!injected500 && ci.isLDC(500f))
+				else if (!injected500 && ci.isLDC(500f))
 				{
 					injected500 = true;
-					yield return ci;
 
 					yield return _dayNightSpeedClamped01.ci;
 					yield return new CodeInstruction(OpCodes.Div);
-
-					continue;
 				}
-
-				yield return ci;
 			}
 		}
 	}

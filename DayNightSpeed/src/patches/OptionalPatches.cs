@@ -28,18 +28,14 @@ namespace DayNightSpeed
 		{
 			foreach (var ci in cins)
 			{
+				yield return ci;
+
 				if (ci.isLDC(1200f))
 				{
-					yield return ci;
-
 					foreach (var i in HarmonyHelper._codeForChangeInstructionToConfigVar(nameof(ModConfig.multCreaturesGrow)))
 						yield return i;
 					yield return new CodeInstruction(OpCodes.Mul);
-
-					continue;
 				}
-
-				yield return ci;
 			}
 		}
 	}

@@ -76,9 +76,11 @@ namespace DayNightSpeed
 			}
 		}
 
+#if DEBUG
 		// for debugging
 		class DayNightSpeedWatch: MonoBehaviour
 		{
+
 			readonly HashSet<string> goals = new HashSet<string>(); // for ignoring duplicates
 
 			void Update()
@@ -90,7 +92,7 @@ namespace DayNightSpeed
 				$"{clr}game:</color>{DayNightCycle.main.dayNightSpeed} <color=#CCCCCCFF>cfg:</color>{Main.config.dayNightSpeed}".onScreen("day/night speed");
 				$"{DayNightCycle.main.timePassed:#.###}".onScreen("time passed");
 				$"{DayNightCycle.ToGameDateTime(DayNightCycle.main.timePassedAsFloat)}".onScreen("date/time");
-#if DEBUG
+
 				if (Main.config.dbgCfg.showGoals && DayNightCycle.main != null) // show current goals
 				{
 					goals.Clear();
@@ -107,10 +109,9 @@ namespace DayNightSpeed
 						}
 					}
 				}
-#endif
 			}
 		}
-
+#endif
 
 		public static void init()
 		{

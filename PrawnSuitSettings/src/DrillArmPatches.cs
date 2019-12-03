@@ -18,7 +18,7 @@ namespace PrawnSuitSettings
 		{
 			public void customAction() => refresh();
 		}
-		
+
 		public static void refresh() => HarmonyHelper.setPatchEnabled(!Main.config.autoPickupDrillableResources, typeof(DrillableResourcesPickup));
 		
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins)
@@ -42,7 +42,7 @@ namespace PrawnSuitSettings
 	class PrawnSuitDrillArmToggle: MonoBehaviour
 	{
 		bool usingArm = false;
-		
+
 		public bool toggleUsingArm() => usingArm = !usingArm;
 		public bool setUsingArm(bool value) => usingArm = value;
 		public bool isUsingArm() => usingArm;
@@ -67,7 +67,7 @@ namespace PrawnSuitSettings
 				__instance.gameObject.getOrAddComponent<PrawnSuitDrillArmToggle>().toggleUsingArm();
 		}
 	}
-	
+
 	[HarmonyPatch(typeof(ExosuitDrillArm), "IExosuitArm.OnUseUp")]
 	static class ExosuitDrillArm_OnUseUp_Patch
 	{

@@ -38,6 +38,15 @@ namespace CustomHotkeys
 				
 				if (Input.GetKeyDown(KeyCode.F2))
 					DisplayManager.SetResolution(2560, 1440, true);
+
+				if (Input.GetKeyDown(KeyCode.F3))
+					DayNightCycle.main._dayNightSpeed = 100f;
+				
+				if (Input.GetKeyDown(KeyCode.F4))
+					DayNightCycle.main._dayNightSpeed = 1f;
+
+				if (Input.GetKey(KeyCode.F5))
+					DevConsole.instance.Submit("warpforward " + Main.config.warpStep);
 			}
 		}
 

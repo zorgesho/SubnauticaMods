@@ -1,0 +1,13 @@
+{
+  "Id": "MiscPrototypes",
+  "DisplayName": "MiscPrototypes",
+  "Author": "zorgesho",
+  "Version": "1.0.0",
+  "Dependencies": [],
+  "LoadBefore": [],
+  "LoadAfter": [],
+  "Enable": true,
+  "Game": "Subnautica",
+  "AssemblyName": "MiscPrototypes.dll",
+  "EntryMethod": "MiscPrototypes.Main.patch"
+}

@@ -82,7 +82,7 @@ namespace Common
 				Object.Destroy(go.GetComponentInChildren<T>());
 		}
 
-
+		//TODO: refactor copyValuesFrom
 		public static void copyValuesFrom<CT, CF>(this CT cmpTo, CF cmpFrom, params string[] fields) where CT: Component where CF: Component
 		{
 			try
@@ -98,6 +98,55 @@ namespace Common
 				Log.msg(e);
 			}
 		}
+
+		public static void copyValuesFrom<CT, CF>(this CT cmpTo, CF cmpFrom) where CT: Component where CF: Component
+		{
+			try
+			{
+				Type typeTo = cmpTo.GetType(), typeFrom = cmpFrom.GetType();
+				BindingFlags bf = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
+
+				FieldInfo[] fields = typeTo.GetFields(bf);
+
+				foreach (var fieldTo in fields)
+				{
+					FieldInfo fieldFrom = typeFrom.GetField(fieldTo.Name, bf);//.GetValue(cmpFrom), 
+
+					if (fieldFrom != null)
+					{
+						fieldTo.SetValue(cmpTo, fieldFrom.GetValue(cmpFrom));
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				Log.msg(e);
+			}
+		}
+
+		// copied from old solution, need to refactor all three of these
+
+		//public static void copyValuesFrom<C>(this C cmpTo, C cmpFrom) where C: Component
+		//{
+		//	try
+		//	{
+		//		Type type = cmpTo.GetType();
+		//		BindingFlags bf = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
+
+		//		FieldInfo[] fields = type.GetFields(bf);
+		//		Console.WriteLine($"[copyValuesFrom] fields count: {fields.Length}");
+
+		//		foreach (var field in fields)
+		//		{
+		//			field.SetValue(cmpTo, field.GetValue(cmpFrom));
+		//			Console.WriteLine($"[copyValuesFrom] {field.Name} = \"{field.GetValue(cmpFrom)}\"");
+		//		}
+		//	}
+		//	catch (Exception e)
+		//	{
+		//		Log.msg(e);
+		//	}
+		//}
 	}
 
 

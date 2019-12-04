@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Harmony;
 
 namespace Common.Crafting
 {
@@ -79,8 +78,7 @@ namespace Common.Crafting
 		{
 			string targetMethod = treeType.ToString() + (treeType != CraftTree.Type.MapRoom? "Scheme": "Sheme"); // :-\
 
-			HarmonyHelper.harmonyInstance.Patch(AccessTools.Method(typeof(CraftTree), targetMethod),
-				postfix: new HarmonyMethod(AccessTools.Method(typeof(CraftNodesCustomOrder), "addNodesTo_" + treeType.ToString())));
+			HarmonyHelper.patch(typeof(CraftTree).method(targetMethod), postfix: typeof(CraftNodesCustomOrder).method("addNodesTo_" + treeType.ToString()));
 		}
 	}
 }

@@ -14,7 +14,7 @@ namespace Common
 			ErrorMessage.AddDebug(s);
 			return s;
 		}
-		
+
 		public static void onScreen(this List<string> list, string msg = "", int maxCount = 30)
 		{
 			List<string> listToPrint = list.Count > maxCount? list.GetRange(0, maxCount): list;
@@ -34,7 +34,7 @@ namespace Common
 			public static readonly string scrollUp		= "<color=#ADF8FFFF>" + char.ConvertFromUtf32(57406) + "</color>";
 			public static readonly string scrollDown	= "<color=#ADF8FFFF>" + char.ConvertFromUtf32(57407) + "</color>";
 		}
-		
+
 		public static readonly string modName = Assembly.GetExecutingAssembly().GetName().Name;
 	}
 
@@ -43,7 +43,7 @@ namespace Common
 	{
 		// can't use vanilla GetVehicle in OnPlayerModeChange after 06.11 update :(
 		public static Vehicle getVehicle(this Player player) => player.GetComponentInParent<Vehicle>();
-		
+
 		public static Constructable initDefault(this Constructable c, GameObject model, TechType techType)
 		{
 			c.allowedInBase = false;
@@ -58,7 +58,7 @@ namespace Common
 			c.rotationEnabled = true;
 			c.controlModelState = true;
 			c.deconstructionAllowed = true;
-			
+
 			c.model = model;
 			c.techType = techType;
 			
@@ -85,11 +85,9 @@ namespace Common
 		void init()
 		{																													"PersistentConsoleCommands.init cmdNames already inited!".logDbgError(cmdNames.Count > 0);
 			// searching for console commands methods in derived class
-			MethodInfo[] methods = GetType().GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-			
-			methods.Where(m => m.Name.StartsWith(cmdPrefix)).forEach(m => cmdNames.Add(m.Name.Replace(cmdPrefix, "")));
+			GetType().methods().Where(m => m.Name.StartsWith(cmdPrefix)).forEach(m => cmdNames.Add(m.Name.Replace(cmdPrefix, "")));
 		}
-			
+
 		void registerCommands()
 		{
 			foreach (var cmdName in cmdNames)
@@ -98,7 +96,7 @@ namespace Common
 				DevConsole.RegisterConsoleCommand(this, cmdName);															$"PersistentConsoleCommands: {cmdName} is registered".logDbg();
 			}
 		}
-			
+
 		void Awake()
 		{
 			init();

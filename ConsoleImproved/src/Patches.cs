@@ -5,6 +5,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using Harmony;
 
+using Common;
+
 namespace ConsoleImproved
 {
 	// don't clear onscreen messages while console is open
@@ -69,26 +71,26 @@ namespace ConsoleImproved
 		[HarmonyPatch(typeof(ConsoleInput), "Validate")]
 		static class ConsoleInput_Validate_Patch
 		{
-			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins)
 			{
 				bool injected = false;
 
-				foreach (var instruction in instructions)
+				foreach (var ci in cins)
 				{
-					if (!injected && instruction.opcode.Equals(OpCodes.Ldfld))
+					if (!injected && ci.opcode == OpCodes.Ldfld)
 					{
-						yield return new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(ConsoleInput), "historyIndex"));
+						yield return new CodeInstruction(OpCodes.Ldfld, typeof(ConsoleInput).field("historyIndex"));
 						continue;
 					}
 
-					if (!injected && instruction.opcode.Equals(OpCodes.Callvirt))
+					if (!injected && ci.opcode == OpCodes.Callvirt)
 					{
 						injected = true;
 						yield return new CodeInstruction(OpCodes.Nop);
 						continue;
 					}
 
-					yield return instruction;
+					yield return ci;
 				}
 			}
 		}

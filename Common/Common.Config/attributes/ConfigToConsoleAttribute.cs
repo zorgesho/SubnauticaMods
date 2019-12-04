@@ -33,9 +33,7 @@ namespace Common.Configuration
 
 			public void process(object config)
 			{
-				FieldInfo[] fields = config.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-
-				fields.forEach(field => process(config, field));
+				config.GetType().fields().forEach(field => process(config, field));
 			}
 
 			public void process(object config, FieldInfo field)

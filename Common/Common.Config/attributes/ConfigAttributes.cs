@@ -26,9 +26,7 @@ namespace Common.Configuration
 			Attribute.GetCustomAttributes(config.GetType()).forEach(attr => (attr as IConfigAttribute)?.process(config));
 
 			// processing attributes for fields and nested classes
-			FieldInfo[] fields = config.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-
-			foreach (FieldInfo field in fields)
+			foreach (FieldInfo field in config.GetType().fields())
 			{																															$"Checking field '{field.Name}' for attributes".logDbg();
 				Attribute.GetCustomAttributes(field).forEach(attr => (attr as IFieldAttribute)?.process(config, field));
 

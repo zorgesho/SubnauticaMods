@@ -49,6 +49,10 @@ namespace Common
 	{
 		public static FieldInfo field(this Type type, string name) => type.GetField(name, _BindingFlags.all);
 		public static MethodInfo method(this Type type, string name) => type.GetMethod(name, _BindingFlags.all);
+
+		public static FieldInfo[] fields(this Type type) => type.GetFields(_BindingFlags.all);
+		public static MethodInfo[] methods(this Type type) => type.GetMethods(_BindingFlags.all);
+		public static PropertyInfo[] properties(this Type type) => type.GetProperties(_BindingFlags.all);
 	}
 
 	static class MiscExtensions

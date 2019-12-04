@@ -22,7 +22,7 @@ namespace Common
 			static bool Prepare()
 			{
 #if TRACE
-				MethodInfo method = typeof(ErrorMessage).GetMethod("_AddMessage", BindingFlags.NonPublic | BindingFlags.Instance);
+				MethodInfo method = typeof(ErrorMessage).method("_AddMessage");
 				Patches patches = HarmonyHelper.harmonyInstance.GetPatchInfo(method);
 																													"ErrorMessage.AddMessage is already patched!".logDbg(patches != null);
 				return patches == null;

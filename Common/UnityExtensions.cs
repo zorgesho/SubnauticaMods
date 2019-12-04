@@ -89,10 +89,9 @@ namespace Common
 			try
 			{
 				Type typeTo = cmpTo.GetType(), typeFrom = cmpFrom.GetType();
-				BindingFlags bf = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
 
 				foreach (var fieldName in fields)
-					typeTo.GetField(fieldName, bf).SetValue(cmpTo, typeFrom.GetField(fieldName, bf).GetValue(cmpFrom), bf, null, null);
+					typeTo.field(fieldName).SetValue(cmpTo, typeFrom.field(fieldName).GetValue(cmpFrom), _BindingFlags.all, null, null);
 			}
 			catch (Exception e)
 			{
@@ -105,13 +104,12 @@ namespace Common
 			try
 			{
 				Type typeTo = cmpTo.GetType(), typeFrom = cmpFrom.GetType();
-				BindingFlags bf = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
 
-				FieldInfo[] fields = typeTo.GetFields(bf);
+				FieldInfo[] fields = typeTo.fields();
 
 				foreach (var fieldTo in fields)
 				{
-					FieldInfo fieldFrom = typeFrom.GetField(fieldTo.Name, bf);//.GetValue(cmpFrom), 
+					FieldInfo fieldFrom = typeFrom.field(fieldTo.Name);//.GetValue(cmpFrom), 
 
 					if (fieldFrom != null)
 					{
@@ -132,9 +130,8 @@ namespace Common
 		//	try
 		//	{
 		//		Type type = cmpTo.GetType();
-		//		BindingFlags bf = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
 
-		//		FieldInfo[] fields = type.GetFields(bf);
+		//		FieldInfo[] fields = type.fields();
 		//		Console.WriteLine($"[copyValuesFrom] fields count: {fields.Length}");
 
 		//		foreach (var field in fields)
@@ -174,7 +171,7 @@ namespace Common
 		}
 	}
 
-	
+
 	class CallAfterDelay: MonoBehaviour
 	{
 		float delay;

@@ -30,7 +30,6 @@ namespace Common
 
 		static class ObjectDumper
 		{
-			static readonly BindingFlags bf = _BindingFlags.all;// | BindingFlags.FlattenHierarchy;
 			static readonly StringBuilder output = new StringBuilder();
 
 			static bool dumpFields = true;
@@ -79,7 +78,7 @@ namespace Common
 				{
 					if (dumpProperties)
 					{
-						var properties = new List<PropertyInfo>(cmpType.GetProperties(bf));
+						var properties = new List<PropertyInfo>(cmpType.properties());
 						if (properties.Count > 0)
 						{
 							properties.Sort((p1, p2) => p1.Name.CompareTo(p2.Name));
@@ -95,7 +94,7 @@ namespace Common
 
 					if (dumpFields)
 					{
-						var fields = new List<FieldInfo>(cmpType.GetFields(bf));
+						var fields = new List<FieldInfo>(cmpType.fields());
 						if (fields.Count > 0)
 						{
 							fields.Sort((f1, f2) => f1.Name.CompareTo(f2.Name));

@@ -21,7 +21,7 @@ namespace Common
 
 			Type mainType = Assembly.GetExecutingAssembly().GetType(modNamespace + "." + mainClassName);
 
-			mainConfigField = mainType?.GetField(configFieldName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
+			mainConfigField = mainType?.field(configFieldName);
 
 			if (mainConfigField == null)
 				"HarmonyHelper: main config was not found".logWarning();
@@ -72,7 +72,7 @@ namespace Common
 
 		public static Instructions _codeForChangeInstructionToConfigVar(string configVar, CodeInstruction ci = null)
 		{
-			FieldInfo varField = mainConfigField?.FieldType.GetField(configVar, _BindingFlags.all);
+			FieldInfo varField = mainConfigField?.FieldType.field(configVar);
 
 			if (varField == null)
 			{
@@ -91,7 +91,7 @@ namespace Common
 
 		public static Instructions _codeForChangeConstToConfigVar<T, C>(T value, string configVar, ILGenerator ilg) where C: Component
 		{
-			FieldInfo varField = mainConfigField?.FieldType.GetField(configVar, _BindingFlags.all);
+			FieldInfo varField = mainConfigField?.FieldType.field(configVar);
 
 			if (varField == null)
 			{
@@ -103,12 +103,10 @@ namespace Common
 			Label lb2 = ilg.DefineLabel();
 
 			yield return new CodeInstruction(OpCodes.Ldarg_0);
-			yield return new CodeInstruction(OpCodes.Callvirt,
-				AccessTools.Method(typeof(Component), "GetComponent").MakeGenericMethod(typeof(C)));
+			yield return new CodeInstruction(OpCodes.Callvirt, typeof(Component).method("GetComponent").MakeGenericMethod(typeof(C)));
 
 			yield return new CodeInstruction(OpCodes.Ldnull);
-			yield return new CodeInstruction(OpCodes.Call,
-				AccessTools.Method(typeof(UnityEngine.Object), "op_Inequality"));
+			yield return new CodeInstruction(OpCodes.Call, typeof(UnityEngine.Object).method("op_Inequality"));
 
 			yield return new CodeInstruction(OpCodes.Brtrue_S, lb1);
 			yield return new CodeInstruction(OpCodeByType.get<T>(), value);
@@ -127,7 +125,7 @@ namespace Common
 
 		//public static Instructions _codeForChangeConstToConfigMethodCall(string configMethod)
 		//{
-		//	MethodInfo method = mainConfigField?.FieldType.GetMethod(configMethod, _BindingFlags.all);
+		//	MethodInfo method = mainConfigField?.FieldType.method(configMethod);
 			
 		//	if (method == null)
 		//	{

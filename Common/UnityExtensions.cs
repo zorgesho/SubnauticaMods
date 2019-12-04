@@ -1,19 +1,24 @@
 ﻿using System;
 using System.Text;
 using System.Reflection;
+using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
-using Object = UnityEngine.Object;
+using UnityEngine.Events;
 
 namespace Common
 {
+	using Object = UnityEngine.Object;
+
 	static class ObjectAndComponentExtensions
 	{
-		public static T getOrAddComponent<T>(this GameObject go) where T: Component
-		{
-			return go.GetComponent<T>() ?? go.AddComponent<T>();
-		}
+		public static void callAfterDelay(this GameObject go, float delay, UnityAction action) =>
+			go.AddComponent<CallAfterDelay>().init(delay, action);
+
+
+		public static T getOrAddComponent<T>(this GameObject go) where T: Component =>
+			go.GetComponent<T>() ?? go.AddComponent<T>();
 
 
 		public static void addComponentIfNeeded<T>(this GameObject go) where T: Component
@@ -36,10 +41,8 @@ namespace Common
 		}
 
 
-		public static GameObject getChild(this GameObject go, string name)
-		{
-			return go.transform.Find(name)?.gameObject;
-		}
+		public static GameObject getChild(this GameObject go, string name) =>
+			go.transform.Find(name)?.gameObject;
 
 
 		public static T getComponentInHierarchy<T>(this GameObject go, bool checkChildren = true, bool checkParent = true) where T: Component
@@ -170,6 +173,27 @@ namespace Common
 		{
 			Cursor.lockState = CursorLockMode.Locked; // warning: don't set lockState separately, use UWE utils for this if needed
 			Cursor.lockState = CursorLockMode.None;
+		}
+	}
+
+	
+	class CallAfterDelay: MonoBehaviour
+	{
+		float delay;
+		UnityAction action;
+
+		public void init(float _delay, UnityAction _action)
+		{
+			action = _action;
+			delay = _delay;
+		}
+
+		IEnumerator Start()
+		{
+			yield return new WaitForSeconds(delay);
+
+			action();
+			Destroy(this);
 		}
 	}
 

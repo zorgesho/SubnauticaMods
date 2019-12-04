@@ -11,8 +11,11 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)debug\ObjectDumper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)debug\Misc.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)HarmonyHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)harmony\HarmonyHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)debug\Log.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)harmony\Misc.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)harmony\OptionalPatchAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)harmony\TranspilerHelpers.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Misc.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MiscInGame.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PathHelper.cs" />

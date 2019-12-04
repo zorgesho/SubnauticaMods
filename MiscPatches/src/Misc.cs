@@ -1,7 +1,10 @@
 ﻿using System.Text;
 
-using UnityEngine;
 using Harmony;
+using UnityEngine;
+using UnityEngine.Events;
+
+using Common;
 
 namespace MiscPatches
 {
@@ -40,22 +43,37 @@ namespace MiscPatches
 		}
 	}
 
+	// Stop dead creatures twitching animations (stop any animations, to be clear)
+	[HarmonyPatch(typeof(CreatureDeath), "OnKill")]
+	static class CreatureDeath_OnKill_Patch
+	{
+		const float timeToStopAnimator = 5f;
+
+		static void Postfix(CreatureDeath __instance) =>
+			__instance.gameObject.callAfterDelay(timeToStopAnimator, new UnityAction(() =>
+			{
+				if (__instance.gameObject.GetComponentInChildren<Animator>() is Animator animator)
+					animator.enabled = false;
+			}));
+	}
+
 	// fixing known eggs that appear as unknown
 	// most of the eggs somehow dont subscribe to KnownTech event and remain unknown
-	[HarmonyPatch(typeof(Pickupable), "OnHandHover")]
-	static class Pickupable_OnHandHover_Patch
-	{
-		static void Prefix(Pickupable __instance)
-		{
-			if (!__instance.overrideTechUsed)
-				return;
+	// UPDATE: it seems to be fixed in Nov-06 update
+	//[HarmonyPatch(typeof(Pickupable), "OnHandHover")]
+	//static class Pickupable_OnHandHover_Patch
+	//{
+	//	static void Prefix(Pickupable __instance)
+	//	{
+	//		if (!__instance.overrideTechUsed)
+	//			return;
 
-			CreatureEgg egg = __instance.GetComponent<CreatureEgg>();
-			if (egg && KnownTech.Contains(egg.eggType))
-			{
-				__instance.ResetTechTypeOverride();
-				egg.Subscribe(false); // just in case
-			}
-		}
-	}
+	//		CreatureEgg egg = __instance.GetComponent<CreatureEgg>();
+	//		if (egg && KnownTech.Contains(egg.eggType))
+	//		{
+	//			__instance.ResetTechTypeOverride();
+	//			egg.Subscribe(false); // just in case
+	//		}
+	//	}
+	//}
 }

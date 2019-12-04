@@ -86,15 +86,12 @@
     <Compile Include="config.cs" />
     <Compile Include="src\ConsoleCommands.cs" />
     <Compile Include="src\DiveReelPatches.cs" />
-    <None Include="src\vehicles\VehiclesLightsInitialOff.cs" />
-    <Compile Include="src\crafting\BuildPatches.cs" />
+    <Compile Include="src\Vehicles.cs" />
+    <Compile Include="src\CraftPatches.cs" />
     <Compile Include="src\CyclopsPatches.cs" />
-    <None Include="src\vehicles\DockedVehiclesFix.cs" />
     <Compile Include="src\Misc.cs" />
-    <Compile Include="src\DeathAnimationFix.cs" />
     <Compile Include="main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <None Include="src\vehicles\VehicleLessQuickSlots.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="mod.json" />

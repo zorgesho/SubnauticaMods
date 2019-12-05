@@ -27,7 +27,7 @@ namespace RemoteTorpedoDetonator
 		void OnDestroy() => Player.main.playerModeChanged.RemoveHandler(gameObject, onPlayerModeChanged);
 
 		public void checkEnabled() =>
-			enabled = Player.main.getVehicle() == vehicle && vehicle.modules.GetCount(TorpedoDetonatorModule.TechType) > 0;
+			enabled = vehicle && Player.main.getVehicle() == vehicle && vehicle.modules.GetCount(TorpedoDetonatorModule.TechType) > 0;
 
 		void onPlayerModeChanged(Player.Mode playerMode)
 		{
@@ -52,7 +52,7 @@ namespace RemoteTorpedoDetonator
 		{
 			sound.Stop();
 			sound.Play();
-	
+
 			foreach (var torpedo in FindObjectsOfType<SeamothTorpedo>())
 				torpedo.Explode();
 		}

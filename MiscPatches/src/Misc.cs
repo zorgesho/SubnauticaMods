@@ -57,6 +57,15 @@ namespace MiscPatches
 			}));
 	}
 
+	
+	static class MiscStuff
+	{
+		public static void init()
+		{
+			CraftData.useEatSound.Add(TechType.Coffee, "event:/player/drink");
+		}
+	}
+
 	// fixing known eggs that appear as unknown
 	// most of the eggs somehow dont subscribe to KnownTech event and remain unknown
 	// UPDATE: it seems to be fixed in Nov-06 update

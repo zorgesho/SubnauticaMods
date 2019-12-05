@@ -12,6 +12,8 @@ namespace MiscPatches
 			HarmonyHelper.patchAll();
 
 			ConsoleCommands.init();
+
+			MiscStuff.init();
 		}
 	}
 }

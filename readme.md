@@ -6,6 +6,7 @@ My mods for Subnautica
 Mod | Nexus description | Nexus link
 -|-|-
 | [**ConsoleImproved**](https://github.com/zorgesho/SubnauticaMods/tree/master/ConsoleImproved) | Console autocomplete for commands and techtypes + full history (saved between sessions) | [341](https://www.nexusmods.com/subnautica/mods/341)|
+| [**DayNightSpeed**](https://github.com/zorgesho/SubnauticaMods/tree/master/DayNightSpeed) | Mod for changing speed of day/night cycle. It's like daynightspeed console command, only better. See the description for details. | [361](https://www.nexusmods.com/subnautica/mods/361)|
 | [**DebrisRecycling**](https://github.com/zorgesho/SubnauticaMods/tree/master/DebrisRecycling) | This mod allows you to deconstruct small Aurora debris (including cargo crates) with Habitat Builder to metal salvage | [324](https://www.nexusmods.com/subnautica/mods/324)|
 | [**FloatingCargoCrate**](https://github.com/zorgesho/SubnauticaMods/tree/master/FloatingCargoCrate) | Big floating storage. You can build it with Habitat Builder and move it with Propulsion Cannon. | [303](https://www.nexusmods.com/subnautica/mods/303)|
 | [**GravTrapImproved**](https://github.com/zorgesho/SubnauticaMods/tree/master/GravTrapImproved) | Now you can switch between types of objects that are attracted by grav trap. Also, now grav trap can pick up chunks left by treaders and you can lure out and catch crashfish with trap. | [299](https://www.nexusmods.com/subnautica/mods/299)|

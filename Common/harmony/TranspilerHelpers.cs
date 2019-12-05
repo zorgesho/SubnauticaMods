@@ -103,7 +103,8 @@ namespace Common
 			Label lb2 = ilg.DefineLabel();
 
 			yield return new CodeInstruction(OpCodes.Ldarg_0);
-			yield return new CodeInstruction(OpCodes.Callvirt, typeof(Component).method("GetComponent").MakeGenericMethod(typeof(C)));
+			yield return new CodeInstruction(OpCodes.Callvirt,
+				AccessTools.Method(typeof(Component), "GetComponent").MakeGenericMethod(typeof(C))); // GetComponent is overloaded so we using AccessTools
 
 			yield return new CodeInstruction(OpCodes.Ldnull);
 			yield return new CodeInstruction(OpCodes.Call, typeof(UnityEngine.Object).method("op_Inequality"));

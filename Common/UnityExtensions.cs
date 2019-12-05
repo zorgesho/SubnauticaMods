@@ -83,37 +83,31 @@ namespace Common
 				Object.Destroy(go.GetComponentInChildren<T>());
 		}
 
-		//TODO: refactor copyValuesFrom
+		// if fields is empty we try to copy all fields
 		public static void copyValuesFrom<CT, CF>(this CT cmpTo, CF cmpFrom, params string[] fields) where CT: Component where CF: Component
 		{
 			try
 			{
 				Type typeTo = cmpTo.GetType(), typeFrom = cmpFrom.GetType();
 
-				foreach (var fieldName in fields)
-					typeTo.field(fieldName).SetValue(cmpTo, typeFrom.field(fieldName).GetValue(cmpFrom), _BindingFlags.all, null, null);
-			}
-			catch (Exception e)
-			{
-				Log.msg(e);
-			}
-		}
-
-		public static void copyValuesFrom<CT, CF>(this CT cmpTo, CF cmpFrom) where CT: Component where CF: Component
-		{
-			try
-			{
-				Type typeTo = cmpTo.GetType(), typeFrom = cmpFrom.GetType();
-
-				FieldInfo[] fields = typeTo.fields();
-
-				foreach (var fieldTo in fields)
+				if (fields.Length == 0)
 				{
-					FieldInfo fieldFrom = typeFrom.field(fieldTo.Name);//.GetValue(cmpFrom), 
-
-					if (fieldFrom != null)
+					foreach (var fieldTo in typeTo.fields())
 					{
-						fieldTo.SetValue(cmpTo, fieldFrom.GetValue(cmpFrom));
+						if (typeFrom.field(fieldTo.Name) is FieldInfo fieldFrom)
+						{																										$"copyValuesFrom: copying field {fieldTo.Name} from {cmpFrom} to {cmpTo}".logDbg();
+							fieldTo.SetValue(cmpTo, fieldFrom.GetValue(cmpFrom));
+						}
+					}
+				}
+				else
+				{
+					foreach (var fieldName in fields)
+					{
+						if (typeTo.field(fieldName) is FieldInfo fieldTo && typeFrom.field(fieldName) is FieldInfo fieldFrom)
+						{																										$"copyValuesFrom: copying field {fieldName} from {cmpFrom} to {cmpTo}".logDbg();
+							fieldTo.SetValue(cmpTo, fieldFrom.GetValue(cmpFrom));
+						}
 					}
 				}
 			}
@@ -122,29 +116,6 @@ namespace Common
 				Log.msg(e);
 			}
 		}
-
-		// copied from old solution, need to refactor all three of these
-
-		//public static void copyValuesFrom<C>(this C cmpTo, C cmpFrom) where C: Component
-		//{
-		//	try
-		//	{
-		//		Type type = cmpTo.GetType();
-
-		//		FieldInfo[] fields = type.fields();
-		//		Console.WriteLine($"[copyValuesFrom] fields count: {fields.Length}");
-
-		//		foreach (var field in fields)
-		//		{
-		//			field.SetValue(cmpTo, field.GetValue(cmpFrom));
-		//			Console.WriteLine($"[copyValuesFrom] {field.Name} = \"{field.GetValue(cmpFrom)}\"");
-		//		}
-		//	}
-		//	catch (Exception e)
-		//	{
-		//		Log.msg(e);
-		//	}
-		//}
 	}
 
 

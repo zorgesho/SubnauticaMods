@@ -67,9 +67,7 @@ namespace DayNightSpeed
 			if (!inited)
 			{
 				inited = true;
-
-				foreach (var patch in patches)
-					harmonyInstance.Patch(patch.second, transpiler: new HarmonyMethod(patch.first));
+				patches.forEach(p => patch(p.second, transpiler: p.first));
 			}
 		}
 	}

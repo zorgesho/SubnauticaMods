@@ -1,0 +1,116 @@
+﻿using System.Collections.Generic;
+
+using UnityEngine;
+using SMLHelper.V2.Crafting;
+using SMLHelper.V2.Handlers;
+
+using Common;
+using Common.Crafting;
+
+namespace OxygenRefill
+{
+	class OxygenRefillStation: CraftableObject
+	{
+		public static ModCraftTreeRoot treeRootNode { get; private set; } = null;
+		CraftTree.Type treeType;
+
+		protected override TechData getTechData() => new TechData() { craftAmount = 1, Ingredients = new List<Ingredient>
+		{
+			new Ingredient(TechType.AdvancedWiringKit, 1),
+		}};
+
+		public override void patch()
+		{
+			register("Oxygen refill station", "Oxygen refill station.", SpriteManager.Get(TechType.Workbench));
+			treeRootNode = CraftTreeHandler.CreateCustomCraftTreeAndType(ClassID, out treeType);
+
+			addToGroup(TechGroup.InteriorModules, TechCategory.InteriorModule, TechType.Workbench);
+			unlockOnStart();
+		}
+
+		public override GameObject getGameObject()
+		{
+			GameObject prefab = Object.Instantiate(CraftData.GetPrefabForTechType(TechType.Workbench));
+			GhostCrafter crafter = prefab.GetComponent<Workbench>();
+			crafter.craftTree = treeType;
+			crafter.handOverText = "Use oxygen refill station";
+
+			prefab.GetComponent<Constructable>().techType = TechType;
+
+			SkyApplier skyApplier = prefab.GetComponent<SkyApplier>();
+			skyApplier.renderers = prefab.GetComponentsInChildren<Renderer>();
+			skyApplier.anchorSky = Skies.Auto;
+
+			prefab.GetComponentInChildren<SkinnedMeshRenderer>().material.color = new Color(0, 1, 1, 1);
+
+			//var powerRelay = new PowerRelay();
+
+			// This is actually a dirty hack
+			// The problem is that the parent SubRoot isn't correctly associated at this time.
+			// The power relay should be getting set in the GhostCrafter Start() method.
+			// But the parent components are coming up null.
+			//crafter.powerRelay = powerRelay;
+			{
+				//GhostCrafter ghost = fabricator.GetComponent<GhostCrafter>();
+				//var powerRelay = new PowerRelay(); // This isn't correct, but nothing else seems to work.
+
+				//ghost.powerRelay = powerRelay;
+
+			}
+			return prefab;
+		}
+	}
+
+	[CraftHelper.NoAutoPatch]
+	abstract class TankRefill: CraftableObject
+	{
+		class RefillOxygen: MonoBehaviour
+		{
+			void Awake()
+			{
+				if (Main.config.tankCapacities.TryGetValue(CraftData.GetTechType(gameObject), out float capacity))
+				{
+					Oxygen oxygen = gameObject.GetComponent<Oxygen>();
+					oxygen.oxygenAvailable = oxygen.oxygenCapacity = capacity;
+				}
+
+				Destroy(this);
+			}
+		}
+		
+		readonly float craftingTime;
+		readonly TechType tankType;
+
+		public TankRefill(TechType _tankType, float _craftingTime): base(_tankType.AsString() + "_Refill")
+		{
+			tankType = _tankType;
+			craftingTime = _craftingTime;
+		}
+
+		public override GameObject getGameObject()
+		{
+			GameObject prefab = Object.Instantiate(CraftData.GetPrefabForTechType(tankType));
+			prefab.AddComponent<RefillOxygen>();
+
+			return prefab; // using this as exact prefab, so no need in LinkedItems
+		}
+
+		protected override TechData getTechData() => new TechData(new Ingredient(tankType, 1)) { craftAmount = 1 };
+
+		public override void patch()
+		{
+			register("Refill oxygen", "Refill oxygen tank.", SpriteManager.Get(tankType));
+			
+			addCraftingNodeTo(OxygenRefillStation.treeRootNode);
+			unlockOnStart();///
+			setCraftingTime(craftingTime);
+			useExactPrefab();
+		}
+	}
+
+	// for CraftHelper patchAll
+	class T1: TankRefill { public T1(): base(TechType.Tank, 5f) {} }
+	class T2: TankRefill { public T2(): base(TechType.DoubleTank, 10f) {} }
+	class T3: TankRefill { public T3(): base(TechType.PlasteelTank, 10f) {} }
+	class T4: TankRefill { public T4(): base(TechType.HighCapacityTank, 15f) {} }
+}

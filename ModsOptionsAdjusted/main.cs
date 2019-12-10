@@ -1,10 +1,13 @@
 ﻿using System;
-using System.Reflection;
+using System.Linq;
+using System.Reflection.Emit;
+using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEngine.UI;
-
 using Harmony;
+
+using Common;
 
 namespace ModsOptionsAdjusted
 {
@@ -12,7 +15,7 @@ namespace ModsOptionsAdjusted
 	{
 		public static void patch()
 		{
-			HarmonyInstance.Create("ModsOptionsAdjusted").PatchAll(Assembly.GetExecutingAssembly());
+			HarmonyHelper.patchAll();
 		}
 	}
 
@@ -20,45 +23,52 @@ namespace ModsOptionsAdjusted
 	[HarmonyPatch(typeof(uGUI_TabbedControlsPanel), "SetVisibleTab")]
 	static class uGUITabbedControlsPanel_SetVisibleTab_Patch
 	{
-		// do not show tab if it already visible (to prevent scroll position resetting)
-		static bool Prefix(uGUI_TabbedControlsPanel __instance, int tabIndex)
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins)
 		{
-			return !(tabIndex >= 0 && tabIndex < __instance.tabs.Count && __instance.tabs[tabIndex].pane.activeSelf);
+			var list = new List<CodeInstruction>(cins);
+			int index = list.FindIndex(ci => ci.isOp(OpCodes.Beq));
+
+			if (index > 0)
+				list.RemoveRange(index - 3, 4); // removing "this.currentTab != tabIndex" check
+
+			return list.AsEnumerable();
 		}
-		
+
 		// adjusting ui elements
 		static void Postfix(uGUI_TabbedControlsPanel __instance, int tabIndex)
-		{
-			if (tabIndex >= 0 && tabIndex < __instance.tabs.Count)
+		{																								$"uGUI_TabbedControlsPanel.setVisibleTab tabIndex:{tabIndex}".logDbg();
+			if (tabIndex < 0 || tabIndex >= __instance.tabs.Count)
+				return;
+
+			try
 			{
-				try
+				Transform options = __instance.tabs[tabIndex].container.transform;
+
+				for (int i = 0; i < options.childCount; i++)
 				{
-					Transform options = __instance.tabs[tabIndex].container.transform;
+					Transform option = options.GetChild(i);
 
-					for (int i = 0; i < options.childCount; ++i)
-					{
-						Transform option = options.GetChild(i);
-
-						if (option.localPosition.x == 0) // layout don't adjust it yet
-							continue;
-
-						if (option.name.Contains("uGUI_ToggleOption"))
-							processToggleOption(option);
-						else
-						if (option.name.Contains("uGUI_SliderOption"))
-							processSliderOption(option);
-						else
-						if (option.name.Contains("uGUI_ChoiceOption"))
-							processChoiceOption(option);
-						else
-						if (option.name.Contains("uGUI_BindingOption"))
-							processBindingOption(option);
+					if (option.localPosition.x == 0) // layout don't adjust it yet
+					{																					"uGUI_TabbedControlsPanel.setVisibleTab: continue".logDbg();
+						continue;
 					}
+
+					if (option.name.Contains("uGUI_ToggleOption"))
+						processToggleOption(option);
+					else
+					if (option.name.Contains("uGUI_SliderOption"))
+						processSliderOption(option);
+					else
+					if (option.name.Contains("uGUI_ChoiceOption"))
+						processChoiceOption(option);
+					else
+					if (option.name.Contains("uGUI_BindingOption"))
+						processBindingOption(option);
 				}
-				catch (Exception e)
-				{
-					Console.WriteLine($"[ModsOptionsAdjusted] EXCEPTION: {e.GetType()}\t{e.Message}");
-				}
+			}
+			catch (Exception e)
+			{
+				Log.msg(e);
 			}
 		}
 
@@ -66,7 +76,7 @@ namespace ModsOptionsAdjusted
 		static void processToggleOption(Transform option)
 		{
 			Transform check = option.Find("Toggle/Background");
-			Text text = option.GetComponentInChildren<Text>();
+			Text text = option.GetComponentInChildren<Text>();																				$"processToggleOption {text.text}".logDbg();
 
 			// :)
 			if (text.text == "Enable AuxUpgradeConsole                        (Restart game)")
@@ -76,7 +86,7 @@ namespace ModsOptionsAdjusted
 			Vector3 pos = check.localPosition;
 
 			if (textWidth > pos.x)
-			{
+			{																																$"processToggleOption: ADJUSTING".logDbg();
 				pos.x = textWidth;
 				check.localPosition = pos;
 			}
@@ -95,7 +105,7 @@ namespace ModsOptionsAdjusted
 
 			// changing width for slider
 			Transform slider = option.Find("Slider/Background");
-			Text text = option.GetComponentInChildren<Text>();
+			Text text = option.GetComponentInChildren<Text>();																				$"processSliderOption {text.text}".logDbg();
 
 			RectTransform rect = slider.GetComponent<RectTransform>();
 
@@ -104,7 +114,7 @@ namespace ModsOptionsAdjusted
 			float widthText = text.getTextWidth() + 25;
 
 			if (widthText + widthSlider + sliderValueWidth > widthAll)
-			{
+			{																																$"processSliderOption: ADJUSTING".logDbg();
 				Vector2 size = rect.sizeDelta;
 				size.x = widthAll - widthText - sliderValueWidth - widthSlider;
 				rect.sizeDelta = size;
@@ -115,7 +125,7 @@ namespace ModsOptionsAdjusted
 		static void processChoiceOption(Transform option)
 		{
 			Transform choice = option.Find("Choice/Background");
-			Text text = option.GetComponentInChildren<Text>();
+			Text text = option.GetComponentInChildren<Text>();																				$"processChoiceOption {text.text}".logDbg();
 
 			RectTransform rect = choice.GetComponent<RectTransform>();
 
@@ -125,7 +135,7 @@ namespace ModsOptionsAdjusted
 			float widthText = text.getTextWidth() + 10;
 
 			if (widthText + widthChoice > widthAll)
-			{
+			{																																$"processChoiceOption: ADJUSTING".logDbg();
 				Vector2 size = rect.sizeDelta;
 				size.x = widthAll - widthText - widthChoice;
 				rect.sizeDelta = size;
@@ -137,7 +147,7 @@ namespace ModsOptionsAdjusted
 		{
 			// changing width for keybinding option
 			Transform binding = option.Find("Bindings");
-			Text text = option.GetComponentInChildren<Text>();
+			Text text = option.GetComponentInChildren<Text>();																				$"processBindingOption {text.text}".logDbg();
 
 			RectTransform rect = binding.GetComponent<RectTransform>();
 
@@ -147,7 +157,7 @@ namespace ModsOptionsAdjusted
 			float widthText = text.getTextWidth() + 10;
 
 			if (widthText + widthBinding > widthAll)
-			{
+			{																																$"processBindingOption: ADJUSTING".logDbg();
 				Vector2 size = rect.sizeDelta;
 				size.x = widthAll - widthText - widthBinding;
 				rect.sizeDelta = size;

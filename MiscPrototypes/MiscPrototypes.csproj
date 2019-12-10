@@ -73,8 +73,15 @@
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>..\..\..\..\games\subnautica\Subnautica_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.UI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\games\subnautica\Subnautica_Data\Managed\UnityEngine.UI.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="src\BulkCrafting.cs" />
+    <None Include="src\PingTabToggles.cs" />
+    <None Include="src\SelectTabsWithKeys.cs" />
     <None Include="src\BuildPatches.cs" />
     <None Include="src\DebugPatches.cs" />
     <None Include="src\CraftFromStorages.cs" />
@@ -88,6 +95,7 @@
   <ItemGroup />
   <Import Project="..\Common\Common.projitems" Label="Shared" />
   <Import Project="..\Common\Common.Config\Common.Config.projitems" Label="Shared" />
+  <Import Project="..\Common\Common.UI\Common.UI.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>if exist c:\games\subnautica\QMods\ xcopy $(TargetPath) c:\games\subnautica\QMods\$(ProjectName)\ /q /y

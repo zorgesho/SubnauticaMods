@@ -10,26 +10,30 @@ namespace Common.Crafting
 	abstract class CraftableObject: ModPrefab
 	{
 		protected CraftableObject(): this(new System.Diagnostics.StackTrace().GetFrame(1).GetMethod().ReflectedType.Name) {}
-		protected CraftableObject(string classID): base(classID, classID + "Prefab") {}
+		protected CraftableObject(string classID): base(classID, classID + "_Prefab") {}
+
+		bool isUsingExactPrefab = false; // using result of getGameObject as prefab, without smlhelper additional stuff
 
 		public abstract void patch();
-		protected abstract TechData   getTechData();
-		protected abstract GameObject getGameObject();
+		public abstract GameObject getGameObject();
+		protected abstract TechData getTechData();
 
 		public override GameObject GetGameObject()
 		{
-			GameObject prefab = getGameObject();
-			prefab.name = ClassID;
-			
-			return prefab;
+			if (isUsingExactPrefab)
+			{
+				$"CraftableObject.GetGameObject called, but isUsingExactPrefab is TRUE ({ClassID})".logError();
+				Debug.logStack();
+			}
+
+			return isUsingExactPrefab? null: getGameObject();
 		}
 
 		void registerPrefabAndTechData()
 		{
 			PrefabHandler.RegisterPrefab(this);
 
-			TechData techData = getTechData();
-			if (techData != null)
+			if (getTechData() is TechData techData)
 				CraftDataHandler.SetTechData(TechType, techData);
 		}
 
@@ -51,6 +55,11 @@ namespace Common.Crafting
 			return TechType;
 		}
 
+		protected void useExactPrefab()
+		{																												$"Already using exact prefab! ({ClassID})".logDbgError(isUsingExactPrefab);
+			isUsingExactPrefab = true;
+			PrefabDatabasePatcher.addPrefab(this);
+		}
 
 		protected void addToGroup(TechGroup group, TechCategory category, TechType after = TechType.None)
 		{
@@ -60,7 +69,6 @@ namespace Common.Crafting
 				CraftDataHandler.AddBuildable(TechType);
 		}
 
-
 		protected void setEquipmentType(EquipmentType equipmentType, QuickSlotType quickSlotType = QuickSlotType.None)
 		{
 			CraftDataHandler.SetEquipmentType(TechType, equipmentType);
@@ -68,7 +76,6 @@ namespace Common.Crafting
 			if (quickSlotType != QuickSlotType.None)
 				CraftDataHandler.SetQuickSlotType(TechType, quickSlotType);
 		}
-
 
 		protected void setTechTypeForUnlock(TechType techType, string message = "NotificationBlueprintUnlocked")
 		{
@@ -85,6 +92,9 @@ namespace Common.Crafting
 
 		protected void addCraftingNode(CraftTree.Type craftTree, string craftPath, TechType after) =>
 			CraftNodesCustomOrder.addNode(craftTree, TechType, craftPath, after);
+
+		protected void addCraftingNodeTo(ModCraftTreeLinkingNode modCraftTreeNode) =>
+			modCraftTreeNode.AddCraftingNode(TechType);
 
 		protected void setBackgroundType(CraftData.BackgroundType backgroundType) => CraftDataHandler.SetBackgroundType(TechType, backgroundType);
 

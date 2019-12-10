@@ -12,6 +12,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)CraftableObject.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CraftHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CraftNodesCustomOrder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PrefabDatabasePatcher.cs" />
     <None Include="$(MSBuildThisFileDirectory)UnlockTechHelper.cs" />
   </ItemGroup>
 </Project>

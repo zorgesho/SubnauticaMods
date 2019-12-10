@@ -45,8 +45,8 @@ namespace CustomHotkeys
 				if (Input.GetKeyDown(KeyCode.F4))
 					DayNightCycle.main._dayNightSpeed = 1f;
 
-				if (Input.GetKey(KeyCode.F5))
-					DevConsole.instance.Submit("warpforward " + Main.config.warpStep);
+				if (Input.GetKeyDown(KeyCode.F5))
+					DevConsole.SendConsoleCommand("toggletankusage");
 			}
 		}
 

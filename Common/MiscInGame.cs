@@ -30,6 +30,7 @@ namespace Common
 	{
 		public static class Mouse
 		{
+			public static readonly string rightButton	= "<color=#ADF8FFFF>" + char.ConvertFromUtf32(57404) + "</color>";
 			public static readonly string middleButton	= "<color=#ADF8FFFF>" + char.ConvertFromUtf32(57405) + "</color>";
 			public static readonly string scrollUp		= "<color=#ADF8FFFF>" + char.ConvertFromUtf32(57406) + "</color>";
 			public static readonly string scrollDown	= "<color=#ADF8FFFF>" + char.ConvertFromUtf32(57407) + "</color>";

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Generic; // used in DEBUG section
 using UnityEngine;
 
 using Common;
@@ -80,7 +80,6 @@ namespace DayNightSpeed
 		// for debugging
 		class DayNightSpeedWatch: MonoBehaviour
 		{
-
 			readonly HashSet<string> goals = new HashSet<string>(); // for ignoring duplicates
 
 			void Update()

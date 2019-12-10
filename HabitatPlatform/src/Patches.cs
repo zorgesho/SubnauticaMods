@@ -6,22 +6,6 @@ using Common;
 
 namespace HabitatPlatform
 {
-	[HarmonyPatch(typeof(Builder), "UpdateAllowed")]
-	static class Builder_UpdateAllowed_Patch
-	{
-		static bool Prefix(ref bool __result)
-		{
-			if (Input.GetKey(KeyCode.V))
-			{
-				__result = true;
-				return false;
-			}
-	
-			return true;
-		}
-	}
-
-
 	//[HarmonyPatch(typeof(Builder), "UpdateAllowed")]
 	static class Builder_UpdateAllowed_Patch2
 	{
@@ -297,7 +281,7 @@ namespace HabitatPlatform
 				}
 			}
 			__result = flag;
-			$"{__result}".log();
+			//$"{__result}".log();
 			
 			return false;
 		}
@@ -312,6 +296,9 @@ namespace HabitatPlatform
 		public static Base lastBase = null;
 		public static Vector3 lastPos = Vector3.zero;
 		public static bool movePlatform = false;
+		public static GameObject floor = null;
+
+		static bool move = false;
 		
 		static void Prefix()
 		{
@@ -331,13 +318,54 @@ namespace HabitatPlatform
 			//		r.gameObject.transform.position = v;
 			//	}
 			//}
+
+			Rocket rrr = Object.FindObjectOfType<Rocket>();
+			$"{rrr?.gameObject.getChild("Base/RocketConstructorPlatform").activeSelf}".onScreen("AAA");
+
+			if (Input.GetKeyDown(KeyCode.Alpha7))
+			{
+				uGUI_RocketBuildScreen ss = rrr.GetComponentInChildren<uGUI_RocketBuildScreen>();
+
+				if (ss)
+				{
+					ss.buildScreen.SetActive(false);
+					ss.customizeScreen.SetActive(true);
+					ss.buildAnimationScreen.SetActive(false);
+
+				}
+			}
+
 			
-			if (Input.GetKeyDown(KeyCode.Insert))
+
+			if (Input.GetKeyDown(KeyCode.Alpha8))
 			{
 				Rocket r = Object.FindObjectOfType<Rocket>();
+				r.gameObject.getChild("Base/RocketConstructorPlatform").SetActive(true);
+			}
 
-				if (r != null)
-					r.gameObject.dump("!!platform_builded");
+			
+			if (Input.GetKeyDown(KeyCode.Alpha9))
+				move = !move;
+
+			if (Input.GetKeyDown(KeyCode.Insert))
+			{
+				BaseCell[] cells = Object.FindObjectsOfType<BaseCell>();
+
+				$"{cells.Length}".log();
+				foreach (var cell in cells)
+				{
+					if (cell.GetComponentInChildren<BaseFoundationPiece>())
+					{
+						MeshRenderer[] meshes = cell.gameObject.GetAllComponentsInChildren<MeshRenderer>();
+
+						$"{meshes.Length}".log();
+
+						meshes.forEach(mesh => mesh.enabled = false);
+					}
+				}
+
+
+
 			}
 			
 			if (Input.GetKeyDown(KeyCode.Home))
@@ -347,7 +375,25 @@ namespace HabitatPlatform
 				//for (int i = 0; i < bb.Length; i++)
 				//	bb[i].gameObject.dump("!!base" + i);
 
-				Builder.ghostModel?.dump("!ghost_model");
+				//Builder.ghostModel?.dump("!ghost_model");
+				floor = GameObject.CreatePrimitive(PrimitiveType.Cube);
+				floor.transform.localScale = new Vector3(12.0f, 1.0f, 12.0f);
+				floor.GetComponent<Renderer>().material.color = Color.gray;
+				//floor.destroyComponent<Collider>(false);
+				
+				//debugSphere.SetActive(false);
+				
+				
+				Rocket r = Object.FindObjectOfType<Rocket>();
+				//Base b = Object.FindObjectOfType<Base>();
+				//GameObject baseGo = b.gameObject;
+
+				floor.transform.parent = r.gameObject.transform;
+				floor.transform.localPosition = new Vector3(0, 3, 0);
+				floor.transform.localScale = new Vector3(43f, 0.1f, 35f);
+					//baseGo.transform.localPosition = new Vector3(11.7f, -1f, 7.5f);
+				floor.transform.localEulerAngles = Vector3.zero;
+
 			}
 
 			if (Input.GetKeyDown(KeyCode.PageUp))
@@ -363,10 +409,18 @@ namespace HabitatPlatform
 					Base b = Object.FindObjectOfType<Base>();
 					GameObject baseGo = b.gameObject;
 
-					if (baseGo.transform.parent != r.gameObject.getChild("Base").transform)
+					//if (baseGo.transform.parent != r.gameObject.getChild("Base").transform)
+					//{
+					//	baseGo.transform.parent = r.gameObject.getChild("Base").transform;
+					//	//baseGo.transform.localPosition = new Vector3(12.5f, -1f, 9f);
+					//	baseGo.transform.localPosition = new Vector3(11.7f, -1.4f, 7.5f);
+					//	baseGo.transform.localEulerAngles = Vector3.zero;
+					//}
+					if (baseGo.transform.parent != r.gameObject.transform)
 					{
-						baseGo.transform.parent = r.gameObject.getChild("Base").transform;
-						baseGo.transform.localPosition = new Vector3(12.5f, -1f, 9f);
+						baseGo.transform.parent = r.gameObject.transform;
+						//baseGo.transform.localPosition = new Vector3(12.5f, -1f, 9f);
+						baseGo.transform.localPosition = new Vector3(11.7f, -1.4f, 7.5f);
 						baseGo.transform.localEulerAngles = Vector3.zero;
 					}
 				}
@@ -374,55 +428,135 @@ namespace HabitatPlatform
 
 			if (true)
 			{
-				Base b = Object.FindObjectOfType<Base>();
-				GameObject baseGo = b?.gameObject;
+				//				GameObject baseGo = Object.FindObjectOfType<Base>()?.gameObject;
+				GameObject baseGo = Object.FindObjectOfType<Rocket>()?.gameObject;
 
-				//if (Input.GetKeyDown(KeyCode.UpArrow))
-				//{
-				//	Vector3 v = baseGo.transform.localPosition;
-				//	v.x += Main.config.step;
-				//	baseGo.transform.localPosition = v;
-				//	$"{baseGo.transform.localPosition}".onScreen("foundation pos");
-				//}
-				//if (Input.GetKeyDown(KeyCode.DownArrow))
-				//{
-				//	Vector3 v = baseGo.transform.localPosition;
-				//	v.x -= Main.config.step;
-				//	baseGo.transform.localPosition = v;
-				//	$"{baseGo.transform.localPosition}".onScreen("foundation pos");
-
-				//}
-				//if (Input.GetKeyDown(KeyCode.LeftArrow))
-				//{
-				//	Vector3 v = baseGo.transform.localPosition;
-				//	v.z += Main.config.step;
-				//	baseGo.transform.localPosition = v;
-				//	$"{baseGo.transform.localPosition}".onScreen("foundation pos");
-
-				//}
-				//if (Input.GetKeyDown(KeyCode.RightArrow))
-				//{
-				//	Vector3 v = baseGo.transform.localPosition;
-				//	v.z -= Main.config.step;
-				//	baseGo.transform.localPosition = v;
-				//	$"{baseGo.transform.localPosition}".onScreen("foundation pos");
-
-				//}
-
-				if (Input.GetKeyDown(KeyCode.P))
+				if (move)
 				{
-					Vector3 v = baseGo.transform.localPosition;
-					v.y += Main.config.step;
+					Vector3 v = baseGo.transform.position;
+					v += Main.config.step * (Quaternion.AngleAxis(90, Vector3.up) * baseGo.transform.forward);
 					baseGo.transform.localPosition = v;
 					$"{baseGo.transform.localPosition}".onScreen("foundation pos");
+
+					if (Input.GetKeyDown(KeyCode.LeftArrow))
+					{
+						Quaternion qq = baseGo.transform.rotation;
+						qq *= Quaternion.AngleAxis(Main.config.stepAngle, Vector3.up);
+						baseGo.transform.rotation = qq;
+						//$"{baseGo.transform.localPosition}".onScreen("foundation pos");
+
+					}
+					if (Input.GetKeyDown(KeyCode.RightArrow))
+					{
+						Quaternion qq = baseGo.transform.rotation;
+						qq *= Quaternion.AngleAxis(-Main.config.stepAngle, Vector3.up);
+						baseGo.transform.rotation = qq;
+
+					}
+
+
+
 				}
-
-				if (Input.GetKeyDown(KeyCode.O))
+				else
+				if (true)
 				{
-					Vector3 v = baseGo.transform.localPosition;
-					v.y -= Main.config.step;
-					baseGo.transform.localPosition = v;
-					$"{baseGo.transform.localPosition}".onScreen("foundation pos");
+					if (Input.GetKeyDown(KeyCode.UpArrow))
+					{
+						Vector3 v = baseGo.transform.localPosition;
+						v.x += Main.config.step;
+						baseGo.transform.localPosition = v;
+						$"{baseGo.transform.localPosition}".onScreen("foundation pos");
+					}
+					if (Input.GetKeyDown(KeyCode.DownArrow))
+					{
+						Vector3 v = baseGo.transform.localPosition;
+						v.x -= Main.config.step;
+						baseGo.transform.localPosition = v;
+						$"{baseGo.transform.localPosition}".onScreen("foundation pos");
+
+					}
+					if (Input.GetKeyDown(KeyCode.LeftArrow))
+					{
+						Vector3 v = baseGo.transform.localPosition;
+						v.z += Main.config.step;
+						baseGo.transform.localPosition = v;
+						$"{baseGo.transform.localPosition}".onScreen("foundation pos");
+
+					}
+					if (Input.GetKeyDown(KeyCode.RightArrow))
+					{
+						Vector3 v = baseGo.transform.localPosition;
+						v.z -= Main.config.step;
+						baseGo.transform.localPosition = v;
+						$"{baseGo.transform.localPosition}".onScreen("foundation pos");
+
+					}
+
+					if (Input.GetKeyDown(KeyCode.P))
+					{
+						Vector3 v = baseGo.transform.localPosition;
+						v.y += Main.config.step;
+						baseGo.transform.localPosition = v;
+						$"{baseGo.transform.localPosition}".onScreen("foundation pos");
+					}
+
+					if (Input.GetKeyDown(KeyCode.O))
+					{
+						Vector3 v = baseGo.transform.localPosition;
+						v.y -= Main.config.step;
+						baseGo.transform.localPosition = v;
+						$"{baseGo.transform.localPosition}".onScreen("foundation pos");
+					}
+				}
+				else
+				{
+					if (Input.GetKeyDown(KeyCode.UpArrow))
+					{
+						Vector3 v = baseGo.transform.localScale;
+						v.x += Main.config.step;
+						baseGo.transform.localScale = v;
+						$"{baseGo.transform.localScale}".onScreen("foundation pos");
+					}
+					if (Input.GetKeyDown(KeyCode.DownArrow))
+					{
+						Vector3 v = baseGo.transform.localScale;
+						v.x -= Main.config.step;
+						baseGo.transform.localScale = v;
+						$"{baseGo.transform.localScale}".onScreen("foundation pos");
+
+					}
+					if (Input.GetKeyDown(KeyCode.LeftArrow))
+					{
+						Vector3 v = baseGo.transform.localScale;
+						v.z += Main.config.step;
+						baseGo.transform.localScale = v;
+						$"{baseGo.transform.localScale}".onScreen("foundation pos");
+
+					}
+					if (Input.GetKeyDown(KeyCode.RightArrow))
+					{
+						Vector3 v = baseGo.transform.localScale;
+						v.z -= Main.config.step;
+						baseGo.transform.localScale = v;
+						$"{baseGo.transform.localScale}".onScreen("foundation pos");
+
+					}
+
+					if (Input.GetKeyDown(KeyCode.P))
+					{
+						Vector3 v = baseGo.transform.localScale;
+						v.y += Main.config.step;
+						baseGo.transform.localScale = v;
+						$"{baseGo.transform.localScale}".onScreen("foundation pos");
+					}
+
+					if (Input.GetKeyDown(KeyCode.O))
+					{
+						Vector3 v = baseGo.transform.localScale;
+						v.y -= Main.config.step;
+						baseGo.transform.localScale = v;
+						$"{baseGo.transform.localScale}".onScreen("foundation pos");
+					}
 				}
 			}
 

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 
 using UnityEngine;
+
 using SMLHelper.V2.Crafting;
 using SMLHelper.V2.Handlers;
 
@@ -64,11 +65,14 @@ namespace OxygenRefill
 	[CraftHelper.NoAutoPatch]
 	abstract class TankRefill: CraftableObject
 	{
+		// used for fill tank after creating at refilling station
 		class RefillOxygen: MonoBehaviour
 		{
 			void Awake()
 			{
-				if (Main.config.tankCapacities.TryGetValue(CraftData.GetTechType(gameObject), out float capacity))
+				float capacity = Main.config.getTankCapacity(gameObject);
+
+				if (capacity > 0)
 				{
 					Oxygen oxygen = gameObject.GetComponent<Oxygen>();
 					oxygen.oxygenAvailable = oxygen.oxygenCapacity = capacity;
@@ -101,8 +105,8 @@ namespace OxygenRefill
 		{
 			register("Refill oxygen", "Refill oxygen tank.", SpriteManager.Get(tankType));
 			
-			addCraftingNodeTo(OxygenRefillStation.treeRootNode);
-			unlockOnStart();///
+			addCraftingNodeTo(OxygenRefillStation.treeRootNode); // todo: ? patch order
+			setTechTypeForUnlock(tankType);
 			setCraftingTime(craftingTime);
 			useExactPrefab();
 		}

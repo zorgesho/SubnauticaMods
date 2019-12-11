@@ -26,7 +26,9 @@ namespace HabitatPlatform
 		{
 			GameObject prefab = Object.Instantiate(CraftData.GetPrefabForTechType(TechType.RocketBase));
 
-			prefab.getChild("Base/RocketConstructorPlatform").SetActive(true);
+			prefab.AddComponent<PlatformInitializer>();
+
+			//prefab.getChild("Base/RocketConstructorPlatform").SetActive(true);
 
 			//GameObject foundation =  Object.Instantiate(CraftData.GetPrefabForTechType(TechType.BaseRoom));
 

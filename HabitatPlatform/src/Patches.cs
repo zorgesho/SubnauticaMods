@@ -401,7 +401,7 @@ namespace HabitatPlatform
 				Builder.Begin(CraftData.GetPrefabForTechType(TechType.BaseFoundation));
 			}
 
-			if (Input.GetKeyDown(KeyCode.Delete))
+			if (false && Input.GetKeyDown(KeyCode.Delete))
 			{
 				// parenting to platform
 				{
@@ -428,8 +428,8 @@ namespace HabitatPlatform
 
 			if (true)
 			{
-				//				GameObject baseGo = Object.FindObjectOfType<Base>()?.gameObject;
-				GameObject baseGo = Object.FindObjectOfType<Rocket>()?.gameObject;
+								GameObject baseGo = Object.FindObjectOfType<Base>()?.gameObject;
+				//GameObject baseGo = Object.FindObjectOfType<Rocket>()?.gameObject;
 
 				if (move)
 				{
@@ -560,11 +560,11 @@ namespace HabitatPlatform
 				}
 			}
 
-			
 
 
-			
-			if (Input.GetKeyDown(KeyCode.PageDown))
+
+
+			if (false && Input.GetKeyDown(KeyCode.PageDown))
 			{
 				//private static void SetDefaultPlaceTransform(ref Vector3 position, ref Quaternion rotation)
 				try

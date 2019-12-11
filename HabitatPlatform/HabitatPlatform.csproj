@@ -88,9 +88,11 @@
     <Compile Include="config.cs" />
     <Compile Include="main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <None Include="src\backup\PlatformInitializer.cs" />
     <Compile Include="src\BasePatches.cs" />
     <Compile Include="src\Patches.cs" />
     <Compile Include="src\PlatformBuildable.cs" />
+    <Compile Include="src\PlatformInitializer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="mod.json" />

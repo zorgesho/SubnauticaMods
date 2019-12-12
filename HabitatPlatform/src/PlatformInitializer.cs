@@ -8,6 +8,9 @@ namespace HabitatPlatform
 {
 	class PlatformInitializer: MonoBehaviour
 	{
+		Base platformBase = null;
+		GameObject floor = null;
+		
 		IEnumerator Start()
 		{
 			VFXConstructing c = gameObject.GetComponentInChildren<VFXConstructing>();
@@ -23,18 +26,34 @@ namespace HabitatPlatform
 			}
 			yield return new WaitForSeconds(1f);
 
-			yield break;
+			//yield break;
 
 			//initOneTime();
 
-			_addFoundation();
+			//_addAllFoundations();
 			yield return new WaitForSeconds(1f);
-			_parentToPlatform();
+			//_parentToPlatform();
 
 
-			init();
+			//init();
 
 			//Destroy(this);
+		}
+
+		void _addAllFoundations()
+		{
+			_addFirstFoundation();
+			//_addNextFoundation(-10, 0);
+			for (int x = 0; x < Main.config.xxx; x++)
+			{
+				for (int z = 0; z < Main.config.zzz; z++)
+				{
+					if ((x == 0 && z == 0) || (x == 3 && z == 1))
+						continue;
+
+					_addNextFoundation(-10f * x, -10f * z);
+				}
+			}
 		}
 
 		void Update()
@@ -45,12 +64,137 @@ namespace HabitatPlatform
 			//	$"constructed: {c.constructed}".onScreen();
 
 			if (Input.GetKeyDown(KeyCode.PageDown))
-				_addFoundation();
+			{
+				_addAllFoundations();
+//				Common.Debug.dump(gameObject);
 
-			if (Input.GetKeyDown(KeyCode.Delete))
-				_parentToPlatform();
+			}
+			if (Input.GetKeyDown(KeyCode.Alpha9))
+			{
+				//_addAllFoundations();
+				Common.Debug.dump(gameObject);
 
+			}
+
+
+			if (Input.GetKeyDown(KeyCode.Insert))
+			{
+				//BaseFoundationPiece[] foundations = platformBase.GetAllComponentsInChildren<BaseFoundationPiece>();
+				BaseFoundationPiece[] foundations = platformBase.GetComponentsInChildren<BaseFoundationPiece>();
+
+				$"{foundations.Length}".onScreen();
+
+				foreach (var f in foundations)
+				{
+					GameObject models = f.gameObject.getChild("models");
+
+					$"{models.transform.childCount}".log();
+					for (int i = 0; i < models.transform.childCount; i++)
+					{
+						if (models.transform.GetChild(i).GetComponent<MeshRenderer>())
+							models.transform.GetChild(i).GetComponent<MeshRenderer>().enabled = false;
+					}
+					
+					//MeshRenderer[] meshes = f.gameObject.GetAllComponentsInChildren<MeshRenderer>();
+					//$"{meshes.Length}".log();
+
+					//meshes.forEach(mesh => mesh.enabled = false);
+				}
+			}
+
+
+
+			//_addFirstFoundation();
+
+			//if (Input.GetKeyDown(KeyCode.Delete))
+			//{
+			//	for (int x = 0; x < Main.config.xxx; x++)
+			//	{
+			//		for (int z = 0; z < Main.config.zzz; z++)
+			//		{
+			//			if ((x == 0 && z == 0) || (x == 3 && z == 1))
+			//				continue;
+
+			//			_addNextFoundation(-10f * x, -10f * z);
+			//		}
+			//	}
+			//}
+			if (Input.GetKeyDown(KeyCode.Alpha8))
+			{
+				Vector3 pp = floor.transform.localPosition;
+				pp.y += 0.01f;
+				floor.transform.localPosition = pp;
+				$"{pp.y}".log();
+			}
+			if (Input.GetKeyDown(KeyCode.Home))
+			{
+				//Base[] bb = Object.FindObjectsOfType<Base>();
+
+				//for (int i = 0; i < bb.Length; i++)
+				//	bb[i].gameObject.dump("!!base" + i);
+		
+
+				//Builder.ghostModel?.dump("!ghost_model");
+				floor = GameObject.CreatePrimitive(PrimitiveType.Cube);
+				Common.Debug.dump(floor);
+				//floor.transform.localScale = new Vector3(12.0f, 1.0f, 12.0f);
+				floor.GetComponent<Renderer>().material.color = Color.gray;
+				//floor.destroyComponent<Collider>(false);
+				
+				//debugSphere.SetActive(false);
+				
+				//Base b = Object.FindObjectOfType<Base>();
+				//GameObject baseGo = b.gameObject;
+
+				floor.transform.parent = gameObject.getChild("Base").transform;
+				floor.transform.localPosition = new Vector3(0, 0, 0);
+				floor.transform.localScale = new Vector3(43f, 0.1f, 35f);
+					//baseGo.transform.localPosition = new Vector3(11.7f, -1f, 7.5f);
+				floor.transform.localEulerAngles = Vector3.zero;
+				//floor.GetComponent<MeshRenderer>().material = new Material(Resources.Load<Material>("Materials/starship_exploded_interrior_Locker_room_floormods_01_rocketship_platform"));
+				
+				//floor.GetComponent<MeshRenderer>().material.SetTexture
+
+
+				//GameObject obj1 = gameObject.getChild("Base/rocketship_platform/Rocket_Geo/Rocketship_platform/Rocketship_platform_base-1/Rocketship_platform_base_MeshPart0");
+				//////Common.Debug.dump(gameObject);
+
+				//MeshRenderer renderer = obj1?.GetComponent<MeshRenderer>();
+
+				//if (renderer)
+				//{
+				//	foreach (var m in renderer.materials)
+				//	{
+				//		$"{m.name}".log();
+
+				//		if (m.name.Contains("starship_exploded_interrior_Locker_room_floormods_01_rocketship_platform"))
+				//			floor.GetComponent<MeshRenderer>().material = m;
+
+				//		m.sett
+
+				//	}
+				//}
+
+
+
+			}
 		}
+
+
+		//IEnumerator _add()
+		//{
+		//	for (int x = 0; x < Main.config.xxx; x++)
+		//	{
+		//		for (int z = 0; z < Main.config.zzz; z++)
+		//		{
+		//			if ((x == 0 && z == 0) || (x == 3 && z == 1))
+		//				continue;
+
+		//			_addNextFoundation(-10f * x, -10f * z);
+		//			yield return new WaitForSeconds(0.5f);
+		//		}
+		//	}	
+		//}
 
 
 		void init()
@@ -67,8 +211,102 @@ namespace HabitatPlatform
 		}
 
 
+		void _addFirstFoundation()
+		{
+			GameObject newObject = Instantiate(CraftData.GetPrefabForTechType(TechType.BaseFoundation));
+			ConstructableBase constructableBase = newObject.GetComponent<ConstructableBase>();
+
+			GameObject ghostModel = constructableBase.model;
+			BaseGhost baseGhost = ghostModel.GetComponent<BaseGhost>();
+
+			baseGhost.ghostBase.SetSize(Base.CellSize[2]);
+			baseGhost.ghostBase.SetCell(Int3.zero, Base.CellType.Foundation);
+
+			if (baseGhost.targetBase != null)
+			{
+				constructableBase.transform.parent = baseGhost.targetBase.transform;
+			}
+
+			// !!!!!!!!!
+			//if (baseGhost.TargetBase != null)
+			//	constructableBase.transform.SetParent(baseGhost.TargetBase.transform, true);
+
+			if (baseGhost.targetBase == null)
+			{
+				GameObject gameObject;
+				if (!UWE.PrefabDatabase.TryGetPrefabForFilename("WorldEntities/Structures/Base", out gameObject))
+				{
+					//Debug.LogErrorFormat(this, "Failed to load Base prefab in BaseGhost.Finish()", new object[0]);
+					return;
+				}
+				GameObject gameObject2 = Object.Instantiate<GameObject>(gameObject, constructableBase.transform.position, constructableBase.transform.rotation);
+				if (LargeWorld.main)
+				{
+					LargeWorld.main.streamer.cellManager.RegisterEntity(gameObject2);
+				}
+				baseGhost.targetBase = gameObject2.GetComponent<Base>();
+				
+				platformBase = baseGhost.targetBase; //!!!!!!!!!!!!
+			}
+
+			baseGhost.targetOffset = baseGhost.targetBase.WorldToGrid(baseGhost.transform.position);
+			baseGhost.targetBase.CopyFrom(baseGhost.ghostBase, baseGhost.ghostBase.Bounds, baseGhost.targetOffset);
+
+			// parenting to platform
+			baseGhost.targetBase.transform.parent = gameObject.transform;
+					
+			//baseGo.transform.localPosition = new Vector3(11.7f, 1.4f, 7.5f);
+			baseGhost.targetBase.transform.localPosition = new Vector3(11.7f, 1.4f, 7.5f);
+			baseGhost.targetBase.transform.localEulerAngles = Vector3.zero;
+
+			Destroy(newObject);
+		}
+		
+		
+		void _addNextFoundation(float deltaX, float deltaZ)
+		{
+			if (platformBase == null)
+			{
+				"NULL BASE".onScreen();
+				return;
+			}
+
+			GameObject newObject = Instantiate(CraftData.GetPrefabForTechType(TechType.BaseFoundation));
+			ConstructableBase constructableBase = newObject.GetComponent<ConstructableBase>();
+
+			GameObject ghostModel = constructableBase.model;
+			BaseGhost baseGhost = ghostModel.GetComponent<BaseGhost>();
+
+			baseGhost.ghostBase.SetSize(Base.CellSize[2]);
+			baseGhost.ghostBase.SetCell(Int3.zero, Base.CellType.Foundation);
+
+			baseGhost.targetBase = platformBase;
+			
+			constructableBase.transform.parent = baseGhost.targetBase.transform;
+
+			constructableBase.transform.localPosition = new Vector3(deltaX, 0, deltaZ);
+
+			// !!!!!!!!!
+			//if (baseGhost.TargetBase != null)
+			//	constructableBase.transform.SetParent(baseGhost.TargetBase.transform, true);
+
+			baseGhost.targetOffset = baseGhost.targetBase.WorldToGrid(baseGhost.transform.position);
+			baseGhost.targetBase.CopyFrom(baseGhost.ghostBase, baseGhost.ghostBase.Bounds, baseGhost.targetOffset);
+
+			//// parenting to platform
+			//baseGhost.targetBase.transform.parent = gameObject.transform;
+					
+			////baseGo.transform.localPosition = new Vector3(11.7f, 1.4f, 7.5f);
+			//baseGhost.targetBase.transform.localPosition = new Vector3(11.7f, 1.7f, 7.5f);
+			//baseGhost.targetBase.transform.localEulerAngles = Vector3.zero;
+
+			Destroy(newObject);
+		}
+		
+		
 		void _addFoundation()
 		{
+			return;
 			$"111 - {FindObjectsOfType<Base>().Length}".log();
 
 			///////////////////////////////////////

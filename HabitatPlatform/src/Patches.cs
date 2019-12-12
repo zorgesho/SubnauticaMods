@@ -290,7 +290,7 @@ namespace HabitatPlatform
 		
 
 
-	[HarmonyPatch(typeof(Player), "Update")]
+	//[HarmonyPatch(typeof(Player), "Update")]
 	static class Player_Update_Patch
 	{
 		public static Base lastBase = null;
@@ -426,7 +426,7 @@ namespace HabitatPlatform
 				}
 			}
 
-			if (true)
+			if (false)
 			{
 								GameObject baseGo = Object.FindObjectOfType<Base>()?.gameObject;
 				//GameObject baseGo = Object.FindObjectOfType<Rocket>()?.gameObject;
@@ -458,7 +458,7 @@ namespace HabitatPlatform
 
 				}
 				else
-				if (true)
+				if (false)
 				{
 					if (Input.GetKeyDown(KeyCode.UpArrow))
 					{

@@ -19,24 +19,32 @@ namespace Common
 				stopwatch = Stopwatch.StartNew();
 		}
 
-		public static void stopStopwatch(string msg, string filename = null)
+		public static double stopStopwatch(string msg, string filename = null)
 		{
 			if (--nestLevel > 0)
-				return;
+				return 0;
 
 			stopwatch.Stop();
-			string result = $"{msg}: {stopwatch.Elapsed.TotalMilliseconds} ms";
-			$"STOPWATCH: {result}".logDbg();
+			
+			double time = stopwatch.Elapsed.TotalMilliseconds;
 
-			if (filename != null)
+			if (msg != null)
 			{
-				if (Path.GetExtension(filename) == "")
-					filename += ".prf";
+				string result = $"{msg}: {time} ms";
+				$"STOPWATCH: {result}".logDbg();
 
-				File.AppendAllText(Paths.modRootPath + filename, $"{result}{System.Environment.NewLine}");
+				if (filename != null)
+				{
+					if (Path.GetExtension(filename) == "")
+						filename += ".prf";
+
+					File.AppendAllText(Paths.modRootPath + filename, $"{result}{Environment.NewLine}");
+				}
 			}
 
 			stopwatch = null;
+
+			return time;
 		}
 	}
 

@@ -19,9 +19,16 @@ namespace Common
 
 		public static void patch(MethodBase original, MethodInfo prefix = null, MethodInfo postfix = null, MethodInfo transpiler = null)
 		{
-			harmonyInstance.Patch(original, (prefix == null)? null: new HarmonyMethod(prefix),
-											(postfix == null)? null: new HarmonyMethod(postfix),
-											(transpiler == null)? null: new HarmonyMethod(transpiler));
+			try
+			{
+				harmonyInstance.Patch(original, (prefix == null)? null: new HarmonyMethod(prefix),
+												(postfix == null)? null: new HarmonyMethod(postfix),
+												(transpiler == null)? null: new HarmonyMethod(transpiler));
+			}
+			catch (System.Exception e)
+			{
+				Log.msg(e, "HarmonyHelper.patch");
+			}
 		}
 	}
 }

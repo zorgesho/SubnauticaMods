@@ -19,7 +19,7 @@ namespace MiscObjects
 			unlockOnStart();
 		}
 
-		protected override GameObject getGameObject()
+		public override GameObject getGameObject()
 		{
 			GameObject prefab = Object.Instantiate(Resources.Load<GameObject>("Submarine/Build/submarine_locker_04"));
 			GameObject model = prefab.FindChild("submarine_locker_04");

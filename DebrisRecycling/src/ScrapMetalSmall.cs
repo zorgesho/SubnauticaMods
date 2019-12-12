@@ -19,7 +19,7 @@ namespace DebrisRecycling
 			TechType = register("Small piece of salvage", "Composed primarily of titanium.", SpriteManager.Get(TechType.ScrapMetal));
 		}
 
-		protected override GameObject getGameObject()
+		public override GameObject getGameObject()
 		{
 			GameObject prefab = Object.Instantiate(CraftData.GetPrefabForTechType(TechType.Titanium));
 
@@ -63,7 +63,7 @@ namespace DebrisRecycling
 			resultCount = _resultCount;
 		}
 
-		protected override GameObject getGameObject() => Object.Instantiate(CraftData.GetPrefabForTechType(TechType.Titanium));
+		public override GameObject getGameObject() => Object.Instantiate(CraftData.GetPrefabForTechType(TechType.Titanium));
 
 		protected override TechData getTechData()
 		{
@@ -82,7 +82,7 @@ namespace DebrisRecycling
 
 			register($"Titanium (x{resultCount})", "Ti. Basic building material.", SpriteManager.Get(TechType.Titanium));
 			setCraftingTime(0.7f * resultCount);
-			addCraftingNode(CraftTree.Type.Fabricator, "Resources/Titanium");
+			addCraftingNodeTo(CraftTree.Type.Fabricator, "Resources/Titanium");
 		}
 
 		static void initNodes()

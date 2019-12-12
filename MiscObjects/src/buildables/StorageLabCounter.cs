@@ -24,7 +24,7 @@ namespace MiscObjects
 			setTechTypeForUnlock(TechType.LabCounter);
 		}
 
-		protected override GameObject getGameObject()
+		public override GameObject getGameObject()
 		{
 			GameObject prefab = Object.Instantiate(CraftData.GetPrefabForTechType(TechType.LabCounter));
 

@@ -27,7 +27,7 @@ namespace FloatingCargoCrate
 			setTechTypeForUnlock(TechType.AirBladder);
 		}
 
-		protected override GameObject getGameObject()
+		public override GameObject getGameObject()
 		{
 			var prefab = Object.Instantiate(Resources.Load<GameObject>("WorldEntities/tools/smallstorage"));
 			GameObject model = prefab.FindChild("3rd_person_model");

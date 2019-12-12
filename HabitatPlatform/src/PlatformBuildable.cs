@@ -17,7 +17,7 @@ namespace HabitatPlatform
 			TechType = register("Habitat platform", "Platform", SpriteManager.Get(TechType.AcidMushroom));
 
 			addToGroup(TechGroup.Constructor, TechCategory.Constructor);
-			addCraftingNode(CraftTree.Type.Constructor, "");
+			addCraftingNodeTo(CraftTree.Type.Constructor, "");
 
 			unlockOnStart();
 		}

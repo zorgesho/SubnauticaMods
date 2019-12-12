@@ -17,7 +17,7 @@ namespace MiscObjects
 			new Ingredient(TechType.CreepvinePiece, 2),
 		}};
 
-		protected override GameObject getGameObject()
+		public override GameObject getGameObject()
 		{
 			GameObject prefab = Object.Instantiate(CraftData.GetPrefabForTechType(TechType.NutrientBlock));
 			
@@ -43,7 +43,7 @@ namespace MiscObjects
 					 AssetsHelper.loadSprite(ClassID));
 
 			addToGroup(TechGroup.Survival, TechCategory.CookedFood);
-			addCraftingNode(CraftTree.Type.Fabricator, "Survival");
+			addCraftingNodeTo(CraftTree.Type.Fabricator, "Survival");
 			setTechTypeForUnlock(TechType.PurpleVegetable);
 		}
 	}

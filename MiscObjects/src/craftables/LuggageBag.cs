@@ -13,7 +13,7 @@ namespace MiscObjects
 			new Ingredient(TechType.Silicone, 1),
 		}};
 
-		protected override GameObject getGameObject()
+		public override GameObject getGameObject()
 		{
 			GameObject prefab = Object.Instantiate(Resources.Load<GameObject>("WorldEntities/Doodads/Debris/Wrecks/Decoration/docking_luggage_01_bag4"));
 
@@ -31,7 +31,7 @@ namespace MiscObjects
 			register(TechType.LuggageBag);
 
 			addToGroup(TechGroup.Personal, TechCategory.Equipment);
-			addCraftingNode(CraftTree.Type.Fabricator, "Personal/Equipment");
+			addCraftingNodeTo(CraftTree.Type.Fabricator, "Personal/Equipment");
 			setTechTypeForUnlock(TechType.LuggageBag);
 		}
 	}

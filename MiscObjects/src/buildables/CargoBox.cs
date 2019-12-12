@@ -19,7 +19,7 @@ namespace MiscObjects
 			unlockOnStart();
 		}
 
-		protected override GameObject getGameObject()
+		public override GameObject getGameObject()
 		{
 			GameObject  prefab = Object.Instantiate(Resources.Load<GameObject>("WorldEntities/Doodads/Debris/Wrecks/Decoration/Starship_cargo"));
 			GameObject model = prefab.FindChild("Starship_cargo");

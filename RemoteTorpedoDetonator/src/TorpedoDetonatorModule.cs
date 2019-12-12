@@ -18,7 +18,7 @@ namespace RemoteTorpedoDetonator
 			new Ingredient(TechType.Magnetite, 1),
 		}};
 
-		protected override GameObject getGameObject() => Object.Instantiate(CraftData.GetPrefabForTechType(TechType.VehicleArmorPlating));
+		public override GameObject getGameObject() => Object.Instantiate(CraftData.GetPrefabForTechType(TechType.VehicleArmorPlating));
 
 		public override void patch()
 		{
@@ -27,7 +27,7 @@ namespace RemoteTorpedoDetonator
 								AssetsHelper.loadSprite(ClassID));
 
 			addToGroup(TechGroup.VehicleUpgrades, TechCategory.VehicleUpgrades);
-			addCraftingNode(CraftTree.Type.SeamothUpgrades, "CommonModules");
+			addCraftingNodeTo(CraftTree.Type.SeamothUpgrades, "CommonModules");
 			setEquipmentType(EquipmentType.VehicleModule, QuickSlotType.Instant);
 
 			setTechTypeForUnlock(TechType.GasTorpedo);

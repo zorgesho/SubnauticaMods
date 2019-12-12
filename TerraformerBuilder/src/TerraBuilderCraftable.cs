@@ -13,7 +13,7 @@ namespace TerraformerBuilder
 	{
 		public static new TechType TechType { get; private set; } = 0;
 
-		protected override GameObject getGameObject()
+		public override GameObject getGameObject()
 		{
 			GameObject prefab = Object.Instantiate(CraftData.GetPrefabForTechType(TechType.Terraformer));
 
@@ -51,7 +51,7 @@ namespace TerraformerBuilder
 								AssetsHelper.loadSprite(ClassID));
 
 			addToGroup(TechGroup.Personal, TechCategory.Tools, TechType.Flare);
-			addCraftingNode(CraftTree.Type.Fabricator, "Personal/Tools", TechType.Flare);
+			addCraftingNodeTo(CraftTree.Type.Fabricator, "Personal/Tools", TechType.Flare);
 
 			if (Main.config.removeVanillaBuilder)
 			{

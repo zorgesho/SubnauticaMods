@@ -18,14 +18,14 @@ namespace PrawnSuitSonarUpgrade
 			new Ingredient(TechType.ComputerChip, 1)
 		}};
 
-		protected override GameObject getGameObject() => Object.Instantiate(CraftData.GetPrefabForTechType(TechType.VehicleArmorPlating));
+		public override GameObject getGameObject() => Object.Instantiate(CraftData.GetPrefabForTechType(TechType.VehicleArmorPlating));
 
 		public override void patch()
 		{
 			TechType = register("Prawn suit sonar", "Seamoth sonar modified to use on prawn suit.", SpriteManager.Get(TechType.SeamothSonarModule));
 
 			addToGroup(TechGroup.Workbench, TechCategory.Workbench);
-			addCraftingNode(CraftTree.Type.Workbench, "ExosuitMenu");
+			addCraftingNodeTo(CraftTree.Type.Workbench, "ExosuitMenu");
 			setEquipmentType(EquipmentType.ExosuitModule, QuickSlotType.SelectableChargeable);
 
 			setTechTypeForUnlock(TechType.SeamothSonarModule);

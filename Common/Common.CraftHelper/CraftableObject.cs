@@ -87,10 +87,10 @@ namespace Common.Crafting
 		//	UnlockTechHelper.setTechTypesForUnlock(UnlockTechHelper.UnlockType.All, TechType, new TechType[] { t1, t2 });
 		//}
 		
-		protected void addCraftingNode(CraftTree.Type craftTree, string craftPath) =>
+		protected void addCraftingNodeTo(CraftTree.Type craftTree, string craftPath) =>
 			CraftTreeHandler.AddCraftingNode(craftTree, TechType, craftPath.Split('/'));
 
-		protected void addCraftingNode(CraftTree.Type craftTree, string craftPath, TechType after) =>
+		protected void addCraftingNodeTo(CraftTree.Type craftTree, string craftPath, TechType after) =>
 			CraftNodesCustomOrder.addNode(craftTree, TechType, craftPath, after);
 
 		protected void addCraftingNodeTo(ModCraftTreeLinkingNode modCraftTreeNode) =>

@@ -20,14 +20,14 @@ namespace PrawnSuitJetUpgrade
 			new Ingredient(TechType.Polyaniline, 1),
 		}};
 
-		protected override GameObject getGameObject() => Object.Instantiate(CraftData.GetPrefabForTechType(TechType.VehicleArmorPlating));
+		public override GameObject getGameObject() => Object.Instantiate(CraftData.GetPrefabForTechType(TechType.VehicleArmorPlating));
 
 		public override void patch()
 		{
 			TechType = register("Prawn suit thrusters optimizer", "Thrusters work longer before need to recharge.", AssetsHelper.loadSprite(ClassID));
 
 			addToGroup(TechGroup.VehicleUpgrades, TechCategory.VehicleUpgrades);
-			addCraftingNode(CraftTree.Type.SeamothUpgrades, "ExosuitModules");
+			addCraftingNodeTo(CraftTree.Type.SeamothUpgrades, "ExosuitModules");
 			setEquipmentType(EquipmentType.ExosuitModule, QuickSlotType.Passive);
 
 			setTechTypeForUnlock(TechType.BaseUpgradeConsole);

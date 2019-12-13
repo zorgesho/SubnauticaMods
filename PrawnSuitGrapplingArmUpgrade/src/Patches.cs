@@ -20,7 +20,7 @@ namespace PrawnSuitGrapplingArmUpgrade
 				__instance.MarkArmsDirty();
 				return false;
 			}
-			
+
 			return true;
 		}
 	}
@@ -48,7 +48,7 @@ namespace PrawnSuitGrapplingArmUpgrade
 		{
 			var list = new List<CodeInstruction>(cins);
 
-			for (int i = list.Count - 1; i >= 0; --i) // changing list in the process, so iterate it backwards
+			for (int i = list.Count - 1; i >= 0; i--) // changing list in the process, so iterate it backwards
 			{
 				void tryChangeVal(float val, string configVar)
 				{
@@ -63,7 +63,7 @@ namespace PrawnSuitGrapplingArmUpgrade
 				tryChangeVal(15f, nameof(Main.config.acceleration));
 				tryChangeVal(400f, nameof(Main.config.force));
 			}
-			
+
 			return list.AsEnumerable();
 		}
 	}
@@ -74,19 +74,19 @@ namespace PrawnSuitGrapplingArmUpgrade
 	{
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins, ILGenerator ilg)
 		{
-			var list = new List<CodeInstruction>(cins);
-
-			for (int i = list.Count - 1; i >= 0; --i) // we need last 25f, so we going backwards
+			int ldc25 = 0;
+			foreach (var ci in cins)
 			{
-				if (list[i].isLDC(25f))
+				if (ci.isLDC(25f) && ++ldc25 == 2)
 				{
-					list.RemoveAt(i);
-					list.InsertRange(i, _codeForChangeConstToConfigVar<float, GrapplingArmUpgraded>(25f, nameof(Main.config.hookSpeed), ilg));
-					break;
+					foreach (var i in _codeForChangeConstToConfigVar<float, GrapplingArmUpgraded>(25f, nameof(Main.config.hookSpeed), ilg))
+						yield return i;
+
+					continue;
 				}
+
+				yield return ci;
 			}
-			
-			return list.AsEnumerable();
 		}
 	}
 

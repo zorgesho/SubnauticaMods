@@ -11,8 +11,6 @@ namespace PrawnSuitGrapplingArmUpgrade
 		public static void patch()
 		{
 			HarmonyHelper.patchAll();
-			Options.init();
-
 			CraftHelper.patchAll();
 		}
 	}

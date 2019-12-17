@@ -20,7 +20,7 @@ namespace PrawnSuitSettings
 		}
 
 		public static void refresh() => HarmonyHelper.setPatchEnabled(!Main.config.autoPickupDrillableResources, typeof(DrillableResourcesPickup));
-		
+
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins)
 		{
 			var list = new List<CodeInstruction>(cins);

@@ -25,7 +25,7 @@ namespace PrawnSuitSettings
 			float grapplingArmEnergyCost = Main.config.armsEnergyUsage.enabled? Main.config.armsEnergyUsage.grapplingArmShoot: 0f;
 
 			CraftData.energyCost[TechType.ExosuitGrapplingArmModule] = grapplingArmEnergyCost;
-			
+	
 			if (TechTypeHandler.TryGetModdedTechType("GrapplingArmUpgradeModule", out TechType upgradedGrapplingArm))
 				CraftData.energyCost[upgradedGrapplingArm] = grapplingArmEnergyCost;
 
@@ -43,7 +43,7 @@ namespace PrawnSuitSettings
 			}
 		}
 
-		// Energy usage from drill arm
+		// Energy usage for drill arm
 		[HarmonyPatch(typeof(ExosuitDrillArm), "IExosuitArm.Update")]
 		static class ExosuitDrillArm_Update_Patch
 		{
@@ -54,12 +54,12 @@ namespace PrawnSuitSettings
 			}
 		}
 
-		// Energy usage from grappling arm
+		// Energy usage for grappling arm
 		[HarmonyPatch(typeof(ExosuitGrapplingArm), "FixedUpdate")]
 		static class ExosuitGrapplingArm_FixedUpdate_Patch
 		{
 			const float sqrMagnitudeGrapplingArm = 16f; // if hook attached and its sqr length less than that, then don't consume power
-			
+
 			static void Postfix(ExosuitGrapplingArm __instance)
 			{
 				if (Main.config.armsEnergyUsage.enabled &&

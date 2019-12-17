@@ -20,9 +20,9 @@ namespace PrawnSuitSettings
 			[NonSerialized]
 			[Options.Field("Damage from collisions")]
 			[Field.CustomAction(typeof(CollisionSelfDamage.SettingChanged))]
-			public bool _enabled_0 = true; // can't use just 'enabled' now to avoid name collision in mod options
+			public bool _enabled_0 = false; // can't use just 'enabled' now to avoid name collision in mod options
 
-			public bool enabled = true;
+			public bool enabled = false;
 
 			public readonly float speedMinimumForDamage = 20f;
 			public readonly float mirroredSelfDamageFraction = 0.1f;
@@ -34,9 +34,9 @@ namespace PrawnSuitSettings
 			[NonSerialized]
 			[Options.Field("Arms additional energy usage")]
 			[Field.CustomAction(typeof(ArmsEnergyUsage.SettingChanged))]
-			public bool _enabled_1 = true; // temporary workaround
+			public bool _enabled_1 = false; // temporary workaround
 
-			public bool enabled = true;
+			public bool enabled = false;
 
 			public readonly float drillArm = 0.3f;
 			public readonly float grapplingArmShoot = 0.5f;
@@ -49,10 +49,10 @@ namespace PrawnSuitSettings
 		public readonly ArmsEnergyUsageSettings armsEnergyUsage = new ArmsEnergyUsageSettings();
 
 		[Options.Field("Propulsion arm 'ready' animation")]
-		public readonly bool readyAnimationForPropulsionCannon = false;
+		public readonly bool readyAnimationForPropulsionCannon = true;
 
 		[Options.Field("Toggleable drill arm")]
-		public readonly bool toggleableDrillArm = true;
+		public readonly bool toggleableDrillArm = false;
 
 		[Options.Field("Auto pickup resources after drilling")]
 		[Field.CustomAction(typeof(DrillableResourcesPickup.SettingChanged))]

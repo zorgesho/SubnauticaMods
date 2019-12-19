@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 
 using UnityEngine;
 
@@ -69,15 +70,82 @@ namespace HabitatPlatform
 //				Common.Debug.dump(gameObject);
 
 			}
-			if (Input.GetKeyDown(KeyCode.Alpha9))
+
+			if (Input.GetKeyDown(KeyCode.PageUp))
 			{
-				//_addAllFoundations();
-				Common.Debug.dump(gameObject);
+				GameObject obj1 = gameObject.getChild("Base/rocketship_platform/Rocket_Geo/Rocketship_platform/Rocketship_platform_base-1/Rocketship_platform_base_MeshPart0");
+
+				$"mesh   {obj1.GetComponent<MeshFilter>().mesh.subMeshCount}".log();
+
+				Mesh mesh = obj1.GetComponent<MeshFilter>().sharedMesh;
+
+				mesh.UploadMeshData(false);
+
+				MeshRenderer meshRenderer = obj1.GetComponent<MeshRenderer>();
+
+				var materials = meshRenderer.materials;
+
+				int meshIndex = 0;
+				
+				for (int i = 0; i < materials.Length; i++)
+				{
+					$"{mesh.GetIndexCount(i)}  {materials[i].name}".log();
+
+					if (materials[i].name.Contains("rocketship_wallmods_01_platform"))
+					{
+						//materials[i] = null;
+						meshIndex = i;
+					}
+				}
+
+				//meshRenderer.materials = materials;
+
+				try
+				{
+					//List<Vector3> vertices = null;
+					////new List<Vector3>();
+					//mesh.GetVertices(vertices);
+
+					Vector3[] vertices = mesh.vertices;
+					$"{mesh.isReadable} {vertices.Length} {mesh.vertices.Length} {mesh.vertexCount}".log();
+				}
+				catch (System.Exception e)
+				{
+					Log.msg(e);
+				}
+
+				GameObject floor = GameObject.CreatePrimitive(PrimitiveType.Cube);
+
+				Mesh mm = floor.GetComponent<MeshFilter>()?.mesh;
+
+				if (mm == null)
+					"null".log();
+				else
+				{
+					$"{mm.vertices.Length}".log();
+				}
+
+				//List<int> indices = new List<int>();
+				//mesh.GetIndices(indices, meshIndex);
+
+				//$"{vertices.Count} {indices.Count}".log();
+
+				//foreach (var i in indices)
+				//{
+				//	$"{i}  {vertices[i]}".log();
+				//}
+
+
+
+
 
 			}
 
+			//if (Input.GetKeyDown(KeyCode.Alpha9))
+			//	Common.Debug.dump(gameObject);
 
-			if (Input.GetKeyDown(KeyCode.Insert))
+
+			if (false &&Input.GetKeyDown(KeyCode.Insert))
 			{
 				//BaseFoundationPiece[] foundations = platformBase.GetAllComponentsInChildren<BaseFoundationPiece>();
 				BaseFoundationPiece[] foundations = platformBase.GetComponentsInChildren<BaseFoundationPiece>();
@@ -119,13 +187,29 @@ namespace HabitatPlatform
 			//		}
 			//	}
 			//}
-			if (Input.GetKeyDown(KeyCode.Alpha8))
+			//if (Input.GetKeyDown(KeyCode.Alpha8))
+			//{
+			//	Vector3 pp = floor.transform.localPosition;
+			//	pp.y += 0.01f;
+			//	floor.transform.localPosition = pp;
+			//	$"{pp.y}".log();
+			//}
+
+			if (Input.GetKeyDown(KeyCode.Alpha7))
 			{
-				Vector3 pp = floor.transform.localPosition;
-				pp.y += 0.01f;
-				floor.transform.localPosition = pp;
-				$"{pp.y}".log();
+				gameObject.getChild("Base/RocketConstructorPlatform").SetActive(true);
+				uGUI_RocketBuildScreen ss = gameObject.GetComponentInChildren<uGUI_RocketBuildScreen>();
+
+				if (ss)
+				{
+					ss.buildScreen.SetActive(false);
+					ss.customizeScreen.SetActive(true);
+					ss.buildAnimationScreen.SetActive(false);
+
+				}
 			}
+
+
 			if (Input.GetKeyDown(KeyCode.Home))
 			{
 				//Base[] bb = Object.FindObjectsOfType<Base>();

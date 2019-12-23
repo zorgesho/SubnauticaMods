@@ -2,7 +2,7 @@
 using Common.Crafting;
 using Common.Configuration;
 
-namespace TerraformerBuilder
+namespace TrfHabitatBuilder
 {
 	public static class Main
 	{

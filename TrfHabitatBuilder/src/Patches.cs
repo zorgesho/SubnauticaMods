@@ -1,25 +1,25 @@
 ﻿using Harmony;
 
-namespace TerraformerBuilder
+namespace TrfHabitatBuilder
 {
 	[HarmonyPatch(typeof(BuilderTool), "Start")]
 	static class BuilderTool_Start_Patch
 	{
-		static bool Prefix(BuilderTool __instance) => !__instance.gameObject.GetComponent<TerraBuilderControl>();
+		static bool Prefix(BuilderTool __instance) => !__instance.gameObject.GetComponent<TrfBuilderControl>();
 	}
 
 	[HarmonyPatch(typeof(BuilderTool), "OnDisable")]
 	static class BuilderTool_OnDisable_Patch
 	{
-		static bool Prefix(BuilderTool __instance) => !__instance.gameObject.GetComponent<TerraBuilderControl>();
+		static bool Prefix(BuilderTool __instance) => !__instance.gameObject.GetComponent<TrfBuilderControl>();
 	}
-	
+
 	[HarmonyPatch(typeof(BuilderTool), "LateUpdate")]
 	static class BuilderTool_LateUpdate_Patch
 	{
 		static bool Prefix(BuilderTool __instance)
 		{
-			TerraBuilderControl	tbc = __instance.gameObject.GetComponent<TerraBuilderControl>();
+			TrfBuilderControl	tbc = __instance.gameObject.GetComponent<TrfBuilderControl>();
 			if (tbc == null)
 				return true;
 
@@ -31,8 +31,8 @@ namespace TerraformerBuilder
 	[HarmonyPatch(typeof(QuickSlots), "SetAnimationState")]
 	static class QuickSlots_SetAnimationState_Patch
 	{
-		static readonly string builderToolName = nameof(TerraBuilder).ToLower();
-		
+		static readonly string builderToolName = nameof(TrfBuilder).ToLower();
+
 		static bool Prefix(QuickSlots __instance, string toolName)
 		{
 			if (toolName != builderToolName)

@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using Common;
 
-namespace TerraformerBuilder
+namespace TrfHabitatBuilder
 {
-	class TerraBuilderControl: MonoBehaviour
+	class TrfBuilderControl: MonoBehaviour
 	{
 		class ConstructionPoint
 		{
@@ -17,7 +17,7 @@ namespace TerraformerBuilder
 
 #if DBG_CPOINTS
 			readonly GameObject debugSphere = null;
-			
+
 			public ConstructionPoint()
 			{
 				debugSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
@@ -152,7 +152,7 @@ namespace TerraformerBuilder
 				new Info(1f),	// terF_use_open_panel_end
 				new Info(0.5f)	// terF_use_open_panel_loop
 			};
-		
+
 			static Dictionary<int, float> animSpeeds = null;
 
 			public static int   getAnimHash(Anim anim) => animInfo[(int)anim].hash;
@@ -168,7 +168,7 @@ namespace TerraformerBuilder
 				foreach (Anim anim in Enum.GetValues(typeof(Anim)))
 				{
 					int hash = Animator.StringToHash("Base Layer." + anim.ToString());
-				
+
 					animSpeeds[hash] = animInfo[(int)anim].speed;
 					animInfo[(int)anim].hash = hash;
 				}
@@ -243,7 +243,7 @@ namespace TerraformerBuilder
 		{
 			int animHash = animator.GetCurrentAnimatorStateInfo(0).fullPathHash;
 			animator.speed = AnimationHelper.getAnimSpeed(animHash);								$"anim: {animator.GetCurrentAnimatorClipInfo(0)[0].clip.name}\tspeed: {animator.speed}".onScreen("anim info");
-			
+
 			bool isConstructing = builderTool.constructable != null;
 			if (builderTool.isConstructing != isConstructing)
 			{
@@ -260,7 +260,7 @@ namespace TerraformerBuilder
 			{
 				foreach (var cpoint in cpoints)
 					cpoint.update(Time.deltaTime, builderTool.constructable);
-				
+
 				bool isRotating = (animHash == AnimationHelper.getAnimHash(AnimationHelper.Anim.terF_use_open_panel_loop));
 				cbeams[0].setActive(isRotating);
 				cbeams[1].setActive(isRotating);

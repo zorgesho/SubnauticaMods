@@ -7,9 +7,9 @@ using SMLHelper.V2.Handlers;
 using Common;
 using Common.Crafting;
 
-namespace TerraformerBuilder
+namespace TrfHabitatBuilder
 {
-	class TerraBuilder: CraftableObject
+	class TrfBuilder: CraftableObject
 	{
 		public static new TechType TechType { get; private set; } = 0;
 
@@ -27,7 +27,7 @@ namespace TerraformerBuilder
 
 			bldCmp.animator = prefab.getChild("terraformer_anim").GetComponent<Animator>();
 
-			prefab.AddComponent<TerraBuilderControl>();
+			prefab.AddComponent<TrfBuilderControl>();
 
 			VFXFabricating vfxFab = prefab.GetComponentInChildren<VFXFabricating>();
 			vfxFab.eulerOffset = new Vector3(-10f, 90f, 0f);

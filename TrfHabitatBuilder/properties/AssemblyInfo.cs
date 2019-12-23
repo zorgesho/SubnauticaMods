@@ -1,11 +1,11 @@
 ﻿using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("TerraformerBuilder")]
+[assembly: AssemblyTitle("TrfHabitatBuilder")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("TerraformerBuilder")]
+[assembly: AssemblyProduct("TrfHabitatBuilder")]
 [assembly: AssemblyCopyright("© 2019 zorgesho")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

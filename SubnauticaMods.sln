@@ -48,7 +48,7 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Common.AssetsHelper", "Comm
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrawnSuitSonarUpgrade", "PrawnSuitSonarUpgrade\PrawnSuitSonarUpgrade.csproj", "{F93D86EE-3055-407B-8AF2-5F2A06319AF8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TerraformerBuilder", "TerraformerBuilder\TerraformerBuilder.csproj", "{2EF87EAC-0967-4C91-B79D-B52FC6F32739}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrfHabitatBuilder", "TrfHabitatBuilder\TrfHabitatBuilder.csproj", "{2EF87EAC-0967-4C91-B79D-B52FC6F32739}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DayNightSpeed", "DayNightSpeed\DayNightSpeed.csproj", "{655A27D7-F0E2-480C-B875-96312B41EF0F}"
 EndProject

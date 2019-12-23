@@ -1,11 +1,11 @@
 ﻿using Common.Configuration;
 
-namespace TerraformerBuilder
+namespace TrfHabitatBuilder
 {
 	class ModConfig: Config
 	{
-		public readonly bool bigInInventory = true;
-		public readonly bool removeVanillaBuilder = true;
+		public readonly bool bigInInventory = false;
+		public readonly bool removeVanillaBuilder = false;
 
 #if DEBUG
 		[AddToConsole]

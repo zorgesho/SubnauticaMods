@@ -1,6 +1,6 @@
 {
-  "Id": "TerraformerBuilder",
-  "DisplayName": "TerraformerBuilder",
+  "Id": "TrfHabitatBuilder",
+  "DisplayName": "TrfHabitatBuilder",
   "Author": "zorgesho",
   "Version": "1.0.0",
   "Dependencies": ["SMLHelper"],
@@ -8,6 +8,6 @@
   "LoadAfter": [],
   "Enable": true,
   "Game": "Subnautica",
-  "AssemblyName": "TerraformerBuilder.dll",
-  "EntryMethod": "TerraformerBuilder.Main.patch"
+  "AssemblyName": "TrfHabitatBuilder.dll",
+  "EntryMethod": "TrfHabitatBuilder.Main.patch"
 }

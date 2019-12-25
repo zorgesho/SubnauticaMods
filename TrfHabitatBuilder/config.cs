@@ -6,6 +6,7 @@ namespace TrfHabitatBuilder
 	{
 		public readonly bool bigInInventory = false;
 		public readonly bool removeVanillaBuilder = false;
+		public readonly bool slowLoopAnim = false;
 
 #if DEBUG
 		[AddToConsole]

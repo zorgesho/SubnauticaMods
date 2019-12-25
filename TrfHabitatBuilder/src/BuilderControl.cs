@@ -125,6 +125,14 @@ namespace TrfHabitatBuilder
 
 		static class AnimationHelper
 		{
+			struct Info
+			{
+				public int hash;
+				public float speed;
+
+				public Info(float _speed) { hash = 0; speed = _speed; }
+			}
+
 			public enum Anim
 			{
 				terF_idle,
@@ -135,14 +143,6 @@ namespace TrfHabitatBuilder
 				terF_use_open_panel_loop,
 			};
 
-			struct Info
-			{
-				public int hash;
-				public float speed;
-
-				public Info(float _speed) { hash = 0; speed = _speed; }
-			}
-
 			static readonly Info[] animInfo = new Info[]
 			{
 				new Info(1f),	// terF_idle
@@ -150,7 +150,7 @@ namespace TrfHabitatBuilder
 				new Info(3f),	// terF_panels_down
 				new Info(1f),	// terF_use_open_panel_start
 				new Info(1f),	// terF_use_open_panel_end
-				new Info(0.5f)	// terF_use_open_panel_loop
+				new Info(Main.config.slowLoopAnim? 0.5f: 1f) // terF_use_open_panel_loop
 			};
 
 			static Dictionary<int, float> animSpeeds = null;

@@ -30,10 +30,12 @@ namespace Common
 	{
 		public static class Mouse
 		{
-			public static readonly string rightButton	= "<color=#ADF8FFFF>" + char.ConvertFromUtf32(57404) + "</color>";
-			public static readonly string middleButton	= "<color=#ADF8FFFF>" + char.ConvertFromUtf32(57405) + "</color>";
-			public static readonly string scrollUp		= "<color=#ADF8FFFF>" + char.ConvertFromUtf32(57406) + "</color>";
-			public static readonly string scrollDown	= "<color=#ADF8FFFF>" + char.ConvertFromUtf32(57407) + "</color>";
+			static string _str(int utf32) => "<color=#ADF8FFFF>" + char.ConvertFromUtf32(utf32) + "</color>";
+
+			public static readonly string rightButton	= _str(57404);
+			public static readonly string middleButton	= _str(57405);
+			public static readonly string scrollUp		= _str(57406);
+			public static readonly string scrollDown	= _str(57407);
 		}
 
 		public static readonly string modName = Assembly.GetExecutingAssembly().GetName().Name;
@@ -62,7 +64,7 @@ namespace Common
 
 			c.model = model;
 			c.techType = techType;
-			
+
 			return c;
 		}
 

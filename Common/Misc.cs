@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using System.Globalization;
 using System.Collections.Generic;
 
 namespace Common
@@ -20,18 +21,18 @@ namespace Common
 
 	static class ObjectExtensions
 	{
-		public static int   toInt(this object obj)   => Convert.ToInt32(obj);
-		public static bool  toBool(this object obj)  => Convert.ToBoolean(obj);
-		public static float toFloat(this object obj) => Convert.ToSingle(obj);
+		public static int   toInt(this object obj)   => Convert.ToInt32(obj, CultureInfo.InvariantCulture);
+		public static bool  toBool(this object obj)  => Convert.ToBoolean(obj, CultureInfo.InvariantCulture);
+		public static float toFloat(this object obj) => Convert.ToSingle(obj, CultureInfo.InvariantCulture);
 
 		public static void setFieldValue(this object obj, FieldInfo field, object value)
 		{
 			try
 			{
 				if (field.FieldType.IsEnum)
-					field.SetValue(obj, Convert.ChangeType(value, Enum.GetUnderlyingType(field.FieldType)));
+					field.SetValue(obj, Convert.ChangeType(value, Enum.GetUnderlyingType(field.FieldType), CultureInfo.InvariantCulture));
 				else
-					field.SetValue(obj, Convert.ChangeType(value, field.FieldType));
+					field.SetValue(obj, Convert.ChangeType(value, field.FieldType, CultureInfo.InvariantCulture));
 			}
 			catch (Exception e)
 			{
@@ -47,12 +48,11 @@ namespace Common
 
 	static class TypeExtensions
 	{
-		public static FieldInfo field(this Type type, string name) => type.GetField(name, _BindingFlags.all);
-		public static MethodInfo method(this Type type, string name)
+		static MethodInfo _method(this Type type, string name, Type[] types)
 		{
 			try
 			{
-				return type.GetMethod(name, _BindingFlags.all);
+				return types == null? type.GetMethod(name, _BindingFlags.all): type.GetMethod(name, types);
 			}
 			catch (AmbiguousMatchException)
 			{
@@ -60,6 +60,11 @@ namespace Common
 				return null;
 			}
 		}
+
+		public static MethodInfo method(this Type type, string name) => _method(type, name, null);
+		public static MethodInfo method(this Type type, string name, params Type[] types) => _method(type, name, types);
+
+		public static FieldInfo field(this Type type, string name) => type.GetField(name, _BindingFlags.all);
 
 		public static FieldInfo[] fields(this Type type) => type.GetFields(_BindingFlags.all);
 		public static MethodInfo[] methods(this Type type) => type.GetMethods(_BindingFlags.all);

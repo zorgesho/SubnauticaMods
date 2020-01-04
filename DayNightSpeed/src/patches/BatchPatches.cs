@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using System.Reflection.Emit;
 using System.Collections.Generic;
 
@@ -42,24 +43,24 @@ namespace DayNightSpeed
 		static readonly Tuple<MethodInfo, MethodInfo>[] patches = new Tuple<MethodInfo, MethodInfo>[]
 		{
 			// 1.0 -> dayNightSpeed
-			Tuple.New(patchSpeedSimple, typeof(DayNightCycle).method("Update")),
-			Tuple.New(patchSpeedSimple, typeof(DayNightCycle).method("Resume")),
-			Tuple.New(patchSpeedSimple, typeof(DayNightCycle).method("StopSkipTimeMode")),
-			Tuple.New(patchSpeedSimple, typeof(DayNightCycle).method("OnConsoleCommand_day")),
-			Tuple.New(patchSpeedSimple, typeof(DayNightCycle).method("OnConsoleCommand_night")),
-			Tuple.New(patchSpeedSimple, typeof(DayNightCycle).method("OnConsoleCommand_daynight")),
+			Tuple.Create(patchSpeedSimple, typeof(DayNightCycle).method("Update")),
+			Tuple.Create(patchSpeedSimple, typeof(DayNightCycle).method("Resume")),
+			Tuple.Create(patchSpeedSimple, typeof(DayNightCycle).method("StopSkipTimeMode")),
+			Tuple.Create(patchSpeedSimple, typeof(DayNightCycle).method("OnConsoleCommand_day")),
+			Tuple.Create(patchSpeedSimple, typeof(DayNightCycle).method("OnConsoleCommand_night")),
+			Tuple.Create(patchSpeedSimple, typeof(DayNightCycle).method("OnConsoleCommand_daynight")),
 
 			// deltaTime -> deltaTime/dayNightSpeed01
-			Tuple.New(patchSpeedClamped01, typeof(Charger).method("Update")),
-			Tuple.New(patchSpeedClamped01, typeof(SolarPanel).method("Update")),
-			Tuple.New(patchSpeedClamped01, typeof(BaseBioReactor).method("Update")),
-			Tuple.New(patchSpeedClamped01, typeof(BaseNuclearReactor).method("Update")),
-			Tuple.New(patchSpeedClamped01, typeof(ToggleLights).method("UpdateLightEnergy")),
+			Tuple.Create(patchSpeedClamped01, typeof(Charger).method("Update")),
+			Tuple.Create(patchSpeedClamped01, typeof(SolarPanel).method("Update")),
+			Tuple.Create(patchSpeedClamped01, typeof(BaseBioReactor).method("Update")),
+			Tuple.Create(patchSpeedClamped01, typeof(BaseNuclearReactor).method("Update")),
+			Tuple.Create(patchSpeedClamped01, typeof(ToggleLights).method("UpdateLightEnergy")),
 
 			// dayNightSpeed -> dayNightSpeed/dayNightSpeed01
-			Tuple.New(patchSpeedClamped01, typeof(BaseRoot).method("ConsumePower")),
-			Tuple.New(patchSpeedClamped01, typeof(ThermalPlant).method("AddPower")),
-			Tuple.New(patchSpeedClamped01, typeof(FiltrationMachine).method("UpdateFiltering")),
+			Tuple.Create(patchSpeedClamped01, typeof(BaseRoot).method("ConsumePower")),
+			Tuple.Create(patchSpeedClamped01, typeof(ThermalPlant).method("AddPower")),
+			Tuple.Create(patchSpeedClamped01, typeof(FiltrationMachine).method("UpdateFiltering")),
 		};
 
 		public static void init()
@@ -67,7 +68,7 @@ namespace DayNightSpeed
 			if (!inited)
 			{
 				inited = true;
-				patches.forEach(p => patch(p.second, transpiler: p.first));
+				patches.forEach(p => patch(p.Item2, transpiler: p.Item1));
 			}
 		}
 	}

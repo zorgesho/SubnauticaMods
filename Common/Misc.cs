@@ -6,19 +6,6 @@ using System.Collections.Generic;
 
 namespace Common
 {
-	// tuple class from https://stackoverflow.com/a/7120902/1663850
-	class Tuple<T1, T2>
-	{
-		public T1 first  { get; private set; }
-		public T2 second { get; private set; }
-		public Tuple(T1 _first, T2 _second) { first = _first; second = _second; }
-	}
-
-	static class Tuple
-	{
-		public static Tuple<T1, T2> New<T1, T2>(T1 first, T2 second) => new Tuple<T1, T2>(first, second);
-	}
-
 	static class ObjectExtensions
 	{
 		public static int   toInt(this object obj)   => Convert.ToInt32(obj, CultureInfo.InvariantCulture);

@@ -1,4 +1,6 @@
 ﻿using System.Reflection.Emit;
+using System.Collections.Generic;
+
 using Harmony;
 
 namespace Common
@@ -12,11 +14,30 @@ namespace Common
 		public static bool isOp(this CodeInstruction ci, OpCode opcode, object operand = null) =>
 			ci.opcode == opcode && (operand == null || ci.operand.Equals(operand));
 
-		public static void log(this CodeInstruction ci) =>
-			$"{ci.opcode} {ci.operand} {(ci.labels.Count > 0? "->labels:" + ci.labels.Count:"")}".log();
+		public static void log(this CodeInstruction ci) => $"{ci.opcode} {ci.operand}".log();
 
+		public static void log(this IEnumerable<CodeInstruction> cins)
+		{
+			int _findLabel(object label)
+			{
+				int j = 0;
+				foreach (var ci in cins)
+				{
+					if (ci.labels?.FindIndex(l => l.Equals(label)) != -1)
+						return j;
+					j++;
+				}
+				return -1;
+			}
+
+			int i = 0;
+			foreach (var ci in cins)
+			{
+				int labelIndex = (ci.operand?.GetType() == typeof(Label))? _findLabel(ci.operand): -1;
+				$"{i++}: {ci.opcode} {(labelIndex != -1? "jump to " + labelIndex: ci.operand)} {(ci.labels.Count > 0? "=> labels:" + ci.labels.Count:"")}".log();
+			}
+		}
 		#endregion
-
 
 		// https://stackoverflow.com/questions/600978/how-to-do-template-specialization-in-c-sharp
 		static class OpCodeByType

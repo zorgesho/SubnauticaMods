@@ -18,7 +18,7 @@ namespace Common
 		}
 
 		public static void patch(MethodBase original, MethodInfo prefix = null, MethodInfo postfix = null, MethodInfo transpiler = null)
-		{
+		{																					$"HarmonyHelper.patch: patching '{original}' with prefix:'{prefix}' postfix:'{postfix}' transpiler:'{transpiler}'".logDbg();
 			try
 			{
 				harmonyInstance.Patch(original, (prefix == null)? null: new HarmonyMethod(prefix),

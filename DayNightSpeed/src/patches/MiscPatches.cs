@@ -59,7 +59,7 @@ namespace DayNightSpeed
 			}
 		}
 	}
-	
+
 	// fixing maproom scan times
 	[HarmonyPatch(typeof(MapRoomFunctionality), "GetScanInterval")]
 	static class MapRoomFunctionality_GetScanInterval_Patch
@@ -183,7 +183,7 @@ namespace DayNightSpeed
 			{
 				yield return ci;
 
-				if (ci.isLDC<double>(0.03f)) // is it safe ?
+				if (ci.isLDC(0.03d)) // is it safe ?
 				{
 					yield return _dayNightSpeedClamped01.ci;
 					yield return new CodeInstruction(OpCodes.Mul);

@@ -16,17 +16,14 @@ namespace Common.Configuration
 
 		public static void init()
 		{																								"Config.Options is already inited!".logDbgError(inited);
-			if (!inited)
-			{
-				if (modOptions.Count == 0)
-				{
-					"Config.Options.init: options list is empty".logWarning();
-					return;
-				}
+			if (inited)
+				return;
 
-				inited = true;
-				OptionsPanelHandler.RegisterModOptions(new Options());
-			}
+			if (modOptions.Count == 0 && "Config.Options.init: options list is empty".logWarning())
+				return;
+
+			inited = true;
+			OptionsPanelHandler.RegisterModOptions(new Options());
 		}
 
 		static void add(ModOption option)
@@ -41,7 +38,7 @@ namespace Common.Configuration
 			ChoiceChanged  += (object sender, ChoiceChangedEventArgs e)  => eventHandler(e.Id, e);
 			KeybindChanged += (object sender, KeybindChangedEventArgs e) => eventHandler(e.Id, e);
 		}
-		
+
 		void eventHandler(string id, EventArgs e)
 		{
 			try
@@ -58,5 +55,13 @@ namespace Common.Configuration
 		{
 			modOptions.ForEach(o => o.addOption(this));
 		}
-	}	
+
+		// for using SMLHelper's language override files
+		static void registerLabel(string id, ref string label)
+		{
+			id = Strings.modName + ".ids_options_" + id;
+			LanguageHandler.SetLanguageLine(id, label);
+			label = id;
+		}
+	}
 }

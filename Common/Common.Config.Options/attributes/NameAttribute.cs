@@ -9,7 +9,7 @@ namespace Common.Configuration
 		[AttributeUsage(AttributeTargets.Class)]
 		public class NameAttribute: Attribute, Config.IConfigAttribute
 		{
-			readonly string optionsName;
+			string optionsName;
 
 			public NameAttribute(string name)
 			{
@@ -18,6 +18,7 @@ namespace Common.Configuration
 
 			public void process(object config)
 			{
+				registerLabel("Name", ref optionsName);
 				name = optionsName;
 				mainConfig = config as Config;
 			}

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Globalization;
 using System.Collections.Generic;
@@ -28,9 +29,15 @@ namespace Common
 		}
 	}
 
-	static class _BindingFlags
+	static class ReflectionHelper
 	{
-		public static BindingFlags all = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
+		// for getting mod's defined types, don't return any of Common projects types
+		public static IEnumerable<Type> definedTypes
+		{
+			get => Assembly.GetExecutingAssembly().GetTypes().Where(type => !type.Namespace.StartsWith(nameof(Common)));
+		}
+
+		public static BindingFlags bfAll = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
 	}
 
 	static class TypeExtensions
@@ -39,7 +46,7 @@ namespace Common
 		{
 			try
 			{
-				return types == null? type.GetMethod(name, _BindingFlags.all): type.GetMethod(name, types);
+				return types == null? type.GetMethod(name, ReflectionHelper.bfAll): type.GetMethod(name, types);
 			}
 			catch (AmbiguousMatchException)
 			{
@@ -51,11 +58,11 @@ namespace Common
 		public static MethodInfo method(this Type type, string name) => _method(type, name, null);
 		public static MethodInfo method(this Type type, string name, params Type[] types) => _method(type, name, types);
 
-		public static FieldInfo field(this Type type, string name) => type.GetField(name, _BindingFlags.all);
+		public static FieldInfo field(this Type type, string name) => type.GetField(name, ReflectionHelper.bfAll);
 
-		public static FieldInfo[] fields(this Type type) => type.GetFields(_BindingFlags.all);
-		public static MethodInfo[] methods(this Type type) => type.GetMethods(_BindingFlags.all);
-		public static PropertyInfo[] properties(this Type type) => type.GetProperties(_BindingFlags.all);
+		public static FieldInfo[] fields(this Type type) => type.GetFields(ReflectionHelper.bfAll);
+		public static MethodInfo[] methods(this Type type) => type.GetMethods(ReflectionHelper.bfAll);
+		public static PropertyInfo[] properties(this Type type) => type.GetProperties(ReflectionHelper.bfAll);
 	}
 
 	static class MiscExtensions

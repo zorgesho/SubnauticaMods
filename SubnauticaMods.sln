@@ -99,6 +99,7 @@ Global
 		Common\Common.GameSerialization\Common.GameSerialization.projitems*{4ef61a6d-0c6e-48a9-8625-58d196fd5386}*SharedItemsImports = 4
 		Common\Common.projitems*{4ef61a6d-0c6e-48a9-8625-58d196fd5386}*SharedItemsImports = 4
 		Common\Common.Config\Common.Config.projitems*{5322339c-9933-4fb2-a04a-495718a3f66b}*SharedItemsImports = 4
+		Common\Common.CraftHelper\Common.CraftHelper.projitems*{5322339c-9933-4fb2-a04a-495718a3f66b}*SharedItemsImports = 4
 		Common\Common.projitems*{5322339c-9933-4fb2-a04a-495718a3f66b}*SharedItemsImports = 4
 		Common\Common.UI\Common.UI.projitems*{5322339c-9933-4fb2-a04a-495718a3f66b}*SharedItemsImports = 4
 		Common\Common.Config.Options\Common.Config.Options.projitems*{655a27d7-f0e2-480c-b875-96312b41ef0f}*SharedItemsImports = 4

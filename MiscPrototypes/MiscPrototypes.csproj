@@ -62,6 +62,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\games\subnautica\Subnautica_Data\Managed\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="SMLHelper">
+      <HintPath>..\..\..\..\games\subnautica\QMods\Modding Helper\SMLHelper.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -80,6 +83,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="src\EmergencyPowerStation.cs" />
     <None Include="src\BulkCrafting.cs" />
     <None Include="src\PingTabToggles.cs" />
     <None Include="src\SelectTabsWithKeys.cs" />
@@ -97,6 +101,7 @@
   <Import Project="..\Common\Common.projitems" Label="Shared" />
   <Import Project="..\Common\Common.Config\Common.Config.projitems" Label="Shared" />
   <Import Project="..\Common\Common.UI\Common.UI.projitems" Label="Shared" />
+  <Import Project="..\Common\Common.CraftHelper\Common.CraftHelper.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>if exist c:\games\subnautica\QMods\ xcopy $(TargetPath) c:\games\subnautica\QMods\$(ProjectName)\ /q /y

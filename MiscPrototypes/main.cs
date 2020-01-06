@@ -1,4 +1,5 @@
 ﻿using Common;
+using Common.Crafting;
 using Common.Configuration;
 
 namespace MiscPrototypes
@@ -10,6 +11,8 @@ namespace MiscPrototypes
 		public static void patch()
 		{
 			HarmonyHelper.patchAll();
+
+			CraftHelper.patchAll();
 		}
 	}
 }

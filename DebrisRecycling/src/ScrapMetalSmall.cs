@@ -8,6 +8,7 @@ using Common.Crafting;
 
 namespace DebrisRecycling
 {
+	[CraftHelper.PatchFirst]
 	class ScrapMetalSmall: CraftableObject
 	{
 		public static new TechType TechType { get; private set; } = 0;

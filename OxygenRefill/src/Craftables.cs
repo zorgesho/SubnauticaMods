@@ -5,11 +5,11 @@ using UnityEngine;
 using SMLHelper.V2.Crafting;
 using SMLHelper.V2.Handlers;
 
-using Common;
 using Common.Crafting;
 
 namespace OxygenRefill
 {
+	[CraftHelper.PatchFirst]
 	class OxygenRefillStation: CraftableObject
 	{
 		public static ModCraftTreeRoot treeRootNode { get; private set; } = null;
@@ -105,7 +105,7 @@ namespace OxygenRefill
 		{
 			register("Refill oxygen", "Refill oxygen tank.", SpriteManager.Get(tankType));
 			
-			addCraftingNodeTo(OxygenRefillStation.treeRootNode); // todo: ? patch order
+			addCraftingNodeTo(OxygenRefillStation.treeRootNode);
 			setTechTypeForUnlock(tankType);
 			setCraftingTime(craftingTime);
 			useExactPrefab();

@@ -15,8 +15,13 @@ namespace Common.Configuration
 			void process(object config, FieldInfo field);
 		}
 
+		// for use with non-primitive types, inner fields will not be searched for attributes
+		// (other attributes of the field will still be processed)
+		[AttributeUsage(AttributeTargets.Field)]
+		public class SkipRecursiveAttrProcessing: Attribute {}
+
 		void processAttributes() => processAttributes(this); // using static method because of possible nested config classes
-		
+
 		static void processAttributes(object config)
 		{
 			if (config == null)
@@ -30,7 +35,7 @@ namespace Common.Configuration
 			{																															$"Checking field '{field.Name}' for attributes".logDbg();
 				Attribute.GetCustomAttributes(field).forEach(attr => (attr as IFieldAttribute)?.process(config, field));
 
-				if (field.FieldType.IsClass)
+				if (field.FieldType.IsClass && Attribute.GetCustomAttribute(field, typeof(SkipRecursiveAttrProcessing)) == null)
 					processAttributes(field.GetValue(config));
 			}
 		}

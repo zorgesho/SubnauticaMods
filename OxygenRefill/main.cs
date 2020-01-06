@@ -11,6 +11,7 @@ namespace OxygenRefill
 		public static void patch()
 		{
 			HarmonyHelper.patchAll();
+			LanguageHelper.init();
 			CraftHelper.patchAll();
 
 			ConsoleCommands.init();

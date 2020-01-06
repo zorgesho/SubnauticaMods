@@ -15,7 +15,7 @@ namespace OxygenRefill
 		static void Postfix(StringBuilder sb, GameObject obj)
 		{
 			if (getTankInSlot()?.item.gameObject == obj && !isTankUsed(obj.GetComponent<Oxygen>()))
-				TooltipFactory.WriteDescription(sb, "<color=#FF0000FF>Tank is not used</color>");
+				TooltipFactory.WriteDescription(sb, L10n.str("ids_TankIsNotUsed"));
 		}
 	}
 
@@ -25,7 +25,7 @@ namespace OxygenRefill
 		static void Postfix(StringBuilder sb, InventoryItem item)
 		{
 			if (item == getTankInSlot())
-				TooltipFactory.WriteAction(sb, Strings.Mouse.rightButton, "toggle tank usage");
+				TooltipFactory.WriteAction(sb, Strings.Mouse.rightButton, L10n.str("ids_ToggleTankUsage"));
 		}
 	}
 

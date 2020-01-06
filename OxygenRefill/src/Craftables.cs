@@ -22,7 +22,7 @@ namespace OxygenRefill
 
 		public override void patch()
 		{
-			register("Oxygen refill station", "Oxygen refill station.", SpriteManager.Get(TechType.Workbench));
+			register(L10n.ids_OxygenStation, L10n.ids_OxygenStationDesc, SpriteManager.Get(TechType.Workbench));
 			treeRootNode = CraftTreeHandler.CreateCustomCraftTreeAndType(ClassID, out treeType);
 
 			addToGroup(TechGroup.InteriorModules, TechCategory.InteriorModule, TechType.Workbench);
@@ -34,7 +34,7 @@ namespace OxygenRefill
 			GameObject prefab = Object.Instantiate(CraftData.GetPrefabForTechType(TechType.Workbench));
 			GhostCrafter crafter = prefab.GetComponent<Workbench>();
 			crafter.craftTree = treeType;
-			crafter.handOverText = "Use oxygen refill station";
+			crafter.handOverText = L10n.str("ids_UseStation");
 
 			prefab.GetComponent<Constructable>().techType = TechType;
 
@@ -81,7 +81,7 @@ namespace OxygenRefill
 				Destroy(this);
 			}
 		}
-		
+
 		readonly float craftingTime;
 		readonly TechType tankType;
 
@@ -103,8 +103,8 @@ namespace OxygenRefill
 
 		public override void patch()
 		{
-			register("Refill oxygen", "Refill oxygen tank.", SpriteManager.Get(tankType));
-			
+			register(L10n.ids_RefillOxygen, L10n.ids_RefillOxygenDesc, SpriteManager.Get(tankType));
+
 			addCraftingNodeTo(OxygenRefillStation.treeRootNode);
 			setTechTypeForUnlock(tankType);
 			setCraftingTime(craftingTime);

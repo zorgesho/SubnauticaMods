@@ -88,8 +88,10 @@
     <Compile Include="config.cs" />
     <Compile Include="main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="src\buildables\CargoBoxBig.cs" />
     <Compile Include="src\buildables\Locker.cs" />
     <Compile Include="src\buildables\CargoBox.cs" />
+    <Compile Include="src\craftables\HardenedBlade.cs" />
     <Compile Include="src\craftables\NutrientBlock.cs" />
     <Compile Include="src\buildables\StorageLabCounter.cs" />
     <Compile Include="src\craftables\LuggageBag.cs" />

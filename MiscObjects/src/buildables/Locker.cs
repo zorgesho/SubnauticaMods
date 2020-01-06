@@ -9,11 +9,20 @@ namespace MiscObjects
 {
 	class MetalLocker: CraftableObject
 	{
+		class L10n: LanguageHelper
+		{
+			public const string ids_LockerItem		= "Locker";
+			public const string ids_LockerItemDesc	= "Metal locker.";
+
+			public static string ids_LockerInv	= "LOCKER";
+			public static string ids_OpenLocker = "Open locker";
+		}
+
 		protected override TechData getTechData() => new TechData(new Ingredient(TechType.Titanium, 2));
 
 		public override void patch()
 		{
-			register("Locker", "Metal locker.", AssetsHelper.loadSprite(ClassID));
+			register(L10n.ids_LockerItem, L10n.ids_LockerItemDesc, AssetsHelper.loadSprite(ClassID));
 
 			addToGroup(TechGroup.InteriorModules, TechCategory.InteriorModule, TechType.SmallLocker);
 			unlockOnStart();
@@ -40,8 +49,8 @@ namespace MiscObjects
 			constructable.allowedOnConstructables = true;
 			constructable.forceUpright = true;
 			constructable.placeDefaultDistance = 3f;
-			
-			StorageHelper.addStorageToPrefab(prefab,  "Open locker", "LOCKER", 4, 8);
+
+			StorageHelper.addStorageToPrefab(prefab, L10n.str("ids_OpenLocker"), L10n.str("ids_LockerInv"), 4, 8);
 
 			return prefab;
 		}

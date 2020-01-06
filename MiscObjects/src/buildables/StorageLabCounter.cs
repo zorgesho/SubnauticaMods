@@ -10,14 +10,23 @@ namespace MiscObjects
 {
 	class StorageLabCounter: CraftableObject
 	{
+		class L10n: LanguageHelper
+		{
+			public const string ids_CounterItem		= "Counter";
+			public const string ids_CounterItemDesc	= "Counter with drawers.";
+
+			public static string ids_DrawersInv	 = "DRAWERS";
+			public static string ids_OpenDrawers = "Open drawers";
+		}
+
 		protected override TechData getTechData() => new TechData(new Ingredient(TechType.Titanium, 4));
 
 		public override void patch()
 		{
-			register("Counter", "Counter with drawers.", SpriteManager.Get(TechType.LabCounter));
+			register(L10n.ids_CounterItem, L10n.ids_CounterItemDesc, SpriteManager.Get(TechType.LabCounter));
 
 			addToGroup(TechGroup.Miscellaneous, TechCategory.Misc, TechType.CoffeeVendingMachine);
-			
+
 			if (Main.config.removeVanillaCounter)
 				CraftDataHandler.RemoveFromGroup(TechGroup.Miscellaneous, TechCategory.Misc, TechType.LabCounter);
 
@@ -27,13 +36,10 @@ namespace MiscObjects
 		public override GameObject getGameObject()
 		{
 			GameObject prefab = Object.Instantiate(CraftData.GetPrefabForTechType(TechType.LabCounter));
-
-			Common.Debug.dumpGameObject(prefab).saveToFile("counter");
-
 			prefab.getOrAddComponent<TechTag>().type = TechType;
 			prefab.GetComponent<PrefabIdentifier>().ClassId = ClassID;
 
-			StorageHelper.addStorageToPrefab(prefab, "Open drawers", "DRAWERS", 7, 4);
+			StorageHelper.addStorageToPrefab(prefab, L10n.str("ids_OpenDrawers"), L10n.str("ids_DrawersInv"), 7, 4);
 
 			return prefab;
 		}

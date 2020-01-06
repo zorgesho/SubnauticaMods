@@ -12,6 +12,8 @@ namespace MiscObjects
 		{
 			HarmonyHelper.patchAll();
 			CraftHelper.patchAll();
+
+			LanguageHelper.init();
 		}
 	}
 }

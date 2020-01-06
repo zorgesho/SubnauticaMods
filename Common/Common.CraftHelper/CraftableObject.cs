@@ -6,7 +6,6 @@ using SMLHelper.V2.Handlers;
 
 namespace Common.Crafting
 {
-	[CraftHelper.NoAutoPatch]
 	abstract class CraftableObject: ModPrefab
 	{
 		protected CraftableObject(): this(new System.Diagnostics.StackTrace().GetFrame(1).GetMethod().ReflectedType.Name) {}
@@ -20,11 +19,8 @@ namespace Common.Crafting
 
 		public override GameObject GetGameObject()
 		{
-			if (isUsingExactPrefab)
-			{
-				$"CraftableObject.GetGameObject called, but isUsingExactPrefab is TRUE ({ClassID})".logError();
+			if (isUsingExactPrefab && $"CraftableObject.GetGameObject called, but isUsingExactPrefab is TRUE ({ClassID})".logError())
 				Debug.logStack();
-			}
 
 			return isUsingExactPrefab? null: getGameObject();
 		}
@@ -49,7 +45,7 @@ namespace Common.Crafting
 				sprite = SpriteManager._defaultSprite;
 
 			TechType = TechTypeHandler.AddTechType(ClassID, friendlyName, description, sprite, false);
-			
+
 			registerPrefabAndTechData();
 
 			return TechType;
@@ -72,7 +68,7 @@ namespace Common.Crafting
 		protected void setEquipmentType(EquipmentType equipmentType, QuickSlotType quickSlotType = QuickSlotType.None)
 		{
 			CraftDataHandler.SetEquipmentType(TechType, equipmentType);
-			
+
 			if (quickSlotType != QuickSlotType.None)
 				CraftDataHandler.SetQuickSlotType(TechType, quickSlotType);
 		}
@@ -86,7 +82,7 @@ namespace Common.Crafting
 		//{
 		//	UnlockTechHelper.setTechTypesForUnlock(UnlockTechHelper.UnlockType.All, TechType, new TechType[] { t1, t2 });
 		//}
-		
+
 		protected void addCraftingNodeTo(CraftTree.Type craftTree, string craftPath) =>
 			CraftTreeHandler.AddCraftingNode(craftTree, TechType, craftPath.Split('/'));
 

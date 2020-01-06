@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+
 using UnityEngine;
 using SMLHelper.V2.Crafting;
 
@@ -20,7 +21,7 @@ namespace MiscObjects
 		public override GameObject getGameObject()
 		{
 			GameObject prefab = Object.Instantiate(CraftData.GetPrefabForTechType(TechType.NutrientBlock));
-			
+
 			var food = prefab.GetComponent<Eatable>();
 			food.foodValue = 60;
 			food.waterValue = -5;
@@ -32,7 +33,7 @@ namespace MiscObjects
 
 			MeshRenderer meshRenderer = prefab.GetComponentInChildren<MeshRenderer>();
 			meshRenderer.material.color = new Color(1, 1, 0, 1);
-			
+
 			return prefab;
 		}
 

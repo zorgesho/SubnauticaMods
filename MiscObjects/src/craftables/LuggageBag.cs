@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+
 using UnityEngine;
 using SMLHelper.V2.Crafting;
+
 using Common.Crafting;
 
 namespace MiscObjects

@@ -19,7 +19,7 @@ namespace MiscObjects
 			container.hoverText = hoverText;
 			container.storageLabel = storageLabel;
 			container.Resize(width, height);
-			
+
 			prefab.SetActive(true);
 
 			return container;

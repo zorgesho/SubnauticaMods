@@ -14,7 +14,7 @@ namespace HabitatPlatform
 
 		public override void patch()
 		{
-			TechType = register("Habitat platform", "Platform", SpriteManager.Get(TechType.AcidMushroom));
+			TechType = register();
 
 			addToGroup(TechGroup.Constructor, TechCategory.Constructor);
 			addCraftingNodeTo(CraftTree.Type.Constructor, "");

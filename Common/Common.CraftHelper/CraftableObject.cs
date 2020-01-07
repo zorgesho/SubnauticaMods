@@ -39,6 +39,11 @@ namespace Common.Crafting
 			registerPrefabAndTechData();
 		}
 
+		protected TechType register() // just for convenience during development
+		{
+			return register(ClassID, ClassID);
+		}
+
 		protected TechType register(string friendlyName, string description, Sprite sprite = null)
 		{
 			return register(friendlyName, description, (sprite == null)? SpriteManager._defaultSprite: new Atlas.Sprite(sprite));

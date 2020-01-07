@@ -190,7 +190,7 @@ namespace MiscPrototypes
 
 		public override void patch()
 		{
-			register("Emergency power station", "");
+			register();
 
 			addToGroup(TechGroup.InteriorModules, TechCategory.InteriorModule, TechType.PowerCellCharger);
 			unlockOnStart();

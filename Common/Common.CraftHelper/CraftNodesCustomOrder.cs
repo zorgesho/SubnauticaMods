@@ -6,11 +6,8 @@ namespace Common.Crafting
 	{
 		public static TreeNode insertNode(this TreeNode parent, string idAfter, TreeNode child)
 		{
-			if (parent == null || child == null || parent[child.id] != null)
-			{
-				$"TreeNode.insertNode failed ('{parent}' '{child}'".logError();
+			if (parent == null || child == null || parent[child.id] != null && $"TreeNode.insertNode failed: '{parent}' '{child}'".logError())
 				return parent;
-			}
 
 			// if idAfter is null we adding new node as first node
 			int indexAfter = idAfter == null? -1: parent.nodes.FindIndex(n => n.id == idAfter);
@@ -30,10 +27,9 @@ namespace Common.Crafting
 	{
 		class CraftNode // hides global CraftNode
 		{
-			public TechType techType;
-			
-			public string idAfter;
-			public string[] path;
+			public readonly TechType techType;
+			public readonly string[] path;
+			public readonly string   idAfter;
 
 			public CraftNode(TechType _techType, string _path, TechType techTypeAfter)
 			{

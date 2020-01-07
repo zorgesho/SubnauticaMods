@@ -298,7 +298,7 @@ namespace Fatigue
 			//Texture2D newTexture = AssetsHelper.load<Texture2D>("slider_nub");
 			
 			
-			image.sprite = AssetsHelper.loadSprite_("slider_nub");
+			image.sprite = AssetsHelper.loadSprite("slider_nub");
 
 			return slider;
 		}

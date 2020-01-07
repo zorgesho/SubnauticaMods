@@ -27,12 +27,12 @@ namespace Fatigue
 			GameObject barsPanel = uGUI.main.barsPanel;											"Energy bar already created!".logDbg(barsPanel.getChild("EnergyBar") != null);
 
 			Image image = barsPanel.getChild("BackgroundQuad").GetComponent<Image>();
-			image.sprite = loadSprite_("bar_background");
+			image.sprite = loadSprite("bar_background");
 			image.rectTransform.setSize(264, 222);
 			image.rectTransform.localPosition = new Vector3(22, 0, 0);
 
 			image = barsPanel.getChild("BackgroundQuad/Quad").GetComponent<Image>();
-			image.sprite = loadSprite_("bar");
+			image.sprite = loadSprite("bar");
 			image.rectTransform.setSize(250, 206);
 			image.rectTransform.localPosition = new Vector3(-0.5f, -1f, 0f);
 
@@ -45,7 +45,7 @@ namespace Fatigue
 			energyBar.name = "EnergyBar";
 			energyBar.setParent(barsPanel);
 			energyBar.transform.localPosition = new Vector3(115.5f, -41.5f, 0f);
-			energyBar.getChild("Icon/Icon").GetComponent<Image>().sprite = loadSprite_("eye_icon");
+			energyBar.getChild("Icon/Icon").GetComponent<Image>().sprite = loadSprite("eye_icon");
 
 			uGUI_CircularBar crbar = energyBar.GetComponentInChildren<uGUI_CircularBar>();
 			crbar.color = new Color(0.5f, 0f, 1f);

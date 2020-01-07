@@ -5,10 +5,12 @@ namespace Common
 {
 	static class AssetsHelper
 	{
-		public static Atlas.Sprite loadSprite(string textureName)
-		{
-			return textureToSprite(loadTextureFromFile(Paths.assetsPath + textureName + ".png"));
-		}
+		public static Sprite loadSprite(string textureName) =>
+			textureToSprite(loadTextureFromFile(Paths.assetsPath + textureName + ".png"));
+
+		static Sprite textureToSprite(Texture2D tex) =>
+			Sprite.Create(tex, new Rect(0f, 0f, tex.width, tex.height), new Vector2(0.5f, 0.5f));
+
 
 		static Texture2D loadTextureFromFile(string textureFilePath)
 		{
@@ -20,27 +22,9 @@ namespace Common
 
 			return tex;
 		}
-
-		static Atlas.Sprite textureToSprite(Texture2D tex)
-		{
-			return new Atlas.Sprite(Sprite.Create(tex, new Rect(0f, 0f, tex.width, tex.height), new Vector2(0.5f, 0.5f)));
-		}
-
-
-		
-		// refactor 
-		public static Sprite loadSprite_(string textureName)
-		{
-			return textureToSprite_(loadTextureFromFile(Paths.assetsPath + textureName + ".png"));
-		}
-		
-		static Sprite textureToSprite_(Texture2D tex)
-		{
-			return Sprite.Create(tex, new Rect(0f, 0f, tex.width, tex.height), new Vector2(0.5f, 0.5f));
-		}
-
 	}
 }
+
 // from old solution, TODO: refactor and integrate
 
 //	static class AssetsHelper

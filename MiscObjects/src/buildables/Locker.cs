@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-
 using SMLHelper.V2.Crafting;
 
 using Common;
@@ -22,7 +21,7 @@ namespace MiscObjects
 
 		public override void patch()
 		{
-			register(L10n.ids_LockerItem, L10n.ids_LockerItemDesc, AssetsHelper.loadSprite(ClassID));
+			register(L10n.ids_LockerItem, L10n.ids_LockerItemDesc);
 
 			addToGroup(TechGroup.InteriorModules, TechCategory.InteriorModule, TechType.SmallLocker);
 			unlockOnStart();

@@ -22,7 +22,7 @@ namespace PrawnSuitSonarUpgrade
 
 		public override void patch()
 		{
-			TechType = register("Prawn suit sonar", "Seamoth sonar modified to use on prawn suit.", SpriteManager.Get(TechType.SeamothSonarModule));
+			TechType = register("Prawn suit sonar", "Seamoth sonar modified to use on prawn suit.", TechType.SeamothSonarModule);
 
 			addToGroup(TechGroup.Workbench, TechCategory.Workbench);
 			addCraftingNodeTo(CraftTree.Type.Workbench, "ExosuitMenu");

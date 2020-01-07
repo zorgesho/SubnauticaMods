@@ -3,7 +3,6 @@
 using UnityEngine;
 using SMLHelper.V2.Crafting;
 
-using Common;
 using Common.Crafting;
 
 namespace RemoteTorpedoDetonator
@@ -22,9 +21,7 @@ namespace RemoteTorpedoDetonator
 
 		public override void patch()
 		{
-			TechType = register("Remote torpedo detonator",
-								"Allows detonate launched torpedoes remotely. Seamoth/Prawn compatible.",
-								AssetsHelper.loadSprite(ClassID));
+			TechType = register("Remote torpedo detonator", "Allows detonate launched torpedoes remotely. Seamoth/Prawn compatible.");
 
 			addToGroup(TechGroup.VehicleUpgrades, TechCategory.VehicleUpgrades);
 			addCraftingNodeTo(CraftTree.Type.SeamothUpgrades, "CommonModules");

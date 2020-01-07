@@ -3,7 +3,6 @@
 using UnityEngine;
 using SMLHelper.V2.Crafting;
 
-using Common;
 using Common.Crafting;
 
 namespace MiscObjects
@@ -39,9 +38,7 @@ namespace MiscObjects
 
 		public override void patch()
 		{
-			register("Craftable nutrient block",
-					 "Nutrient block cooked from local ingridients. Less nutritious and more salty than original.",
-					 AssetsHelper.loadSprite(ClassID));
+			register("Craftable nutrient block", "Nutrient block cooked from local ingridients. Less nutritious and more salty than original.");
 
 			addToGroup(TechGroup.Survival, TechCategory.CookedFood);
 			addCraftingNodeTo(CraftTree.Type.Fabricator, "Survival");

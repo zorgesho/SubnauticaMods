@@ -3,7 +3,6 @@
 using UnityEngine;
 using SMLHelper.V2.Crafting;
 
-using Common;
 using Common.Crafting;
 
 namespace PrawnSuitJetUpgrade
@@ -24,7 +23,7 @@ namespace PrawnSuitJetUpgrade
 
 		public override void patch()
 		{
-			TechType = register("Prawn suit thrusters optimizer", "Thrusters work longer before need to recharge.", AssetsHelper.loadSprite(ClassID));
+			TechType = register("Prawn suit thrusters optimizer", "Thrusters work longer before need to recharge.");
 
 			addToGroup(TechGroup.VehicleUpgrades, TechCategory.VehicleUpgrades);
 			addCraftingNodeTo(CraftTree.Type.SeamothUpgrades, "ExosuitModules");

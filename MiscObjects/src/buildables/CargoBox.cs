@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-
 using SMLHelper.V2.Crafting;
 
 using Common;
@@ -13,7 +12,7 @@ namespace MiscObjects
 
 		public override void patch()
 		{
-			register("Cargo box", "Small cargo box.", AssetsHelper.loadSprite(ClassID));
+			register("Cargo box", "Small cargo box.");
 
 			addToGroup(TechGroup.InteriorModules, TechCategory.InteriorModule, TechType.Locker);
 			unlockOnStart();

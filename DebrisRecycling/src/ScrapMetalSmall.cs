@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-
 using SMLHelper.V2.Crafting;
 using SMLHelper.V2.Handlers;
 
@@ -17,7 +16,7 @@ namespace DebrisRecycling
 
 		public override void patch()
 		{
-			TechType = register("Small piece of salvage", "Composed primarily of titanium.", SpriteManager.Get(TechType.ScrapMetal));
+			TechType = register("Small piece of salvage", "Composed primarily of titanium.", TechType.ScrapMetal);
 		}
 
 		public override GameObject getGameObject()
@@ -81,7 +80,7 @@ namespace DebrisRecycling
 
 			initNodes();
 
-			register($"Titanium (x{resultCount})", "Ti. Basic building material.", SpriteManager.Get(TechType.Titanium));
+			register($"Titanium (x{resultCount})", "Ti. Basic building material.", TechType.Titanium);
 			setCraftingTime(0.7f * resultCount);
 			addCraftingNodeTo(CraftTree.Type.Fabricator, "Resources/Titanium");
 		}

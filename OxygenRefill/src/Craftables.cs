@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 
 using UnityEngine;
-
 using SMLHelper.V2.Crafting;
 using SMLHelper.V2.Handlers;
 
@@ -22,7 +21,7 @@ namespace OxygenRefill
 
 		public override void patch()
 		{
-			register(L10n.ids_OxygenStation, L10n.ids_OxygenStationDesc, SpriteManager.Get(TechType.Workbench));
+			register(L10n.ids_OxygenStation, L10n.ids_OxygenStationDesc, TechType.Workbench);
 			treeRootNode = CraftTreeHandler.CreateCustomCraftTreeAndType(ClassID, out treeType);
 
 			addToGroup(TechGroup.InteriorModules, TechCategory.InteriorModule, TechType.Workbench);
@@ -103,7 +102,7 @@ namespace OxygenRefill
 
 		public override void patch()
 		{
-			register(L10n.ids_RefillOxygen, L10n.ids_RefillOxygenDesc, SpriteManager.Get(tankType));
+			register(L10n.ids_RefillOxygen, L10n.ids_RefillOxygenDesc, tankType);
 
 			addCraftingNodeTo(OxygenRefillStation.treeRootNode);
 			setTechTypeForUnlock(tankType);

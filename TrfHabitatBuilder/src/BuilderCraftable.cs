@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using UnityEngine;
 
+using UnityEngine;
 using SMLHelper.V2.Crafting;
 using SMLHelper.V2.Handlers;
 
@@ -46,9 +46,7 @@ namespace TrfHabitatBuilder
 
 		public override void patch()
 		{
-			TechType = register("Habitat builder",
-								"Fabricates habitat compartments and appliances from raw materials.",
-								AssetsHelper.loadSprite(ClassID));
+			TechType = register("Habitat builder", "Fabricates habitat compartments and appliances from raw materials.");
 
 			addToGroup(TechGroup.Personal, TechCategory.Tools, TechType.Flare);
 			addCraftingNodeTo(CraftTree.Type.Fabricator, "Personal/Tools", TechType.Flare);

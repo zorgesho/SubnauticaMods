@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-
 using SMLHelper.V2.Crafting;
 using SMLHelper.V2.Handlers;
 
@@ -23,7 +22,7 @@ namespace MiscObjects
 
 		public override void patch()
 		{
-			register(L10n.ids_CounterItem, L10n.ids_CounterItemDesc, SpriteManager.Get(TechType.LabCounter));
+			register(L10n.ids_CounterItem, L10n.ids_CounterItemDesc, TechType.LabCounter);
 
 			addToGroup(TechGroup.Miscellaneous, TechCategory.Misc, TechType.CoffeeVendingMachine);
 

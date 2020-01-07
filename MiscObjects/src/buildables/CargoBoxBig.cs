@@ -12,7 +12,7 @@ namespace MiscObjects
 
 		public override void patch()
 		{
-			register("Big cargo box", "Cargo box for outside.", AssetsHelper.loadSprite(nameof(CargoBox)));
+			register("Big cargo box", "Cargo box for outside.", SpriteHelper.getSprite(nameof(CargoBox)));
 
 			addToGroup(TechGroup.ExteriorModules, TechCategory.ExteriorOther, TechType.FarmingTray);
 			unlockOnStart();

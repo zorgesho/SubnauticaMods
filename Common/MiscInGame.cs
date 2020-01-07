@@ -41,6 +41,14 @@ namespace Common
 		public static readonly string modName = Assembly.GetExecutingAssembly().GetName().Name;
 	}
 
+	static partial class SpriteHelper // extended in other Common projects
+	{
+		public static Atlas.Sprite getSprite(object spriteID)
+		{
+			$"TechSpriteHelper.getSprite({spriteID.GetType()}) is not implemented!".logError();
+			return SpriteManager._defaultSprite;
+		}
+	}
 
 	static class MiscInGameExtensions
 	{

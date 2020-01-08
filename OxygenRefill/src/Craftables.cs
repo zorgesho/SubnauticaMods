@@ -31,32 +31,13 @@ namespace OxygenRefill
 		public override GameObject getGameObject()
 		{
 			GameObject prefab = Object.Instantiate(CraftData.GetPrefabForTechType(TechType.Workbench));
+
 			GhostCrafter crafter = prefab.GetComponent<Workbench>();
 			crafter.craftTree = treeType;
 			crafter.handOverText = L10n.str("ids_UseStation");
 
-			prefab.GetComponent<Constructable>().techType = TechType;
-
-			SkyApplier skyApplier = prefab.GetComponent<SkyApplier>();
-			skyApplier.renderers = prefab.GetComponentsInChildren<Renderer>();
-			skyApplier.anchorSky = Skies.Auto;
-
 			prefab.GetComponentInChildren<SkinnedMeshRenderer>().material.color = new Color(0, 1, 1, 1);
 
-			//var powerRelay = new PowerRelay();
-
-			// This is actually a dirty hack
-			// The problem is that the parent SubRoot isn't correctly associated at this time.
-			// The power relay should be getting set in the GhostCrafter Start() method.
-			// But the parent components are coming up null.
-			//crafter.powerRelay = powerRelay;
-			{
-				//GhostCrafter ghost = fabricator.GetComponent<GhostCrafter>();
-				//var powerRelay = new PowerRelay(); // This isn't correct, but nothing else seems to work.
-
-				//ghost.powerRelay = powerRelay;
-
-			}
 			return prefab;
 		}
 	}
@@ -64,7 +45,7 @@ namespace OxygenRefill
 	[CraftHelper.NoAutoPatch]
 	abstract class TankRefill: CraftableObject
 	{
-		// used for fill tank after creating at refilling station
+		// used for fill tank after creating at refilling station (we can't just change it in prefab)
 		class RefillOxygen: MonoBehaviour
 		{
 			void Awake()

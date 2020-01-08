@@ -4,6 +4,7 @@ using System.Reflection.Emit;
 using System.Collections.Generic;
 
 using Harmony;
+using UnityEngine;
 using UnityEngine.Events;
 
 using Common;
@@ -16,7 +17,7 @@ namespace MiscPatches
 	[HarmonyPatch(typeof(Vehicle), "Start")]
 	static class Vehicle_Start_Patch_LightsOffByDefault
 	{
-		const float time = 0.1f;
+		const float time = 1.2f;
 
 		static void Postfix(Vehicle __instance) =>
 			__instance.gameObject.callAfterDelay(time, new UnityAction(() =>
@@ -26,10 +27,45 @@ namespace MiscPatches
 					// turn light off. Not using SetLightsActive because of sound
 					lights.lightsActive = false;
 					lights.lightsParent.SetActive(false);
+
+					if (lights.energyPerSecond == 0f)
+						lights.energyPerSecond = Main.config.vehicleLightEnergyPerSec;					$"light energy consumption for {__instance} is {lights.energyPerSecond}".logDbg();
 				}
 			}));
 	}
 
+	static class PrawnSuitLightsToggle // mostly from RandyKnapp's PrawnSuitLightSwitch mod
+	{
+		[HarmonyPatch(typeof(Exosuit), "Awake")]
+		static class Exosuit_Awake_Patch
+		{
+			static void Postfix(Exosuit __instance)
+			{
+				var toggleLights = __instance.gameObject.getOrAddComponent<ToggleLights>();
+				var toggleLightsPrefab = Resources.Load<GameObject>("WorldEntities/Tools/SeaMoth").GetComponent<SeaMoth>().toggleLights;
+
+				toggleLights.copyValuesFrom(toggleLightsPrefab, "lightsOnSound", "lightsOffSound", "onSound", "offSound", "energyPerSecond");
+
+				toggleLights.lightsParent = __instance.transform.Find("lights_parent").gameObject;
+				toggleLights.energyMixin = __instance.GetComponent<EnergyMixin>();
+			}
+		}
+
+		[HarmonyPatch(typeof(Exosuit), "Update")]
+		static class Exosuit_Update_Patch
+		{
+			static void Postfix(Exosuit __instance)
+			{
+				if (__instance.GetComponent<ToggleLights>() is ToggleLights toggleLights)
+				{
+					toggleLights.UpdateLightEnergy();
+
+					if (__instance.GetPilotingMode() && Input.GetKeyDown(Main.config.toggleLightKey) && !(Player.main.GetPDA().isOpen || !AvatarInputHandler.main.IsEnabled()))
+						toggleLights.SetLightsActive(!toggleLights.lightsActive);
+				}
+			}
+		}
+	}
 
 	// Hide extra quick slots in vehicles
 	// Modules installed in these slots working as usual
@@ -84,25 +120,28 @@ namespace MiscPatches
 	// Fix hatch and antennas for docked vehicles in cyclops
 	// Playing vehicle dock animation after load, dont find another way
 	// Exosuit is also slightly moved from cyclops dock bay hatch, need to play all docking animations to fix it (like in moonpool)
-	[HarmonyPatch(typeof(Vehicle), "Start")]
-	static class Vehicle_Start_Patch_CyclopsDocking
+	static class CyclopsDockingVehiclesFix
 	{
-		const float time = 7f;
-			
-		static void Postfix(Vehicle __instance)
+		[HarmonyPatch(typeof(Vehicle), "Start")]
+		static class Vehicle_Start_Patch
 		{
-			if (!__instance.docked)
-				return;
+			const float time = 7f;
 
-			SubRoot subRoot = __instance.GetComponentInParent<SubRoot>();
-			if (subRoot != null && !subRoot.isBase) // we're docked in cyclops
+			static void Postfix(Vehicle __instance)
 			{
-				(__instance as IAnimParamReceiver).ForwardAnimationParameterBool("cyclops_dock", true);
+				if (!__instance.docked)
+					return;
 
-				__instance.gameObject.callAfterDelay(time, new UnityAction(() =>
+				SubRoot subRoot = __instance.GetComponentInParent<SubRoot>();
+				if (subRoot != null && !subRoot.isBase) // we're docked in cyclops
 				{
-					(__instance as IAnimParamReceiver).ForwardAnimationParameterBool("cyclops_dock", false);
-				}));
+					(__instance as IAnimParamReceiver).ForwardAnimationParameterBool("cyclops_dock", true);
+
+					__instance.gameObject.callAfterDelay(time, new UnityAction(() =>
+					{
+						(__instance as IAnimParamReceiver).ForwardAnimationParameterBool("cyclops_dock", false);
+					}));
+				}
 			}
 		}
 	}

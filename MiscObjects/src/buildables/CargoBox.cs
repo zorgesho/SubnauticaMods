@@ -23,12 +23,9 @@ namespace MiscObjects
 			GameObject prefab = Object.Instantiate(Resources.Load<GameObject>("WorldEntities/Doodads/Debris/Wrecks/Decoration/Starship_cargo"));
 			GameObject model = prefab.FindChild("Starship_cargo");
 
-			prefab.getOrAddComponent<TechTag>().type = TechType;
-			prefab.GetComponent<PrefabIdentifier>().ClassId = ClassID;
-
 			prefab.destroyComponent<Rigidbody>();
 
-			Constructable constructable = prefab.AddComponent<Constructable>().initDefault(model, TechType);
+			Constructable constructable = prefab.AddComponent<Constructable>().initDefault(model);
 			constructable.allowedInBase = true;
 			constructable.allowedInSub = true;
 			constructable.allowedOnGround = true;

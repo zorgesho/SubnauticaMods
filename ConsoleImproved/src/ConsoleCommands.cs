@@ -36,6 +36,13 @@ namespace ConsoleImproved
 				matched.onScreen("TechType: ");
 			}
 
+			void OnConsoleCommand_dumpresource(NotificationCenter.Notification n)
+			{
+				if (n.getArgsCount() == 0)
+					return;
+
+				Resources.Load<GameObject>(n.getArg(0) as string)?.dump();
+			}
 
 			void OnConsoleCommand_dumpprefab(NotificationCenter.Notification n)
 			{

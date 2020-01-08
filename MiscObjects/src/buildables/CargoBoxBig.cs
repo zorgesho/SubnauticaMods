@@ -26,7 +26,7 @@ namespace MiscObjects
 			prefab.transform.localScale *= 2.1f;
 			prefab.destroyComponent<Rigidbody>();
 
-			Constructable constructable = prefab.AddComponent<Constructable>().initDefault(model, TechType);
+			Constructable constructable = prefab.AddComponent<Constructable>().initDefault(model);
 			constructable.allowedOutside = true;
 			constructable.allowedOnGround = true;
 			constructable.allowedOnConstructables = true;

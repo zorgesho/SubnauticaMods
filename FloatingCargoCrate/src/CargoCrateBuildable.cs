@@ -39,8 +39,6 @@ namespace FloatingCargoCrate
 			modelCargo.transform.parent = model.transform;
 			modelCargo.transform.localScale *= 2.1f;
 
-			prefab.GetComponent<PrefabIdentifier>().ClassId = ClassID;
-
 			Animator anim = model.GetComponentInChildren<Animator>();
 			anim.enabled = false;
 
@@ -70,8 +68,6 @@ namespace FloatingCargoCrate
 			storageContainer.preventDeconstructionIfNotEmpty = true;
 
 
-			prefab.GetComponent<TechTag>().type = TechType;
-
 			prefab.destroyChild("LidLabel");
 			prefab.destroyChild("1st_person_model");
 
@@ -97,7 +93,7 @@ namespace FloatingCargoCrate
 			prefab.GetComponent<SkyApplier>().renderers = new Renderer[] { model.GetComponentInChildren<Renderer>(), modelCargo.GetComponent<Renderer>() };
 
 
-			Constructable constructable = prefab.AddComponent<Constructable>().initDefault(model, TechType);
+			Constructable constructable = prefab.AddComponent<Constructable>().initDefault(model);
 			constructable.allowedOutside = true;
 			constructable.forceUpright = true;
 

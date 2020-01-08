@@ -199,8 +199,6 @@ namespace MiscPrototypes
 		public override GameObject getGameObject()
 		{
 			GameObject prefab = Object.Instantiate(CraftData.GetPrefabForTechType(TechType.PowerCellCharger));
-			prefab.getOrAddComponent<TechTag>().type = TechType;
-			prefab.GetComponent<PrefabIdentifier>().ClassId = ClassID;
 
 			PowerCellChargerMy pccmy = prefab.AddComponent<PowerCellChargerMy>();
 

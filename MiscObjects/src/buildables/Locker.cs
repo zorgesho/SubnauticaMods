@@ -36,12 +36,10 @@ namespace MiscObjects
 			door.setParent(model, false);
 			door.destroyComponentInChildren<BoxCollider>();
 
-			prefab.AddComponent<TechTag>().type = TechType;
-			prefab.GetComponent<PrefabIdentifier>().ClassId = ClassID;
-
+			prefab.AddComponent<TechTag>(); // just in case
 			prefab.destroyComponent<Rigidbody>();
 
-			Constructable constructable = prefab.AddComponent<Constructable>().initDefault(model, TechType);
+			Constructable constructable = prefab.AddComponent<Constructable>().initDefault(model);
 			constructable.allowedInBase = true;
 			constructable.allowedInSub = true;
 			constructable.allowedOnGround = true;

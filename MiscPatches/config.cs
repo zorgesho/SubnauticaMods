@@ -16,5 +16,10 @@ namespace MiscPatches
 
 		public readonly float vehicleLightEnergyPerSec = 0.1f;
 		public readonly UnityEngine.KeyCode toggleLightKey = UnityEngine.KeyCode.F;
+
+		public readonly float continuousDamageCheckInterval = 5f;
+		public readonly float minHealthPercentForContinuousDamage = 0.3f;
+		public readonly float chanceForDamage = 0.3f;
+		public readonly float additionalContinuousDamage = 1f; // absolute value
 	}
 }

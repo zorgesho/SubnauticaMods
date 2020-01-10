@@ -67,6 +67,50 @@ namespace MiscPatches
 		}
 	}
 
+	// if vehicle's health too low it will take random additional damage
+	static class VehicleLowHealthExtraDamage
+	{
+		class LowHealthExtraDamage: MonoBehaviour
+		{
+			Vehicle vehicle;
+			LiveMixin liveMixin;
+			FMOD_CustomEmitter soundOnDamage;
+
+			void Start()
+			{
+				liveMixin = GetComponent<LiveMixin>();
+				vehicle = GetComponent<Vehicle>();
+				soundOnDamage = GetComponent<CrushDamage>().soundOnDamage;
+
+				InvokeRepeating(nameof(healthUpdate), 0f, Main.config.continuousDamageCheckInterval);
+			}
+
+			bool isCanTakeDamage() =>
+				(!vehicle || (!vehicle.GetRecentlyUndocked() && !vehicle.docked && !vehicle.precursorOutOfWater && !vehicle.IsInsideAquarium()));
+
+			void healthUpdate()
+			{
+				if (!gameObject.activeInHierarchy || !enabled)
+					return;
+
+				if (liveMixin.health / liveMixin.maxHealth < Main.config.minHealthPercentForContinuousDamage &&
+					UnityEngine.Random.value < Main.config.chanceForDamage &&
+					isCanTakeDamage())
+				{
+					liveMixin.TakeDamage(Main.config.additionalContinuousDamage, transform.position, DamageType.Pressure, null);
+					soundOnDamage?.Play();																							$"LowHealthExtraDamage: {vehicle} health:{liveMixin.health}".logDbg();
+				}
+			}
+		}
+
+		[HarmonyPatch(typeof(Vehicle), "Awake")]
+		static class Vehicle_Awake_Patch
+		{
+			static void Postfix(Vehicle __instance) => __instance.gameObject.addComponentIfNeeded<LowHealthExtraDamage>();
+		}
+	}
+
+
 	// Hide extra quick slots in vehicles
 	// Modules installed in these slots working as usual
 	// Intended for passive modules, issues with selectable modules

@@ -15,14 +15,19 @@ namespace MiscPatches
 					return;
 
 				"Inventory items:".log();
-				foreach (var item in Inventory.main.container)
-					$"item: {item.item.GetTechName()}".onScreen().log();
+				Inventory.main.container.ForEach(item => $"item: {item.item.GetTechName()}".onScreen().log());
 			}
 
 			void OnConsoleCommand_subtitles(NotificationCenter.Notification n)
 			{
 				if (n.getArgsCount() > 0)
 					Subtitles.main.Add(n.getArg(0) as string);
+			}
+
+			void OnConsoleCommand_vehiclehealth(NotificationCenter.Notification n)
+			{
+				if (n.getArgsCount() > 0 && Player.main?.GetVehicle()?.GetComponent<LiveMixin>() is LiveMixin liveMixin)
+					liveMixin.health = liveMixin.maxHealth * (n.getArg(0).toFloat());
 			}
 		}
 

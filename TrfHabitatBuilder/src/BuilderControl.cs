@@ -128,7 +128,7 @@ namespace TrfHabitatBuilder
 			struct Info
 			{
 				public int hash;
-				public float speed;
+				public readonly float speed;
 
 				public Info(float _speed) { hash = 0; speed = _speed; }
 			}

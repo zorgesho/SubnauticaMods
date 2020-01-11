@@ -44,6 +44,15 @@ namespace ConsoleImproved
 				Resources.Load<GameObject>(n.getArg(0) as string)?.dump();
 			}
 
+			void OnConsoleCommand_dumptarget(NotificationCenter.Notification _)
+			{
+				if (Player.main?.GetComponent<GUIHand>().activeTarget is GameObject go)
+				{
+					$"Target dump: {go.name}".onScreen();
+					go.dump();
+				}
+			}
+
 			void OnConsoleCommand_dumpprefab(NotificationCenter.Notification n)
 			{
 				if (n.getArgsCount() == 0)

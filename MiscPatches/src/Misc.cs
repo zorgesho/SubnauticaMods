@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using System.Linq;
+using System.Reflection;
 using System.Reflection.Emit;
 using System.Collections.Generic;
 
@@ -139,6 +140,48 @@ namespace MiscPatches
 
 				return list;
 			}
+		}
+	}
+
+
+	static class ChangeChargersSpeed
+	{
+		// chargers speed is not linked to battery capacity
+		[HarmonyPatch(typeof(Charger), "Update")]
+		static class Charger_Update_Patch
+		{
+			static bool Prepare() => Main.config.changeChargersSpeed && Main.config.chargersAbsoluteSpeed;
+
+			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins)
+			{
+				var list = cins.ToList();
+
+				FieldInfo chargeSpeed = typeof(Charger).field("chargeSpeed");
+				int index = list.FindIndex(ci => ci.isOp(OpCodes.Ldfld, chargeSpeed)) + 2;
+				list.RemoveRange(index, 2);
+
+				return list;
+			}
+		}
+
+		// BatteryCharger speed
+		[HarmonyPatch(typeof(BatteryCharger), "Initialize")]
+		static class BatteryCharger_Initialize_Patch
+		{
+			static bool Prepare() => Main.config.changeChargersSpeed;
+
+			static void Postfix(Charger __instance) =>
+				__instance.chargeSpeed = Main.config.batteryChargerSpeed * (Main.config.chargersAbsoluteSpeed? 100f: 1f);
+		}
+
+		// PowerCellCharger speed
+		[HarmonyPatch(typeof(PowerCellCharger), "Initialize")]
+		static class PowerCellCharger_Initialize_Patch
+		{
+			static bool Prepare() => Main.config.changeChargersSpeed;
+
+			static void Postfix(Charger __instance) =>
+				__instance.chargeSpeed = Main.config.powerCellChargerSpeed * (Main.config.chargersAbsoluteSpeed? 200f: 1f);
 		}
 	}
 

@@ -1,4 +1,5 @@
-﻿using System.Reflection.Emit;
+﻿using System.Linq;
+using System.Reflection.Emit;
 using System.Collections.Generic;
 
 using Harmony;
@@ -16,25 +17,24 @@ namespace Common
 
 		public static void log(this CodeInstruction ci) => $"{ci.opcode} {ci.operand}".log();
 
-		public static void log(this IEnumerable<CodeInstruction> cins)
+		public static void log(this IEnumerable<CodeInstruction> cins, bool searchFirstOps = false)
 		{
-			int _findLabel(object label)
-			{
-				int j = 0;
-				foreach (var ci in cins)
-				{
-					if (ci.labels?.FindIndex(l => l.Equals(label)) != -1)
-						return j;
-					j++;
-				}
-				return -1;
-			}
+			var list = cins.ToList();
 
-			int i = 0;
-			foreach (var ci in cins)
+			int _findLabel(object label) => // find target index for jumps
+				list.FindIndex(_ci => _ci.labels?.FindIndex(l => l.Equals(label)) != -1);
+
+			for (int i = 0; i < list.Count; i++)
 			{
+				var ci = list[i];
+
 				int labelIndex = (ci.operand?.GetType() == typeof(Label))? _findLabel(ci.operand): -1;
-				$"{i++}: {ci.opcode} {(labelIndex != -1? "jump to " + labelIndex: ci.operand)} {(ci.labels.Count > 0? "=> labels:" + ci.labels.Count:"")}".log();
+				string operandInfo = labelIndex != -1? "jump to " + labelIndex: ci.operand?.ToString();
+
+				string labelsInfo = ci.labels.Count > 0? "=> labels:" + ci.labels.Count: "";
+				string isFirstOp = (searchFirstOps && list.FindIndex(_ci => _ci.opcode == ci.opcode) == i)? " 1ST":""; // is such an opcode is first encountered in this instruction
+
+				$"{i}{isFirstOp}: {ci.opcode} {operandInfo} {labelsInfo}".log();
 			}
 		}
 		#endregion

@@ -1,4 +1,7 @@
 ﻿using System.Text;
+using System.Linq;
+using System.Reflection.Emit;
+using System.Collections.Generic;
 
 using Harmony;
 using UnityEngine;
@@ -57,7 +60,89 @@ namespace MiscPatches
 			}));
 	}
 
-	
+	// we can kill HangingStingers now
+	[HarmonyPatch(typeof(HangingStinger), "Start")]
+	static class HangingStinger_Start_Patch
+	{
+		static GameObject deathEffect = null;
+		const float maxHealth = 10f;
+
+		static void Postfix(HangingStinger __instance)
+		{
+			LiveMixin liveMixin = __instance.GetComponent<LiveMixin>();
+
+			if (!deathEffect)
+			{
+				GameObject prefab = CraftData.GetPrefabForTechType(TechType.BlueCluster);
+				deathEffect = prefab.GetComponent<LiveMixin>().data.deathEffect;
+			}
+
+			// can't change it just once, stingers use three LiveMixinData (short, middle, long)
+			liveMixin.data.destroyOnDeath = true;
+			liveMixin.data.explodeOnDestroy = false;
+			liveMixin.data.deathEffect = deathEffect;
+			liveMixin.data.maxHealth = maxHealth;
+
+			liveMixin.health = liveMixin.data.maxHealth;
+		}
+	}
+
+	// For adding propulsion/repulsion cannon immunity to some objects
+	// for now: <BrainCoral> <Drillable>
+	static class PropRepCannonImmunity
+	{
+		class ImmuneToPropRepCannon: MonoBehaviour {}
+
+		public static bool isObjectImmune(GameObject go)
+		{
+			if (!go || go.GetComponent<ImmuneToPropRepCannon>())
+				return true;
+
+			if (go.GetComponent<BrainCoral>() || go.GetComponent<Drillable>()) // maybe I'll add some more
+			{
+				go.AddComponent<ImmuneToPropRepCannon>();
+				return true;
+			}
+
+			return false;
+		}
+
+		[HarmonyPatch(typeof(PropulsionCannon), "ValidateNewObject")]
+		static class PropulsionCannon_ValidateNewObject_Patch
+		{
+			static bool Prepare() => Main.config.additionalPropRepImmunity;
+			static bool Prefix(GameObject go, ref bool __result) => __result = !isObjectImmune(go);
+		}
+
+		[HarmonyPatch(typeof(RepulsionCannon), "OnToolUseAnim")]
+		static class RepulsionCannon_OnToolUseAnim_Patch
+		{
+			static bool Prepare() => Main.config.additionalPropRepImmunity;
+
+			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins, ILGenerator ilg)
+			{
+				var list = cins.ToList();
+
+				int indexForChangeLabel = list.FindIndex(ci => ci.isOp(OpCodes.Brfalse));															$"indexForChangeLabel: {indexForChangeLabel }".logDbg();
+				int indexForInject	    = indexForChangeLabel + 5;																					$"indexForInject: {indexForInject}".logDbg();
+				int indexForJumpLabel   = list.FindIndex(indexForInject, ci => ci.isOp(OpCodes.Brfalse));											$"indexForJumpLabel: {indexForJumpLabel}".logDbg();
+
+				Label lb = ilg.DefineLabel();
+				list[indexForChangeLabel].operand = lb;
+
+				list.InsertRange(indexForInject, new List<CodeInstruction>()
+				{
+					new CodeInstruction(OpCodes.Ldloc_S, 11) { labels = new List<Label> {lb} },
+					new CodeInstruction(OpCodes.Call, typeof(PropRepCannonImmunity).method(nameof(PropRepCannonImmunity.isObjectImmune))),
+					new CodeInstruction(OpCodes.Brtrue, list[indexForJumpLabel].operand)
+				});
+
+				return list;
+			}
+		}
+	}
+
+
 	static class MiscStuff
 	{
 		public static void init()

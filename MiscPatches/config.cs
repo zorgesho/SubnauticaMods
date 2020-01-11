@@ -21,5 +21,7 @@ namespace MiscPatches
 		public readonly float minHealthPercentForContinuousDamage = 0.3f;
 		public readonly float chanceForDamage = 0.3f;
 		public readonly float additionalContinuousDamage = 1f; // absolute value
+
+		public readonly bool additionalPropRepImmunity = true; // propulsion/repulsion cannon immunity for some additional objects
 	}
 }

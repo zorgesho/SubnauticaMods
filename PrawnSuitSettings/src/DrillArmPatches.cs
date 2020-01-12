@@ -2,8 +2,8 @@
 using System.Reflection.Emit;
 using System.Collections.Generic;
 
-using UnityEngine;
 using Harmony;
+using UnityEngine;
 
 using Common;
 using Common.Configuration;
@@ -23,18 +23,14 @@ namespace PrawnSuitSettings
 
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins)
 		{
-			var list = new List<CodeInstruction>(cins);
+			var list = cins.ToList();
 
-			for (int i = 0; i < list.Count - 1; i++)
-			{
-				if (list[i].opcode == OpCodes.Ldloc_1 && list[i + 1].opcode == OpCodes.Ldnull)
-				{
-					list.RemoveRange(i, 4);
-					break;
-				}
-			}
+			int index = list.FindIndex(ci => ci.isOp(OpCodes.Ldloc_2));
 
-			return list.AsEnumerable();
+			if (index > 0)
+				list.RemoveRange(index, 4);
+
+			return list;
 		}
 	}
 

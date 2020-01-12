@@ -121,7 +121,7 @@ namespace MiscPatches
 
 		static Instructions ci(Instructions cins, bool isSeamoth)
 		{
-			var list = new List<CodeInstruction>(cins);
+			var list = cins.ToList();
 
 			list.RemoveRange(0, 5);
 
@@ -132,7 +132,7 @@ namespace MiscPatches
 				new CodeInstruction(OpCodes.Stloc_0)
 			});
 
-			return list.AsEnumerable();
+			return list;
 		}
 
 		[HarmonyPatch(typeof(Vehicle), "GetSlotBinding", new Type[] {})]

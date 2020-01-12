@@ -2,8 +2,8 @@
 using System.Reflection.Emit;
 using System.Collections.Generic;
 
-using UnityEngine;
 using Harmony;
+using UnityEngine;
 
 using Common;
 using static Common.HarmonyHelper;
@@ -46,7 +46,7 @@ namespace PrawnSuitGrapplingArmUpgrade
 	{
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins, ILGenerator ilg)
 		{
-			var list = new List<CodeInstruction>(cins);
+			var list = cins.ToList();
 
 			for (int i = list.Count - 1; i >= 0; i--) // changing list in the process, so iterate it backwards
 			{
@@ -64,7 +64,7 @@ namespace PrawnSuitGrapplingArmUpgrade
 				tryChangeVal(400f, nameof(Main.config.force));
 			}
 
-			return list.AsEnumerable();
+			return list;
 		}
 	}
 

@@ -3,9 +3,9 @@ using System.Linq;
 using System.Reflection.Emit;
 using System.Collections.Generic;
 
+using Harmony;
 using UnityEngine;
 using UnityEngine.UI;
-using Harmony;
 
 using Common;
 
@@ -25,13 +25,13 @@ namespace ModsOptionsAdjusted
 	{
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins)
 		{
-			var list = new List<CodeInstruction>(cins);
+			var list = cins.ToList();
 			int index = list.FindIndex(ci => ci.isOp(OpCodes.Beq));
 
 			if (index > 0)
 				list.RemoveRange(index - 3, 4); // removing "this.currentTab != tabIndex" check
 
-			return list.AsEnumerable();
+			return list;
 		}
 
 		// adjusting ui elements
@@ -141,8 +141,8 @@ namespace ModsOptionsAdjusted
 				rect.sizeDelta = size;
 			}
 		}
-		
-		
+
+
 		static void processBindingOption(Transform option)
 		{
 			// changing width for keybinding option
@@ -170,7 +170,7 @@ namespace ModsOptionsAdjusted
 			if (bindingText.text == "D")
 			{
 				string buttonRawText = primaryBinding.GetComponent<uGUI_Binding>().value;
-				
+
 				if (uGUI.buttonCharacters.TryGetValue(buttonRawText, out string buttonText))
 					bindingText.text = buttonText;
 				else

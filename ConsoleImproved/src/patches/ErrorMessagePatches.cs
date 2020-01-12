@@ -3,8 +3,8 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Collections.Generic;
 
-using UnityEngine;
 using Harmony;
+using UnityEngine;
 
 using Common;
 
@@ -38,7 +38,7 @@ namespace ConsoleImproved
 
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins, ILGenerator ilg)
 		{
-			var list = new List<CodeInstruction>(cins);
+			var list = cins.ToList();
 
 			// is console visible
 			void _injectStateCheck(int indexToInject, object labelToJump)
@@ -78,7 +78,7 @@ namespace ConsoleImproved
 				return cins;
 			_injectStateCheck(indexToInject2, lb2);
 
-			return list.AsEnumerable();
+			return list;
 		}
 	}
 }

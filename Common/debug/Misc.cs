@@ -11,40 +11,41 @@ namespace Common
 		static Stopwatch stopwatch = null;
 		static int nestLevel = 0;
 
+		// need that to avoid returning from stopStopwatch and be able to add Conditional attribute
+		public static double stopwatchLastResult { get; private set; } = 0d;
+
+		[Conditional("DEBUG")]
 		public static void startStopwatch()
 		{
 			nestLevel++;
-			
+
 			if (stopwatch == null)
 				stopwatch = Stopwatch.StartNew();
 		}
 
-		public static double stopStopwatch(string msg, string filename = null)
+		[Conditional("DEBUG")]
+		public static void stopStopwatch(string msg = null, string filename = null)
 		{
 			if (--nestLevel > 0)
-				return 0;
+				return;
 
 			stopwatch.Stop();
-			
-			double time = stopwatch.Elapsed.TotalMilliseconds;
-
-			if (msg != null)
-			{
-				string result = $"{msg}: {time} ms";
-				$"STOPWATCH: {result}".logDbg();
-
-				if (filename != null)
-				{
-					if (Path.GetExtension(filename) == "")
-						filename += ".prf";
-
-					File.AppendAllText(Paths.modRootPath + filename, $"{result}{Environment.NewLine}");
-				}
-			}
-
+			stopwatchLastResult = stopwatch.Elapsed.TotalMilliseconds;
 			stopwatch = null;
 
-			return time;
+			if (msg == null)
+				return;
+
+			string result = $"{msg}: {stopwatchLastResult} ms";
+			$"STOPWATCH: {result}".logDbg();
+
+			if (filename != null)
+			{
+				if (Path.GetExtension(filename) == "")
+					filename += ".prf";
+
+				File.AppendAllText(Paths.modRootPath + filename, $"{result}{Environment.NewLine}");
+			}
 		}
 	}
 

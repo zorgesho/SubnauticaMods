@@ -1,10 +1,8 @@
-﻿using System.Reflection.Emit;
+﻿using System.Linq;
 using System.Collections.Generic;
 
-using UnityEngine;
 using Harmony;
-
-using Common;
+using UnityEngine;
 
 namespace ConsoleImproved
 {
@@ -16,23 +14,9 @@ namespace ConsoleImproved
 		{
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins)
 			{
-				bool injected = false;
-
-				foreach (var ci in cins)
-				{
-					if (!injected && ci.opcode == OpCodes.Ldfld)
-					{
-						yield return new CodeInstruction(OpCodes.Ldfld, typeof(ConsoleInput).field(nameof(ConsoleInput.historyIndex)));
-					}
-					else
-					if (!injected && ci.opcode == OpCodes.Callvirt)
-					{
-						injected = true;
-						yield return new CodeInstruction(OpCodes.Nop);
-					}
-					else
-						yield return ci;
-				}
+				var list = cins.ToList();
+				list.RemoveRange(0, 5); // remove first line "this.historyIndex = this.history.Count;"
+				return list;
 			}
 		}
 

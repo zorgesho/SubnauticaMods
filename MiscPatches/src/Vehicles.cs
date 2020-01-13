@@ -41,7 +41,7 @@ namespace MiscPatches
 		{
 			static void Postfix(Exosuit __instance)
 			{
-				var toggleLights = __instance.gameObject.getOrAddComponent<ToggleLights>();
+				var toggleLights = __instance.gameObject.ensureComponent<ToggleLights>();
 				var toggleLightsPrefab = Resources.Load<GameObject>("WorldEntities/Tools/SeaMoth").GetComponent<SeaMoth>().toggleLights;
 
 				toggleLights.copyValuesFrom(toggleLightsPrefab, "lightsOnSound", "lightsOffSound", "onSound", "offSound", "energyPerSecond");
@@ -106,7 +106,7 @@ namespace MiscPatches
 		[HarmonyPatch(typeof(Vehicle), "Awake")]
 		static class Vehicle_Awake_Patch
 		{
-			static void Postfix(Vehicle __instance) => __instance.gameObject.addComponentIfNeeded<LowHealthExtraDamage>();
+			static void Postfix(Vehicle __instance) => __instance.gameObject.ensureComponent<LowHealthExtraDamage>();
 		}
 	}
 

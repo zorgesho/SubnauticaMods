@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using Harmony;
+﻿using Harmony;
+using UnityEngine;
 
 using Common;
 
@@ -19,7 +19,7 @@ namespace VehicleCameraDrone
 					mapRoomCamera.GetComponent<EnergyMixin>().allowBatteryReplacement = true;
 					mapRoomCamera.ControlCamera(Player.main, null);
 
-					ToggleLights tl = mapRoomCamera.gameObject.getOrAddComponent<ToggleLights>();
+					ToggleLights tl = mapRoomCamera.gameObject.ensureComponent<ToggleLights>();
 					tl.lightsParent = mapRoomCamera.gameObject.getChild("lights_parent");
 					tl.energyMixin = mapRoomCamera.gameObject.GetComponent<EnergyMixin>();
 

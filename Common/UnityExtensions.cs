@@ -4,9 +4,9 @@ using System.Reflection.Emit;
 using System.Collections;
 using System.Collections.Generic;
 
+using Harmony;
 using UnityEngine;
 using UnityEngine.Events;
-using Harmony;
 
 namespace Common
 {
@@ -17,17 +17,7 @@ namespace Common
 		public static void callAfterDelay(this GameObject go, float delay, UnityAction action) =>
 			go.AddComponent<CallAfterDelay>().init(delay, action);
 
-
-		public static T getOrAddComponent<T>(this GameObject go) where T : Component =>
-			go.GetComponent<T>() ?? go.AddComponent<T>();
-
-
-		public static void addComponentIfNeeded<T>(this GameObject go) where T : Component
-		{
-			if (!go.GetComponent<T>())
-				go.AddComponent<T>();
-		}
-
+		public static T ensureComponent<T>(this GameObject go) where T: Component => go.GetComponent<T>() ?? go.AddComponent<T>();
 
 		public static void setParent(this GameObject go, GameObject parent, bool resetLocalTransform = true)
 		{
@@ -46,7 +36,7 @@ namespace Common
 			go.transform.Find(name)?.gameObject;
 
 
-		public static T getComponentInHierarchy<T>(this GameObject go, bool checkChildren = true, bool checkParent = true) where T : Component
+		public static T getComponentInHierarchy<T>(this GameObject go, bool checkChildren = true, bool checkParent = true) where T: Component
 		{
 			T cmp = go.GetComponent<T>();
 
@@ -69,7 +59,7 @@ namespace Common
 		}
 
 
-		public static void destroyComponent<T>(this GameObject go, bool immediate = true) where T : Component
+		public static void destroyComponent<T>(this GameObject go, bool immediate = true) where T: Component
 		{
 			if (immediate)
 				Object.DestroyImmediate(go.GetComponent<T>());
@@ -78,7 +68,7 @@ namespace Common
 		}
 
 
-		public static void destroyComponentInChildren<T>(this GameObject go, bool immediate = true) where T : Component
+		public static void destroyComponentInChildren<T>(this GameObject go, bool immediate = true) where T: Component
 		{
 			if (immediate)
 				Object.DestroyImmediate(go.GetComponentInChildren<T>());
@@ -87,7 +77,7 @@ namespace Common
 		}
 
 		// if fields is empty we try to copy all fields
-		public static void copyValuesFrom<CT, CF>(this CT cmpTo, CF cmpFrom, params string[] fields) where CT : Component where CF : Component
+		public static void copyValuesFrom<CT, CF>(this CT cmpTo, CF cmpFrom, params string[] fields) where CT: Component where CF: Component
 		{
 			try
 			{
@@ -98,7 +88,7 @@ namespace Common
 					foreach (var fieldTo in typeTo.fields())
 					{
 						if (typeFrom.field(fieldTo.Name) is FieldInfo fieldFrom)
-						{ $"copyValuesFrom: copying field {fieldTo.Name} from {cmpFrom} to {cmpTo}".logDbg();
+						{																											$"copyValuesFrom: copying field {fieldTo.Name} from {cmpFrom} to {cmpTo}".logDbg();
 							fieldTo.SetValue(cmpTo, fieldFrom.GetValue(cmpFrom));
 						}
 					}
@@ -108,7 +98,7 @@ namespace Common
 					foreach (var fieldName in fields)
 					{
 						if (typeTo.field(fieldName) is FieldInfo fieldTo && typeFrom.field(fieldName) is FieldInfo fieldFrom)
-						{ $"copyValuesFrom: copying field {fieldName} from {cmpFrom} to {cmpTo}".logDbg();
+						{																											$"copyValuesFrom: copying field {fieldName} from {cmpFrom} to {cmpTo}".logDbg();
 							fieldTo.SetValue(cmpTo, fieldFrom.GetValue(cmpFrom));
 						}
 					}
@@ -124,7 +114,7 @@ namespace Common
 
 	static class UnityHelper
 	{
-		public static GameObject createPersistentGameObject<T>(string name) where T : Component
+		public static GameObject createPersistentGameObject<T>(string name) where T: Component
 		{
 			GameObject obj = new GameObject(name, typeof(SceneCleanerPreserve), typeof(T));
 			Object.DontDestroyOnLoad(obj);

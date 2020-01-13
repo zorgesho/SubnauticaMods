@@ -10,8 +10,8 @@ namespace PrawnSuitSonarUpgrade
 		{
 			if (techType != PrawnSonarModule.TechType || __instance.GetType() != typeof(Exosuit))
 				return;
-			
-			var sonarControl = __instance.gameObject.getOrAddComponent<PrawnSonarControl>();
+
+			var sonarControl = __instance.gameObject.ensureComponent<PrawnSonarControl>();
 
 			if (added)
 				sonarControl.enabled = true;
@@ -35,7 +35,7 @@ namespace PrawnSuitSonarUpgrade
 	{
 		static void Postfix(Exosuit __instance) => __instance.GetComponent<PrawnSonarControl>()?.setPlayerInside(true);
 	}
-	
+
 	[HarmonyPatch(typeof(Exosuit), "OnPilotModeEnd")]
 	static class Exosuit_OnPilotModeEnd_Patch
 	{

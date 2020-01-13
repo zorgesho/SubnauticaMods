@@ -17,8 +17,8 @@ namespace Fatigue
 	{
 		static void Postfix(Player __instance)
 		{
-			__instance.gameObject.addComponentIfNeeded<PlayerSleep>();
-			__instance.gameObject.addComponentIfNeeded<EnergySurvival>();
+			__instance.gameObject.ensureComponent<PlayerSleep>();
+			__instance.gameObject.ensureComponent<EnergySurvival>();
 		}
 	}
 	

@@ -3,8 +3,8 @@ using System.Text;
 using System.Linq;
 using System.Collections.Generic;
 
-using UnityEngine;
 using Harmony;
+using UnityEngine;
 
 using Common;
 
@@ -52,7 +52,7 @@ namespace GravTrapImproved
 		}
 #endif
 	}
-	
+
 
 	#region Gravtrap patches
 	[HarmonyPatch(typeof(Gravsphere), "Start")]
@@ -60,7 +60,7 @@ namespace GravTrapImproved
 	{
 		static void Postfix(Gravsphere __instance)
 		{
-			__instance.gameObject.addComponentIfNeeded<GravTrapObjectsType>();
+			__instance.gameObject.ensureComponent<GravTrapObjectsType>();
 		}
 	}
 
@@ -106,7 +106,7 @@ namespace GravTrapImproved
 		static readonly string buttons = (Main.config.useWheelClick? Strings.Mouse.middleButton: "") +
 										((Main.config.useWheelClick && Main.config.useWheelScroll)? " or ": "") +
 										 (Main.config.useWheelScroll? (Strings.Mouse.scrollUp + "/" + Strings.Mouse.scrollDown): "");
-		
+
 		static void Postfix(StringBuilder sb, InventoryItem item)
 		{
 			if ((Main.config.useWheelClick || Main.config.useWheelScroll) && item.item.GetTechType() == TechType.Gravsphere)

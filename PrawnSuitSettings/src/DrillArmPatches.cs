@@ -60,7 +60,7 @@ namespace PrawnSuitSettings
 		static void Prefix(ExosuitDrillArm __instance)
 		{
 			if (Main.config.toggleableDrillArm)
-				__instance.gameObject.getOrAddComponent<PrawnSuitDrillArmToggle>().toggleUsingArm();
+				__instance.gameObject.ensureComponent<PrawnSuitDrillArmToggle>().toggleUsingArm();
 		}
 	}
 
@@ -68,6 +68,6 @@ namespace PrawnSuitSettings
 	static class ExosuitDrillArm_OnUseUp_Patch
 	{
 		static bool Prefix(ExosuitDrillArm __instance) =>
-			!(Main.config.toggleableDrillArm && __instance.gameObject.getOrAddComponent<PrawnSuitDrillArmToggle>().isUsingArm());
+			!(Main.config.toggleableDrillArm && __instance.gameObject.ensureComponent<PrawnSuitDrillArmToggle>().isUsingArm());
 	}
 }

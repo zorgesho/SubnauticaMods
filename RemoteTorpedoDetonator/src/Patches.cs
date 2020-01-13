@@ -21,7 +21,7 @@ namespace RemoteTorpedoDetonator
 		static void Postfix(Vehicle __instance, TechType techType)
 		{
 			if (techType == TorpedoDetonatorModule.TechType)
-				__instance.gameObject.getOrAddComponent<TorpedoDetonatorControl>().checkEnabled();
+				__instance.gameObject.ensureComponent<TorpedoDetonatorControl>().checkEnabled();
 		}
 	}
 

@@ -24,7 +24,7 @@ namespace MiscPrototypes
 			GameObject trg = Player.main.GetComponent<GUIHand>().activeTarget;
 
 			if (Input.GetKeyDown(KeyCode.PageUp))
-				trg?.addComponentIfNeeded<DbgCmp>();
+				trg?.ensureComponent<DbgCmp>();
 
 			if (Input.GetKeyDown(KeyCode.Insert))
 			{

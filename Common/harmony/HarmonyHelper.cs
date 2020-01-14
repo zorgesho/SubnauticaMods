@@ -24,10 +24,10 @@ namespace Common
 		{																					$"HarmonyHelper.patch: patching '{original}' with prefix:'{prefix}' postfix:'{postfix}' transpiler:'{transpiler}'".logDbg();
 			try
 			{
+				HarmonyMethod _harmonyMethod(MethodInfo method) => (method == null)? null: new HarmonyMethod(method);
+
 				Debug.startStopwatch();
-				harmonyInstance.Patch(original, (prefix == null)? null: new HarmonyMethod(prefix),
-												(postfix == null)? null: new HarmonyMethod(postfix),
-												(transpiler == null)? null: new HarmonyMethod(transpiler));
+				harmonyInstance.Patch(original, _harmonyMethod(prefix), _harmonyMethod(postfix), _harmonyMethod(transpiler));
 				Debug.stopStopwatch($"HarmonyHelper.patch");
 			}
 			catch (System.Exception e)

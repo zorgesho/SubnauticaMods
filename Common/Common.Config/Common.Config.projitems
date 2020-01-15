@@ -16,5 +16,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)attributes\FieldBoundsAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)attributes\ConfigAttributes.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Config.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HarmonyHelper.cs" />
   </ItemGroup>
 </Project>

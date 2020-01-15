@@ -1,56 +1,53 @@
 ﻿using System;
 using System.Linq;
 using System.Diagnostics;
-using System.Reflection;
 using System.Reflection.Emit;
 using System.Collections.Generic;
 
 using Harmony;
-using UnityEngine;
 
 namespace Common
 {
-	using Instructions = IEnumerable<CodeInstruction>;
 	using CIEnumerable = IEnumerable<CodeInstruction>;
 	using CIList = List<CodeInstruction>;
 	using CIPredicate = Predicate<CodeInstruction>;
 
 	static partial class HarmonyHelper
 	{
-		public static class TranspilersHelper
+#region CodeInstruction extensions
+
+		public static bool isLDC<T>(this CodeInstruction ci, T val) => ci.isOp(OpCodeByType.get<T>(), val);
+
+		public static bool isOp(this CodeInstruction ci, OpCode opcode, object operand = null) =>
+			ci.opcode == opcode && (operand == null || ci.operand.Equals(operand));
+
+		public static void log(this CodeInstruction ci) => $"{ci.opcode} {ci.operand}".log();
+
+		public static void log(this CIEnumerable cins, bool searchFirstOps = false)
 		{
-			
-		}
+			var list = cins.ToList();
 
-		[AttributeUsage(AttributeTargets.Method)]
-		public class CheckTranspilerAttribute: Attribute
-		{
-			public readonly int count;
-			public CheckTranspilerAttribute(int _count) => count = _count;
-		}
+			int _findLabel(object label) => // find target index for jumps
+				list.FindIndex(_ci => _ci.labels?.FindIndex(l => l.Equals(label)) != -1);
 
-
-		[Conditional("DEBUG")]
-		public static void checkTranspiler(int changes)
-		{
-			//if (lastTranspilerChanges != changes)
-			//	throw new Exception();
-		}
-
-
-		[Conditional("DEBUG")]
-		public static void checkTranspilerByStack()
-		{
-			MethodBase m = new StackTrace().GetFrame(2).GetMethod(); // search
-
-			if (Attribute.GetCustomAttribute(m, typeof(CheckTranspilerAttribute)) is CheckTranspilerAttribute ccc)
+			for (int i = 0; i < list.Count; i++)
 			{
-				$"------- checkTranspilerByStack {ccc.count}".log();
-			}
-			
-		}
+				var ci = list[i];
 
-		public static CIList ciList(params object[] cins)
+				int labelIndex = (ci.operand?.GetType() == typeof(Label))? _findLabel(ci.operand): -1;
+				string operandInfo = labelIndex != -1? "jump to " + labelIndex: ci.operand?.ToString();
+
+				string labelsInfo = ci.labels.Count > 0? "=> labels:" + ci.labels.Count: "";
+				string isFirstOp = (searchFirstOps && list.FindIndex(_ci => _ci.opcode == ci.opcode) == i)? " 1ST":""; // is such an opcode is first encountered in this instruction
+
+				$"{i}{isFirstOp}: {ci.opcode} {operandInfo} {labelsInfo}".log();
+			}
+		}
+#endregion
+
+#region CodeInstruction sequences manipulation methods
+
+		public static CIList toCIList(params object[] cins)
 		{
 			var list = new CIList();
 
@@ -68,7 +65,7 @@ namespace Common
 						list.Add(ci);
 						break;
 					default:
-						"!".logError();
+						$"toCIList: unsupported type {i.GetType()}".logError();
 						break;
 				}
 			}
@@ -77,166 +74,123 @@ namespace Common
 		}
 
 
-		public static CIList ciInsert(CIEnumerable cins, int count, CIPredicate predicate, params object[] toInsert) =>
-			ciInsert(cins.ToList(), count, predicate, toInsert);
+		// ciInsert overloads
+		// maxMatchCount = 0 for all predicate matches
+		public static CIList ciInsert(CIEnumerable cins, int maxMatchCount, CIPredicate predicate, params object[] cinsToInsert) =>
+			ciInsert(cins.ToList(), maxMatchCount, predicate, cinsToInsert);
 
-		public static CIList ciInsert(CIList list, int count, CIPredicate predicate, params object[] toInsert)
+		// for first predicate match
+		public static CIList ciInsert(CIEnumerable cins, CIPredicate predicate, params object[] cinsToInsert) =>
+			ciInsert(cins.ToList(), 1, predicate, cinsToInsert);
+
+		// for first predicate match
+		public static CIList ciInsert(CIList list, CIPredicate predicate, params object[] cinsToInsert) =>
+			ciInsert(list, 1, predicate, cinsToInsert);
+
+		public static CIList ciInsert(CIList list, int maxMatchCount, CIPredicate predicate, params object[] cinsToInsert)
 		{
-			var listToInsert = ciList(toInsert);
+			var listToInsert = toCIList(cinsToInsert);
 			int index, index0 = 0;
-			
+
 			do
 			{
 				if ((index = list.FindIndex(index0, predicate)) == -1)
 					break;
 
-				ciInsert(list, index, listToInsert); //list.InsertRange(index, listToInsert);
+				ciInsert(list, index, listToInsert);
 
 				index0 += index + listToInsert.Count;
 			}
-			while (--count != 0);
+			while (--maxMatchCount != 0);
 
 			return list;
 		}
 
-		public static List<CodeInstruction> ciInsert(List<CodeInstruction> list, int index, List<CodeInstruction> listToInsert)
+		public static CIList ciInsert(CIList list, int index, CIList listToInsert) // TODO: ?copy labels; add transpiler check
 		{
-			// check index
-			// copy labels ?
 			if (index >= 0)
 				list.InsertRange(index, listToInsert);
 
-			checkTranspilerByStack();
-
 			return list;
 		}
 
 
-		public static List<CodeInstruction> ciRemove(IEnumerable<CodeInstruction> cins, Predicate<CodeInstruction> predicate, int delta, int count) =>
-			ciRemove(cins.ToList(), predicate, delta, count, out _);
+		// ciRemove overloads
+		// indexDelta - change actual index from matched for removing
+		// countToRemove - instructions count to be removed
+		// ciRemoved - first CodeInstruction from removed sequence. Can be useful for labels
+		public static CIList ciRemove(CIEnumerable cins, CIPredicate predicate, int indexDelta, int countToRemove) =>
+			ciRemove(cins.ToList(), predicate, indexDelta, countToRemove, out _);
 
-		public static List<CodeInstruction> ciRemove(List<CodeInstruction> list, Predicate<CodeInstruction> predicate, int delta, int count) =>
-			ciRemove(list, predicate, delta, count, out _);
+		public static CIList ciRemove(CIList list, CIPredicate predicate, int indexDelta, int countToRemove) =>
+			ciRemove(list, predicate, indexDelta, countToRemove, out _);
 
-		public static List<CodeInstruction> ciRemove(List<CodeInstruction> list, Predicate<CodeInstruction> predicate, int delta, int count, out CodeInstruction removed)
+		public static CIList ciRemove(CIList list, CIPredicate predicate, int indexDelta, int countToRemove, out CodeInstruction ciRemoved)
 		{
 			int index = list.FindIndex(predicate);
-			return ciRemove(list, (index == -1? -1: index + delta), count, out removed);
+			return ciRemove(list, (index == -1? -1: index + indexDelta), countToRemove, out ciRemoved);
 		}
 
-		public static List<CodeInstruction> ciRemove(List<CodeInstruction> list, int index, int count, out CodeInstruction removed)
+		public static CIList ciRemove(CIList list, int index, int countToRemove, out CodeInstruction ciRemoved) // TODO: add transpiler check
 		{
-			// check index and count
-			removed = list[index];
-			list.RemoveRange(index, count);
+			ciRemoved = null;
+
+			if (index >= 0 && index + countToRemove <= list.Count)
+			{
+				ciRemoved = list[index];
+				list.RemoveRange(index, countToRemove);
+			}
 
 			return list;
 		}
 
 
-		public static List<CodeInstruction> ciReplace(IEnumerable<CodeInstruction> cins, Predicate<CodeInstruction> predicate, params object[] toReplace) =>
-			ciReplace(cins.ToList(), predicate, toReplace);
+		// ciReplace overloads
+		// replaces first matched CodeInstruction with cinsForReplace CodeInstructions
+		public static CIList ciReplace(CIEnumerable cins, CIPredicate predicate, params object[] cinsForReplace) =>
+			ciReplace(cins.ToList(), predicate, cinsForReplace);
 
-		public static List<CodeInstruction> ciReplace(List<CodeInstruction> list, Predicate<CodeInstruction> predicate, params object[] toReplace) =>
-			ciReplace(list, list.FindIndex(predicate), toReplace);
+		public static CIList ciReplace(CIList list, CIPredicate predicate, params object[] cinsForReplace) =>
+			ciReplace(list, list.FindIndex(predicate), cinsForReplace);
 
-		public static List<CodeInstruction> ciReplace(List<CodeInstruction> list, int index, params object[] toReplace)
+		public static CIList ciReplace(CIList list, int index, params object[] cinsForReplace)
 		{
-			ciRemove(list, index, 1, out CodeInstruction removed);
+			if (index >= 0)
+			{
+				ciRemove(list, index, 1, out CodeInstruction ciRemoved);
+				ciInsert(list, index, toCIList(cinsForReplace));
 
-			list.InsertRange(index, ciList(toReplace));
-			list[index].labels.AddRange(removed.labels);
+				list[index].labels.AddRange(ciRemoved.labels);
+			}
 
 			return list;
 		}
+#endregion
 
-
-
-
-		// changing constant to config field
-		public static Instructions constToCfgVar<T>(Instructions cins, T val, string cfgVar)
+#region internal class
+		// https://stackoverflow.com/questions/600978/how-to-do-template-specialization-in-c-sharp
+		static class OpCodeByType
 		{
-			return _changeLDCto(cins, val, _codeForCfgVar(cfgVar));
-			
-			//var list = cins.ToList();
+			interface IGetOpCode<T> { OpCode get(); }
 
-			//int index = list.FindIndex(ci => ci.isLDC(val));
-			//list.InsertRange(index, _codeCItoCfgVar(cfgVar, ciRemove(list, index, 1)));
+			class GetOpCode<T>: IGetOpCode<T>
+			{
+				class GetOpSpec: IGetOpCode<float>, IGetOpCode<double>, IGetOpCode<sbyte>
+				{
+					public static readonly GetOpSpec S = new GetOpSpec();
 
-			//return list;
+					OpCode IGetOpCode<float>.get()  => OpCodes.Ldc_R4;
+					OpCode IGetOpCode<double>.get() => OpCodes.Ldc_R8;
+					OpCode IGetOpCode<sbyte>.get()  => OpCodes.Ldc_I4_S;
+				}
+
+				public static readonly IGetOpCode<T> S = GetOpSpec.S as IGetOpCode<T> ?? new GetOpCode<T>();
+
+				OpCode IGetOpCode<T>.get() => OpCodes.Nop;
+			}
+
+			public static OpCode get<T>() => GetOpCode<T>.S.get();
 		}
-
-		// changing constant to config field if gameobject have component C
-		public static Instructions constToCfgVar<T, C>(Instructions cins, T val, string cfgVar, ILGenerator ilg) where C: Component
-		{
-			return _changeLDCto(cins, val, _codeForCfgVar<T, C>(val, cfgVar, ilg));
-			//var list = cins.ToList();
-
-			//int index = list.FindIndex(ci => ci.isLDC(val));
-			//list.InsertRange(index, _codeCItoCfgVar<C>(cfgVar, ciRemove(list, index, 1), ilg));
-
-			//return list;
-		}
-
-		public static Instructions _changeLDCto<T>(Instructions cins, T val, IEnumerable<CodeInstruction> cins2)
-		{
-			var list = cins.ToList();
-
-			ciReplace(list, ci => ci.isLDC(val), cins2);
-			//int index = list.FindIndex(ci => ci.isLDC(val));
-			//list.InsertRange(index, cins2);
-
-			return list;
-		}
-
-
-
-		public static Instructions _codeForCfgVar(string configVar)//, CodeInstruction ci = null)
-		{
-			FieldInfo varField = mainConfigField?.FieldType.field(configVar);
-
-			if (varField == null && $"changeConstToConfigVar: varField for {configVar} is not found".logError())
-				yield break;
-
-			CodeInstruction ldsfld = new CodeInstruction(OpCodes.Ldsfld, mainConfigField);
-			//if (ci != null && ci.labels.Count > 0)
-			//	ldsfld.labels.AddRange(ci.labels);
-
-			yield return ldsfld;
-			yield return new CodeInstruction(OpCodes.Ldfld, varField);
-		}
-
-
-		public static Instructions _codeForCfgVar<T, C>(T value, string configVar, /*CodeInstruction ci,*/ ILGenerator ilg) where C: Component
-		{																												$"HarmonyHelper.changeConstToVar: injecting {value} => {configVar} ({typeof(C)})".logDbg();
-			FieldInfo varField = mainConfigField?.FieldType.field(configVar);
-
-			if (varField == null && $"changeConstToConfigVar: varField for {configVar} is not found".logError())
-				yield break;
-
-			Label lb1 = ilg.DefineLabel();
-			Label lb2 = ilg.DefineLabel();
-
-			yield return new CodeInstruction(OpCodes.Ldarg_0);// { labels = ci.labels};
-			yield return new CodeInstruction(OpCodes.Callvirt, typeof(Component).method("GetComponent", new Type[0]).MakeGenericMethod(typeof(C)));
-
-			yield return new CodeInstruction(OpCodes.Ldnull);
-			yield return new CodeInstruction(OpCodes.Call, typeof(UnityEngine.Object).method("op_Inequality"));
-
-			yield return new CodeInstruction(OpCodes.Brtrue_S, lb1);
-			yield return new CodeInstruction(OpCodeByType.get<T>(), value);
-			//yield return new CodeInstruction(ci.opcode, ci.operand);
-			yield return new CodeInstruction(OpCodes.Br_S, lb2);
-
-			var ci1 = new CodeInstruction(OpCodes.Ldsfld, mainConfigField);// { labels = new List<Label>{lb1} };
-			ci1.labels.Add(lb1);
-			yield return ci1;
-
-			yield return new CodeInstruction(OpCodes.Ldfld, varField);
-
-			var ci2 = new CodeInstruction(OpCodes.Nop);
-			ci2.labels.Add(lb2);
-			yield return ci2;
-		}
+#endregion
 	}
 }

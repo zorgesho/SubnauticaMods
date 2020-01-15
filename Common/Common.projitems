@@ -13,7 +13,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)debug\Misc.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)harmony\HarmonyHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)debug\Log.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)harmony\Misc.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)harmony\OptionalPatchAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)harmony\TranspilerHelpers.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)harmony\CIHelpers.cs" />

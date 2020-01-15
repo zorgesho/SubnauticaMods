@@ -7,12 +7,8 @@ namespace Common
 	{
 		public static HarmonyInstance harmonyInstance { get; private set; } = null;
 
-		// expected to called only from mod entry function
-		public static void patchAll(bool searchConfig = true)
+		public static void patchAll(bool _ = true) // TODO: remove param
 		{
-			if (searchConfig)
-				findConfig("Main", "config"); // need to be called before harmony patching
-
 			harmonyInstance = HarmonyInstance.Create(Strings.modName);
 
 			Debug.startStopwatch();

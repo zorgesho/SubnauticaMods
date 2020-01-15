@@ -14,7 +14,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)harmony\HarmonyHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)debug\Log.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)harmony\OptionalPatchAttribute.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)harmony\TranspilerHelpers.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)harmony\CIHelpers.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LanguageHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Misc.cs" />

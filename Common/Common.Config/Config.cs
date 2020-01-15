@@ -5,6 +5,8 @@ namespace Common.Configuration
 {
 	partial class Config
 	{
+		public static Config main { get; private set; } = null;
+
 		static readonly bool loadFromFile =
 #if (DEBUG && !LOAD_CONFIG)
 			false;
@@ -16,7 +18,7 @@ namespace Common.Configuration
 		protected Config() {}
 
 		// try to load config from mod folder. If file not found, create default config and save it to that path
-		public static C tryLoad<C>(string localPath = "config.json", bool processAttributes = true) where C: Config, new()
+		public static C tryLoad<C>(string localPath = "config.json", bool processAttributes = true, bool mainConfig = true) where C: Config, new()
 		{
 			string configPath = localPath != null? Paths.modRootPath + localPath: null;
 			C config = null;
@@ -35,6 +37,14 @@ namespace Common.Configuration
 				{
 					config = new C();
 					config.save(configPath);
+				}
+
+				if (mainConfig)
+				{
+					if (main == null)
+						main = config;
+					else
+						"Config.main is already set".logWarning();
 				}
 
 				if (processAttributes)

@@ -13,6 +13,18 @@ namespace Common
 
 	static partial class HarmonyHelper // additional transpilers stuff to work with config
 	{
+		static Configuration.Config mainConfig = null;
+		static readonly FieldInfo mainConfigField = typeof(HarmonyHelper).field(nameof(mainConfig)); // for using in transpiler helper functions
+
+		static FieldInfo getCfgVarField(string cfgVarName)
+		{
+			if (mainConfig == null)
+				mainConfig = Configuration.Config.main;
+
+			return mainConfig?.GetType().field(cfgVarName);
+		}
+
+
 		// changing constant to config field
 		public static CIList constToCfgVar<T>(CIEnumerable cins, T val, string cfgVarName) =>
 			ciReplace(cins, ci => ci.isLDC(val), _codeForCfgVar(cfgVarName));
@@ -24,7 +36,7 @@ namespace Common
 
 		public static CIEnumerable _codeForCfgVar(string cfgVarName) // TODO: check labels copy
 		{
-			FieldInfo varField = mainConfigField?.FieldType.field(cfgVarName);
+			FieldInfo varField = getCfgVarField(cfgVarName);
 
 			if (varField == null && $"_codeForCfgVar: varField for {cfgVarName} is not found".logError())
 				yield break;
@@ -36,7 +48,7 @@ namespace Common
 
 		public static CIEnumerable _codeForCfgVar<T, C>(T val, string cfgVarName, ILGenerator ilg) where C: Component
 		{																												$"HarmonyHelper.constToCfgVar: injecting {val} => {cfgVarName} ({typeof(C)})".logDbg();
-			FieldInfo varField = mainConfigField?.FieldType.field(cfgVarName);
+			FieldInfo varField = getCfgVarField(cfgVarName);
 
 			if (varField == null && $"_codeForCfgVar: varField for {cfgVarName} is not found".logError())
 				yield break;

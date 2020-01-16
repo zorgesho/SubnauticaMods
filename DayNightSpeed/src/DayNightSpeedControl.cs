@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic; // used in DEBUG section
+
 using UnityEngine;
 
 using Common;
@@ -100,7 +101,7 @@ namespace DayNightSpeed
 						if (goals.Add(goal.goalKey))
 						{
 							const string colorCompleted = "<color=#999900CC>", colorNotCompleted = "<color=#FFFF00FF>";
-							
+
 							bool completed = Story.StoryGoalManager.main.completedGoals.Contains(goal.goalKey);
 							string goalName = (completed? colorCompleted: colorNotCompleted) + goal.goalKey + "</color>";
 
@@ -130,7 +131,7 @@ namespace DayNightSpeed
 	}
 
 	// helper for transpilers
-	static class _dayNightSpeedClamped01
+	static class _dnsClamped01
 	{
 		public static Harmony.CodeInstruction ci
 		{

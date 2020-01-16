@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Reflection.Emit;
 using System.Collections.Generic;
+
 using Harmony;
+
 using Common;
 
 namespace DayNightSpeed
@@ -18,26 +20,14 @@ namespace DayNightSpeed
 	
 	// modifying creature grow and breed time (breed time is half of grow time)
 	[HarmonyPatch(typeof(WaterParkCreatureParameters), MethodType.Constructor)]
-	[HarmonyPatch(new Type[] { typeof(float), typeof(float), typeof(float), typeof(float), typeof(bool)})]
+	[HarmonyPatch(new Type[] {typeof(float), typeof(float), typeof(float), typeof(float), typeof(bool)})]
 	static class WaterParkCreature_Constructor_Patch
 	{
 #if !DEBUG
 		static bool Prepare() => Main.config.multCreaturesGrow != 1.0f;
 #endif
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins)
-		{
-			foreach (var ci in cins)
-			{
-				yield return ci;
-
-				if (ci.isLDC(1200f))
-				{
-					foreach (var i in HarmonyHelper._codeForChangeInstructionToConfigVar(nameof(ModConfig.multCreaturesGrow)))
-						yield return i;
-					yield return new CodeInstruction(OpCodes.Mul);
-				}
-			}
-		}
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins) =>
+			HarmonyHelper.ciInsert(cins, ci => ci.isLDC(1200f), HarmonyHelper._codeForCfgVar(nameof(ModConfig.multCreaturesGrow)), OpCodes.Mul);
 	}
 
 	// modifying plants grow time
@@ -48,7 +38,7 @@ namespace DayNightSpeed
 		static bool Prepare() => Main.config.multPlantsGrow != 1.0f;
 #endif
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins) =>
-			HarmonyHelper.changeConstToConfigVar(cins, 1.0f, nameof(ModConfig.multPlantsGrow));
+			HarmonyHelper.constToCfgVar(cins, 1.0f, nameof(ModConfig.multPlantsGrow));
 	}
 
 	// modifying fruits grow time (on lantern tree)
@@ -83,8 +73,8 @@ namespace DayNightSpeed
 	}
 
 
-	#region Debug patches
-	#if DEBUG
+#region Debug patches
+#if DEBUG
 	[HarmonyPatch(typeof(Bed), "GetCanSleep")]
 	static class Bed_GetCanSleep_Patch
 	{
@@ -105,16 +95,6 @@ namespace DayNightSpeed
 		}
 	}
 
-	[HarmonyPatch(typeof(Survival), "UpdateStats")]
-	static class Survival_UpdateStats_Patch_Dbg
-	{
-		static void Postfix(Survival __instance)
-		{
-			if (Main.config.dbgCfg.showSurvivalStats)
-				$"food: {__instance.food} water: {__instance.water}".onScreen("survival stats");
-		}
-	}
-
 	[HarmonyPatch(typeof(Story.StoryGoalScheduler), "Schedule")]
 	static class StoryGoalScheduler_Schedule_Patch
 	{
@@ -126,6 +106,6 @@ namespace DayNightSpeed
 	{
 		static void Postfix(string key, GoalType goalType) => $"goal removed: {key} {goalType}".logDbg();
 	}
-	#endif
-	#endregion
+#endif
+#endregion
 }

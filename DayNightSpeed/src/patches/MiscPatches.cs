@@ -1,62 +1,49 @@
-﻿using System.Reflection.Emit;
+﻿using System.Linq;
+using System.Reflection.Emit;
 using System.Collections.Generic;
 
 using Harmony;
 
+using Common;
+
 namespace DayNightSpeed
 {
-	using Instructions = IEnumerable<CodeInstruction>;
+	using CIEnumerable = IEnumerable<CodeInstruction>;
+	using CIList = List<CodeInstruction>;
 	using static Common.HarmonyHelper;
 
 	// fixing hunger/thrist timers
 	[HarmonyPatch(typeof(Survival), "UpdateStats")]
 	static class Survival_UpdateStats_Patch
 	{
-		static Instructions Transpiler(Instructions cins)
+		static CIEnumerable Transpiler(CIEnumerable cins)
 		{
-			int ldc100 = 0;
-			foreach (var ci in cins)
-			{
-				yield return ci;
+			CIList listToInsert = toCIList(_codeForCfgVar(nameof(ModConfig.dayNightSpeed)), OpCodes.Mul);
 
-				if (ci.isLDC(100f) && ++ldc100 <= 2)
-				{
-					foreach (var i in _codeForChangeInstructionToConfigVar(nameof(ModConfig.dayNightSpeed)))
-						yield return i;
+			if (Main.config.multHungerThrist != 1f)
+				listToInsert.AddRange(toCIList(_codeForCfgVar(nameof(ModConfig.multHungerThrist)), OpCodes.Div));
 
-					yield return new CodeInstruction(OpCodes.Mul);
-
-					if (Main.config.multHungerThrist != 1f)
-					{
-						foreach (var i in _codeForChangeInstructionToConfigVar(nameof(ModConfig.multHungerThrist)))
-							yield return i;
-
-						yield return new CodeInstruction(OpCodes.Div);
-					}
-				}
-			}
+			return ciInsert(cins, ci => ci.isLDC(100f), +1, 2, listToInsert);
 		}
+
+#if DEBUG // debug patch
+		static void Postfix(Survival __instance)
+		{
+			if (Main.config.dbgCfg.showSurvivalStats)
+				$"food: {__instance.food} water: {__instance.water}".onScreen("survival stats");
+		}
+#endif
 	}
 
 	// fixing crafting times
 	[HarmonyPatch(typeof(CrafterLogic), "Craft")]
 	static class CrafterLogic_Craft_Patch
 	{
-		static Instructions Transpiler(Instructions cins)
+		static CIEnumerable Transpiler(CIEnumerable cins)
 		{
 			int ld = 0;
-			foreach (var ci in cins)
-			{
-				yield return ci;
-
-				if ((ci.opcode == OpCodes.Ldarg_2 && ++ld == 2) || ci.isLDC(0.1f))
-				{
-					foreach (var i in _codeForChangeInstructionToConfigVar(nameof(ModConfig.dayNightSpeed)))
-						yield return i;
-
-					yield return new CodeInstruction(OpCodes.Mul);
-				}
-			}
+			return ciInsert(cins, ci => (ci.isOp(OpCodes.Ldarg_2) && ++ld == 2) || ci.isLDC(0.1f), +1, 2,
+				_codeForCfgVar(nameof(ModConfig.dayNightSpeed)), OpCodes.Mul);
 		}
 	}
 
@@ -64,58 +51,54 @@ namespace DayNightSpeed
 	[HarmonyPatch(typeof(MapRoomFunctionality), "GetScanInterval")]
 	static class MapRoomFunctionality_GetScanInterval_Patch
 	{
-		static Instructions Transpiler(Instructions cins)
-		{
-			foreach (var ci in cins)
-			{
-				yield return ci;
-
-				if (ci.opcode == OpCodes.Call)
-				{
-					yield return _dayNightSpeedClamped01.ci;
-					yield return new CodeInstruction(OpCodes.Mul);
-				}
-			}
-		}
+		static CIEnumerable Transpiler(CIEnumerable cins) =>
+			ciInsert(cins, ci => ci.isOp(OpCodes.Call), _dnsClamped01.ci, OpCodes.Mul);
 	}
 
 	// fixing sunbeam counter so it shows realtime seconds regardless of daynightspeed
 	[HarmonyPatch(typeof(uGUI_SunbeamCountdown), "UpdateInterface")]
 	static class uGUISunbeamCountdown_UpdateInterface_Patch
 	{
-		static Instructions Transpiler(Instructions cins)
-		{
-			foreach (var ci in cins)
-			{
-				yield return ci;
-
-				if (ci.opcode == OpCodes.Sub)
-				{
-					foreach (var i in _codeForChangeInstructionToConfigVar(nameof(ModConfig.dayNightSpeed)))
-						yield return i;
-
-					yield return new CodeInstruction(OpCodes.Div);
-				}
-			}
-		}
+		static CIEnumerable Transpiler(CIEnumerable cins) =>
+			ciInsert(cins, ci => ci.isOp(OpCodes.Sub), _codeForCfgVar(nameof(ModConfig.dayNightSpeed)), OpCodes.Div);
 	}
 
 	// we can use object with propulsion cannon after shot in 3 seconds
 	[HarmonyPatch(typeof(PropulseCannonAmmoHandler), "Update")]
 	static class PropulseCannonAmmoHandler_Update_Patch
 	{
-		static Instructions Transpiler(Instructions cins)
-		{
-			foreach (var ci in cins)
-			{
-				yield return ci;
+		static CIEnumerable Transpiler(CIEnumerable cins) =>
+			ciInsert(cins, ci => ci.isLDC(3.0f), _dnsClamped01.ci, OpCodes.Mul);
+	}
 
-				if (ci.isLDC(3.0f))
-				{
-					yield return _dayNightSpeedClamped01.ci;
-					yield return new CodeInstruction(OpCodes.Mul);
-				}
-			}
+	// fixed lifetime for explosion
+	[HarmonyPatch(typeof(WorldForces), "AddExplosion")]
+	static class WorldForces_AddExplosion_Patch
+	{
+		static CIEnumerable Transpiler(CIEnumerable cins) =>
+			ciInsert(cins, ci => ci.isLDC(500f), _dnsClamped01.ci, OpCodes.Div);
+	}
+
+	// fixed lifetime for current
+	[HarmonyPatch(typeof(WorldForces), "AddCurrent")]
+	static class WorldForces_AddCurrent_Patch
+	{
+		static CIEnumerable Transpiler(CIEnumerable cins) =>
+			ciInsert(cins, ci => ci.isOp(OpCodes.Ldarg_S, (byte)5), _dnsClamped01.ci, OpCodes.Mul);
+	}
+
+	// fixes for explosions and currents
+	[HarmonyPatch(typeof(WorldForces), "DoFixedUpdate")]
+	static class WorldForces_DoFixedUpdate_Patch
+	{
+		static CIEnumerable Transpiler(CIEnumerable cins)
+		{
+			var list = cins.ToList();
+
+			ciInsert(list, ci => ci.isLDC<double>(0.03f), _dnsClamped01.ci, OpCodes.Mul); // do not change to 0.03d !
+			ciInsert(list, ci => ci.isLDC(500f), _dnsClamped01.ci, OpCodes.Div); // changing only first '500f'
+
+			return list;
 		}
 	}
 
@@ -130,72 +113,6 @@ namespace DayNightSpeed
 				rechargeIntervalInitial = __instance.rechargeInterval;
 
 			__instance.rechargeInterval = rechargeIntervalInitial * Main.config.dayNightSpeed;
-		}
-	}
-
-	// fixed lifetime for explosion
-	[HarmonyPatch(typeof(WorldForces), "AddExplosion")]
-	static class WorldForces_AddExplosion_Patch
-	{
-		static Instructions Transpiler(Instructions cins)
-		{
-			foreach (var ci in cins)
-			{
-				yield return ci;
-
-				if (ci.isLDC(500f))
-				{
-					yield return _dayNightSpeedClamped01.ci;
-					yield return new CodeInstruction(OpCodes.Div);
-				}
-			}
-		}
-	}
-
-	// fixed lifetime for current
-	[HarmonyPatch(typeof(WorldForces), "AddCurrent")]
-	static class WorldForces_AddCurrent_Patch
-	{
-		static Instructions Transpiler(Instructions cins)
-		{
-			foreach (var ci in cins)
-			{
-				yield return ci;
-
-				if (ci.isOp(OpCodes.Ldarg_S, (byte)5))
-				{
-					yield return _dayNightSpeedClamped01.ci;
-					yield return new CodeInstruction(OpCodes.Mul);
-				}
-			}
-		}
-	}
-
-	// fixes for explosions and currents
-	[HarmonyPatch(typeof(WorldForces), "DoFixedUpdate")]
-	static class WorldForces_DoFixedUpdate_Patch
-	{
-		static Instructions Transpiler(Instructions cins)
-		{
-			bool injected500 = false;
-
-			foreach (var ci in cins)
-			{
-				yield return ci;
-
-				if (ci.isLDC(0.03d)) // is it safe ?
-				{
-					yield return _dayNightSpeedClamped01.ci;
-					yield return new CodeInstruction(OpCodes.Mul);
-				}
-				else if (!injected500 && ci.isLDC(500f))
-				{
-					injected500 = true;
-
-					yield return _dayNightSpeedClamped01.ci;
-					yield return new CodeInstruction(OpCodes.Div);
-				}
-			}
 		}
 	}
 }

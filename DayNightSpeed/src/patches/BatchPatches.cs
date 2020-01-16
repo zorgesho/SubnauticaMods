@@ -4,11 +4,12 @@ using System.Reflection.Emit;
 using System.Collections.Generic;
 
 using Harmony;
+
 using Common;
 
 namespace DayNightSpeed
 {
-	using Instructions = IEnumerable<CodeInstruction>;
+	using CIEnumerable = IEnumerable<CodeInstruction>;
 	using static Common.HarmonyHelper;
 
 	static class DayNightCyclePatches
@@ -16,28 +17,19 @@ namespace DayNightSpeed
 		static bool inited = false;
 
 		// simple transpiler for changing 1.0 to current value of dayNightSpeed
-		static Instructions transpilerSpeed(Instructions cins) => changeConstToConfigVar(cins, 1.0f, nameof(Main.config.dayNightSpeed));
-		static readonly MethodInfo patchSpeedSimple = typeof(DayNightCyclePatches).method(nameof(transpilerSpeed));
-
+		static CIEnumerable transpiler_dayNightSpeed(CIEnumerable cins) => constToCfgVar(cins, 1.0f, nameof(Main.config.dayNightSpeed));
+		static readonly MethodInfo patchSpeedSimple = typeof(DayNightCyclePatches).method(nameof(transpiler_dayNightSpeed));
 
 		// transpiler for correcting time if daynightspeed < 1
-		static Instructions transpilerSpeedClamped01(Instructions cins)
+		static CIEnumerable transpiler_dnsClamped01(CIEnumerable cins)
 		{
 			MethodInfo deltaTime = typeof(DayNightCycle).method("get_deltaTime");
 			MethodInfo dayNightSpeed = typeof(DayNightCycle).method("get_dayNightSpeed");
 
-			foreach (var ci in cins)
-			{
-				yield return ci;
-
-				if (ci.opcode == OpCodes.Callvirt && (ci.operand.Equals(deltaTime) || ci.operand.Equals(dayNightSpeed)))
-				{
-					yield return _dayNightSpeedClamped01.ci;
-					yield return new CodeInstruction(OpCodes.Div);
-				}
-			}
+			return ciInsert(cins, ci => ci.isOp(OpCodes.Callvirt, deltaTime) || ci.isOp(OpCodes.Callvirt, dayNightSpeed), +1, 0,
+				_dnsClamped01.ci, OpCodes.Div);
 		}
-		static readonly MethodInfo patchSpeedClamped01 = typeof(DayNightCyclePatches).method(nameof(transpilerSpeedClamped01));
+		static readonly MethodInfo patchSpeedClamped01 = typeof(DayNightCyclePatches).method(nameof(transpiler_dnsClamped01));
 
 
 		static readonly Tuple<MethodInfo, MethodInfo>[] patches = new Tuple<MethodInfo, MethodInfo>[]

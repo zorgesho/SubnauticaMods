@@ -68,5 +68,32 @@ namespace Common
 
 			output.ToString().log();
 		}
+
+		[Conditional("DEBUG")]
+		public static void assert(bool condition, string message = null)
+		{
+			if (!condition)
+			{
+				string msg = $"Assertion failed: {message}";
+
+				$"{msg}".logError();
+				throw new Exception(msg);
+			}
+		}
+
+		//public static MethodBase _findMethodInStack<A>(out A attribute) where A: Attribute
+		//{
+		//	attribute = null;
+
+		//	foreach (var stackFrame in new StackTrace().GetFrames())
+		//	{
+		//		MethodBase method = stackFrame.GetMethod();
+
+		//		if ((attribute = Attribute.GetCustomAttribute(method, typeof(A)) as A) != null)
+		//			return method;
+		//	}
+
+		//	return null;
+		//}
 	}
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Diagnostics;
 using System.Reflection.Emit;
 using System.Collections.Generic;
 
@@ -16,7 +15,7 @@ namespace Common
 	{
 #region CodeInstruction extensions
 
-		public static bool isLDC<T>(this CodeInstruction ci, T val) => ci.isOp(OpCodeByType.get<T>(), val);
+		public static bool isLDC<T>(this CodeInstruction ci, T val) => ci.isOp(LdcOpCode.get<T>(), val);
 
 		public static bool isOp(this CodeInstruction ci, OpCode opcode, object operand = null) =>
 			ci.opcode == opcode && (operand == null || ci.operand.Equals(operand));
@@ -76,40 +75,49 @@ namespace Common
 
 		// ciInsert overloads
 		// maxMatchCount = 0 for all predicate matches
-		public static CIList ciInsert(CIEnumerable cins, int maxMatchCount, CIPredicate predicate, params object[] cinsToInsert) =>
-			ciInsert(cins.ToList(), maxMatchCount, predicate, cinsToInsert);
+		// indexDelta - change actual index from matched for insertion
+		// if indexDelta is 0 than cinsToInsert will be inserted right before finded instruction
+		// throws assert exception if maxMatchCount > 0 and there were less predicate matches
+		public static CIList ciInsert(CIEnumerable cins, CIPredicate predicate, int indexDelta, int maxMatchCount, params object[] cinsToInsert) =>
+			ciInsert(cins.ToList(), predicate, indexDelta, maxMatchCount, cinsToInsert);
 
-		// for first predicate match
+		// for just first predicate match (right after finded instruction)
 		public static CIList ciInsert(CIEnumerable cins, CIPredicate predicate, params object[] cinsToInsert) =>
-			ciInsert(cins.ToList(), 1, predicate, cinsToInsert);
+			ciInsert(cins.ToList(), predicate, cinsToInsert);
 
-		// for first predicate match
+		// for just first predicate match (right after finded instruction)
 		public static CIList ciInsert(CIList list, CIPredicate predicate, params object[] cinsToInsert) =>
-			ciInsert(list, 1, predicate, cinsToInsert);
+			ciInsert(list, predicate, 1, 1, cinsToInsert);
 
-		public static CIList ciInsert(CIList list, int maxMatchCount, CIPredicate predicate, params object[] cinsToInsert)
+		public static CIList ciInsert(CIList list, CIPredicate predicate, int indexDelta, int maxMatchCount, params object[] cinsToInsert)
 		{
 			var listToInsert = toCIList(cinsToInsert);
 			int index, index0 = 0;
+			bool anyInserts = false;
 
-			do
+			while ((index = list.FindIndex(index0, predicate)) != -1 && (anyInserts = true))
 			{
-				if ((index = list.FindIndex(index0, predicate)) == -1)
+				ciInsert(list, index + indexDelta, listToInsert);
+				index0 += index + listToInsert.Count; // ? indexDelta
+
+				if (--maxMatchCount == 0)
 					break;
-
-				ciInsert(list, index, listToInsert);
-
-				index0 += index + listToInsert.Count;
 			}
-			while (--maxMatchCount != 0);
+
+			Debug.assert(anyInserts, $"ciInsert: no insertions were made");
+			Debug.assert(maxMatchCount <= 0, $"ciInsert: matchCount {maxMatchCount}");
 
 			return list;
 		}
 
-		public static CIList ciInsert(CIList list, int index, CIList listToInsert) // TODO: ?copy labels; add transpiler check
+		public static CIList ciInsert(CIList list, int index, CIList listToInsert) // TODO: ? copy labels
 		{
-			if (index >= 0)
+			if (index >= 0 && index <= list.Count)
+			{
+				Debug.assert(index == list.Count || list[index].labels.Count == 0, "ciInsert: target CodeInstruction have labels");
 				list.InsertRange(index, listToInsert);
+			}
+			else Debug.assert(false, $"ciInsert: CodeInstruction index is invalid ({index})");
 
 			return list;
 		}
@@ -131,7 +139,7 @@ namespace Common
 			return ciRemove(list, (index == -1? -1: index + indexDelta), countToRemove, out ciRemoved);
 		}
 
-		public static CIList ciRemove(CIList list, int index, int countToRemove, out CodeInstruction ciRemoved) // TODO: add transpiler check
+		public static CIList ciRemove(CIList list, int index, int countToRemove, out CodeInstruction ciRemoved)
 		{
 			ciRemoved = null;
 
@@ -140,6 +148,7 @@ namespace Common
 				ciRemoved = list[index];
 				list.RemoveRange(index, countToRemove);
 			}
+			else Debug.assert(false, "ciRemove: CodeInstruction index is invalid");
 
 			return list;
 		}
@@ -162,14 +171,16 @@ namespace Common
 
 				list[index].labels.AddRange(ciRemoved.labels);
 			}
+			else Debug.assert(false, "ciReplace: CodeInstruction index is invalid");
 
 			return list;
 		}
 #endregion
 
-#region internal class
+#region LdcOpCode
+		// helper class for getting LDC opcode based on number type
 		// https://stackoverflow.com/questions/600978/how-to-do-template-specialization-in-c-sharp
-		static class OpCodeByType
+		static class LdcOpCode
 		{
 			interface IGetOpCode<T> { OpCode get(); }
 

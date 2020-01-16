@@ -1,4 +1,6 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
+
 using Harmony;
 
 namespace Common
@@ -11,9 +13,18 @@ namespace Common
 		{
 			harmonyInstance = HarmonyInstance.Create(Strings.modName);
 
-			Debug.startStopwatch();
-			harmonyInstance.PatchAll(Assembly.GetExecutingAssembly());
-			Debug.stopStopwatch($"Harmony.PatchAll {Strings.modName}");
+			try
+			{
+				Debug.startStopwatch();
+				harmonyInstance.PatchAll(Assembly.GetExecutingAssembly());
+				Debug.stopStopwatch($"HarmonyHelper.patchAll {Strings.modName}");
+			}
+			catch (Exception e)
+			{
+				Debug.stopStopwatch();
+				Log.msg(e, "HarmonyHelper.patchAll"); // so the exception will be in the mod's log
+				throw e;
+			}
 		}
 
 		public static void patch(MethodBase original, MethodInfo prefix = null, MethodInfo postfix = null, MethodInfo transpiler = null)
@@ -24,11 +35,13 @@ namespace Common
 
 				Debug.startStopwatch();
 				harmonyInstance.Patch(original, _harmonyMethod(prefix), _harmonyMethod(postfix), _harmonyMethod(transpiler));
-				Debug.stopStopwatch($"HarmonyHelper.patch");
+				Debug.stopStopwatch("HarmonyHelper.patch");
 			}
-			catch (System.Exception e)
+			catch (Exception e)
 			{
+				Debug.stopStopwatch();
 				Log.msg(e, "HarmonyHelper.patch");
+				throw e;
 			}
 		}
 	}

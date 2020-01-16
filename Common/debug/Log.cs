@@ -81,7 +81,7 @@ namespace Common
 
 		static string formatException(Exception e)
 		{
-			return (e != null)? $"{e.GetType()}\tMESSAGE: {e.Message}\n\tSTACKTRACE:\n{e.StackTrace}\n" + formatException(e.InnerException): "";
+			return (e == null)? "": $"\r\n{e.GetType()}: {e.Message}\r\nSTACKTRACE:\r\n{e.StackTrace}\r\n" + formatException(e.InnerException);
 		}
 	}
 }

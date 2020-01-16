@@ -5,11 +5,11 @@ using System.Collections.Generic;
 using Harmony;
 using UnityEngine;
 
-using Common;
-using static Common.HarmonyHelper;
-
 namespace PrawnSuitGrapplingArmUpgrade
 {
+	using static Common.HarmonyHelper;
+	using CIEnumerable = IEnumerable<CodeInstruction>;
+
 	[HarmonyPatch(typeof(Exosuit), "OnUpgradeModuleChange")]
 	static class Exosuit_OnUpgradeModuleChange_Patch
 	{
@@ -44,25 +44,15 @@ namespace PrawnSuitGrapplingArmUpgrade
 	[HarmonyPatch(typeof(ExosuitGrapplingArm), "FixedUpdate")]
 	static class ExosuitGrapplingArm_FixedUpdate_Patch
 	{
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins, ILGenerator ilg)
+		static CIEnumerable Transpiler(CIEnumerable cins, ILGenerator ilg)
 		{
 			var list = cins.ToList();
 
-			for (int i = list.Count - 1; i >= 0; i--) // changing list in the process, so iterate it backwards
-			{
-				void tryChangeVal(float val, string configVar)
-				{
-					if (list[i].isLDC(val))
-					{
-						list.RemoveAt(i);
-						list.InsertRange(i, _codeForChangeConstToConfigVar<float, GrapplingArmUpgraded>(val, configVar, ilg));
-					}
-				}
+			void _changeVal(float val, string cfgVar) => constToCfgVar<float, GrapplingArmUpgraded>(list, val, cfgVar, ilg);
 
-				tryChangeVal(35f, nameof(Main.config.hookMaxDistance));
-				tryChangeVal(15f, nameof(Main.config.acceleration));
-				tryChangeVal(400f, nameof(Main.config.force));
-			}
+			_changeVal(35f,  nameof(Main.config.hookMaxDistance));
+			_changeVal(15f,  nameof(Main.config.acceleration));
+			_changeVal(400f, nameof(Main.config.force));
 
 			return list;
 		}
@@ -72,21 +62,11 @@ namespace PrawnSuitGrapplingArmUpgrade
 	[HarmonyPatch(typeof(ExosuitGrapplingArm), "OnHit")]
 	static class ExosuitGrapplingArm_OnHit_Patch
 	{
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins, ILGenerator ilg)
+		static CIEnumerable Transpiler(CIEnumerable cins, ILGenerator ilg)
 		{
 			int ldc25 = 0;
-			foreach (var ci in cins)
-			{
-				if (ci.isLDC(25f) && ++ldc25 == 2)
-				{
-					foreach (var i in _codeForChangeConstToConfigVar<float, GrapplingArmUpgraded>(25f, nameof(Main.config.hookSpeed), ilg))
-						yield return i;
-
-					continue;
-				}
-
-				yield return ci;
-			}
+			return ciReplace(cins, ci => ci.isLDC(25f) && ++ldc25 == 2,
+				_codeForCfgVar<float, GrapplingArmUpgraded>(25f, nameof(Main.config.hookSpeed), ilg));
 		}
 	}
 
@@ -94,7 +74,7 @@ namespace PrawnSuitGrapplingArmUpgrade
 	[HarmonyPatch(typeof(ExosuitGrapplingArm), "IExosuitArm.OnUseDown")]
 	static class ExosuitGrapplingArm_OnUseDown_Patch
 	{
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins, ILGenerator ilg) =>
-			changeConstToConfigVar<float, GrapplingArmUpgraded>(cins, 2.0f, nameof(Main.config.armCooldown), ilg);
+		static CIEnumerable Transpiler(CIEnumerable cins, ILGenerator ilg) =>
+			constToCfgVar<float, GrapplingArmUpgraded>(cins, 2.0f, nameof(Main.config.armCooldown), ilg);
 	}
 }

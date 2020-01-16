@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
 using System.Reflection.Emit;
 using System.Collections.Generic;
 
@@ -11,7 +12,7 @@ using Common;
 
 namespace MiscPatches
 {
-	using Instructions = IEnumerable<CodeInstruction>;
+	using CIEnumerable = IEnumerable<CodeInstruction>;
 
 	// turn off vehicle lights by default
 	[HarmonyPatch(typeof(Vehicle), "Start")]
@@ -119,18 +120,13 @@ namespace MiscPatches
 		static int _seamoth(Vehicle vehicle) => Math.Min(vehicle.slotIDs.Length, Main.config.maxSlotsCountSeamoth);
 		static int _prawn(Vehicle vehicle)   => Math.Min(vehicle.slotIDs.Length, Main.config.maxSlotsCountPrawnSuit + 2);
 
-		static Instructions ci(Instructions cins, bool isSeamoth)
+		static CIEnumerable transpiler(CIEnumerable cins, bool isSeamoth)
 		{
+			MethodInfo maxSlotsCount = typeof(VehiclesLessQuickSlots).method(isSeamoth? "_seamoth": "_prawn");
 			var list = cins.ToList();
 
-			list.RemoveRange(0, 5);
-
-			list.InsertRange(0, new List<CodeInstruction>()
-			{
-				new CodeInstruction(OpCodes.Ldarg_0),
-				new CodeInstruction(OpCodes.Call, typeof(VehiclesLessQuickSlots).method(isSeamoth? "_seamoth": "_prawn")),
-				new CodeInstruction(OpCodes.Stloc_0)
-			});
+			HarmonyHelper.ciRemove(list, 0, 5);
+			HarmonyHelper.ciInsert(list, 0, HarmonyHelper.toCIList(OpCodes.Ldarg_0, new CodeInstruction(OpCodes.Call, maxSlotsCount), OpCodes.Stloc_0));
 
 			return list;
 		}
@@ -138,13 +134,13 @@ namespace MiscPatches
 		[HarmonyPatch(typeof(Vehicle), "GetSlotBinding", new Type[] {})]
 		static class Vehicle_GetSlotBinding_Patch
 		{
-			static Instructions Transpiler(Instructions cins) => ci(cins, true);
+			static CIEnumerable Transpiler(CIEnumerable cins) => transpiler(cins, true);
 		}
 
 		[HarmonyPatch(typeof(Exosuit), "GetSlotBinding", new Type[] {})]
 		static class Exosuit_GetSlotBinding_Patch
 		{
-			static Instructions Transpiler(Instructions cins) => ci(cins, false);
+			static CIEnumerable Transpiler(CIEnumerable cins) => transpiler(cins, false);
 		}
 	}
 

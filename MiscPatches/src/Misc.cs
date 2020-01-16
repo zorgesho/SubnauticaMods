@@ -128,6 +128,8 @@ namespace MiscPatches
 				int indexForInject	    = indexForChangeLabel + 5;																					$"indexForInject: {indexForInject}".logDbg();
 				int indexForJumpLabel   = list.FindIndex(indexForInject, ci => ci.isOp(OpCodes.Brfalse));											$"indexForJumpLabel: {indexForJumpLabel}".logDbg();
 
+				Common.Debug.assert(indexForChangeLabel != -1 && indexForJumpLabel != -1);
+
 				Label lb = ilg.DefineLabel();
 				list[indexForChangeLabel].operand = lb;
 
@@ -154,13 +156,8 @@ namespace MiscPatches
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins)
 			{
-				var list = cins.ToList();
-
 				FieldInfo chargeSpeed = typeof(Charger).field("chargeSpeed");
-				int index = list.FindIndex(ci => ci.isOp(OpCodes.Ldfld, chargeSpeed)) + 2;
-				list.RemoveRange(index, 2);
-
-				return list;
+				return HarmonyHelper.ciRemove(cins, ci => ci.isOp(OpCodes.Ldfld, chargeSpeed), +2, 2); // remove "*capacity"
 			}
 		}
 

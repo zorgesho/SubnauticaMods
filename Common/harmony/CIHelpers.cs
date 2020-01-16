@@ -139,6 +139,9 @@ namespace Common
 			return ciRemove(list, (index == -1? -1: index + indexDelta), countToRemove, out ciRemoved);
 		}
 
+		public static CIList ciRemove(CIList list, int index, int countToRemove) =>
+			ciRemove(list, index, countToRemove, out _);
+
 		public static CIList ciRemove(CIList list, int index, int countToRemove, out CodeInstruction ciRemoved)
 		{
 			ciRemoved = null;

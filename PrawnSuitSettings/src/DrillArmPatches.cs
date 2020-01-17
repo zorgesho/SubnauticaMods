@@ -5,20 +5,15 @@ using Harmony;
 using UnityEngine;
 
 using Common;
-using Common.Configuration;
 
 namespace PrawnSuitSettings
 {
 	// don't auto pickup resources after drilling
-	[HarmonyHelper.OptionalPatch(typeof(Drillable), "ManagedUpdate")]
-	static class DrillableResourcesPickup
+	[HarmonyHelper.OptionalPatch]
+	[HarmonyPatch(typeof(Drillable), "ManagedUpdate")]
+	static class Drillable_ManagedUpdate_Patch__ResourcesPickup
 	{
-		public class SettingChanged: Config.Field.ICustomAction
-		{
-			public void customAction() => refresh();
-		}
-
-		public static void refresh() => HarmonyHelper.setPatchEnabled(!Main.config.autoPickupDrillableResources, typeof(DrillableResourcesPickup));
+		static bool Prepare() => !Main.config.autoPickupDrillableResources;
 
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins) =>
 			HarmonyHelper.ciRemove(cins, ci => ci.isOp(OpCodes.Ldloc_2), 0, 4);

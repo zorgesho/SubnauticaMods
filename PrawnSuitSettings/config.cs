@@ -55,7 +55,7 @@ namespace PrawnSuitSettings
 		public readonly bool toggleableDrillArm = false;
 
 		[Options.Field("Auto pickup resources after drilling")]
-		[Field.CustomAction(typeof(DrillableResourcesPickup.SettingChanged))]
+		[Field.CustomAction(typeof(Common.HarmonyHelper.UpdateOptionalPatches))]
 		public readonly bool autoPickupDrillableResources = true;
 	}
 }

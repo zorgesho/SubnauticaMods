@@ -17,6 +17,8 @@ namespace Common
 		static Configuration.Config mainConfig = null;
 		static readonly FieldInfo mainConfigField = typeof(HarmonyHelper).field(nameof(mainConfig)); // for using in transpiler helper functions
 
+		public class UpdateOptionalPatches: Configuration.Config.Field.ICustomAction { public void customAction() => updateOptionalPatches(); }
+
 		static FieldInfo getCfgVarField(string cfgVarName)
 		{
 			if (mainConfig == null)

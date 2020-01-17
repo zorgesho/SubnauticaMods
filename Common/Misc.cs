@@ -31,10 +31,10 @@ namespace Common
 
 	static class ReflectionHelper
 	{
-		// for getting mod's defined types, don't return any of Common projects types
+		// for getting mod's defined types, don't return any of Common projects types (or types without namespace)
 		public static IEnumerable<Type> definedTypes
 		{
-			get => Assembly.GetExecutingAssembly().GetTypes().Where(type => !type.Namespace.StartsWith(nameof(Common)));
+			get => Assembly.GetExecutingAssembly().GetTypes().Where(type => !(type.Namespace?.StartsWith(nameof(Common)) ?? true));
 		}
 
 		public static BindingFlags bfAll = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;

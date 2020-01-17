@@ -21,7 +21,7 @@ namespace RemoteTorpedoDetonator
 
 		public override void patch()
 		{
-			TechType = register("Remote torpedo detonator", "Allows detonate launched torpedoes remotely. Seamoth/Prawn compatible.");
+			TechType = register(L10n.ids_detonatorName, L10n.ids_detonatorDesc);
 
 			addToGroup(TechGroup.VehicleUpgrades, TechCategory.VehicleUpgrades);
 			addCraftingNodeTo(CraftTree.Type.SeamothUpgrades, "CommonModules");

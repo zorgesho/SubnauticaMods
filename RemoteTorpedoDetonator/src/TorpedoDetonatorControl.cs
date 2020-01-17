@@ -36,7 +36,7 @@ namespace RemoteTorpedoDetonator
 				checkEnabled();
 
 				if (enabled && Main.config.showHotkeyMessage)
-					LanguageCache.GetButtonFormat("Press <color=#ADF8FFFF>{0}</color> to detonate torpedoes remotely.", Main.config.hotkey).onScreen();
+					LanguageCache.GetButtonFormat(L10n.str("ids_enterVehicleMessage"), Main.config.hotkey).onScreen();
 			}
 			else if (playerMode == Player.Mode.Normal)
 				enabled = false;

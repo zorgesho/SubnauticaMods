@@ -1,8 +1,9 @@
-﻿using System.Linq;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 using Harmony;
 using UnityEngine;
+
+using Common;
 
 namespace ConsoleImproved
 {
@@ -12,12 +13,8 @@ namespace ConsoleImproved
 		[HarmonyPatch(typeof(ConsoleInput), "Validate")]
 		static class ConsoleInput_Validate_Patch
 		{
-			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins)
-			{
-				var list = cins.ToList();
-				list.RemoveRange(0, 5); // remove first line "this.historyIndex = this.history.Count;"
-				return list;
-			}
+			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins) =>
+				HarmonyHelper.ciRemove(cins, 0, 5); // remove first line "this.historyIndex = this.history.Count;"
 		}
 
 		[HarmonyPatch(typeof(DevConsole), "Awake")]

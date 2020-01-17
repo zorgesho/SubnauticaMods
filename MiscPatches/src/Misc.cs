@@ -120,24 +120,20 @@ namespace MiscPatches
 		{
 			static bool Prepare() => Main.config.additionalPropRepImmunity;
 
-			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins, ILGenerator ilg)
+			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins)
 			{
 				var list = cins.ToList();
 
-				int indexForChangeLabel = list.FindIndex(ci => ci.isOp(OpCodes.Brfalse));															$"indexForChangeLabel: {indexForChangeLabel }".logDbg();
-				int indexForInject	    = indexForChangeLabel + 5;																					$"indexForInject: {indexForInject}".logDbg();
-				int indexForJumpLabel   = list.FindIndex(indexForInject, ci => ci.isOp(OpCodes.Brfalse));											$"indexForJumpLabel: {indexForJumpLabel}".logDbg();
+				int indexForInject = list.FindIndex(ci => ci.isOp(OpCodes.Brfalse)) + 5;													$"indexForInject: {indexForInject}".logDbg();
+				int indexForJump   = list.FindIndex(indexForInject, ci => ci.isOp(OpCodes.Brfalse));										$"indexForJump: {indexForJump}".logDbg();
 
-				Common.Debug.assert(indexForChangeLabel != -1 && indexForJumpLabel != -1);
+				Common.Debug.assert(indexForInject >= 5 && indexForJump != -1);
 
-				Label lb = ilg.DefineLabel();
-				list[indexForChangeLabel].operand = lb;
-
-				list.InsertRange(indexForInject, new List<CodeInstruction>()
+				HarmonyHelper.ciInsert(list, indexForInject, new List<CodeInstruction>()
 				{
-					new CodeInstruction(OpCodes.Ldloc_S, 11) { labels = new List<Label> {lb} },
+					new CodeInstruction(OpCodes.Ldloc_S, 11),
 					new CodeInstruction(OpCodes.Call, typeof(PropRepCannonImmunity).method(nameof(PropRepCannonImmunity.isObjectImmune))),
-					new CodeInstruction(OpCodes.Brtrue, list[indexForJumpLabel].operand)
+					new CodeInstruction(OpCodes.Brtrue, list[indexForJump].operand)
 				});
 
 				return list;

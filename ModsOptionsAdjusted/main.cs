@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Reflection.Emit;
 using System.Collections.Generic;
 
@@ -23,16 +22,8 @@ namespace ModsOptionsAdjusted
 	[HarmonyPatch(typeof(uGUI_TabbedControlsPanel), "SetVisibleTab")]
 	static class uGUITabbedControlsPanel_SetVisibleTab_Patch
 	{
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins)
-		{
-			var list = cins.ToList();
-			int index = list.FindIndex(ci => ci.isOp(OpCodes.Beq));
-
-			if (index > 0)
-				list.RemoveRange(index - 3, 4); // removing "this.currentTab != tabIndex" check
-
-			return list;
-		}
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins) =>
+			HarmonyHelper.ciRemove(cins, ci => ci.isOp(OpCodes.Beq), -3, 4);  // removing "this.currentTab != tabIndex" check
 
 		// adjusting ui elements
 		static void Postfix(uGUI_TabbedControlsPanel __instance, int tabIndex)
@@ -77,10 +68,6 @@ namespace ModsOptionsAdjusted
 		{
 			Transform check = option.Find("Toggle/Background");
 			Text text = option.GetComponentInChildren<Text>();																				$"processToggleOption {text.text}".logDbg();
-
-			// :)
-			if (text.text == "Enable AuxUpgradeConsole                        (Restart game)")
-				text.text = "Enable AuxUpgradeConsole (Restart game)";
 
 			int textWidth = text.getTextWidth() + 20;
 			Vector3 pos = check.localPosition;

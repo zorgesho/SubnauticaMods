@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Reflection.Emit;
+﻿using System.Reflection.Emit;
 using System.Collections.Generic;
 
 using Harmony;
@@ -21,17 +20,8 @@ namespace PrawnSuitSettings
 
 		public static void refresh() => HarmonyHelper.setPatchEnabled(!Main.config.autoPickupDrillableResources, typeof(DrillableResourcesPickup));
 
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins)
-		{
-			var list = cins.ToList();
-
-			int index = list.FindIndex(ci => ci.isOp(OpCodes.Ldloc_2));
-
-			if (index > 0)
-				list.RemoveRange(index, 4);
-
-			return list;
-		}
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins) =>
+			HarmonyHelper.ciRemove(cins, ci => ci.isOp(OpCodes.Ldloc_2), 0, 4);
 	}
 
 	// Toggleable drill arm

@@ -10,6 +10,7 @@ using Common;
 
 namespace ConsoleImproved
 {
+	using Debug = Common.Debug;
 #if VER_1_1_0
 	// change position for messages
 	[HarmonyPatch(typeof(ErrorMessage), "Awake")]
@@ -43,7 +44,7 @@ namespace ConsoleImproved
 			// is console visible
 			void _injectStateCheck(int indexToInject, object labelToJump)
 			{
-				list.InsertRange(indexToInject, new List<CodeInstruction>()
+				HarmonyHelper.ciInsert(list, indexToInject, new List<CodeInstruction>()
 				{
 					new CodeInstruction(OpCodes.Ldsfld, typeof(DevConsole).field(nameof(DevConsole.instance))),
 					new CodeInstruction(OpCodes.Ldfld,  typeof(DevConsole).field(nameof(DevConsole.state))),
@@ -53,7 +54,9 @@ namespace ConsoleImproved
 
 			// ignoring (time > message.timeEnd) loop if console is visible (just jumping to "float num = this.offsetY * 7f" line)
 			int indexToJump1 = list.FindIndex(ci => ci.isLDC(7f)) - 2;																$"ErrorMessage.OnUpdate patch: indexToJump1: {indexToJump1}".logDbg();
-			if (indexToJump1 < 0 && "ErrorMessage.OnUpdate patch: indexToJump1 is invalid".logError())
+
+			Debug.assert(indexToJump1 >= 0, "ErrorMessage.OnUpdate patch: indexToJump1 is invalid");
+			if (indexToJump1 < 0)
 				return cins;
 
 			Label lb1 = ilg.DefineLabel();
@@ -66,7 +69,9 @@ namespace ConsoleImproved
 			// ignoring alpha changes for message entry if console is visible (last two lines in the second loop)
 			MethodInfo CanvasRenderer_SetAlpha = typeof(CanvasRenderer).method(nameof(CanvasRenderer.SetAlpha));
 			int indexToJump2 = list.FindIndex(indexToJump1, ci => ci.isOp(OpCodes.Callvirt, CanvasRenderer_SetAlpha)) + 1;			$"ErrorMessage.OnUpdate patch: indexToJump2: {indexToJump2}".logDbg();
-			if (indexToJump2 < 0 && "ErrorMessage.OnUpdate patch: indexToJump2 is invalid".logError())
+
+			Debug.assert(indexToJump2 >= 0, "ErrorMessage.OnUpdate patch: indexToJump2 is invalid");
+			if (indexToJump2 < 0)
 				return cins;
 
 			Label lb2 = ilg.DefineLabel();
@@ -74,8 +79,11 @@ namespace ConsoleImproved
 
 			MethodInfo Transform_setLocalPosition = typeof(Transform).method("set_localPosition");
 			int indexToInject2 = list.FindIndex(indexToJump1, ci => ci.isOp(OpCodes.Callvirt, Transform_setLocalPosition)) + 1;		$"ErrorMessage.OnUpdate patch: indexToInject2: {indexToInject2}".logDbg();
-			if (indexToInject2 < 0 && "ErrorMessage.OnUpdate patch: indexToInject2 is invalid".logError())
+
+			Debug.assert(indexToInject2 >= 0, "ErrorMessage.OnUpdate patch: indexToInject2 is invalid");
+			if (indexToInject2 < 0)
 				return cins;
+
 			_injectStateCheck(indexToInject2, lb2);
 
 			return list;

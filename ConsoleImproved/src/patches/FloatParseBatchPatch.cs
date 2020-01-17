@@ -13,7 +13,6 @@ namespace ConsoleImproved
 	static class CommandsFloatParsePatch
 	{
 		static bool patched = false;
-		static int _patchedCounter = 1;
 
 		static IEnumerable<CodeInstruction> transpiler(IEnumerable<CodeInstruction> cins)
 		{
@@ -21,16 +20,12 @@ namespace ConsoleImproved
 			MethodInfo floatParseCulture = typeof(float).method("Parse", typeof(string), typeof(IFormatProvider));
 			MethodInfo getInvariantCulture = typeof(System.Globalization.CultureInfo).method("get_InvariantCulture");
 
-			foreach (var ci in cins)
-			{
-				if (ci.isOp(OpCodes.Call, floatParse))
-				{																												$"floatParse injected: {_patchedCounter++}".logDbg();
-					yield return new CodeInstruction(OpCodes.Call, getInvariantCulture);
-					yield return new CodeInstruction(OpCodes.Call, floatParseCulture);
-				}
-				else
-					yield return ci;
-			}
+			var list = HarmonyHelper.ciReplace(cins, ci => ci.isOp(OpCodes.Call, floatParse),
+												new CodeInstruction(OpCodes.Call, getInvariantCulture), new CodeInstruction(OpCodes.Call, floatParseCulture));
+
+			Debug.assert(list.FindIndex(ci => ci.isOp(OpCodes.Call, floatParse)) == -1);
+
+			return list;
 		}
 		static readonly MethodInfo patch = typeof(CommandsFloatParsePatch).method(nameof(transpiler));
 

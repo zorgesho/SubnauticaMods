@@ -35,20 +35,16 @@ namespace GravTrapImproved
 		[HarmonyHelper.OptionalPatch(typeof(Gravsphere), "OnTriggerEnter")]
 		public static class Gravsphere_MaxObjects_Patch
 		{
-			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
-			{
-				return HarmonyHelper.changeConstToConfigVar(instructions, (sbyte)12, nameof(Main.config.maxObjects));
-			}
+			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins) =>
+				HarmonyHelper.constToCfgVar(cins, (sbyte)12, nameof(Main.config.maxObjects));
 		}
 
 		// Patching max force applied to attracted objects
 		[HarmonyHelper.OptionalPatch(typeof(Gravsphere), "ApplyGravitation")]
 		public static class Gravsphere_MaxForce_Patch
 		{
-			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
-			{
-				return HarmonyHelper.changeConstToConfigVar(instructions, 15f, nameof(Main.config.maxForce));
-			}
+			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins) =>
+				HarmonyHelper.constToCfgVar(cins, 15f, nameof(Main.config.maxForce));
 		}
 #endif
 	}

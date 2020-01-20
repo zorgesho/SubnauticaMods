@@ -18,6 +18,22 @@ namespace ModsOptionsAdjusted
 	}
 
 
+	[HarmonyPatch(typeof(uGUI_OptionsPanel), "AddTab")]
+	static class uGUIOptionsPanel_AddTab_Patch
+	{
+		public static int modsTabIndex { get; private set; } = -1;
+		public static bool isMainMenu { get; private set; } = true; // is options opened in main menu or in game
+
+		static void Postfix(uGUI_OptionsPanel __instance, string label, int __result)
+		{
+			if (label == "Mods")
+				modsTabIndex = __result;
+
+			isMainMenu = (__instance.GetComponent<MainMenuOptions>() != null);
+		}
+	}
+
+
 	[HarmonyPatch(typeof(uGUI_TabbedControlsPanel), "AddItem")]
 	[HarmonyPatch(new Type[] {typeof(int), typeof(GameObject)})]
 	static class uGUITabbedControlsPanel_AddItem_Patch
@@ -30,13 +46,9 @@ namespace ModsOptionsAdjusted
 			Tuple.Create("uGUI_BindingOption", typeof(AdjustBindingOption))
 		};
 
-		//static void Postfix(uGUI_TabbedControlsPanel __instance, int tabIndex, GameObject optionPrefab, ref GameObject __result)
-		static void Postfix(int tabIndex, ref GameObject __result)
+		static void Postfix(int tabIndex, GameObject __result)
 		{
-			if (__result == null)
-				return;
-
-			if (tabIndex != 4) // HACK ! TODO: !
+			if (__result == null || tabIndex != uGUIOptionsPanel_AddTab_Patch.modsTabIndex)
 				return;
 
 			foreach (var type in optionTypes)
@@ -46,10 +58,11 @@ namespace ModsOptionsAdjusted
 			}
 		}
 
-		// TODO: comment
+
 		abstract class AdjustModOption: MonoBehaviour
 		{
-			const float minCaptionWidth = 200f; // !!!! TODO
+			const float minCaptionWidth_MainMenu = 480f;
+			const float minCaptionWidth_InGame   = 360f;
 
 			GameObject caption = null;
 			protected float captionWidth { get => caption?.GetComponent<RectTransform>().rect.width ?? 0f; }
@@ -58,19 +71,21 @@ namespace ModsOptionsAdjusted
 			{
 				caption = gameObject.getChild(gameObjectPath);
 
-				if (!caption && $"!! CAPTION {gameObjectPath}".logError())
+				if (!caption && $"AdjustModOption: caption gameobject '{gameObjectPath}' not found".logError())
 					return;
 
-				caption.AddComponent<LayoutElement>().minWidth = minCaptionWidth;
-				caption.AddComponent<ContentSizeFitter>().horizontalFit = ContentSizeFitter.FitMode.PreferredSize; // TODO ?????????
+				caption.AddComponent<LayoutElement>().minWidth = uGUIOptionsPanel_AddTab_Patch.isMainMenu? minCaptionWidth_MainMenu: minCaptionWidth_InGame;
+				caption.AddComponent<ContentSizeFitter>().horizontalFit = ContentSizeFitter.FitMode.PreferredSize; // for autosizing captions
 
 				RectTransform transform = caption.GetComponent<RectTransform>();
-				transform.SetSiblingIndex(0); // TODO: comment
+				transform.SetSiblingIndex(0); // for HorizontalLayoutGroup
 				transform.pivot = transform.pivot.setX(0f);
 				transform.anchoredPosition = transform.anchoredPosition.setX(0f);
 			}
 		}
 
+		// in case of ToggleOption there is no need to manually move elements
+		// other option types don't work well with HorizontalLayoutGroup :(
 		class AdjustToggleOption: AdjustModOption
 		{
 			const float spacing = 20f;
@@ -84,9 +99,9 @@ namespace ModsOptionsAdjusted
 				hlg.spacing = spacing;
 
 				setCaptionGameObject("Toggle/Caption");
-			}
 
-			void Start() => Destroy(this);
+				Destroy(this);
+			}
 		}
 
 		class AdjustSliderOption: AdjustModOption
@@ -98,6 +113,10 @@ namespace ModsOptionsAdjusted
 			{
 				setCaptionGameObject("Slider/Caption");
 				yield return null; // skip one frame
+
+				// for some reason sliders don't update their handle positions sometimes
+				uGUI_SnappingSlider slider = gameObject.GetComponentInChildren<uGUI_SnappingSlider>();
+				typeof(Slider).method("UpdateVisuals").Invoke(slider, null);
 
 				// changing width for slider value label
 				RectTransform sliderValueRect = gameObject.transform.Find("Slider/Value") as RectTransform;

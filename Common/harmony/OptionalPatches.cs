@@ -32,17 +32,15 @@ namespace Common
 			static void updatePatch(Type patchType)
 			{
 				MethodInfo prepare = patchType.method("Prepare");
-				Debug.assert(prepare != null);
 
+				Debug.assert(prepare != null);
 				if (prepare == null)
 					return;
 
 				bool? res = prepare.Invoke(null, null) as bool?;
 
-				if (res == null)
-					return;
-
-				setEnabled((bool)res, patchType);
+				if (res != null)
+					setEnabled((bool)res, patchType);
 			}
 
 

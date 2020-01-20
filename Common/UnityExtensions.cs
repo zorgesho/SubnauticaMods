@@ -18,6 +18,7 @@ namespace Common
 			go.AddComponent<CallAfterDelay>().init(delay, action);
 
 		public static T ensureComponent<T>(this GameObject go) where T: Component => go.GetComponent<T>() ?? go.AddComponent<T>();
+		public static Component ensureComponent(this GameObject go, Type type) => go.GetComponent(type) ?? go.AddComponent(type);
 
 		public static void setParent(this GameObject go, GameObject parent, bool resetLocalTransform = true)
 		{
@@ -109,6 +110,13 @@ namespace Common
 				Log.msg(e);
 			}
 		}
+	}
+
+
+	static class VectorExtension
+	{
+		public static Vector2 setX(this Vector2 vec, float val)  { vec.x = val; return vec; }
+		public static Vector2 setY(this Vector2 vec, float val)  { vec.y = val; return vec; }
 	}
 
 

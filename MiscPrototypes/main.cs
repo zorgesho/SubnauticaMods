@@ -12,6 +12,8 @@ namespace MiscPrototypes
 		{
 			HarmonyHelper.patchAll();
 
+			Options.init();
+
 			CraftHelper.patchAll();
 		}
 	}

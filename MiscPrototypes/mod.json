@@ -3,7 +3,7 @@
   "DisplayName": "MiscPrototypes",
   "Author": "zorgesho",
   "Version": "1.0.0",
-  "Dependencies": [],
+  "Dependencies": ["SMLHelper"],
   "LoadBefore": [],
   "LoadAfter": [],
   "Enable": true,

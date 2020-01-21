@@ -66,11 +66,6 @@
       <HintPath>..\..\..\..\games\subnautica\QMods\Modding Helper\SMLHelper.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
     <Reference Include="UnityEngine">
       <HintPath>..\..\..\..\games\Subnautica\Subnautica_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
@@ -81,12 +76,18 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\games\subnautica\Subnautica_Data\Managed\UnityEngine.UI.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.UIModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\games\subnautica\Subnautica_Data\Managed\UnityEngine.UIModule.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="src\ui\options\HeadingsToggle.cs" />
+    <Compile Include="src\ui\options\Tooltips.cs" />
     <None Include="src\EmergencyPowerStation.cs" />
-    <None Include="src\BulkCrafting.cs" />
-    <None Include="src\PingTabToggles.cs" />
-    <None Include="src\SelectTabsWithKeys.cs" />
+    <None Include="src\ui\BulkCrafting.cs" />
+    <None Include="src\ui\PingTabToggles.cs" />
+    <None Include="src\ui\SelectTabsWithKeys.cs" />
     <None Include="src\BuildPatches.cs" />
     <None Include="src\DebugPatches.cs" />
     <None Include="src\CraftFromStorages.cs" />
@@ -102,6 +103,7 @@
   <Import Project="..\Common\Common.Config\Common.Config.projitems" Label="Shared" />
   <Import Project="..\Common\Common.UI\Common.UI.projitems" Label="Shared" />
   <Import Project="..\Common\Common.CraftHelper\Common.CraftHelper.projitems" Label="Shared" />
+  <Import Project="..\Common\Common.Config.Options\Common.Config.Options.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>if exist c:\games\subnautica\QMods\ xcopy $(TargetPath) c:\games\subnautica\QMods\$(ProjectName)\ /q /y

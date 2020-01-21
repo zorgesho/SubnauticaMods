@@ -9,8 +9,23 @@ using UnityEngine.EventSystems;
 
 using Common;
 
-namespace ModsOptionsAdjusted
+namespace MiscPrototypes
 {
+	[HarmonyPatch(typeof(uGUI_OptionsPanel), "AddTab")]
+	static class uGUIOptionsPanel_AddTab_Patch
+	{
+		public static int modsTabIndex { get; private set; } = -1;
+		public static bool isMainMenu { get; private set; } = true; // is options opened in main menu or in game
+
+		static void Postfix(uGUI_OptionsPanel __instance, string label, int __result)
+		{
+			if (label == "Mods")
+				modsTabIndex = __result;
+
+			isMainMenu = (__instance.GetComponent<MainMenuOptions>() != null);
+		}
+	}
+
 	class SmoothSetVisible: MonoBehaviour
 	{
 		public int state = 0;
@@ -110,43 +125,6 @@ namespace ModsOptionsAdjusted
 		}
 	}
 	
-	class OnHover: MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, ITooltip
-	{
-		public void OnPointerEnter(PointerEventData eventData)
-		{
-			$"ENTER {uGUI_Tooltip.main}".onScreen();
-			
-			"------------".log();
-			
-			foreach (var t in eventData.hovered)
-			{
-				t.name.log();
-				if (t.name.Contains("NextButton"))
-				{
-					"^^^^^".log();
-					uGUI_Tooltip.Set(null);
-					return;
-				}
-			}
-
-			//uGUI_Tooltip.Set(this);
-		}
-
-		public void OnPointerExit(PointerEventData eventData)
-		{
-			"EXIT".onScreen();
-			uGUI_Tooltip.Set(null);
-			
-		}
-
-		public void GetTooltip(out string tooltipText, List<TooltipIcon> tooltipIcons)
-		{
-//sb.AppendFormat("<size=25><color=#ffffffff>{0}</color></size>", title);
-			tooltipText = $"<size=25><color=#ffffffff>OLOLO</color></size>" + " OLOLO\n PEPEPE\n VIVIVIIVIBO s dfls nasnd";
-		}
-		
-	}
-
 
 	[HarmonyPatch(typeof(uGUI_TabbedControlsPanel), "AddHeading")]
 	static class uGUI_TabbedControlsPanel_AddHeading_Patch

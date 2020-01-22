@@ -11,7 +11,10 @@ using Common;
 
 namespace MiscPrototypes
 {
-	[HarmonyPatch(typeof(uGUI_OptionsPanel), "AddTab")]
+	using Debug  = Common.Debug;
+	using Object = UnityEngine.Object;
+
+	[HarmonyPatch(typeof(uGUI_OptionsPanel), "AddTab")] // from ModsOptionsAdjusted
 	static class uGUIOptionsPanel_AddTab_Patch
 	{
 		public static int modsTabIndex { get; private set; } = -1;
@@ -26,198 +29,206 @@ namespace MiscPrototypes
 		}
 	}
 
-	class SmoothSetVisible: MonoBehaviour
+	static class States
 	{
-		public int state = 0;
-		bool rotating = false;
-		//const float d = 0.2f;
+		public static Dictionary<string, bool> states = new Dictionary<string, bool>();
 
-		public void setVisible(bool val, float delay)
+		public static bool getState(string name)
 		{
-			if (val)
-			{
-				if (!rotating)
-				{
-					StartCoroutine(smoothVisible(true, Main.config.alpha, delay));
-					state = 1;
-				}
-			}
-			else
-			{
-				if (!rotating)
-				{
-					StartCoroutine(smoothVisible(false, Main.config.alpha, delay));
-					state = 0;
-				}
-			}
+			if (states.TryGetValue(name, out bool state))
+				return state;
+
+			return true;
 		}
+	}
 
-		IEnumerator smoothVisible(bool val, float duration, float delay)
+
+	class HeadingToggler: MonoBehaviour
+	{
+		List<GameObject> childOptions = null;
+		string headingName = null;
+
+		bool state = true; // opened by default
+
+		void init()
 		{
-			rotating = true;
+			"INIT".log();
+			headingName = transform.Find("Caption")?.GetComponent<Text>()?.text;
+			headingName.log();
 
-			float alphaBegin = val? 0f: 1.0f;
-			float alphaEnd = val? 1.0f: 0f;
-
-			CanvasRenderer[] canvases = gameObject.GetComponentsInChildren<CanvasRenderer>();
-
-			yield return new WaitForSeconds(delay);
-
-			$"canvases {canvases.Length}".log();
+			childOptions = new List<GameObject>();
 			
-			for (float t = 0; t < duration; t+= Time.deltaTime)
+			for (int i = transform.GetSiblingIndex() + 1; i < transform.parent.childCount; i++)
 			{
-				foreach (var canvas in canvases)
-					canvas.SetAlpha(Mathf.Lerp(alphaBegin, alphaEnd, t));
-				yield return null;
+				GameObject option = transform.parent.GetChild(i).gameObject;
+
+				if (option.GetComponent<HeadingToggler>())
+					break;
+
+				childOptions.Add(option);
 			}
-
-			foreach (var canvas in canvases)
-				canvas.SetAlpha(alphaEnd);
-
-			gameObject.SetActive(val);
-
-			rotating = false;
 		}
 
+		public void ensureState()
+		{
+			if (childOptions == null)
+				init();
+
+			if (state != States.getState(headingName))
+			{
+				toggle(States.getState(headingName));
+
+				GetComponentInChildren<ToggleButtonClickHandler>().setForcedState(States.getState(headingName));
+
+			}
+		}
+
+		public void toggle(bool val)
+		{
+			if (childOptions == null)
+				init();
+
+			childOptions.ForEach(option => option.SetActive(val));
+
+			States.states[headingName] = state = val;
+		}
 	}
 	
-	
-	class SmoothRotate: MonoBehaviour
+	class ToggleButtonClickHandler: MonoBehaviour, IPointerClickHandler
 	{
-		public int state = 0;
-		bool rotating = false;
-		const float d = 0.1f;
+		const float timeRotate = 0.1f;
 
-		public void rotate()
+		bool isOpen = true;
+		bool isRotating = false;
+
+		public void setForcedState(bool _isOpen)
 		{
-			if (state == 0)
-			{
-				if (!rotating)
-				{
-					StartCoroutine(smoothRotate(new Vector3(-90, 0, 0), d));
-					state = 1;
-				}
-			}
-			else
-			{
-				if (!rotating)
-				{
-					StartCoroutine(smoothRotate(new Vector3(90, 0, 0), d));
-					state = 0;
-				}
-			}
+			isOpen = _isOpen;
+			//transform.eulerAngles = new Vector3(isOpen?0: -90, 0, 0);
+			transform.localEulerAngles = new Vector3(0, 0, isOpen?-90: 0);
+				
+				//new Vector3(0, 0, isOpen?0: -90);
 		}
 
-		IEnumerator smoothRotate(Vector3 angles, float duration)
+		void Clicked()
 		{
-			rotating = true;
-			Quaternion startRotation = transform.rotation;
-			Quaternion endRotation = Quaternion.Euler(angles) * startRotation;
-			for (float t = 0; t < duration; t+= Time.deltaTime)
+			if (isRotating)
+				return;
+
+			StartCoroutine(smoothRotate(isOpen? 90: -90));
+			SendMessageUpwards("toggle", (isOpen = !isOpen));
+		}
+
+		public void OnPointerClick(PointerEventData pointerEventData) => Clicked();
+
+		IEnumerator smoothRotate(float angles)
+		{
+			isRotating = true;
+			
+			Quaternion startRotation = transform.localRotation;
+			Quaternion endRotation = Quaternion.Euler(new Vector3(0f, 0f, angles)) * startRotation;
+
+			for (float t = 0; t < timeRotate; t += Time.deltaTime)
 			{
-				transform.rotation = Quaternion.Lerp(startRotation, endRotation, t / duration);
+				transform.localRotation = Quaternion.Lerp(startRotation, endRotation, t / timeRotate);
 				yield return null;
 			}
 
-			transform.rotation = endRotation;
-			rotating = false;
+			transform.localRotation = endRotation;
+			isRotating = false;
 		}
 	}
-	
+
+
+	class HeadingClickHandler: MonoBehaviour, IPointerClickHandler
+	{
+		public void OnPointerClick(PointerEventData pointerEventData) => BroadcastMessage("Clicked");
+	}
+
+
+	// TODO: make one class, patching in init
+	[HarmonyPatch(typeof(uGUI_TabbedControlsPanel), "Awake")]
+	static class uGUITabbedControlsPanel_AddHeading_Patch11
+	{
+		static void Postfix(uGUI_TabbedControlsPanel __instance)
+		{
+			uGUITabbedControlsPanel_AddHeading_Patch.initPrefab(__instance);
+		}
+	}
+
 
 	[HarmonyPatch(typeof(uGUI_TabbedControlsPanel), "AddHeading")]
-	static class uGUI_TabbedControlsPanel_AddHeading_Patch
+	static class uGUITabbedControlsPanel_AddHeading_Patch
 	{
-		static GameObject buttonPrefab = null;
+		public static GameObject headingPrefab = null;
 
+		public static void initPrefab(uGUI_TabbedControlsPanel panel)
+		{
+			if (headingPrefab) // TODO: check ingame prefab
+				return;
+
+			headingPrefab = Object.Instantiate(panel.headingPrefab);
+
+			headingPrefab.name = "OptionHeadingToggleable";
+
+			Text text = headingPrefab.GetComponentInChildren<Text>();
+			text.gameObject.AddComponent<ContentSizeFitter>().horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+			//text.gameObject.AddComponent<OnHover>(); // for tooltips
+
+			GameObject button = Object.Instantiate(panel.choiceOptionPrefab.getChild("Choice/Background/NextButton"));
+			button.name = "HeadingToggleButton";
+			button.AddComponent<ToggleButtonClickHandler>();
+			RectTransform buttonTransform = button.transform as RectTransform;
+			buttonTransform.anchorMin = (button.transform as RectTransform).anchorMin.setX(0f);
+			buttonTransform.anchorMax = (button.transform as RectTransform).anchorMax.setX(0f);
+			buttonTransform.pivot = new Vector2(Main.config.pivotX, Main.config.pivotY);
+			buttonTransform.localEulerAngles = new Vector3(0, 0, -90);
+
+			buttonTransform.SetParent(headingPrefab.transform, false);
+			buttonTransform.SetAsFirstSibling();
+
+			buttonTransform.localPosition = button.transform.localPosition.setX(Main.config.posX);
+			buttonTransform.localPosition = button.transform.localPosition.setY(Main.config.posY);
+
+			Transform rr = headingPrefab.transform.Find("Caption").transform;// as RectTransform;
+			rr.localPosition = rr.localPosition.setX(Main.config.posX2);
+
+			headingPrefab.AddComponent<HeadingClickHandler>(); // ?????
+			headingPrefab.AddComponent<HeadingToggler>();
+		}
 		
-		static void Postfix(uGUI_TabbedControlsPanel __instance, int tabIndex, string label)
+		
+		static bool Prefix(uGUI_TabbedControlsPanel __instance, int tabIndex, string label)
+		{
+			if (tabIndex != uGUIOptionsPanel_AddTab_Patch.modsTabIndex)
+				return true;
+
+			GameObject newHeading = __instance.AddItem(tabIndex, headingPrefab, label);
+
+			RectTransform rr = newHeading.transform.Find("Caption").transform as RectTransform;
+			$"{rr.localPosition.x} {label}".onScreen();
+
+			return false;
+		}
+	}
+
+	[HarmonyPatch(typeof(uGUI_TabbedControlsPanel), "SetVisibleTab")]
+	static class uGUITabbedControlsPanel_SetVisibleTab_Patch
+	{
+		static void Prefix(uGUI_TabbedControlsPanel __instance, int tabIndex)
 		{
 			if (tabIndex != uGUIOptionsPanel_AddTab_Patch.modsTabIndex)
 				return;
-				
-			GameObject heading = __instance.tabs[tabIndex].container.transform.GetChild(__instance.tabs[tabIndex].container.transform.childCount - 1)?.gameObject;
 
-			
+			__instance.tabs[tabIndex].container.GetComponent<VerticalLayoutGroup>().spacing = 5;
 
+			Transform options = __instance.tabs[tabIndex].container.transform;
 
-
-
-			heading.GetComponentInChildren<Text>()?.text.onScreen();
-
-
-			Text t = heading.GetComponentInChildren<Text>();
-			//t.gameObject.AddComponent<LayoutElement>().minWidth = 300;;
-			t.gameObject.AddComponent<ContentSizeFitter>().horizontalFit = ContentSizeFitter.FitMode.PreferredSize; // for autosizing captions
-			t.gameObject.AddComponent<OnHover>();
-
-
-			if (!buttonPrefab)
-				buttonPrefab = __instance.choiceOptionPrefab.getChild("Choice/Background/NextButton");
-
-
-			GameObject newBtt = UnityEngine.Object.Instantiate(buttonPrefab);
-			(newBtt.transform as RectTransform).anchorMin = (newBtt.transform as RectTransform).anchorMin.setX(0f);
-			(newBtt.transform as RectTransform).anchorMax = (newBtt.transform as RectTransform).anchorMax.setX(0f);
-			(newBtt.transform as RectTransform).pivot = new Vector2(Main.config.pivotX, Main.config.pivotY);
-			
-			newBtt.transform.SetParent(heading.transform, false);
-			newBtt.transform.SetAsFirstSibling();
-
-			$"{newBtt.transform.localPosition}".onScreen();
-
-			newBtt.transform.localPosition = newBtt.transform.localPosition.setX(Main.config.posX);
-			newBtt.transform.localPosition = newBtt.transform.localPosition.setY(Main.config.posY);
-
-			newBtt.AddComponent<SmoothRotate>();
-
-			int iii = __instance.tabs[tabIndex].container.transform.childCount;
-
-			//newBtt.GetComponent<Button>().
-			
-			newBtt.GetComponent<Button>().onClick.AddListener(() =>
+			for (int i = 0; i < options.childCount; i++)
 			{
-				newBtt.GetComponent<SmoothRotate>().rotate();
-
-				if (newBtt.GetComponent<SmoothRotate>().state == 1)
-				{
-					for (int i = iii; i < iii + 3; i++)
-					{
-						__instance.tabs[tabIndex].container.GetChild(i).gameObject.SetActive(true);
-						//__instance.tabs[tabIndex].container.GetChild(i).gameObject.ensureComponent<SmoothSetVisible>().setVisible(true, (i - iii)* Main.config.delay);
-					}
-				}
-				else
-				{
-					for (int i = iii; i < iii + 3; i++)
-					{
-						__instance.tabs[tabIndex].container.GetChild(i).gameObject.SetActive(false);
-						//__instance.tabs[tabIndex].container.GetChild(i).gameObject.ensureComponent<SmoothSetVisible>().setVisible(false, (i - iii)* Main.config.delay);
-					}
-				}
-				//Vector3 rot = newBtt.transform.localEulerAngles;// = new Vector3(0, 0, -90);
-				//if (rot.z == 270)
-				//{
-				//	newBtt.transform.localEulerAngles = new Vector3(0, 0, 0);
-
-				//	__instance.tabs[tabIndex].container.GetChild(iii).gameObject.SetActive(false);
-				//	__instance.tabs[tabIndex].container.GetChild(iii).gameObject.SetActive(false);
-				//}
-				//else
-				//{
-				//	newBtt.transform.localEulerAngles = new Vector3(0, 0, -90);
-				//	__instance.tabs[tabIndex].container.GetChild(iii).gameObject.SetActive(true);
-
-				//}
-				
-				$"{heading.GetComponentInChildren<Text>()?.text} {newBtt.transform.localEulerAngles}".onScreen();
-			});
-
-			RectTransform rr = heading.transform.Find("Caption").transform as RectTransform;
-
-			rr.localPosition = rr.localPosition.setX(Main.config.posX2);
+				if (options.GetChild(i).GetComponent<HeadingToggler>() is HeadingToggler headingToggler)
+					headingToggler.ensureState();
+			}
 		}
 	}
-
 }

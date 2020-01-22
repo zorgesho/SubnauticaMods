@@ -8,6 +8,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
 using Common;
+using Common.Configuration;
 
 namespace MiscPrototypes
 {
@@ -29,206 +30,219 @@ namespace MiscPrototypes
 		}
 	}
 
-	static class States
+
+	static class ModOptionsHeadingsToggle
 	{
-		public static Dictionary<string, bool> states = new Dictionary<string, bool>();
+		enum HeadingState { Collapsed, Expanded };
 
-		public static bool getState(string name)
+		static GameObject headingPrefab = null;
+
+		static class StoredHeadingStates
 		{
-			if (states.TryGetValue(name, out bool state))
-				return state;
-
-			return true;
-		}
-	}
-
-
-	class HeadingToggler: MonoBehaviour
-	{
-		List<GameObject> childOptions = null;
-		string headingName = null;
-
-		bool state = true; // opened by default
-
-		void init()
-		{
-			"INIT".log();
-			headingName = transform.Find("Caption")?.GetComponent<Text>()?.text;
-			headingName.log();
-
-			childOptions = new List<GameObject>();
-			
-			for (int i = transform.GetSiblingIndex() + 1; i < transform.parent.childCount; i++)
+			class StatesConfig: Config
 			{
-				GameObject option = transform.parent.GetChild(i).gameObject;
+				[Oculus.Newtonsoft.Json.JsonProperty]
+				readonly Dictionary<string, HeadingState> states = new Dictionary<string, HeadingState>();
 
-				if (option.GetComponent<HeadingToggler>())
-					break;
+				public HeadingState this[string name]
+				{
+					get => states.TryGetValue(name, out HeadingState state)? state: HeadingState.Expanded;
 
-				childOptions.Add(option);
+					set
+					{
+						states[name] = value;
+						save();
+					}
+				}
 			}
+			static readonly StatesConfig statesConfig = Config.tryLoad<StatesConfig>("heading_states.json", false, false);
+
+			public static HeadingState get(string name) => statesConfig[name];
+			public static void store(string name, HeadingState state) => statesConfig[name] = state;
 		}
 
-		public void ensureState()
-		{
-			if (childOptions == null)
-				init();
 
-			if (state != States.getState(headingName))
-			{
-				toggle(States.getState(headingName));
-
-				GetComponentInChildren<ToggleButtonClickHandler>().setForcedState(States.getState(headingName));
-
-			}
-		}
-
-		public void toggle(bool val)
-		{
-			if (childOptions == null)
-				init();
-
-			childOptions.ForEach(option => option.SetActive(val));
-
-			States.states[headingName] = state = val;
-		}
-	}
-	
-	class ToggleButtonClickHandler: MonoBehaviour, IPointerClickHandler
-	{
-		const float timeRotate = 0.1f;
-
-		bool isOpen = true;
-		bool isRotating = false;
-
-		public void setForcedState(bool _isOpen)
-		{
-			isOpen = _isOpen;
-			//transform.eulerAngles = new Vector3(isOpen?0: -90, 0, 0);
-			transform.localEulerAngles = new Vector3(0, 0, isOpen?-90: 0);
-				
-				//new Vector3(0, 0, isOpen?0: -90);
-		}
-
-		void Clicked()
-		{
-			if (isRotating)
-				return;
-
-			StartCoroutine(smoothRotate(isOpen? 90: -90));
-			SendMessageUpwards("toggle", (isOpen = !isOpen));
-		}
-
-		public void OnPointerClick(PointerEventData pointerEventData) => Clicked();
-
-		IEnumerator smoothRotate(float angles)
-		{
-			isRotating = true;
-			
-			Quaternion startRotation = transform.localRotation;
-			Quaternion endRotation = Quaternion.Euler(new Vector3(0f, 0f, angles)) * startRotation;
-
-			for (float t = 0; t < timeRotate; t += Time.deltaTime)
-			{
-				transform.localRotation = Quaternion.Lerp(startRotation, endRotation, t / timeRotate);
-				yield return null;
-			}
-
-			transform.localRotation = endRotation;
-			isRotating = false;
-		}
-	}
-
-
-	class HeadingClickHandler: MonoBehaviour, IPointerClickHandler
-	{
-		public void OnPointerClick(PointerEventData pointerEventData) => BroadcastMessage("Clicked");
-	}
-
-
-	// TODO: make one class, patching in init
-	[HarmonyPatch(typeof(uGUI_TabbedControlsPanel), "Awake")]
-	static class uGUITabbedControlsPanel_AddHeading_Patch11
-	{
-		static void Postfix(uGUI_TabbedControlsPanel __instance)
-		{
-			uGUITabbedControlsPanel_AddHeading_Patch.initPrefab(__instance);
-		}
-	}
-
-
-	[HarmonyPatch(typeof(uGUI_TabbedControlsPanel), "AddHeading")]
-	static class uGUITabbedControlsPanel_AddHeading_Patch
-	{
-		public static GameObject headingPrefab = null;
-
-		public static void initPrefab(uGUI_TabbedControlsPanel panel)
+		static void initHeadingPrefab(uGUI_TabbedControlsPanel panel)
 		{
 			if (headingPrefab) // TODO: check ingame prefab
 				return;
 
 			headingPrefab = Object.Instantiate(panel.headingPrefab);
-
 			headingPrefab.name = "OptionHeadingToggleable";
+			headingPrefab.AddComponent<HeadingClickHandler>(); // ?????
+			headingPrefab.AddComponent<HeadingToggle>();
 
-			Text text = headingPrefab.GetComponentInChildren<Text>();
-			text.gameObject.AddComponent<ContentSizeFitter>().horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
-			//text.gameObject.AddComponent<OnHover>(); // for tooltips
+			Transform captionTransform = headingPrefab.transform.Find("Caption");
+			captionTransform.localPosition = new Vector3(45f, 0f, 0f);
+			captionTransform.gameObject.AddComponent<ContentSizeFitter>().horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
 
 			GameObject button = Object.Instantiate(panel.choiceOptionPrefab.getChild("Choice/Background/NextButton"));
 			button.name = "HeadingToggleButton";
 			button.AddComponent<ToggleButtonClickHandler>();
-			RectTransform buttonTransform = button.transform as RectTransform;
-			buttonTransform.anchorMin = (button.transform as RectTransform).anchorMin.setX(0f);
-			buttonTransform.anchorMax = (button.transform as RectTransform).anchorMax.setX(0f);
-			buttonTransform.pivot = new Vector2(Main.config.pivotX, Main.config.pivotY);
-			buttonTransform.localEulerAngles = new Vector3(0, 0, -90);
 
+			RectTransform buttonTransform = button.transform as RectTransform;
 			buttonTransform.SetParent(headingPrefab.transform, false);
 			buttonTransform.SetAsFirstSibling();
-
-			buttonTransform.localPosition = button.transform.localPosition.setX(Main.config.posX);
-			buttonTransform.localPosition = button.transform.localPosition.setY(Main.config.posY);
-
-			Transform rr = headingPrefab.transform.Find("Caption").transform;// as RectTransform;
-			rr.localPosition = rr.localPosition.setX(Main.config.posX2);
-
-			headingPrefab.AddComponent<HeadingClickHandler>(); // ?????
-			headingPrefab.AddComponent<HeadingToggler>();
+			buttonTransform.localEulerAngles = new Vector3(0f, 0f, -90f);
+			buttonTransform.localPosition = new Vector3(15f, -13f, 0f);
+			buttonTransform.pivot = new Vector2(0.25f, 0.5f);
+			buttonTransform.anchorMin = buttonTransform.anchorMax = new Vector2(0f, 0.5f);
 		}
-		
-		
-		static bool Prefix(uGUI_TabbedControlsPanel __instance, int tabIndex, string label)
+
+		#region components
+		class HeadingToggle: MonoBehaviour
+		{
+			HeadingState headingState = HeadingState.Expanded;
+			string headingName = null;
+
+			List<GameObject> childOptions = null;
+
+			void init()
+			{
+				if (childOptions != null)
+					return;
+
+				headingName = transform.Find("Caption")?.GetComponent<Text>()?.text;
+
+				childOptions = new List<GameObject>();
+
+				for (int i = transform.GetSiblingIndex() + 1; i < transform.parent.childCount; i++)
+				{
+					GameObject option = transform.parent.GetChild(i).gameObject;
+
+					if (option.GetComponent<HeadingToggle>())
+						break;
+
+					childOptions.Add(option);
+				}
+			}
+
+			public void ensureState()
+			{
+				init();
+
+				HeadingState storedState = StoredHeadingStates.get(headingName);
+
+				if (headingState != storedState)
+				{
+					setState(storedState);
+					GetComponentInChildren<ToggleButtonClickHandler>().setStateInstant(storedState);
+				}
+			}
+
+			public void setState(HeadingState state)
+			{
+				init();
+
+				childOptions.ForEach(option => option.SetActive(state == HeadingState.Expanded));
+				headingState = state;
+
+				StoredHeadingStates.store(headingName, state);
+			}
+		}
+
+
+		class ToggleButtonClickHandler: MonoBehaviour, IPointerClickHandler
+		{
+			const float timeRotate = 0.1f;
+
+			HeadingState headingState = HeadingState.Expanded;
+			bool isRotating = false;
+
+			public void setStateInstant(HeadingState state)
+			{
+				headingState = state;
+				transform.localEulerAngles = new Vector3(0, 0, headingState == HeadingState.Expanded? -90: 0);
+			}
+
+			void Clicked()
+			{
+				if (isRotating)
+					return;
+
+				StartCoroutine(smoothRotate(headingState == HeadingState.Expanded? 90: -90));
+				headingState = headingState == HeadingState.Expanded? HeadingState.Collapsed: HeadingState.Expanded;
+
+				SendMessageUpwards("setState", headingState);
+			}
+
+			public void OnPointerClick(PointerEventData pointerEventData) => Clicked();
+
+			IEnumerator smoothRotate(float angles)
+			{
+				isRotating = true;
+
+				Quaternion startRotation = transform.localRotation;
+				Quaternion endRotation = Quaternion.Euler(new Vector3(0f, 0f, angles)) * startRotation;
+
+				for (float t = 0; t < timeRotate; t += Time.deltaTime)
+				{
+					transform.localRotation = Quaternion.Lerp(startRotation, endRotation, t / timeRotate);
+					yield return null;
+				}
+
+				transform.localRotation = endRotation;
+				isRotating = false;
+			}
+		}
+
+
+		class HeadingClickHandler: MonoBehaviour, IPointerClickHandler
+		{
+			public void OnPointerClick(PointerEventData pointerEventData) => BroadcastMessage("Clicked");
+		}
+		#endregion
+
+		#region patches for uGUI_TabbedControlsPanel
+		// prefix for uGUI_TabbedControlsPanel.AddHeading  [HarmonyPatch(typeof(uGUI_TabbedControlsPanel), "AddHeading")]
+		static bool _addHeading(uGUI_TabbedControlsPanel __instance, int tabIndex, string label)
 		{
 			if (tabIndex != uGUIOptionsPanel_AddTab_Patch.modsTabIndex)
 				return true;
 
-			GameObject newHeading = __instance.AddItem(tabIndex, headingPrefab, label);
-
-			RectTransform rr = newHeading.transform.Find("Caption").transform as RectTransform;
-			$"{rr.localPosition.x} {label}".onScreen();
-
+			__instance.AddItem(tabIndex, headingPrefab, label);
 			return false;
 		}
-	}
 
-	[HarmonyPatch(typeof(uGUI_TabbedControlsPanel), "SetVisibleTab")]
-	static class uGUITabbedControlsPanel_SetVisibleTab_Patch
-	{
-		static void Prefix(uGUI_TabbedControlsPanel __instance, int tabIndex)
+		// postfix for uGUI_TabbedControlsPanel.Awake  [HarmonyPatch(typeof(uGUI_TabbedControlsPanel), "Awake")]
+		static void _awakeInitPrefab(uGUI_TabbedControlsPanel __instance)
+		{
+			initHeadingPrefab(__instance);
+		}
+
+		// prefix for uGUI_TabbedControlsPanel.SetVisibleTab  [HarmonyPatch(typeof(uGUI_TabbedControlsPanel), "SetVisibleTab")]
+		static void _setVisibleTab(uGUI_TabbedControlsPanel __instance, int tabIndex)
 		{
 			if (tabIndex != uGUIOptionsPanel_AddTab_Patch.modsTabIndex)
 				return;
 
-			__instance.tabs[tabIndex].container.GetComponent<VerticalLayoutGroup>().spacing = 5;
+			//__instance.tabs[tabIndex].container.GetComponent<VerticalLayoutGroup>().spacing = -5; // TODO
 
 			Transform options = __instance.tabs[tabIndex].container.transform;
 
 			for (int i = 0; i < options.childCount; i++)
-			{
-				if (options.GetChild(i).GetComponent<HeadingToggler>() is HeadingToggler headingToggler)
-					headingToggler.ensureState();
-			}
+				options.GetChild(i).GetComponent<HeadingToggle>()?.ensureState();
+		}
+		#endregion
+
+
+		static bool inited = false;
+
+		public static void init()
+		{
+			if (inited)
+				return;
+
+			inited = true;
+
+			HarmonyHelper.patch(typeof(uGUI_TabbedControlsPanel).method("AddHeading"),
+				prefix: typeof(ModOptionsHeadingsToggle).method(nameof(ModOptionsHeadingsToggle._addHeading)));
+
+			HarmonyHelper.patch(typeof(uGUI_TabbedControlsPanel).method("Awake"),
+				postfix: typeof(ModOptionsHeadingsToggle).method(nameof(ModOptionsHeadingsToggle._awakeInitPrefab)));
+
+			HarmonyHelper.patch(typeof(uGUI_TabbedControlsPanel).method("SetVisibleTab"),
+				prefix: typeof(ModOptionsHeadingsToggle).method(nameof(ModOptionsHeadingsToggle._setVisibleTab)));
 		}
 	}
 }

@@ -15,6 +15,8 @@ namespace MiscPrototypes
 			Options.init();
 
 			CraftHelper.patchAll();
+
+			ModOptionsHeadingsToggle.init();
 		}
 	}
 }

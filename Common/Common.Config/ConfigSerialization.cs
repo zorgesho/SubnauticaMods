@@ -1,4 +1,7 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Linq;
+using System.Reflection;
+using System.Collections.Generic;
 
 using Oculus.Newtonsoft.Json;
 using Oculus.Newtonsoft.Json.Serialization;
@@ -7,33 +10,33 @@ namespace Common.Configuration
 {
 	partial class Config
 	{
-		// for writing to readonly config fields in json desearialization
-		class ReadOnlyWritableContractResolver: DefaultContractResolver
+		class ConfigContractResolver: DefaultContractResolver
 		{
+			// serialize only fields (including private and readonly, except static and with NonSerialized attribute)
+			// don't serialize properties
+			protected override List<MemberInfo> GetSerializableMembers(Type objectType)
+			{
+				IEnumerable<MemberInfo> members = objectType.fields().
+					Where(field => !field.IsStatic && Attribute.GetCustomAttribute(field, typeof(NonSerializedAttribute)) == null);
+
+				return members.ToList();
+			}
+
+			// all serializable members are readable and writeble
 			protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
 			{
 				var property = base.CreateProperty(member, memberSerialization);
 
-				if (!property.Writable && member.MemberType == MemberTypes.Field && ((member as FieldInfo)?.IsInitOnly?? false))
-					property.Writable = true;
+				property.Readable = property.Writable = true;
 
 				return property;
 			}
 		}
-		
-		static C deserialize<C>(string text)
-		{
-			JsonSerializerSettings settings = new JsonSerializerSettings()
-			{
-				ContractResolver = new ReadOnlyWritableContractResolver()
-			};
-			
-			return JsonConvert.DeserializeObject<C>(text, settings);
-		}
+		static readonly JsonSerializerSettings serializerSettings = new JsonSerializerSettings() { ContractResolver = new ConfigContractResolver() };
 
-		string serialize()
-		{
-			return JsonConvert.SerializeObject(this, Formatting.Indented);
-		}
+
+		string serialize() => JsonConvert.SerializeObject(this, Formatting.Indented, serializerSettings);
+
+		static C deserialize<C>(string text) => JsonConvert.DeserializeObject<C>(text, serializerSettings);
 	}
 }

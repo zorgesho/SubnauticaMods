@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 
 using Harmony;
@@ -12,9 +11,6 @@ using Common.Configuration;
 
 namespace MiscPrototypes
 {
-	using Debug  = Common.Debug;
-	using Object = UnityEngine.Object;
-
 	[HarmonyPatch(typeof(uGUI_OptionsPanel), "AddTab")] // from ModsOptionsAdjusted
 	static class uGUIOptionsPanel_AddTab_Patch
 	{
@@ -64,16 +60,16 @@ namespace MiscPrototypes
 
 		static void initHeadingPrefab(uGUI_TabbedControlsPanel panel)
 		{
-			if (headingPrefab) // TODO: check ingame prefab
+			if (headingPrefab)
 				return;
 
 			headingPrefab = Object.Instantiate(panel.headingPrefab);
 			headingPrefab.name = "OptionHeadingToggleable";
-			headingPrefab.AddComponent<HeadingClickHandler>(); // ?????
 			headingPrefab.AddComponent<HeadingToggle>();
 
 			Transform captionTransform = headingPrefab.transform.Find("Caption");
 			captionTransform.localPosition = new Vector3(45f, 0f, 0f);
+			captionTransform.gameObject.AddComponent<HeadingClickHandler>();
 			captionTransform.gameObject.AddComponent<ContentSizeFitter>().horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
 
 			GameObject button = Object.Instantiate(panel.choiceOptionPrefab.getChild("Choice/Background/NextButton"));
@@ -126,7 +122,7 @@ namespace MiscPrototypes
 				if (headingState != storedState)
 				{
 					setState(storedState);
-					GetComponentInChildren<ToggleButtonClickHandler>().setStateInstant(storedState);
+					GetComponentInChildren<ToggleButtonClickHandler>()?.setStateInstant(storedState);
 				}
 			}
 
@@ -155,18 +151,16 @@ namespace MiscPrototypes
 				transform.localEulerAngles = new Vector3(0, 0, headingState == HeadingState.Expanded? -90: 0);
 			}
 
-			void Clicked()
+			public void OnPointerClick(PointerEventData _)
 			{
 				if (isRotating)
 					return;
 
-				StartCoroutine(smoothRotate(headingState == HeadingState.Expanded? 90: -90));
 				headingState = headingState == HeadingState.Expanded? HeadingState.Collapsed: HeadingState.Expanded;
+				StartCoroutine(smoothRotate(headingState == HeadingState.Expanded? -90: 90));
 
-				SendMessageUpwards("setState", headingState);
+				GetComponentInParent<HeadingToggle>()?.setState(headingState);
 			}
-
-			public void OnPointerClick(PointerEventData pointerEventData) => Clicked();
 
 			IEnumerator smoothRotate(float angles)
 			{
@@ -175,9 +169,11 @@ namespace MiscPrototypes
 				Quaternion startRotation = transform.localRotation;
 				Quaternion endRotation = Quaternion.Euler(new Vector3(0f, 0f, angles)) * startRotation;
 
-				for (float t = 0; t < timeRotate; t += Time.deltaTime)
+				float timeStart = Time.realtimeSinceStartup; // Time.deltaTime works only in main menu
+
+				while (timeStart + timeRotate > Time.realtimeSinceStartup)
 				{
-					transform.localRotation = Quaternion.Lerp(startRotation, endRotation, t / timeRotate);
+					transform.localRotation = Quaternion.Lerp(startRotation, endRotation, (Time.realtimeSinceStartup - timeStart) / timeRotate);
 					yield return null;
 				}
 
@@ -189,7 +185,8 @@ namespace MiscPrototypes
 
 		class HeadingClickHandler: MonoBehaviour, IPointerClickHandler
 		{
-			public void OnPointerClick(PointerEventData pointerEventData) => BroadcastMessage("Clicked");
+			public void OnPointerClick(PointerEventData eventData) =>
+				transform.parent.GetComponentInChildren<ToggleButtonClickHandler>()?.OnPointerClick(eventData);
 		}
 		#endregion
 

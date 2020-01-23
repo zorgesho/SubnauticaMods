@@ -7,7 +7,7 @@ namespace PrawnSuitSonarUpgrade
 	{
 		public static void patch()
 		{
-			HarmonyHelper.patchAll(false);
+			HarmonyHelper.patchAll();
 
 			CraftHelper.patchAll();
 		}

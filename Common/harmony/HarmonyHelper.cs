@@ -9,7 +9,7 @@ namespace Common
 	{
 		public static HarmonyInstance harmonyInstance { get; private set; } = null;
 
-		public static void patchAll(bool _ = true) // TODO: remove param
+		public static void patchAll()
 		{
 			harmonyInstance = HarmonyInstance.Create(Strings.modName);
 

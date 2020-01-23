@@ -6,7 +6,7 @@ namespace SeamothStorageSlots
 	{
 		public static void patch()
 		{
-			HarmonyHelper.patchAll(false);
+			HarmonyHelper.patchAll();
 		}
 	}
 }

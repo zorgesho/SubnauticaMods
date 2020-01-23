@@ -51,7 +51,7 @@ namespace MiscPrototypes
 					}
 				}
 			}
-			static readonly StatesConfig statesConfig = Config.tryLoad<StatesConfig>("heading_states.json", false, false);
+			static readonly StatesConfig statesConfig = Config.tryLoad<StatesConfig>("heading_states.json", Config.LoadOptions.ForcedLoad);
 
 			public static HeadingState get(string name) => statesConfig[name];
 			public static void store(string name, HeadingState state) => statesConfig[name] = state;

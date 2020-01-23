@@ -7,7 +7,16 @@ namespace Common.Configuration
 	{
 		public static Config main { get; private set; } = null;
 
-		static readonly bool loadFromFile =
+		public enum LoadOptions
+		{
+			None = 0,
+			ProcessAttributes = 1,
+			SetAsMainConfig = 2,
+			ForcedLoad = 4,
+			Default = ProcessAttributes | SetAsMainConfig
+		}
+
+		static readonly bool loadFromFile = // can be overrided by LoadOptions.ForcedLoad
 #if (DEBUG && !LOAD_CONFIG)
 			false;
 #else
@@ -18,17 +27,19 @@ namespace Common.Configuration
 		protected Config() {}
 
 		// try to load config from mod folder. If file not found, create default config and save it to that path
-		public static C tryLoad<C>(string localPath = "config.json", bool processAttributes = true, bool mainConfig = true) where C: Config, new()
+		public static C tryLoad<C>(string localPath = "config.json", LoadOptions loadOptions = LoadOptions.Default) where C: Config, new()
 		{
 			string configPath = localPath != null? Paths.modRootPath + localPath: null;
 			C config = null;
 
 			try
 			{
-				if (!loadFromFile)
+				bool isNeedToLoad = loadFromFile || loadOptions.HasFlag(LoadOptions.ForcedLoad);
+
+				if (!isNeedToLoad)
 					"Loading from config is DISABLED".logWarning();
 
-				if (loadFromFile && File.Exists(configPath))
+				if (isNeedToLoad && File.Exists(configPath))
 				{
 					config = deserialize<C>(File.ReadAllText(configPath));
 					config.configPath = configPath;
@@ -39,7 +50,7 @@ namespace Common.Configuration
 					config.save(configPath);
 				}
 
-				if (mainConfig)
+				if (loadOptions.HasFlag(LoadOptions.SetAsMainConfig))
 				{
 					if (main == null)
 						main = config;
@@ -47,14 +58,14 @@ namespace Common.Configuration
 						"Config.main is already set".logWarning();
 				}
 
-				if (processAttributes)
+				if (loadOptions.HasFlag(LoadOptions.ProcessAttributes))
 					config.processAttributes();
 			}
 			catch (Exception e)
 			{
 				Log.msg(e);
 			}
-			
+
 			return config;
 		}
 

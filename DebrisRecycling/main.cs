@@ -6,7 +6,7 @@ namespace DebrisRecycling
 {
 	public static class Main
 	{
-		internal static ModConfig config = Config.tryLoad<ModConfig>();
+		internal static readonly ModConfig config = Config.tryLoad<ModConfig>();
 
 		public static void patch()
 		{
@@ -15,7 +15,7 @@ namespace DebrisRecycling
 			Options.init();
 			CraftHelper.patchAll();
 
-			DebrisPatcher.init(config.prefabsConfig, Config.tryLoad<PrefabIDs>("prefabs_config.json", false));
+			DebrisPatcher.init(config.prefabsConfig, Config.tryLoad<PrefabIDs>("prefabs_config.json", Config.LoadOptions.None));
 		}
 	}
 }

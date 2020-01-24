@@ -26,7 +26,7 @@ namespace MiscPrototypes
 		}
 	}
 
-
+	[HarmonyHelper.PatchClass]
 	static class ModOptionsHeadingsToggle
 	{
 		enum HeadingState { Collapsed, Expanded };
@@ -37,7 +37,6 @@ namespace MiscPrototypes
 		{
 			class StatesConfig: Config
 			{
-				[Oculus.Newtonsoft.Json.JsonProperty]
 				readonly Dictionary<string, HeadingState> states = new Dictionary<string, HeadingState>();
 
 				public HeadingState this[string name]
@@ -113,7 +112,7 @@ namespace MiscPrototypes
 				}
 			}
 
-			public void ensureState()
+			public void ensureState() // for setting previously saved state
 			{
 				init();
 
@@ -191,7 +190,7 @@ namespace MiscPrototypes
 		#endregion
 
 		#region patches for uGUI_TabbedControlsPanel
-		// prefix for uGUI_TabbedControlsPanel.AddHeading  [HarmonyPatch(typeof(uGUI_TabbedControlsPanel), "AddHeading")]
+		[HarmonyPatch(typeof(uGUI_TabbedControlsPanel), "AddHeading")][HarmonyPrefix]
 		static bool _addHeading(uGUI_TabbedControlsPanel __instance, int tabIndex, string label)
 		{
 			if (tabIndex != uGUIOptionsPanel_AddTab_Patch.modsTabIndex)
@@ -201,19 +200,19 @@ namespace MiscPrototypes
 			return false;
 		}
 
-		// postfix for uGUI_TabbedControlsPanel.Awake  [HarmonyPatch(typeof(uGUI_TabbedControlsPanel), "Awake")]
+		[HarmonyPatch(typeof(uGUI_TabbedControlsPanel), "Awake")][HarmonyPostfix]
 		static void _awakeInitPrefab(uGUI_TabbedControlsPanel __instance)
 		{
 			initHeadingPrefab(__instance);
 		}
 
-		// prefix for uGUI_TabbedControlsPanel.SetVisibleTab  [HarmonyPatch(typeof(uGUI_TabbedControlsPanel), "SetVisibleTab")]
+		[HarmonyPatch(typeof(uGUI_TabbedControlsPanel), "SetVisibleTab")][HarmonyPrefix]
 		static void _setVisibleTab(uGUI_TabbedControlsPanel __instance, int tabIndex)
 		{
 			if (tabIndex != uGUIOptionsPanel_AddTab_Patch.modsTabIndex)
 				return;
 
-			//__instance.tabs[tabIndex].container.GetComponent<VerticalLayoutGroup>().spacing = -5; // TODO
+			__instance.tabs[tabIndex].container.GetComponent<VerticalLayoutGroup>().spacing = Main.config.spacingModOptions;
 
 			Transform options = __instance.tabs[tabIndex].container.transform;
 
@@ -221,25 +220,5 @@ namespace MiscPrototypes
 				options.GetChild(i).GetComponent<HeadingToggle>()?.ensureState();
 		}
 		#endregion
-
-
-		static bool inited = false;
-
-		public static void init()
-		{
-			if (inited)
-				return;
-
-			inited = true;
-
-			HarmonyHelper.patch(typeof(uGUI_TabbedControlsPanel).method("AddHeading"),
-				prefix: typeof(ModOptionsHeadingsToggle).method(nameof(ModOptionsHeadingsToggle._addHeading)));
-
-			HarmonyHelper.patch(typeof(uGUI_TabbedControlsPanel).method("Awake"),
-				postfix: typeof(ModOptionsHeadingsToggle).method(nameof(ModOptionsHeadingsToggle._awakeInitPrefab)));
-
-			HarmonyHelper.patch(typeof(uGUI_TabbedControlsPanel).method("SetVisibleTab"),
-				prefix: typeof(ModOptionsHeadingsToggle).method(nameof(ModOptionsHeadingsToggle._setVisibleTab)));
-		}
 	}
 }

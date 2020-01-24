@@ -6,17 +6,15 @@ namespace MiscPrototypes
 {
 	public static class Main
 	{
-		internal static ModConfig config = Config.tryLoad<ModConfig>();
+		internal static readonly ModConfig config = Config.tryLoad<ModConfig>();
 
 		public static void patch()
 		{
-			HarmonyHelper.patchAll();
+			HarmonyHelper.patchAll(true);
 
 			Options.init();
 
 			CraftHelper.patchAll();
-
-			ModOptionsHeadingsToggle.init();
 		}
 	}
 }

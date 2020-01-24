@@ -49,7 +49,7 @@ namespace Common
 				if (!(Attribute.GetCustomAttribute(patchType, typeof(HarmonyPatch)) is HarmonyPatch patch))
 					return;
 
-				MethodInfo method = patch.info.declaringType?.method(patch.info.methodName);
+				MethodInfo method = patch.info.getTargetMethod();
 
 				if (method == null && $"OptionalPatches: method is null!".logError())
 					return;

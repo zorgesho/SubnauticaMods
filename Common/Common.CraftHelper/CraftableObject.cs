@@ -8,7 +8,7 @@ namespace Common.Crafting
 {
 	abstract class CraftableObject: ModPrefab
 	{
-		protected CraftableObject(): this(new System.Diagnostics.StackTrace().GetFrame(1).GetMethod().ReflectedType.Name) {}
+		protected CraftableObject(): this(ReflectionHelper.getCallingType().Name) {}
 		protected CraftableObject(string classID): base(classID, classID + "_Prefab") {}
 
 		bool isUsingExactPrefab = false; // using result of getGameObject as prefab, without smlhelper additional stuff

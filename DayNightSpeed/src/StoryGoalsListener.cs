@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+
+using Harmony;
 using UnityEngine;
 
 using Common;
@@ -8,31 +10,28 @@ namespace DayNightSpeed
 {
 	static partial class DayNightSpeedControl
 	{
+		[HarmonyHelper.PatchClass]
 		class StoryGoalsListener: MonoBehaviour
 		{
 			const float shortGoalDelay = 60f;
+			const string saveName = "goals";
 
-			static bool patched = false;
 			static StoryGoalsListener instance = null;
 			List<string> goals = new List<string>(); // goals with delay less than shortGoalDelay
 
-			const string saveName = "goals";
 			SaveLoadHelper slHelper;
 			class SaveData { public List<string> goals; }
 
 			void Awake()
 			{
-				if (instance != null)
+				if (instance != null && $"StoryGoalsListener already created!".logError())
 				{
-					$"StoryGoalsListener already created!".logError();
 					Destroy(this);
 					return;
 				}
 
 				instance = this;
-
 				slHelper = new SaveLoadHelper(null, onSave);
-				init();
 			}
 
 			void OnDestroy() => instance = null;
@@ -52,7 +51,8 @@ namespace DayNightSpeed
 				SaveLoad.save(saveName, new SaveData { goals = goals });
 			}
 
-			static void onAddGoal(Story.StoryGoal goal) // postfix for StoryGoalScheduler.Schedule(StoryGoal goal)
+			[HarmonyPatch(typeof(Story.StoryGoalScheduler), "Schedule")][HarmonyPostfix]
+			static void onAddGoal(Story.StoryGoal goal)
 			{
 				if (goal == null || goal.delay > shortGoalDelay)
 					return;
@@ -62,20 +62,11 @@ namespace DayNightSpeed
 				instance.goals.Add(goal.key);	$"StoryGoalsListener: goal added '{goal.key}'".logDbg();
 			}
 
-			static void onRemoveGoal(string key) // postfix for StoryGoal.Execute(string key, GoalType goalType)
+			[HarmonyPatch(typeof(Story.StoryGoal), "Execute")][HarmonyPostfix]
+			static void onRemoveGoal(string key)
 			{
 				if (instance.goals.RemoveAll(g => g == key) > 0 && instance.goals.Count == 0)
 					forcedNormalSpeed = false;
-			}
-
-			public static void init()
-			{
-				if (patched)
-					return;
-
-				patched = true;
-				HarmonyHelper.patch(typeof(Story.StoryGoalScheduler).method("Schedule"), postfix: typeof(StoryGoalsListener).method(nameof(onAddGoal)));
-				HarmonyHelper.patch(typeof(Story.StoryGoal).method("Execute"), postfix: typeof(StoryGoalsListener).method(nameof(onRemoveGoal)));
 			}
 		}
 	}

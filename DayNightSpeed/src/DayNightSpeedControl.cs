@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic; // used in DEBUG section
 
+using Harmony;
 using UnityEngine;
 
 using Common;
@@ -7,6 +8,7 @@ using Common.Configuration;
 
 namespace DayNightSpeed
 {
+	[HarmonyHelper.PatchClass]
 	static partial class DayNightSpeedControl
 	{
 		static bool inited = false;
@@ -29,7 +31,8 @@ namespace DayNightSpeed
 		}
 		static bool _forcedNormalSpeed = false;
 
-		static void initDayNightCycle(DayNightCycle __instance) // postfix for DayNightCycle.Awake
+		[HarmonyPatch(typeof(DayNightCycle), "Awake")][HarmonyPostfix]
+		static void initDayNightCycle(DayNightCycle __instance)
 		{
 			__instance._dayNightSpeed = Main.config.dayNightSpeed;
 
@@ -122,8 +125,6 @@ namespace DayNightSpeed
 
 			gameObject = UnityHelper.createPersistentGameObject<DayNightSpeedCommands>("DayNightSpeedControl");
 			gameObject.AddComponent<StoryGoalsListener>();
-
-			HarmonyHelper.patch(typeof(DayNightCycle).method("Awake"), postfix: typeof(DayNightSpeedControl).method(nameof(initDayNightCycle)));
 #if DEBUG
 			gameObject.AddComponent<DayNightSpeedWatch>();
 #endif
@@ -133,9 +134,9 @@ namespace DayNightSpeed
 	// helper for transpilers
 	static class _dnsClamped01
 	{
-		public static Harmony.CodeInstruction ci
+		public static CodeInstruction ci
 		{
-			get => new Harmony.CodeInstruction(System.Reflection.Emit.OpCodes.Call,
+			get => new CodeInstruction(System.Reflection.Emit.OpCodes.Call,
 				typeof(DayNightSpeedControl).method(nameof(DayNightSpeedControl.getDayNightSpeedClamped01)));
 		}
 	}

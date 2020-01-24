@@ -134,9 +134,9 @@ namespace Common
 
 	static class InputHelper
 	{
-		static InputHelper() => HarmonyHelper.patch(typeof(InputHelper).method(nameof(InputHelper.getMouseWheelValue)),
-										transpiler: typeof(InputHelper).method(nameof(InputHelper.patch_getMouseWheelValue)));
+		static InputHelper() => HarmonyHelper.patch();
 
+		[HarmonyPatch(typeof(InputHelper), nameof(InputHelper.getMouseWheelValue))][HarmonyTranspiler]
 		static IEnumerable<CodeInstruction> patch_getMouseWheelValue(IEnumerable<CodeInstruction> cins) // weird way to avoid including InputLegacyModule in all references
 		{
 			if (Assembly.Load("UnityEngine.InputLegacyModule")?.GetType("UnityEngine.Input")?.method("GetAxis") is MethodInfo GetAxis)

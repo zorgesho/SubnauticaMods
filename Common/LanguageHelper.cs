@@ -22,7 +22,7 @@ namespace Common
 				return;
 
 			inited = true;
-			HarmonyHelper.patch(typeof(LanguageHelper).method(nameof(LanguageHelper._addString)), transpiler: typeof(LanguageHelper).method(nameof(LanguageHelper._patch)));
+			HarmonyHelper.patch();
 
 			// search for any classes that inherited from LanguageHelper and add their static string members to SMLHelper.LanguageHandler
 			foreach (var type in ReflectionHelper.definedTypes)
@@ -47,6 +47,8 @@ namespace Common
 		// using this to avoid including SMLHelper as a reference to Common project
 		// can't use just reflection here (MethodInfo.Invoke), in that case SMLHelper can't identify calling mod (it uses StackTrace for that)
 		static bool _addString(string _0, string _1) { "LanguageHelper: SMLHelper is not installed".logWarning(); return false; }
+
+		[HarmonyPatch(typeof(LanguageHelper), nameof(LanguageHelper._addString))][HarmonyTranspiler]
 		static IEnumerable<CodeInstruction> _patch(IEnumerable<CodeInstruction> cins)
 		{
 			try

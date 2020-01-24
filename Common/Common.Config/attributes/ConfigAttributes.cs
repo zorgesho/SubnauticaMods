@@ -31,11 +31,11 @@ namespace Common.Configuration
 			Attribute.GetCustomAttributes(config.GetType()).forEach(attr => (attr as IConfigAttribute)?.process(config));
 
 			// processing attributes for fields and nested classes (don't process static fields)
-			foreach (FieldInfo field in config.GetType().fields())
+			foreach (var field in config.GetType().fields())
 			{																															$"Checking field '{field.Name}' for attributes".logDbg();
 				Attribute.GetCustomAttributes(field).forEach(attr => (attr as IFieldAttribute)?.process(config, field));
 
-				if (!field.IsStatic && field.FieldType.IsClass && Attribute.GetCustomAttribute(field, typeof(SkipRecursiveAttrProcessing)) == null)
+				if (!field.IsStatic && field.FieldType.IsClass && !field.checkAttribute<SkipRecursiveAttrProcessing>())
 					processAttributes(field.GetValue(config));
 			}
 		}

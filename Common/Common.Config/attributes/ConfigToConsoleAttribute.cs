@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reflection;
+using System.Collections.Generic;
 
 using UnityEngine;
 
@@ -22,7 +22,7 @@ namespace Common.Configuration
 		public class AddToConsoleAttribute: Attribute, IConfigAttribute, IFieldAttribute
 		{
 			static Config mainConfig = null;
-			
+
 			readonly string cfgNamespace = ""; // optional namespace for use in console in case of duplicate names
 
 			public AddToConsoleAttribute(string _cfgNamespace = null)
@@ -51,14 +51,14 @@ namespace Common.Configuration
 					if (ConfigVarsConsoleCommand.addConfigField(nameForConsole, new ConfigVarsConsoleCommand.CfgField(config, field)))
 						ExportedCfgVarFields.addField(nameForConsole);
 				}
-					
+
 				if (field.FieldType.IsClass)
 					process(field.GetValue(config));
 			}
 
 			#region Internal stuff
 
-			string getFieldNameForConsole(object _, FieldInfo field) // todo implement nested naming
+			string getFieldNameForConsole(object _, FieldInfo field) // TODO: implement nested naming
 			{
 				return (cfgNamespace + field.Name).ToLower();
 			}
@@ -68,7 +68,7 @@ namespace Common.Configuration
 				static GameObject consoleObject = null;
 
 				public static bool isInited { get => consoleObject != null; }
-				
+
 				static readonly Dictionary<string, CfgField> cfgFields = new Dictionary<string, CfgField>();
 
 				public class CfgField: Field
@@ -78,7 +78,7 @@ namespace Common.Configuration
 					public CfgField(object config, FieldInfo field): base(config, field)
 					{
 #if !DEBUG
-						bounds = GetCustomAttribute(field, typeof(BoundsAttribute)) as BoundsAttribute;
+						bounds = field.getAttribute<BoundsAttribute>();
 #endif
 					}
 
@@ -149,7 +149,7 @@ namespace Common.Configuration
 							setFieldValue(n.getArg(0) as string, n.getArg(1) as string);
 						}
 					}
-					
+
 					void OnConsoleCommand_getcfgvar(NotificationCenter.Notification n)
 					{																				$"getcfgvar: '{n.getArg(0)}'".logDbg();
 						if (n.getArgsCount() == 1)

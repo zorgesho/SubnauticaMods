@@ -16,9 +16,7 @@ namespace Common.Configuration
 			// don't serialize properties
 			protected override List<MemberInfo> GetSerializableMembers(Type objectType)
 			{
-				IEnumerable<MemberInfo> members = objectType.fields().
-					Where(field => !field.IsStatic && Attribute.GetCustomAttribute(field, typeof(NonSerializedAttribute)) == null);
-
+				IEnumerable<MemberInfo> members = objectType.fields().Where(field => !field.IsStatic && !field.checkAttribute<NonSerializedAttribute>());
 				return members.ToList();
 			}
 

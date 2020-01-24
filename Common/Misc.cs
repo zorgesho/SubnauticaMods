@@ -65,6 +65,9 @@ namespace Common
 		public static FieldInfo[] fields(this Type type) => type.GetFields(ReflectionHelper.bfAll);
 		public static MethodInfo[] methods(this Type type) => type.GetMethods(ReflectionHelper.bfAll);
 		public static PropertyInfo[] properties(this Type type) => type.GetProperties(ReflectionHelper.bfAll);
+
+		public static A    getAttribute<A>(this MemberInfo memberInfo)   where A: Attribute => Attribute.GetCustomAttribute(memberInfo, typeof(A)) as A;
+		public static bool checkAttribute<A>(this MemberInfo memberInfo) where A: Attribute => Attribute.GetCustomAttribute(memberInfo, typeof(A)) != null;
 	}
 
 	static class MiscExtensions

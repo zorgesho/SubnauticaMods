@@ -26,9 +26,9 @@ namespace Common.Crafting
 
 			foreach (var type in ReflectionHelper.definedTypes)
 			{
-				if (typeof(CraftableObject).IsAssignableFrom(type) && Attribute.GetCustomAttribute(type, typeof(NoAutoPatchAttribute)) == null)
+				if (typeof(CraftableObject).IsAssignableFrom(type) && !type.checkAttribute<NoAutoPatchAttribute>())
 				{
-					if (Attribute.GetCustomAttribute(type, typeof(PatchFirstAttribute)) != null)
+					if (type.checkAttribute<PatchFirstAttribute>())
 						patchObject(type);
 					else
 						toPatch.Add(type);

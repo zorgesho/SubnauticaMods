@@ -24,7 +24,7 @@ namespace Common
 					harmonyInstance.PatchAll(Assembly.GetExecutingAssembly());
 
 					if (searchForPatchClasses)
-						ReflectionHelper.definedTypes.Where(type => Attribute.GetCustomAttribute(type, typeof(PatchClassAttribute)) != null).forEach(type => patch(type));
+						ReflectionHelper.definedTypes.Where(type => type.checkAttribute<PatchClassAttribute>()).forEach(type => patch(type));
 				}
 			}
 			catch (Exception e)
@@ -56,9 +56,9 @@ namespace Common
 		{
 			foreach (var method in (typeWithPatchMethods ?? ReflectionHelper.getCallingType()).methods())
 			{
-				if (Attribute.GetCustomAttribute(method, typeof(HarmonyPatch)) is HarmonyPatch harmonyPatch)
+				if (method.getAttribute<HarmonyPatch>() is HarmonyPatch harmonyPatch)
 				{
-					MethodInfo _method_if<PatchType>() => Attribute.GetCustomAttribute(method, typeof(PatchType)) != null? method: null;
+					MethodInfo _method_if<H>() where H: Attribute => method.checkAttribute<H>()? method: null;
 
 					patch(harmonyPatch.info.getTargetMethod(), _method_if<HarmonyPrefix>(), _method_if<HarmonyPostfix>(), _method_if<HarmonyTranspiler>());
 				}

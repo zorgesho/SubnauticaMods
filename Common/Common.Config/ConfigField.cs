@@ -1,5 +1,4 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 
 namespace Common.Configuration
 {
@@ -17,7 +16,7 @@ namespace Common.Configuration
 				config = _config;
 				field = _field;
 
-				action = (Attribute.GetCustomAttribute(field, typeof(CustomActionAttribute)) as CustomActionAttribute)?.action;
+				action = field.getAttribute<CustomActionAttribute>()?.action;
 			}
 
 			public string name

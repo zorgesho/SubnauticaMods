@@ -23,7 +23,7 @@ namespace Common
 			public static void updatePatches()
 			{
 				if (optionalPatches == null)
-					optionalPatches = ReflectionHelper.definedTypes.Where(type => Attribute.GetCustomAttribute(type, typeof(OptionalPatchAttribute)) != null).ToList();
+					optionalPatches = ReflectionHelper.definedTypes.Where(type => type.checkAttribute<OptionalPatchAttribute>()).ToList();
 
 				optionalPatches.ForEach(type => updatePatch(type));
 			}
@@ -46,7 +46,7 @@ namespace Common
 
 			public static void setEnabled(bool val, Type patchType)
 			{																														$"OptionalPatches: setEnabled {patchType} => {val}".logDbg();
-				if (!(Attribute.GetCustomAttribute(patchType, typeof(HarmonyPatch)) is HarmonyPatch patch))
+				if (!(patchType.getAttribute<HarmonyPatch>() is HarmonyPatch patch))
 					return;
 
 				MethodInfo method = patch.info.getTargetMethod();

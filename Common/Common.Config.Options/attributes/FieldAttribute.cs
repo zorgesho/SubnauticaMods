@@ -64,13 +64,13 @@ namespace Common.Configuration
 				if (field.FieldType == typeof(float) || field.FieldType == typeof(int))
 				{
 					// creating ChoiceOption if we also have choice attribute
-					if (GetCustomAttribute(field, typeof(ChoiceAttribute)) is ChoiceAttribute choice && choice.choices.Length > 0)
+					if (field.getAttribute<ChoiceAttribute>() is ChoiceAttribute choice && choice.choices.Length > 0)
 					{
 						_registerChoiceLabels(choice.choices);
 						add(new ChoiceOption(cfgField, label, choice.choices, choice.values));
 					}
 					else // creating SliderOption if we also have bounds attribute
-					if (GetCustomAttribute(field, typeof(Config.Field.BoundsAttribute)) is Config.Field.BoundsAttribute bounds && bounds.isBothBoundsSet())
+					if (field.getAttribute<Config.Field.BoundsAttribute>() is Config.Field.BoundsAttribute bounds && bounds.isBothBoundsSet())
 					{
 						add(new SliderOption(cfgField, label, bounds.min, bounds.max));
 					}

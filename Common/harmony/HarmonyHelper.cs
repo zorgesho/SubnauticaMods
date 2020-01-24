@@ -19,15 +19,16 @@ namespace Common
 
 			try
 			{
-				Debug.startStopwatch();
-				harmonyInstance.PatchAll(Assembly.GetExecutingAssembly());
-				if (searchForPatchClasses)
-					ReflectionHelper.definedTypes.Where(type => Attribute.GetCustomAttribute(type, typeof(PatchClassAttribute)) != null).forEach(type => patch(type));
-				Debug.stopStopwatch($"HarmonyHelper.patchAll {Strings.modName}");
+				using (Debug.profiler($"HarmonyHelper.patchAll {Strings.modName}"))
+				{
+					harmonyInstance.PatchAll(Assembly.GetExecutingAssembly());
+
+					if (searchForPatchClasses)
+						ReflectionHelper.definedTypes.Where(type => Attribute.GetCustomAttribute(type, typeof(PatchClassAttribute)) != null).forEach(type => patch(type));
+				}
 			}
 			catch (Exception e)
 			{
-				Debug.stopStopwatch();
 				Log.msg(e, "HarmonyHelper.patchAll"); // so the exception will be in the mod's log
 				throw e;
 			}
@@ -39,13 +40,11 @@ namespace Common
 			{
 				HarmonyMethod _harmonyMethod(MethodInfo method) => (method == null)? null: new HarmonyMethod(method);
 
-				Debug.startStopwatch();
-				harmonyInstance.Patch(original, _harmonyMethod(prefix), _harmonyMethod(postfix), _harmonyMethod(transpiler));
-				Debug.stopStopwatch("HarmonyHelper.patch");
+				using (Debug.profiler("HarmonyHelper.patch"))
+					harmonyInstance.Patch(original, _harmonyMethod(prefix), _harmonyMethod(postfix), _harmonyMethod(transpiler));
 			}
 			catch (Exception e)
 			{
-				Debug.stopStopwatch();
 				Log.msg(e, "HarmonyHelper.patch");
 				throw e;
 			}

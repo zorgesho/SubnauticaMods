@@ -9,23 +9,8 @@ using UnityEngine.EventSystems;
 using Common;
 using Common.Configuration;
 
-namespace MiscPrototypes
+namespace ModsOptionsAdjusted
 {
-	[HarmonyPatch(typeof(uGUI_OptionsPanel), "AddTab")] // from ModsOptionsAdjusted
-	static class uGUIOptionsPanel_AddTab_Patch
-	{
-		public static int modsTabIndex { get; private set; } = -1;
-		public static bool isMainMenu { get; private set; } = true; // is options opened in main menu or in game
-
-		static void Postfix(uGUI_OptionsPanel __instance, string label, int __result)
-		{
-			if (label == "Mods")
-				modsTabIndex = __result;
-
-			isMainMenu = (__instance.GetComponent<MainMenuOptions>() != null);
-		}
-	}
-
 	[HarmonyHelper.PatchClass]
 	static class ModOptionsHeadingsToggle
 	{
@@ -193,7 +178,7 @@ namespace MiscPrototypes
 		[HarmonyPatch(typeof(uGUI_TabbedControlsPanel), "AddHeading")][HarmonyPrefix]
 		static bool _addHeading(uGUI_TabbedControlsPanel __instance, int tabIndex, string label)
 		{
-			if (tabIndex != uGUIOptionsPanel_AddTab_Patch.modsTabIndex)
+			if (tabIndex != OptionsPanelInfo.modsTabIndex)
 				return true;
 
 			__instance.AddItem(tabIndex, headingPrefab, label);
@@ -209,7 +194,7 @@ namespace MiscPrototypes
 		[HarmonyPatch(typeof(uGUI_TabbedControlsPanel), "SetVisibleTab")][HarmonyPrefix]
 		static void _setVisibleTab(uGUI_TabbedControlsPanel __instance, int tabIndex)
 		{
-			if (tabIndex != uGUIOptionsPanel_AddTab_Patch.modsTabIndex)
+			if (tabIndex != OptionsPanelInfo.modsTabIndex)
 				return;
 
 			__instance.tabs[tabIndex].container.GetComponent<VerticalLayoutGroup>().spacing = Main.config.spacingModOptions;

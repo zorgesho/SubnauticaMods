@@ -65,6 +65,7 @@ namespace Common
 			}
 		}
 
-		static MethodInfo getTargetMethod(this HarmonyMethod harmonyMethod) => harmonyMethod.declaringType?.method(harmonyMethod.methodName);
+		static MethodInfo getTargetMethod(this HarmonyMethod harmonyMethod) =>
+			harmonyMethod.declaringType?.method(harmonyMethod.methodName, harmonyMethod.argumentTypes);
 	}
 }

@@ -82,8 +82,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="src\ui\options\HeadingsToggle.cs" />
-    <Compile Include="src\ui\options\Tooltips.cs" />
+    <None Include="src\ui\options\Tooltips.cs" />
     <None Include="src\EmergencyPowerStation.cs" />
     <None Include="src\ui\BulkCrafting.cs" />
     <None Include="src\ui\PingTabToggles.cs" />

@@ -4,12 +4,7 @@ namespace MiscPrototypes
 {
 	class ModConfig: Config
 	{
-		public readonly float spacingModOptions = 15f;
-		
-		public readonly int field = 42;
-
-		public readonly float maxPowerOnBatteries = 50f;
-
+#if TEST_MOD_OPTIONS
 		[Options.Field("Short description of choice")]
 		[Options.Choice("Choice 1", "Choice 2", "Choice 3")]
 		public readonly int choice1 = 0;
@@ -37,5 +32,6 @@ namespace MiscPrototypes
 
 		[Options.Field("Key ------------------------------------ description")]
 		public readonly UnityEngine.KeyCode keybind2 = UnityEngine.KeyCode.B;
+#endif
 	}
 }

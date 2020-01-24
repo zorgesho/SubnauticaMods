@@ -9,25 +9,8 @@ using Common;
 
 namespace ModsOptionsAdjusted
 {
-	[HarmonyPatch(typeof(uGUI_OptionsPanel), "AddTab")]
-	static class uGUIOptionsPanel_AddTab_Patch
-	{
-		public static int modsTabIndex { get; private set; } = -1;
-		public static bool isMainMenu { get; private set; } = true; // is options opened in main menu or in game
-
-		static void Postfix(uGUI_OptionsPanel __instance, string label, int __result)
-		{
-			if (label == "Mods")
-				modsTabIndex = __result;
-
-			isMainMenu = (__instance.GetComponent<MainMenuOptions>() != null);
-		}
-	}
-
-
-	[HarmonyPatch(typeof(uGUI_TabbedControlsPanel), "AddItem")]
-	[HarmonyPatch(new Type[] {typeof(int), typeof(GameObject)})]
-	static class uGUITabbedControlsPanel_AddItem_Patch
+	[HarmonyHelper.PatchClass]
+	static class ModOptionsAdjuster
 	{
 		static readonly Tuple<string, Type>[] optionTypes = new Tuple<string, Type>[]
 		{
@@ -37,9 +20,11 @@ namespace ModsOptionsAdjusted
 			Tuple.Create("uGUI_BindingOption", typeof(AdjustBindingOption))
 		};
 
-		static void Postfix(int tabIndex, GameObject __result)
+		[HarmonyPostfix]
+		[HarmonyPatch(typeof(uGUI_TabbedControlsPanel), "AddItem", new Type[] {typeof(int), typeof(GameObject)})]
+		static void _addItem(int tabIndex, GameObject __result)
 		{
-			if (__result == null || tabIndex != uGUIOptionsPanel_AddTab_Patch.modsTabIndex)
+			if (__result == null || tabIndex != OptionsPanelInfo.modsTabIndex)
 				return;
 
 			foreach (var type in optionTypes)
@@ -65,7 +50,7 @@ namespace ModsOptionsAdjusted
 				if (!caption && $"AdjustModOption: caption gameobject '{gameObjectPath}' not found".logError())
 					return;
 
-				caption.AddComponent<LayoutElement>().minWidth = uGUIOptionsPanel_AddTab_Patch.isMainMenu? minCaptionWidth_MainMenu: minCaptionWidth_InGame;
+				caption.AddComponent<LayoutElement>().minWidth = OptionsPanelInfo.isMainMenu? minCaptionWidth_MainMenu: minCaptionWidth_InGame;
 				caption.AddComponent<ContentSizeFitter>().horizontalFit = ContentSizeFitter.FitMode.PreferredSize; // for autosizing captions
 
 				RectTransform transform = caption.GetComponent<RectTransform>();

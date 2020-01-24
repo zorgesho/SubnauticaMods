@@ -11,9 +11,9 @@ namespace MiscPrototypes
 		public static void patch()
 		{
 			HarmonyHelper.patchAll(true);
-
+#if TEST_MOD_OPTIONS
 			Options.init();
-
+#endif
 			CraftHelper.patchAll();
 		}
 	}

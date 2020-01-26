@@ -12,14 +12,26 @@ namespace Common
 		{
 			public static double lastResult { get; private set; } = 0d;
 #if DEBUG
-			string filename = null;
 			readonly string message = null;
+			readonly string filename = null;
 			readonly Stopwatch stopwatch = null;
+
+			static string formatFileName(string filename)
+			{
+				if (filename.isNullOrEmpty())
+					return filename;
+
+				if (Path.GetExtension(filename) == "")
+					filename += ".prf";
+
+				return Paths.modRootPath + filename;
+			}
 
 			public Profiler(string _message, string _filename)
 			{
 				message = _message;
-				filename = _filename;
+				filename = formatFileName(_filename);
+
 				stopwatch = Stopwatch.StartNew();
 			}
 
@@ -35,12 +47,16 @@ namespace Common
 				$"PROFILER: {result}".logDbg();
 
 				if (filename != null)
-				{
-					if (Path.GetExtension(filename) == "")
-						filename += ".prf";
+					result.appendToFile(filename);
+			}
 
-					File.AppendAllText(Paths.modRootPath + filename, $"{result}{Environment.NewLine}");
-				}
+			public static void _logCompare(double prevResult, string filename = null)
+			{
+				string res = $"PROFILER: DIFF {(lastResult - prevResult) / prevResult * 100f:F2} %";
+				res.logDbg();
+
+				if (filename != null)
+					res.appendToFile(formatFileName(filename));
 			}
 #else
 			public Profiler(string _0, string _1) {}

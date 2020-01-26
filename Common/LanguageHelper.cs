@@ -1,9 +1,7 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Collections.Generic;
-
-using Harmony;
 
 namespace Common
 {
@@ -22,52 +20,51 @@ namespace Common
 				return;
 
 			inited = true;
-			HarmonyHelper.patch();
 
 			// search for any classes that inherited from LanguageHelper and add their static string members to SMLHelper.LanguageHandler
-			foreach (var type in ReflectionHelper.definedTypes)
+			foreach (var type in ReflectionHelper.definedTypes.Where(type => typeof(LanguageHelper).IsAssignableFrom(type)))
 			{
-				if (typeof(LanguageHelper).IsAssignableFrom(type))
+				foreach (FieldInfo field in type.fields())
 				{
-					foreach (FieldInfo field in type.fields())
-					{
-						if (field.FieldType == typeof(string) && field.IsStatic && !field.IsLiteral) // const strings are not added to LanguageHandler
-						{																						$"LanguageHelper.init: adding field '{field.Name}': '{field.GetValue(null)}'".logDbg();
-							if (_addString(prefix + field.Name, field.GetValue(null) as string))
-								field.SetValue(null, field.Name); // changing value of string to its name, so we can use it as a string id for 'str' method
-						}
+					if (field.FieldType == typeof(string) && field.IsStatic && !field.IsLiteral) // const strings are not added to LanguageHandler
+					{																						$"LanguageHelper.init: adding field '{field.Name}': '{field.GetValue(null)}'".logDbg();
+						if (addString(prefix + field.Name, field.GetValue(null) as string))
+							field.SetValue(null, field.Name); // changing value of string to its name, so we can use it as a string id for 'str' method
 					}
 				}
 			}
 		}
 
+		// get string by id from Language.main
 		public static string str(string ids) => Language.main == null? ids: (Language.main.TryGet(prefix + ids, out string result)? result: ids);
 
+		// wrap method for SMLHelper.LanguageHandler.SetLanguageLine
+		static readonly Func<string, string, bool> addString = _initDynamicMethod();
 
 		// using this to avoid including SMLHelper as a reference to Common project
 		// can't use just reflection here (MethodInfo.Invoke), in that case SMLHelper can't identify calling mod (it uses StackTrace for that)
-		static bool _addString(string _0, string _1) { "LanguageHelper: SMLHelper is not installed".logWarning(); return false; }
-
-		[HarmonyPatch(typeof(LanguageHelper), nameof(LanguageHelper._addString))][HarmonyTranspiler]
-		static IEnumerable<CodeInstruction> _patch(IEnumerable<CodeInstruction> cins)
+		static Func<string, string, bool> _initDynamicMethod()
 		{
-			try
-			{
-				if (Assembly.Load("SMLHelper")?.GetType("SMLHelper.V2.Handlers.LanguageHandler")?.GetMethod("SetLanguageLine", BindingFlags.Static | BindingFlags.Public) is MethodInfo SetLanguageLine)
-				{
-					return new List<CodeInstruction>
-					{
-						new CodeInstruction(OpCodes.Ldarg_0),
-						new CodeInstruction(OpCodes.Ldarg_1),
-						new CodeInstruction(OpCodes.Call, SetLanguageLine),
-						new CodeInstruction(OpCodes.Ldc_I4_1),
-						new CodeInstruction(OpCodes.Ret)
-					};
-				}
-			}
-			catch (Exception) {}
+			MethodInfo SetLanguageLine = ReflectionHelper.safeGetMethod("SMLHelper", "SMLHelper.V2.Handlers.LanguageHandler", "SetLanguageLine");
+			Debug.assert(SetLanguageLine != null);
 
-			return cins;
+			DynamicMethod dm = new DynamicMethod("_addString", typeof(bool), new Type[] { typeof(string), typeof(string)}, typeof(LanguageHelper));
+
+			ILGenerator ilg = dm.GetILGenerator();
+			if (SetLanguageLine != null)
+			{
+				ilg.Emit(OpCodes.Ldarg_0);
+				ilg.Emit(OpCodes.Ldarg_1);
+				ilg.Emit(OpCodes.Call, SetLanguageLine);
+				ilg.Emit(OpCodes.Ldc_I4_1);
+			}
+			else
+			{
+				ilg.Emit(OpCodes.Ldc_I4_0);
+			}
+			ilg.Emit(OpCodes.Ret);
+
+			return dm.createDelegate<Func<string, string, bool>>();
 		}
 	}
 }

@@ -1,10 +1,9 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Collections;
-using System.Collections.Generic;
 
-using Harmony;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -32,76 +31,52 @@ namespace Common
 			}
 		}
 
-
-		public static GameObject getChild(this GameObject go, string name) =>
-			go.transform.Find(name)?.gameObject;
-
+		public static GameObject getChild(this GameObject go, string name) => go.transform.Find(name)?.gameObject;
 
 		public static T getComponentInHierarchy<T>(this GameObject go, bool checkChildren = true, bool checkParent = true) where T: Component
 		{
 			T cmp = go.GetComponent<T>();
 
-			if (checkChildren && cmp == null)
+			if (checkChildren && !cmp)
 				cmp = go.GetComponentInChildren<T>();
 
-			if (checkParent && cmp == null)
+			if (checkParent && !cmp)
 				cmp = go.GetComponentInParent<T>();
 
 			return cmp;
 		}
 
 
-		public static void destroyChild(this GameObject go, string name, bool immediate = true)
+		static void _destroy(this Object obj, bool immediate)
 		{
 			if (immediate)
-				Object.DestroyImmediate(go.getChild(name));
+				Object.DestroyImmediate(obj);
 			else
-				Object.Destroy(go.getChild(name));
+				Object.Destroy(obj);
 		}
 
+		public static void destroyChild(this GameObject go, string name, bool immediate = true) =>
+			go.getChild(name)?._destroy(immediate);
 
-		public static void destroyComponent<T>(this GameObject go, bool immediate = true) where T: Component
-		{
-			if (immediate)
-				Object.DestroyImmediate(go.GetComponent<T>());
-			else
-				Object.Destroy(go.GetComponent<T>());
-		}
+		public static void destroyComponent<T>(this GameObject go, bool immediate = true) where T: Component =>
+			go.GetComponent<T>()?._destroy(immediate);
 
+		public static void destroyComponentInChildren<T>(this GameObject go, bool immediate = true) where T: Component =>
+			go.GetComponentInChildren<T>()?._destroy(immediate);
 
-		public static void destroyComponentInChildren<T>(this GameObject go, bool immediate = true) where T: Component
-		{
-			if (immediate)
-				Object.DestroyImmediate(go.GetComponentInChildren<T>());
-			else
-				Object.Destroy(go.GetComponentInChildren<T>());
-		}
 
 		// if fields is empty we try to copy all fields
-		public static void copyValuesFrom<CT, CF>(this CT cmpTo, CF cmpFrom, params string[] fields) where CT: Component where CF: Component
+		public static void copyFieldsFrom<CT, CF>(this CT cmpTo, CF cmpFrom, params string[] fieldNames) where CT: Component where CF: Component
 		{
 			try
 			{
 				Type typeTo = cmpTo.GetType(), typeFrom = cmpFrom.GetType();
 
-				if (fields.Length == 0)
+				foreach (var fieldTo in fieldNames.Length == 0? typeTo.fields(): fieldNames.Select(name => typeTo.field(name)))
 				{
-					foreach (var fieldTo in typeTo.fields())
-					{
-						if (typeFrom.field(fieldTo.Name) is FieldInfo fieldFrom)
-						{																											$"copyValuesFrom: copying field {fieldTo.Name} from {cmpFrom} to {cmpTo}".logDbg();
-							fieldTo.SetValue(cmpTo, fieldFrom.GetValue(cmpFrom));
-						}
-					}
-				}
-				else
-				{
-					foreach (var fieldName in fields)
-					{
-						if (typeTo.field(fieldName) is FieldInfo fieldTo && typeFrom.field(fieldName) is FieldInfo fieldFrom)
-						{																											$"copyValuesFrom: copying field {fieldName} from {cmpFrom} to {cmpTo}".logDbg();
-							fieldTo.SetValue(cmpTo, fieldFrom.GetValue(cmpFrom));
-						}
+					if (typeFrom.field(fieldTo.Name) is FieldInfo fieldFrom)
+					{																										$"copyFieldsFrom: copying field {fieldTo.Name} from {cmpFrom} to {cmpTo}".logDbg();
+						fieldTo.SetValue(cmpTo, fieldFrom.GetValue(cmpFrom));
 					}
 				}
 			}
@@ -110,6 +85,10 @@ namespace Common
 				Log.msg(e);
 			}
 		}
+
+		[Obsolete]
+		public static void copyValuesFrom<CT, CF>(this CT cmpTo, CF cmpFrom, params string[] fieldNames) where CT: Component where CF: Component =>
+			copyFieldsFrom(cmpTo, cmpFrom, fieldNames);
 	}
 
 
@@ -134,30 +113,35 @@ namespace Common
 
 	static class InputHelper
 	{
-		static InputHelper() => HarmonyHelper.patch();
-
-		[HarmonyPatch(typeof(InputHelper), nameof(InputHelper.getMouseWheelValue))][HarmonyTranspiler]
-		static IEnumerable<CodeInstruction> patch_getMouseWheelValue(IEnumerable<CodeInstruction> cins) // weird way to avoid including InputLegacyModule in all references
-		{
-			if (Assembly.Load("UnityEngine.InputLegacyModule")?.GetType("UnityEngine.Input")?.method("GetAxis") is MethodInfo GetAxis)
-			{
-				return new List<CodeInstruction>
-				{
-					new CodeInstruction(OpCodes.Ldstr, "Mouse ScrollWheel"),
-					new CodeInstruction(OpCodes.Call, GetAxis),
-					new CodeInstruction(OpCodes.Ret)
-				};
-			}
-
-			return cins;
-		}
-
-		public static float getMouseWheelValue() { "InputHelper.getMouseWheelValue is not patched!".logError(); return 0f; } // need to logging anyway to avoid inlining
+		public static readonly Func<float> getMouseWheelValue = _initDynamicMethod();
 
 		public static void resetCursorToCenter()
 		{
 			Cursor.lockState = CursorLockMode.Locked; // warning: don't set lockState separately, use UWE utils for this if needed
 			Cursor.lockState = CursorLockMode.None;
+		}
+
+		// making dynamic method to avoid including InputLegacyModule in all references
+		static Func<float> _initDynamicMethod()
+		{
+			MethodInfo GetAxis = ReflectionHelper.safeGetMethod("UnityEngine.InputLegacyModule", "UnityEngine.Input", "GetAxis");
+			Debug.assert(GetAxis != null);
+
+			DynamicMethod dm = new DynamicMethod("getMouseWheelValue", typeof(float), null, typeof(InputHelper));
+
+			ILGenerator ilg = dm.GetILGenerator();
+			if (GetAxis != null)
+			{
+				ilg.Emit(OpCodes.Ldstr, "Mouse ScrollWheel");
+				ilg.Emit(OpCodes.Call, GetAxis);
+			}
+			else
+			{
+				ilg.Emit(OpCodes.Ldc_R4, 0f);
+			}
+			ilg.Emit(OpCodes.Ret);
+
+			return dm.createDelegate<Func<float>>();
 		}
 	}
 

@@ -27,11 +27,14 @@ namespace ConsoleImproved
 			__instance.timeDelay = Main.config.msgsSettings.timeDelay;
 			__instance.timeFadeOut  = Main.config.msgsSettings.timeFadeOut;
 			__instance.timeInvisible = Main.config.msgsSettings.timeInvisible;
+
+			__instance.prefabMessage.lineSpacing = Main.config.msgsSettings.textLineSpacing;
 		}
 	}
 #endif
 
 	// don't clear onscreen messages while console is open
+	[HarmonyHelper.OptionalPatch]
 	[HarmonyPatch(typeof(ErrorMessage), "OnUpdate")]
 	static class ErrorMessage_OnUpdate_Patch
 	{

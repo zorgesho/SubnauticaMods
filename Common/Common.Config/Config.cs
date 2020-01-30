@@ -39,16 +39,10 @@ namespace Common.Configuration
 				if (!isNeedToLoad)
 					"Loading from config is DISABLED".logWarning();
 
-				if (isNeedToLoad && File.Exists(configPath))
-				{
-					config = deserialize<C>(File.ReadAllText(configPath));
-					config.configPath = configPath;
-				}
-				else
-				{
-					config = new C();
-					config.save(configPath);
-				}
+				config = (!isNeedToLoad || !File.Exists(configPath))? new C(): deserialize<C>(File.ReadAllText(configPath));
+
+				// saving config even if we just loaded it to update it in case of added or removed fields (and to set configPath var)
+				config.save(configPath);
 
 				if (loadOptions.HasFlag(LoadOptions.SetAsMainConfig))
 				{

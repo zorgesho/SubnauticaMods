@@ -1,12 +1,17 @@
-﻿using Harmony;
+﻿using System.Reflection.Emit;
+using System.Collections.Generic;
+
+using Harmony;
+
 using Common;
 
 namespace RemoteTorpedoDetonator
 {
+	[HarmonyHelper.OptionalPatch]
 	[HarmonyPatch(typeof(SeamothTorpedo), "Awake")]
 	static class SeamothTorpedo_Awake_Patch
 	{
-		static bool Prepare() => (Main.config.torpedoSpeed != 10f || !Main.config.homingTorpedoes); // non-default values, need to patch
+		static bool Prepare() => Main.config.torpedoSpeed != 10f || !Main.config.homingTorpedoes; // non-default values, need to patch
 
 		static void Postfix(SeamothTorpedo __instance)
 		{
@@ -36,5 +41,16 @@ namespace RemoteTorpedoDetonator
 			if (techType == TechType.SeamothTorpedoModule && __instance.quickSlotCooldown[slotID] > Main.config.torpedoCooldown)
 				__instance.quickSlotCooldown[slotID] = Main.config.torpedoCooldown;
 		}
+	}
+
+	// infinite torpedoes cheat
+	[HarmonyHelper.OptionalPatch]
+	[HarmonyPatch(typeof(Vehicle), "TorpedoShot")]
+	static class Vehicle_TorpedoShot_Patch
+	{
+		static bool Prepare() => Main.config.cheatInfiniteTorpedoes;
+
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins) =>
+			HarmonyHelper.ciRemove(cins, ci => ci.isOp(OpCodes.Ldarg_0), +0, 5); // removing "container.DestroyItem(torpedoType.techType)" check
 	}
 }

@@ -71,7 +71,6 @@ namespace ModsOptionsAdjusted
 				HorizontalLayoutGroup hlg = gameObject.getChild("Toggle").AddComponent<HorizontalLayoutGroup>();
 				hlg.childControlWidth = false;
 				hlg.childForceExpandWidth = false;
-				hlg.childAlignment = TextAnchor.MiddleLeft;
 				hlg.spacing = spacing;
 
 				setCaptionGameObject("Toggle/Caption");

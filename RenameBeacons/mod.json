@@ -2,7 +2,7 @@
   "Id": "RenameBeacons",
   "DisplayName": "RenameBeacons",
   "Author": "zorgesho",
-  "Version": "1.0.1",
+  "Version": "1.0.2",
   "Dependencies": [],
   "LoadBefore": [],
   "LoadAfter": [],

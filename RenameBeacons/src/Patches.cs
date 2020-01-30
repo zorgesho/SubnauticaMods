@@ -1,8 +1,8 @@
 ﻿using System.Text;
 
+using Harmony;
 using UnityEngine;
 using UnityEngine.UI;
-using Harmony;
 
 using Common;
 
@@ -14,7 +14,7 @@ namespace RenameBeacons
 		static void Postfix(StringBuilder sb, InventoryItem item)
 		{
 			if (item.item.GetTechType() == TechType.Beacon)
-				TooltipFactory.WriteAction(sb, Strings.Mouse.middleButton, "rename");
+				TooltipFactory.WriteAction(sb, Strings.Mouse.middleButton, L10n.str(L10n.ids_rename));
 		}
 	}
 
@@ -24,10 +24,10 @@ namespace RenameBeacons
 		static void Postfix(StringBuilder sb, TechType techType, GameObject obj)
 		{
 			if (techType == TechType.Beacon)
-				TooltipFactory.WriteDescription(sb, $"Name: \"{obj.GetComponent<Beacon>().label}\"");
+				TooltipFactory.WriteDescription(sb, $"{L10n.str(L10n.ids_name)}: \"{obj.GetComponent<Beacon>().label}\"");
 		}
 	}
-	
+
 	[HarmonyPatch(typeof(Beacon), "OnPickedUp")]
 	static class Beacon_OnPickedUp_Patch
 	{
@@ -61,23 +61,25 @@ namespace RenameBeacons
 				}
 			}
 		}
-		
+
 		static void Postfix(InventoryItem item, int button)
 		{
-			if (item.item.GetTechType() == TechType.Beacon && button == 2)
-			{
-				Beacon beacon = item.item.GetComponent<Beacon>();
-				BeaconRenamer.init(beacon);
-				uGUI.main.userInput.RequestString(	Language.main.Get("BeaconLabel"),
-													Language.main.Get("BeaconSubmit"),
-													beacon.beaconLabel.labelName, 25,
-													new uGUI_UserInput.UserInputCallback(BeaconRenamer.setLabel));
-				
-				// just polish
-				uGUI.main.userInput.gameObject.GetComponentInChildren<Button>()?.OnDeselect(null);
-				uGUI.main.userInput.gameObject.GetComponentInChildren<InputField>()?.OnSelect(null);
-				InputHelper.resetCursorToCenter();
-			}
+			if (item.item.GetTechType() != TechType.Beacon || button != 2)
+				return;
+
+			Beacon beacon = item.item.GetComponent<Beacon>();
+			BeaconRenamer.init(beacon);
+
+			// for receiving events from mouse when opened from inventory
+			uGUI.main.userInput.gameObject.ensureComponent<uGUI_GraphicRaycaster>().guiCameraSpace = true;
+
+			uGUI.main.userInput.RequestString(	Language.main.Get("BeaconLabel"),
+												Language.main.Get("BeaconSubmit"),
+												beacon.beaconLabel.labelName, 25,
+												new uGUI_UserInput.UserInputCallback(BeaconRenamer.setLabel));
+
+			uGUI.main.userInput.gameObject.GetComponentInChildren<InputField>()?.OnSelect(null); // set focus to input field
+			Cursor.lockState = CursorLockMode.Locked; // for resetting cursor to the center of the screen (it's unlocks on the next frame in UWE.Utils.UpdateCusorLockState)
 		}
 	}
 }

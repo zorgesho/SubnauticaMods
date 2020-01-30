@@ -6,7 +6,14 @@ namespace RenameBeacons
 	{
 		public static void patch()
 		{
-			HarmonyHelper.patchAll(false);
+			HarmonyHelper.patchAll();
+			LanguageHelper.init();
 		}
+	}
+
+	class L10n: LanguageHelper
+	{
+		public static readonly string ids_name = "Name";
+		public static readonly string ids_rename = "rename";
 	}
 }

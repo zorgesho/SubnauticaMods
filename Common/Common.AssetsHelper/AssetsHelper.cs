@@ -9,8 +9,7 @@ namespace Common
 			textureToSprite(loadTextureFromFile(Paths.assetsPath + textureName + ".png"));
 
 		static Sprite textureToSprite(Texture2D tex) =>
-			Sprite.Create(tex, new Rect(0f, 0f, tex.width, tex.height), new Vector2(0.5f, 0.5f));
-
+			tex == null? null: Sprite.Create(tex, new Rect(0f, 0f, tex.width, tex.height), new Vector2(0.5f, 0.5f));
 
 		static Texture2D loadTextureFromFile(string textureFilePath)
 		{
@@ -18,9 +17,7 @@ namespace Common
 				return null;
 
 			Texture2D tex = new Texture2D(2, 2);
-			tex.LoadImage(File.ReadAllBytes(textureFilePath));
-
-			return tex;
+			return tex.LoadImage(File.ReadAllBytes(textureFilePath))? tex: null;
 		}
 	}
 }

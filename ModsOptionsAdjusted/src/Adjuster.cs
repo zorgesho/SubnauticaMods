@@ -9,6 +9,9 @@ using Common;
 
 namespace ModsOptionsAdjusted
 {
+	// Adjusting mod options ui elements so they don't overlap with their text labels.
+	// We add corresponding 'adjuster' components to each ui element in mod options tab.
+	// Reason for using components is to skip one frame before manually adjust ui elements to make sure that Unity UI Layout components is updated
 	[HarmonyHelper.PatchClass]
 	static class ModOptionsAdjuster
 	{
@@ -30,11 +33,16 @@ namespace ModsOptionsAdjusted
 			foreach (var type in optionTypes)
 			{
 				if (__result.name.Contains(type.Item1))
+				{
 					__result.ensureComponent(type.Item2);
+					break;
+				}
 			}
 		}
 
-
+		// base class for 'adjuster' components
+		// we add ContentSizeFitter component to text label so it will change width in its Update() based on text
+		// that's another reason to skip one frame
 		abstract class AdjustModOption: MonoBehaviour
 		{
 			const float minCaptionWidth_MainMenu = 480f;
@@ -91,7 +99,7 @@ namespace ModsOptionsAdjusted
 
 				// for some reason sliders don't update their handle positions sometimes
 				uGUI_SnappingSlider slider = gameObject.GetComponentInChildren<uGUI_SnappingSlider>();
-				typeof(Slider).method("UpdateVisuals").Invoke(slider, null);
+				typeof(Slider).method("UpdateVisuals")?.Invoke(slider, null);
 
 				// changing width for slider value label
 				RectTransform sliderValueRect = gameObject.transform.Find("Slider/Value") as RectTransform;
@@ -120,7 +128,7 @@ namespace ModsOptionsAdjusted
 				setCaptionGameObject("Choice/Caption");
 				yield return null; // skip one frame
 
-				RectTransform rect = gameObject.transform.Find("Choice/Background").GetComponent<RectTransform>();
+				RectTransform rect = gameObject.transform.Find("Choice/Background") as RectTransform;
 
 				float widthAll = gameObject.GetComponent<RectTransform>().rect.width;
 				float widthChoice = rect.rect.width;
@@ -142,7 +150,7 @@ namespace ModsOptionsAdjusted
 				setCaptionGameObject("Caption");
 				yield return null; // skip one frame
 
-				RectTransform rect = gameObject.transform.Find("Bindings").GetComponent<RectTransform>();
+				RectTransform rect = gameObject.transform.Find("Bindings") as RectTransform;
 
 				float widthAll = gameObject.GetComponent<RectTransform>().rect.width;
 				float widthBinding = rect.rect.width;

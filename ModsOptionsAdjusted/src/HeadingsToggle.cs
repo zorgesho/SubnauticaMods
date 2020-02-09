@@ -11,6 +11,8 @@ using Common.Configuration;
 
 namespace ModsOptionsAdjusted
 {
+	// Class for collapsing/expanding options in 'Mods' tab
+	// Options can be collapsed/expanded by clicking on mod's title or arrow button
 	[HarmonyHelper.PatchClass]
 	static class ModOptionsHeadingsToggle
 	{
@@ -41,7 +43,7 @@ namespace ModsOptionsAdjusted
 			public static void store(string name, HeadingState state) => statesConfig[name] = state;
 		}
 
-
+		// we add arrow button from Choice ui element to the options headings for collapsing/expanding
 		static void initHeadingPrefab(uGUI_TabbedControlsPanel panel)
 		{
 			if (headingPrefab)
@@ -61,7 +63,7 @@ namespace ModsOptionsAdjusted
 			button.AddComponent<ToggleButtonClickHandler>();
 
 			RectTransform buttonTransform = button.transform as RectTransform;
-			buttonTransform.SetParent(headingPrefab.transform, false);
+			buttonTransform.SetParent(headingPrefab.transform);
 			buttonTransform.SetAsFirstSibling();
 			buttonTransform.localEulerAngles = new Vector3(0f, 0f, -90f);
 			buttonTransform.localPosition = new Vector3(15f, -13f, 0f);
@@ -70,6 +72,7 @@ namespace ModsOptionsAdjusted
 		}
 
 		#region components
+		// main component for headings toggling
 		class HeadingToggle: MonoBehaviour
 		{
 			HeadingState headingState = HeadingState.Expanded;
@@ -121,7 +124,7 @@ namespace ModsOptionsAdjusted
 			}
 		}
 
-
+		// click handler for arrow button
 		class ToggleButtonClickHandler: MonoBehaviour, IPointerClickHandler
 		{
 			const float timeRotate = 0.1f;
@@ -166,7 +169,7 @@ namespace ModsOptionsAdjusted
 			}
 		}
 
-
+		// click handler for title, just redirects clicks to button click handler
 		class HeadingClickHandler: MonoBehaviour, IPointerClickHandler
 		{
 			public void OnPointerClick(PointerEventData eventData) =>

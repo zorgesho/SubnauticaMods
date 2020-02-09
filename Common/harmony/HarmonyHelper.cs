@@ -52,16 +52,15 @@ namespace Common
 
 		// use methods from 'typeWithPatchMethods' class as harmony patches
 		// valid method need to have HarmonyPatch and Harmony[Prefix/Postfix/Transpiler] attributes
+		// if typeWithPatchMethods is null, we use type from which this method is called
 		public static void patch(Type typeWithPatchMethods = null)
 		{
-			foreach (var method in (typeWithPatchMethods ?? ReflectionHelper.getCallingType()).methods())
+			foreach (var method in (typeWithPatchMethods ?? ReflectionHelper.getCallingType()).methods(BindingFlags.DeclaredOnly))
 			{
-				if (method.getAttribute<HarmonyPatch>() is HarmonyPatch harmonyPatch)
-				{
-					MethodInfo _method_if<H>() where H: Attribute => method.checkAttribute<H>()? method: null;
+				MethodInfo _method_if<H>() where H: Attribute => method.checkAttribute<H>()? method: null;
 
+				if (method.getAttribute<HarmonyPatch>() is HarmonyPatch harmonyPatch)
 					patch(harmonyPatch.info.getTargetMethod(), _method_if<HarmonyPrefix>(), _method_if<HarmonyPostfix>(), _method_if<HarmonyTranspiler>());
-				}
 			}
 		}
 

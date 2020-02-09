@@ -16,7 +16,7 @@ namespace Common.GameSerialization
 			return File.Exists(filePath)? JsonConvert.DeserializeObject<T>(File.ReadAllText(filePath)): default;
 		}
 
-		public static bool load<T>(string id, out T saveData) => (saveData = load<T>(id)) != default;
+		public static bool load<T>(string id, out T saveData) => !(saveData = load<T>(id)).Equals(default);
 
 		static string getPath(string id) => Path.Combine(Paths.savesPath, id + ".json");
 	}

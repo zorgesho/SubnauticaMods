@@ -19,7 +19,7 @@ namespace TrfHabitatBuilder
 	{
 		static bool Prefix(BuilderTool __instance)
 		{
-			TrfBuilderControl	tbc = __instance.gameObject.GetComponent<TrfBuilderControl>();
+			TrfBuilderControl tbc = __instance.gameObject.GetComponent<TrfBuilderControl>();
 			if (tbc == null)
 				return true;
 

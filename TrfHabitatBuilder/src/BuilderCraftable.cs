@@ -20,8 +20,9 @@ namespace TrfHabitatBuilder
 			Terraformer trfCmp = prefab.GetComponent<Terraformer>();
 			BuilderTool bldCmp = prefab.AddComponent<BuilderTool>();
 
-			bldCmp.copyValuesFrom(trfCmp, "rightHandIKTarget", "leftHandIKTarget", "ikAimRightArm", "ikAimLeftArm", "mainCollider", "pickupable", "useLeftAimTargetOnPlayer", "drawSound");
+			bldCmp.copyFieldsFrom(trfCmp, "rightHandIKTarget", "leftHandIKTarget", "ikAimRightArm", "ikAimLeftArm", "mainCollider", "pickupable", "useLeftAimTargetOnPlayer", "drawSound");
 			bldCmp.buildSound = trfCmp.placeLoopSound;
+			bldCmp.completeSound = CraftData.GetPrefabForTechType(TechType.Builder).GetComponent<BuilderTool>().completeSound;
 
 			Object.DestroyImmediate(trfCmp);
 

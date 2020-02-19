@@ -6,7 +6,7 @@ namespace TrfHabitatBuilder
 {
 	public static class Main
 	{
-		internal static ModConfig config = Config.tryLoad<ModConfig>();
+		internal static readonly ModConfig config = Config.tryLoad<ModConfig>();
 
 		public static void patch()
 		{

@@ -10,6 +10,13 @@ namespace Common.Configuration
 {
 	partial class Config
 	{
+		public partial class Field
+		{
+			// field with this attribute will not be saved (will be removed during save from json file)
+			[AttributeUsage(AttributeTargets.Field)]
+			public class LoadOnlyAttribute: Attribute {}
+		}
+
 		class ConfigContractResolver: DefaultContractResolver
 		{
 			// serialize only fields (including private and readonly, except static and with NonSerialized attribute)
@@ -20,12 +27,13 @@ namespace Common.Configuration
 				return members.ToList();
 			}
 
-			// all serializable members are readable and writeble
+			// we can deserialize all members and serialize members without LoadOnly attribute
 			protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
 			{
 				var property = base.CreateProperty(member, memberSerialization);
 
-				property.Readable = property.Writable = true;
+				property.Writable = true;
+				property.Readable = !member.checkAttribute<Field.LoadOnlyAttribute>();
 
 				return property;
 			}

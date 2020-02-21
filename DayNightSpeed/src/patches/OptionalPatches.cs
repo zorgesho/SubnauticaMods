@@ -13,21 +13,21 @@ namespace DayNightSpeed
 	static class CreatureEgg_Awake_Patch
 	{
 #if !DEBUG
-		static bool Prepare() => Main.config.multEggsHatching != 1.0f;
+		static bool Prepare() => Main.config.speedEggsHatching != 1.0f;
 #endif
-		static void Postfix(CreatureEgg __instance) => __instance.daysBeforeHatching *= Main.config.multEggsHatching;
+		static void Postfix(CreatureEgg __instance) => __instance.daysBeforeHatching /= Main.config.speedEggsHatching;
 	}
-	
+
 	// modifying creature grow and breed time (breed time is half of grow time)
 	[HarmonyPatch(typeof(WaterParkCreatureParameters), MethodType.Constructor)]
 	[HarmonyPatch(new Type[] {typeof(float), typeof(float), typeof(float), typeof(float), typeof(bool)})]
 	static class WaterParkCreature_Constructor_Patch
 	{
 #if !DEBUG
-		static bool Prepare() => Main.config.multCreaturesGrow != 1.0f;
+		static bool Prepare() => Main.config.speedCreaturesGrow != 1.0f;
 #endif
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins) =>
-			HarmonyHelper.ciInsert(cins, ci => ci.isLDC(1200f), HarmonyHelper._codeForCfgVar(nameof(ModConfig.multCreaturesGrow)), OpCodes.Mul);
+			HarmonyHelper.ciInsert(cins, ci => ci.isLDC(1200f), HarmonyHelper._codeForCfgVar(nameof(ModConfig.speedCreaturesGrow)), OpCodes.Div);
 	}
 
 	// modifying plants grow time
@@ -35,10 +35,10 @@ namespace DayNightSpeed
 	static class GrowingPlant_GetGrowthDuration_Patch
 	{
 #if !DEBUG
-		static bool Prepare() => Main.config.multPlantsGrow != 1.0f;
+		static bool Prepare() => Main.config.speedPlantsGrow != 1.0f;
 #endif
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins) =>
-			HarmonyHelper.constToCfgVar(cins, 1.0f, nameof(ModConfig.multPlantsGrow));
+			HarmonyHelper.ciInsert(cins, ci => ci.isLDC(1f), HarmonyHelper._codeForCfgVar(nameof(ModConfig.speedPlantsGrow)), OpCodes.Div);
 	}
 
 	// modifying fruits grow time (on lantern tree)
@@ -46,12 +46,12 @@ namespace DayNightSpeed
 	static class FruitPlant_Initialize_Patch
 	{
 #if !DEBUG
-		static bool Prepare() => Main.config.multPlantsGrow != 1.0f;
+		static bool Prepare() => Main.config.speedPlantsGrow != 1.0f;
 #endif
 		static void Prefix(FruitPlant __instance)
 		{
 			if (!__instance.initialized)
-				__instance.fruitSpawnInterval *= Main.config.multPlantsGrow;
+				__instance.fruitSpawnInterval /= Main.config.speedPlantsGrow;
 		}
 	}
 
@@ -61,14 +61,14 @@ namespace DayNightSpeed
 	{
 		static float medKitSpawnInterval = 0f;
 #if !DEBUG
-		static bool Prepare() => Main.config.multMedkitInterval != 1.0f;
+		static bool Prepare() => Main.config.speedMedkitInterval != 1.0f;
 #endif
 		static void Prefix(MedicalCabinet __instance)
 		{
 			if (medKitSpawnInterval == 0f)
 				medKitSpawnInterval = __instance.medKitSpawnInterval;
 
-			__instance.medKitSpawnInterval = medKitSpawnInterval * Main.config.multMedkitInterval;
+			__instance.medKitSpawnInterval = medKitSpawnInterval / Main.config.speedMedkitInterval;
 		}
 	}
 
@@ -95,12 +95,35 @@ namespace DayNightSpeed
 		}
 	}
 
+	[HarmonyPatch(typeof(WaterParkCreature), "Update")]
+	static class WaterParkCreature_Update_Patch
+	{
+		static void Postfix(WaterParkCreature __instance)
+		{
+			if (Main.config.dbgCfg.showWaterParkCreatures)
+			{
+				$"age: {__instance.age} canBreed: {__instance.canBreed} matureTime: {__instance.matureTime} isMature: {__instance.isMature}".
+					onScreen("waterpark " + __instance.name + " " + __instance.GetHashCode());
+			}
+		}
+	}
+
+	[HarmonyPatch(typeof(CreatureEgg), "UpdateProgress")]
+	static class CreatureEgg_UpdateProgress_Patch
+	{
+		static void Postfix(CreatureEgg __instance)
+		{
+			if (Main.config.dbgCfg.showWaterParkCreatures)
+				$"progress: {__instance.progress}".onScreen("waterpark " + __instance.name + " " + __instance.GetHashCode());
+		}
+	}
+
 	[HarmonyPatch(typeof(Story.StoryGoalScheduler), "Schedule")]
 	static class StoryGoalScheduler_Schedule_Patch
 	{
 		static void Postfix(Story.StoryGoal goal) => $"goal added: {goal.key} {goal.delay} {goal.goalType}".logDbg();
 	}
-	
+
 	[HarmonyPatch(typeof(Story.StoryGoal), "Execute")]
 	static class StoryGoal_Execute_Patch
 	{

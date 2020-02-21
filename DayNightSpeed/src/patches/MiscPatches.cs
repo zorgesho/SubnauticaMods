@@ -20,8 +20,8 @@ namespace DayNightSpeed
 		{
 			CIList listToInsert = toCIList(_codeForCfgVar(nameof(ModConfig.dayNightSpeed)), OpCodes.Mul);
 
-			if (Main.config.multHungerThrist != 1f)
-				listToInsert.AddRange(toCIList(_codeForCfgVar(nameof(ModConfig.multHungerThrist)), OpCodes.Div));
+			if (Main.config.speedHungerThrist != 1f)
+				listToInsert.AddRange(toCIList(_codeForCfgVar(nameof(ModConfig.speedHungerThrist)), OpCodes.Mul));
 
 			return ciInsert(cins, ci => ci.isLDC(100f), +1, 2, listToInsert);
 		}

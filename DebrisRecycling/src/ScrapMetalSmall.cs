@@ -16,7 +16,7 @@ namespace DebrisRecycling
 
 		public override void patch()
 		{
-			TechType = register("Small piece of salvage", "Composed primarily of titanium.", TechType.ScrapMetal);
+			TechType = register(L10n.str(L10n.ids_smallScrapName), L10n.str(L10n.ids_smallScrapDesc), TechType.ScrapMetal);
 		}
 
 		public override GameObject getGameObject()
@@ -75,7 +75,7 @@ namespace DebrisRecycling
 
 		public override void patch()
 		{
-			if (Main.config.dynamicMetalScrapRequirements)
+			if (Main.config.craftConfig.dynamicTitaniumBlueprint)
 				return;
 
 			initNodes();

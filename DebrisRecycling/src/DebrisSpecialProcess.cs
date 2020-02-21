@@ -48,7 +48,7 @@ namespace DebrisRecycling
 			model.transform.parent = go.transform;
 			model.transform.localPosition = Vector3.zero;
 			model.transform.localEulerAngles = Vector3.zero;
-			
+
 			go.destroyComponent<MeshFilter>();
 			go.destroyComponent<MeshRenderer>();
 

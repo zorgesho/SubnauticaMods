@@ -9,7 +9,7 @@ namespace DebrisRecycling
 		[HarmonyPatch(typeof(uGUI_CraftingMenu), "Open")]
 		static class uGUICraftingMenu_Open_Patch
 		{
-			static bool Prepare() => Main.config.dynamicMetalScrapRequirements;
+			static bool Prepare() => Main.config.craftConfig.dynamicTitaniumBlueprint;
 
 			static void Prefix(CraftTree.Type treeType, ITreeActionReceiver receiver)
 			{
@@ -24,12 +24,12 @@ namespace DebrisRecycling
 		[HarmonyPatch(typeof(TooltipFactory), "Recipe")]
 		static class TooltipFactory_Recipe_Patch
 		{
-			static bool Prepare() => Main.config.dynamicMetalScrapRequirements;
+			static bool Prepare() => Main.config.craftConfig.dynamicTitaniumBlueprint;
 
 			static void Prefix(TechType techType, out string tooltipText)
 			{
 				tooltipText = null;
-			
+
 				if (techType == TechType.Titanium)
 				{
 					if (currentPowerRelay.GetPower() < getPowerConsumption() + 7f) // +2 energy units in order not to drain energy completely
@@ -43,7 +43,7 @@ namespace DebrisRecycling
 		[HarmonyPatch(typeof(GhostCrafter), "Craft")]
 		static class GhostCrafter_Craft_Patch
 		{
-			static bool Prepare() => Main.config.dynamicMetalScrapRequirements;
+			static bool Prepare() => Main.config.craftConfig.dynamicTitaniumBlueprint;
 
 			static void Prefix(GhostCrafter __instance, TechType techType)
 			{																									"Power relays are different!".logDbgError(__instance.powerRelay != currentPowerRelay);
@@ -54,7 +54,6 @@ namespace DebrisRecycling
 
 
 		static int lastScrapCount = 0; // scrapCount * 100 + smallScrapCount;
-		static readonly int titaniumPerMetalScrap = 4, titaniumPerMetalScrapSmall = 1;
 
 		static float extraPowerConsumption = 0f;
 		static PowerRelay currentPowerRelay = null;
@@ -71,7 +70,7 @@ namespace DebrisRecycling
 			if (scrapCount == 0 && smallScrapCount == 0)
 				getScrapCount(out scrapCount, out smallScrapCount);
 
-			return scrapCount * titaniumPerMetalScrap + smallScrapCount * titaniumPerMetalScrapSmall;
+			return scrapCount * Main.config.craftConfig.titaniumPerBigScrap + smallScrapCount * Main.config.craftConfig.titaniumPerSmallScrap;
 		}
 
 		// extra power consumption for crafting this amount of titanium
@@ -90,7 +89,7 @@ namespace DebrisRecycling
 			techData._craftAmount = getCraftAmount(scrapCount, smallScrapCount);
 			CraftData.craftingTimes[TechType.Titanium] = 0.7f * techData._craftAmount;
 			extraPowerConsumption = getPowerConsumption(techData._craftAmount);
-			
+
 			techData._ingredients.Clear();
 			if (scrapCount > 0)
 				techData._ingredients.Add(TechType.ScrapMetal, scrapCount);

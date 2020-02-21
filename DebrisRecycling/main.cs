@@ -15,6 +15,8 @@ namespace DebrisRecycling
 			Options.init();
 			CraftHelper.patchAll();
 
+			LanguageHelper.init();
+
 			DebrisPatcher.init(config.prefabsConfig, Config.tryLoad<PrefabIDs>("prefabs_config.json", Config.LoadOptions.None));
 		}
 	}

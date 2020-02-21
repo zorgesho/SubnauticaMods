@@ -1,7 +1,7 @@
 ﻿using System;
 
-using UnityEngine;
 using Harmony;
+using UnityEngine;
 
 namespace DebrisRecycling
 {
@@ -19,9 +19,9 @@ namespace DebrisRecycling
 		{
 			if (!constructable.gameObject.GetComponent<DebrisDeconstructable>())
 				return true;
-		
+
 			HandReticle hand = HandReticle.main;
-			hand.SetInteractText("Salvageable debris", __instance.deconstructText, false, false, HandReticle.Hand.None);
+			hand.SetInteractText(L10n.str("ids_salvageableDebris"), __instance.deconstructText, false, false, HandReticle.Hand.None);
 
 			if (!constructable.constructed)
 			{
@@ -41,7 +41,7 @@ namespace DebrisRecycling
 			if (__instance.isDrawn && !Builder.isPlacing && AvatarInputHandler.main.IsEnabled())
 			{
 				Targeting.GetTarget(Player.main.gameObject, 10f, out GameObject go, out float num, null);
-				
+
 				if (go)
 					DebrisPatcher.processObject(go);
 			}

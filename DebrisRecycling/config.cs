@@ -1,18 +1,42 @@
-﻿using Common.Configuration;
+﻿using Common;
+using Common.Configuration;
 
 namespace DebrisRecycling
 {
 	using PrefabsList = System.Collections.Generic.Dictionary<string, int>;
 
+	class L10n: LanguageHelper
+	{
+		public const string ids_smallScrapName = "Small piece of salvage";
+		public const string ids_smallScrapDesc = "Composed primarily of titanium.";
+
+		public static string ids_salvageableDebris = "Salvageable debris";
+		public static string ids_tryMoveObject = "Try to move object"; // probably not used very often
+	}
+
+
 	[Options.Name("Debris Recycling <color=#CCCCCCFF>(restart game to apply options)</color>")]
 	class ModConfig: Config
 	{
-		[Options.Field("Dynamic titanium blueprint")]
-		public readonly bool dynamicMetalScrapRequirements = true;
+#pragma warning disable CS0414 // unused field
+		[Field.LoadOnly] readonly bool dynamicMetalScrapRequirements = true; // obsolete
+#pragma warning restore
 
-		public readonly bool deconstructValidStaticObjects = true;
-		public readonly bool patchStaticObjects = true;
-		public readonly bool hotkeyForNewObjects = false;
+		public class CraftConfig
+		{
+			[Options.Field("Dynamic titanium blueprint")]
+			public readonly bool dynamicTitaniumBlueprint = true;
+
+			public readonly int titaniumPerBigScrap = 4;
+			public readonly int titaniumPerSmallScrap = 1;
+		}
+		public readonly CraftConfig craftConfig = new CraftConfig();
+
+		protected override void onLoad() // v1.0.0 -> v1.0.1 (dynamicMetalScrapRequirements -> craftConfig.dynamicTitaniumBlueprint)
+		{
+			if (!dynamicMetalScrapRequirements)
+				typeof(CraftConfig).field(nameof(CraftConfig.dynamicTitaniumBlueprint)).SetValue(craftConfig, false); // using reflection to keep field readonly
+		}
 
 		public class PrefabsConfig
 		{
@@ -30,10 +54,14 @@ namespace DebrisRecycling
 			public readonly bool includeBigStatic = false;
 #endif
 		};
-		public PrefabsConfig prefabsConfig = new PrefabsConfig();
+		public readonly PrefabsConfig prefabsConfig = new PrefabsConfig();
+
+		public readonly bool deconstructValidStaticObjects = true;
+		public readonly bool patchStaticObjects = true;
+		public readonly bool hotkeyForNewObjects = false;
 	};
-	
-	
+
+
 	// key = prefab id, value = ScrapMetal * 10 + ScrapMetalSmall
 	class PrefabIDs: Config
 	{
@@ -58,14 +86,14 @@ namespace DebrisRecycling
 			{"ef1370e3-832f-4008-ac39-99ad24f43f76", 10}, // Starship_doors_door
 			{"4e8f6009-fc9c-4774-9ddc-27a6b0081dde",  3}  // room_06_wreck					// special processing
 		};
-		
+
 		public readonly PrefabsList debrisLockers = new PrefabsList()
 		{
 			{"bca9b19c-616d-4948-8742-9bb6f4296dc3",  3}, // submarine_locker_04_open
 			{"779d4bbe-6e34-4ca5-bee5-b32d65288f5f",  1}, // submarine_locker_04_door
 			{"078b41f8-968e-4ca3-8a7e-4e3d7d98422c", 10}, // submarine_locker_05			// special processing
 		};
-		
+
 		public readonly PrefabsList debrisTech = new PrefabsList()
 		{
 			{"8ce870ba-b559-45d7-9c10-a5477967db24",  2}, // tech_light_deco				// special processing

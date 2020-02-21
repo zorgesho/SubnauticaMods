@@ -8,11 +8,11 @@ namespace DebrisRecycling
 	{
 		public bool CanDeconstruct(out string reason)
 		{
-			reason = "Try to move object";
+			reason = L10n.str("ids_tryMoveObject");
 
 			if (Main.config.deconstructValidStaticObjects)
 				return true;
-			
+
 			Rigidbody rigidbody = gameObject.getComponentInHierarchy<Rigidbody>(true, false);
 			return (rigidbody && !rigidbody.isKinematic);
 		}
@@ -28,43 +28,43 @@ namespace DebrisRecycling
 
 		public static void init(ModConfig.PrefabsConfig prefabsConfig, PrefabIDs prefabIDs)
 		{
-			if (!inited)
-			{
-				inited = true;
+			if (inited)
+				return;
 
-				validPrefabs.addRange(prefabIDs.debrisCargoOpened);
-				validPrefabs.addRange(prefabIDs.debrisMiscMovable);
+			inited = true;
 
-				if (prefabsConfig.includeFurniture)
-					validPrefabs.addRange(prefabIDs.debrisFurniture);
+			validPrefabs.addRange(prefabIDs.debrisCargoOpened);
+			validPrefabs.addRange(prefabIDs.debrisMiscMovable);
 
-				if (prefabsConfig.includeLockers)
-					validPrefabs.addRange(prefabIDs.debrisLockers);
+			if (prefabsConfig.includeFurniture)
+				validPrefabs.addRange(prefabIDs.debrisFurniture);
 
-				if (prefabsConfig.includeTech)
-					validPrefabs.addRange(prefabIDs.debrisTech);
+			if (prefabsConfig.includeLockers)
+				validPrefabs.addRange(prefabIDs.debrisLockers);
 
-				if (prefabsConfig.includeClosedCargo)
-					validPrefabs.addRange(prefabIDs.debrisCargoClosed);
+			if (prefabsConfig.includeTech)
+				validPrefabs.addRange(prefabIDs.debrisTech);
+
+			if (prefabsConfig.includeClosedCargo)
+				validPrefabs.addRange(prefabIDs.debrisCargoClosed);
 
 #if !EXCLUDE_STATIC_DEBRIS
-				if (prefabsConfig.includeBigStatic)
-					validPrefabs.addRange(prefabIDs.debrisStatic);
+			if (prefabsConfig.includeBigStatic)
+				validPrefabs.addRange(prefabIDs.debrisStatic);
 #endif
-				$"Debris patcher inited, prefabs id count:{validPrefabs.Count}".logDbg();
-			}
+			$"Debris patcher inited, prefabs id count:{validPrefabs.Count}".logDbg();
 		}
 
 
 		public static void processObject(GameObject go)
 		{
-			if (isValidForPatching(go))
-			{
-				if (Main.config.hotkeyForNewObjects)
-					updateHotkeys(go);
-				
-				tryPatchObject(go);
-			}
+			if (!isValidForPatching(go))
+				return;
+
+			if (Main.config.hotkeyForNewObjects)
+				updateHotkeys(go);
+
+			tryPatchObject(go);
 		}
 
 
@@ -86,13 +86,10 @@ namespace DebrisRecycling
 		{
 			PrefabIdentifier prefabID = go.getComponentInHierarchy<PrefabIdentifier>(false);
 
-			if (prefabID)
+			if (prefabID && validPrefabs.TryGetValue(prefabID.ClassId, out int resourcesCount))
 			{
-				if (validPrefabs.TryGetValue(prefabID.ClassId, out int resourcesCount))
-				{
-					addConstructableComponent(prefabID.gameObject, resourcesCount);
-					DebrisSpecialProcess.tryProcessSpecial(prefabID);
-				}
+				addConstructableComponent(prefabID.gameObject, resourcesCount);
+				DebrisSpecialProcess.tryProcessSpecial(prefabID);
 			}
 		}
 

@@ -22,6 +22,9 @@ namespace Common.Configuration
 
 		void processAttributes() => processAttributes(this); // using static method because of possible nested config classes
 
+		static bool _isFieldValidForRecursiveAttrProcessing(FieldInfo field) =>
+			field.FieldType.IsClass && !field.IsStatic && !field.checkAttribute<SkipRecursiveAttrProcessing>();
+
 		static void processAttributes(object config)
 		{
 			if (config == null)
@@ -35,7 +38,7 @@ namespace Common.Configuration
 			{																															$"Checking field '{field.Name}' for attributes".logDbg();
 				Attribute.GetCustomAttributes(field).forEach(attr => (attr as IFieldAttribute)?.process(config, field));
 
-				if (!field.IsStatic && field.FieldType.IsClass && !field.checkAttribute<SkipRecursiveAttrProcessing>())
+				if (_isFieldValidForRecursiveAttrProcessing(field))
 					processAttributes(field.GetValue(config));
 			}
 		}

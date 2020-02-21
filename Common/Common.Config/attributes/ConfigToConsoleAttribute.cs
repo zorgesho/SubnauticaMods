@@ -52,7 +52,7 @@ namespace Common.Configuration
 						ExportedCfgVarFields.addField(nameForConsole);
 				}
 
-				if (field.FieldType.IsClass)
+				if (_isFieldValidForRecursiveAttrProcessing(field))
 					process(field.GetValue(config));
 			}
 

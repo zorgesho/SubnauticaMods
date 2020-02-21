@@ -26,6 +26,8 @@ namespace Common.Configuration
 
 		protected Config() {}
 
+		protected virtual void onLoad() {} // called immediately after config loading/creating
+
 		// try to load config from mod folder. If file not found, create default config and save it to that path
 		public static C tryLoad<C>(string localPath = "config.json", LoadOptions loadOptions = LoadOptions.Default) where C: Config, new()
 		{
@@ -40,25 +42,19 @@ namespace Common.Configuration
 					"Loading from config is DISABLED".logWarning();
 
 				config = (!isNeedToLoad || !File.Exists(configPath))? new C(): deserialize<C>(File.ReadAllText(configPath));
+				config.onLoad();
 
 				// saving config even if we just loaded it to update it in case of added or removed fields (and to set configPath var)
 				config.save(configPath);
 
-				if (loadOptions.HasFlag(LoadOptions.SetAsMainConfig))
-				{
-					if (main == null)
-						main = config;
-					else
-						"Config.main is already set".logWarning();
-				}
+				Debug.assert(!loadOptions.HasFlag(LoadOptions.SetAsMainConfig) || main == null, "Config.main is already set");
+				if (loadOptions.HasFlag(LoadOptions.SetAsMainConfig) && main == null)
+					main = config;
 
 				if (loadOptions.HasFlag(LoadOptions.ProcessAttributes))
 					config.processAttributes();
 			}
-			catch (Exception e)
-			{
-				Log.msg(e);
-			}
+			catch (Exception e) { Log.msg(e); }
 
 			return config;
 		}
@@ -73,10 +69,7 @@ namespace Common.Configuration
 				if (configPath != null)
 					File.WriteAllText(configPath, serialize());
 			}
-			catch (Exception e)
-			{
-				Log.msg(e);
-			}
+			catch (Exception e) { Log.msg(e); }
 		}
 	}
 }

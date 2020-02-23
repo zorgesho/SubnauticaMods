@@ -14,15 +14,15 @@ namespace Common.Configuration
 			public Field(object _config, FieldInfo _field)
 			{
 				config = _config;
-				field = _field;
+				field  = _field;
+				Debug.assert(config != null && field != null);
 
 				action = field.getAttribute<CustomActionAttribute>()?.action;
 			}
 
-			public string name
-			{
-				get => field.Name;
-			}
+			public Field(object _config, string fieldName): this(_config, _config?.GetType().field(fieldName)) {}
+
+			public string name { get => field.Name; }
 
 			public object value
 			{

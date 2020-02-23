@@ -5,7 +5,7 @@ namespace Common.Configuration
 {
 	partial class Options: ModOptions
 	{
-		class KeyBindOption: ModOption
+		public class KeyBindOption: ModOption
 		{
 			public KeyBindOption(Config.Field cfgField, string label): base(cfgField, label) {}
 

@@ -9,18 +9,14 @@ namespace Common.Configuration
 		[AttributeUsage(AttributeTargets.Class)]
 		public class NameAttribute: Attribute, Config.IConfigAttribute
 		{
-			string optionsName;
+			string name;
 
-			public NameAttribute(string name)
-			{
-				optionsName = name;
-			}
+			public NameAttribute(string _name) => name = _name;
 
 			public void process(object config)
 			{
-				registerLabel("Name", ref optionsName);
-				name = optionsName;
-				mainConfig = config as Config;
+				registerLabel("Name", ref name);
+				optionsName = name;
 			}
 		}
 	}

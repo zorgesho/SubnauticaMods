@@ -8,30 +8,23 @@ namespace Common.Configuration
 {
 	partial class Options: ModOptions
 	{
-		static bool inited = false;
+		static Options instance = null;
+		static string  optionsName = Strings.modName;
 
-		static Config mainConfig = null;
-		static string name = Strings.modName;
-		static readonly List<ModOption> modOptions = new List<ModOption>();
+		readonly List<ModOption> modOptions = new List<ModOption>();
 
-		public static void init()
-		{																								"Config.Options is already inited!".logDbgError(inited);
-			if (inited)
-				return;
+		[Obsolete]
+		public static void init() {}
 
-			if (modOptions.Count == 0 && "Config.Options.init: options list is empty".logWarning())
-				return;
-
-			inited = true;
-			OptionsPanelHandler.RegisterModOptions(new Options());
-		}
-
-		static void add(ModOption option)
+		public static void add(ModOption option)
 		{
-			modOptions.Add(option);
+			if (instance == null)
+				OptionsPanelHandler.RegisterModOptions(instance = new Options());
+
+			instance.modOptions.Add(option);
 		}
 
-		Options(): base(name)
+		Options(): base(optionsName)
 		{
 			ToggleChanged  += (object sender, ToggleChangedEventArgs e)  => eventHandler(e.Id, e);
 			SliderChanged  += (object sender, SliderChangedEventArgs e)  => eventHandler(e.Id, e);
@@ -45,10 +38,7 @@ namespace Common.Configuration
 			{
 				modOptions.Find(o => o.id == id)?.onEvent(e);
 			}
-			catch (Exception ex)
-			{
-				Log.msg(ex);
-			}
+			catch (Exception ex) { Log.msg(ex); }
 		}
 
 		public override void BuildModOptions()

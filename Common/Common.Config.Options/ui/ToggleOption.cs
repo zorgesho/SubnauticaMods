@@ -5,7 +5,7 @@ namespace Common.Configuration
 {
 	partial class Options: ModOptions
 	{
-		class ToggleOption: ModOption
+		public class ToggleOption: ModOption
 		{
 			public ToggleOption(Config.Field cfgField, string label): base(cfgField, label) {}
 

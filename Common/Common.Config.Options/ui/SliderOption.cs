@@ -5,7 +5,7 @@ namespace Common.Configuration
 {
 	partial class Options: ModOptions
 	{
-		class SliderOption: ModOption
+		public class SliderOption: ModOption
 		{
 			readonly float min, max;
 

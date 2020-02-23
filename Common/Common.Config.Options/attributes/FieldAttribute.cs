@@ -14,26 +14,11 @@ namespace Common.Configuration
 		{
 			string label;
 
-			public FieldAttribute(string _label = null)
-			{
-				label = _label;
-			}
+			public FieldAttribute(string _label = null) => label = _label;
 
 			public void process(object config, FieldInfo field)
 			{																				$"Options.FieldAttribute.process fieldName:'{field.Name}' fieldType:{field.FieldType} label: '{label}'".logDbg();
-				// adds choice labels to LanguageHandler, changing array in the process
-				void _registerChoiceLabels(string[] labels)
-				{
-					for (int i = 0; i < labels.Length; i++)
-						registerLabel($"{field.Name}_{i}", ref labels[i]);
-				}
-
-				if (mainConfig == null)
-					mainConfig = config as Config;
-
-				if (label != null)
-					registerLabel(field.Name, ref label);
-				else
+				if (label == null)
 					label = field.Name;
 
 				Config.Field cfgField = new Config.Field(config, field);
@@ -55,10 +40,7 @@ namespace Common.Configuration
 					foreach (var e in Enum.GetValues(field.FieldType))
 						list.Add(e.ToString());
 
-					string[] choices = list.ToArray();
-					_registerChoiceLabels(choices);
-
-					add(new ChoiceOption(cfgField, label, choices));
+					add(new ChoiceOption(cfgField, label, list.ToArray()));
 				}
 				else
 				if (field.FieldType == typeof(float) || field.FieldType == typeof(int))
@@ -66,7 +48,6 @@ namespace Common.Configuration
 					// creating ChoiceOption if we also have choice attribute
 					if (field.getAttribute<ChoiceAttribute>() is ChoiceAttribute choice && choice.choices.Length > 0)
 					{
-						_registerChoiceLabels(choice.choices);
 						add(new ChoiceOption(cfgField, label, choice.choices, choice.values));
 					}
 					else // creating SliderOption if we also have bounds attribute

@@ -5,15 +5,19 @@ namespace Common.Configuration
 {
 	partial class Options: ModOptions
 	{
-		class ChoiceOption: ModOption
+		public class ChoiceOption: ModOption
 		{
 			readonly string[] choices = null;
-			readonly object[] values = null;
+			readonly object[] values  = null;
 
 			public ChoiceOption(Config.Field cfgField, string label, string[] _choices, object[] _values = null): base(cfgField, label)
 			{
 				choices = _choices;
-				values = _values;
+				values  = _values;
+
+				// adds choice labels to LanguageHandler, changing array in the process
+				for (int i = 0; i < choices.Length; i++)
+					registerLabel($"{id}.{i}", ref choices[i]);
 			}
 
 			public override void addOption(Options options)

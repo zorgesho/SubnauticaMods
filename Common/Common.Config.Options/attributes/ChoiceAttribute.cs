@@ -10,7 +10,7 @@ namespace Common.Configuration
 		public class ChoiceAttribute: Attribute
 		{
 			public readonly string[] choices = null;
-			public readonly object[] values = null;
+			public readonly object[] values  = null;
 
 			// using default values, just choice index
 			public ChoiceAttribute(params string[] _choices) => choices = _choices;
@@ -19,12 +19,12 @@ namespace Common.Configuration
 			public ChoiceAttribute(params object[] _choices)
 			{																		$"ChoiceAttribute: counts for choices and values is not equal!".logDbgError(_choices != null && _choices.Length % 2 != 0);
 				choices = new string[_choices.Length / 2];
-				values = new object[_choices.Length / 2];
+				values  = new object[_choices.Length / 2];
 
-				for (int i = 0; i < _choices.Length / 2; i++)
+				for (int i = 0; i < choices.Length; i++)
 				{
 					choices[i] = _choices[i * 2] as string;
-					values[i] = _choices[i * 2 + 1];
+					values[i]  = _choices[i * 2 + 1];
 				}
 			}
 		}

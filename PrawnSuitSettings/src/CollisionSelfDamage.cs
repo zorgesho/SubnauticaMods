@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using Harmony;
+﻿using Harmony;
+using UnityEngine;
 
 using Common;
 using Common.Configuration;
@@ -11,11 +11,7 @@ namespace PrawnSuitSettings
 	{
 		public class SettingChanged: Config.Field.ICustomAction
 		{
-			public void customAction()
-			{
-				Main.config.collisionSelfDamage.enabled = Main.config.collisionSelfDamage._enabled_0;
-				Object.FindObjectsOfType<Exosuit>()?.forEach(ex => refresh(ex));
-			}
+			public void customAction() => Object.FindObjectsOfType<Exosuit>()?.forEach(ex => refresh(ex));
 		}
 
 

@@ -1,6 +1,5 @@
-﻿using UnityEngine;
-using Harmony;
-
+﻿using Harmony;
+using UnityEngine;
 using SMLHelper.V2.Handlers;
 
 using Common;
@@ -12,11 +11,7 @@ namespace PrawnSuitSettings
 	{
 		public class SettingChanged: Config.Field.ICustomAction
 		{
-			public void customAction()
-			{
-				Main.config.armsEnergyUsage.enabled = Main.config.armsEnergyUsage._enabled_1;
-				refresh();
-			}
+			public void customAction() => refresh();
 		}
 
 
@@ -25,7 +20,7 @@ namespace PrawnSuitSettings
 			float grapplingArmEnergyCost = Main.config.armsEnergyUsage.enabled? Main.config.armsEnergyUsage.grapplingArmShoot: 0f;
 
 			CraftData.energyCost[TechType.ExosuitGrapplingArmModule] = grapplingArmEnergyCost;
-	
+
 			if (TechTypeHandler.TryGetModdedTechType("GrapplingArmUpgradeModule", out TechType upgradedGrapplingArm))
 				CraftData.energyCost[upgradedGrapplingArm] = grapplingArmEnergyCost;
 

@@ -52,9 +52,6 @@
     <Reference Include="0Harmony-1.2.0.1">
       <HintPath>..\..\..\..\games\Subnautica\Subnautica_Data\Managed\0Harmony-1.2.0.1.dll</HintPath>
     </Reference>
-    <Reference Include="Assembly-CSharp-firstpass_publicized">
-      <HintPath>..\..\..\..\games\Subnautica\Subnautica_Data\Managed\Assembly-CSharp-firstpass_publicized.dll</HintPath>
-    </Reference>
     <Reference Include="Assembly-CSharp_publicized">
       <HintPath>..\..\..\..\games\Subnautica\Subnautica_Data\Managed\Assembly-CSharp_publicized.dll</HintPath>
     </Reference>
@@ -66,10 +63,6 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
     <Reference Include="UnityEngine">
       <HintPath>..\..\..\..\games\Subnautica\Subnautica_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>

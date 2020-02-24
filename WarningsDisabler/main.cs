@@ -10,9 +10,6 @@ namespace WarningsDisabler
 		public static void patch()
 		{
 			HarmonyHelper.patchAll();
-
-			if (config.addOptionsToMenu)
-				Options.init();
 		}
 	}
 }

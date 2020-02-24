@@ -61,10 +61,6 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
     <Reference Include="UnityEngine">
       <HintPath>..\..\..\..\games\Subnautica\Subnautica_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
@@ -73,9 +69,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="src\PDANotifications.cs" />
-    <Compile Include="src\VoiceNotifications.cs" />
-    <Compile Include="src\OxygenWarnings.cs" />
+    <Compile Include="src\Patches.cs" />
     <Compile Include="config.cs" />
     <Compile Include="main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

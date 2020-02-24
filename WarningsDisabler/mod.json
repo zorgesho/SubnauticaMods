@@ -1,8 +1,8 @@
 {
   "Id": "WarningsDisabler",
-  "DisplayName": "WarningsDisabler",
+  "DisplayName": "Warnings Disabler",
   "Author": "zorgesho",
-  "Version": "1.0.0",
+  "Version": "1.1.0",
   "Dependencies": ["SMLHelper"],
   "LoadBefore": [],
   "LoadAfter": [],

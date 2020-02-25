@@ -45,7 +45,7 @@ namespace MiscPatches
 				var toggleLights = __instance.gameObject.ensureComponent<ToggleLights>();
 				var toggleLightsPrefab = Resources.Load<GameObject>("WorldEntities/Tools/SeaMoth").GetComponent<SeaMoth>().toggleLights;
 
-				toggleLights.copyValuesFrom(toggleLightsPrefab, "lightsOnSound", "lightsOffSound", "onSound", "offSound", "energyPerSecond");
+				toggleLights.copyFieldsFrom(toggleLightsPrefab, "lightsOnSound", "lightsOffSound", "onSound", "offSound", "energyPerSecond");
 
 				toggleLights.lightsParent = __instance.transform.Find("lights_parent").gameObject;
 				toggleLights.energyMixin = __instance.GetComponent<EnergyMixin>();

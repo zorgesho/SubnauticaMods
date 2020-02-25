@@ -7,7 +7,7 @@ using Common.UI;
 namespace Fatigue
 {
 	using static Common.AssetsHelper;
-	
+
 	class uGUI_EnergyBar: uGUI_StatsBar
 	{
 		public override float getUpdatedValue()
@@ -15,7 +15,7 @@ namespace Fatigue
 			EnergySurvival energySurvival = Player.main?.GetComponent<EnergySurvival>();
 			return energySurvival?.energy ?? 100f;
 		}
-		
+
 		public override bool subscribe(bool val)
 		{
 			return true;
@@ -38,7 +38,6 @@ namespace Fatigue
 
 			barsPanel.getChild("BackgroundQuad/Center").GetComponent<Image>().rectTransform.localPosition = new Vector3(16, 38, 0);
 
-			
 			// adding energy circular bar (based on water bar)
 			GameObject energyBar = GameObject.Instantiate(barsPanel.getChild("WaterBar"));
 
@@ -53,8 +52,8 @@ namespace Fatigue
 
 			energyBar.SetActive(false); // turn off Awake for uGUI_EnergyBar before we copy stuff from waterbar
 			uGUI_WaterBar waterbar = energyBar.GetComponentInChildren<uGUI_WaterBar>();
-			energyBar.AddComponent<uGUI_EnergyBar>().copyValuesFrom(waterbar);
-			GameObject.Destroy(waterbar);
+			energyBar.AddComponent<uGUI_EnergyBar>().copyFieldsFrom(waterbar);
+			Destroy(waterbar);
 		}
 	}
 }

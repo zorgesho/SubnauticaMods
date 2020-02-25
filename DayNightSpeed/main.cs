@@ -11,8 +11,6 @@ namespace DayNightSpeed
 		{
 			HarmonyHelper.patchAll(true);
 
-			Options.init();
-
 			DayNightSpeedControl.init();
 			DayNightCyclePatches.init();
 		}

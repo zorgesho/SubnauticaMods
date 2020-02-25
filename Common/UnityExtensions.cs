@@ -80,15 +80,8 @@ namespace Common
 					}
 				}
 			}
-			catch (Exception e)
-			{
-				Log.msg(e);
-			}
+			catch (Exception e) { Log.msg(e); }
 		}
-
-		[Obsolete]
-		public static void copyValuesFrom<CT, CF>(this CT cmpTo, CF cmpFrom, params string[] fieldNames) where CT: Component where CF: Component =>
-			copyFieldsFrom(cmpTo, cmpFrom, fieldNames);
 	}
 
 

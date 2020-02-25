@@ -11,8 +11,6 @@ namespace DebrisRecycling
 		public static void patch()
 		{
 			HarmonyHelper.patchAll();
-
-			Options.init();
 			CraftHelper.patchAll();
 
 			LanguageHelper.init();

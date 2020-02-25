@@ -13,9 +13,6 @@ namespace Common.Configuration
 
 		readonly List<ModOption> modOptions = new List<ModOption>();
 
-		[Obsolete]
-		public static void init() {}
-
 		public static void add(ModOption option)
 		{
 			if (instance == null)

@@ -21,8 +21,6 @@ namespace Common.Configuration
 		[AttributeUsage(AttributeTargets.Class | AttributeTargets.Field)]
 		public class AddToConsoleAttribute: Attribute, IConfigAttribute, IFieldAttribute
 		{
-			static Config mainConfig = null;
-
 			readonly string cfgNamespace = ""; // optional namespace for use in console in case of duplicate names
 
 			public AddToConsoleAttribute(string _cfgNamespace = null)
@@ -38,11 +36,7 @@ namespace Common.Configuration
 
 			public void process(object config, FieldInfo field)
 			{
-				if (mainConfig == null)
-				{
-					mainConfig = config as Config;
-					ConfigVarsConsoleCommand.init();
-				}
+				ConfigVarsConsoleCommand.init();
 
 				if (field.FieldType.IsPrimitive)
 				{
@@ -65,9 +59,7 @@ namespace Common.Configuration
 
 			static class ConfigVarsConsoleCommand
 			{
-				static GameObject consoleObject = null;
-
-				public static bool isInited { get => consoleObject != null; }
+				static GameObject consoleCommands = null;
 
 				static readonly Dictionary<string, CfgField> cfgFields = new Dictionary<string, CfgField>();
 
@@ -91,8 +83,8 @@ namespace Common.Configuration
 
 				public static void init()
 				{
-					if (consoleObject == null && mainConfig != null)
-						consoleObject = PersistentConsoleCommands.createGameObject<SetGetCfgVarCommand>("ConfigConsoleCommands_" + Strings.modName);
+					if (consoleCommands == null)
+						consoleCommands = PersistentConsoleCommands.createGameObject<SetGetCfgVarCommand>("ConfigConsoleCommands_" + Strings.modName);
 				}
 
 
@@ -129,7 +121,7 @@ namespace Common.Configuration
 					if (cf != null)
 					{
 						cf.value = fieldValue;
-						mainConfig.save();
+						_main?.save();
 					}
 				}
 

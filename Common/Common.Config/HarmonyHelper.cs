@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using Harmony;
 using UnityEngine;
 
+using Common.Configuration;
+
 namespace Common
 {
 	using CIEnumerable = IEnumerable<CodeInstruction>;
@@ -14,18 +16,12 @@ namespace Common
 
 	static partial class HarmonyHelper // additional transpilers stuff to work with config
 	{
-		static Configuration.Config mainConfig = null;
-		static readonly FieldInfo mainConfigField = typeof(HarmonyHelper).field(nameof(mainConfig)); // for using in transpiler helper functions
+		static readonly FieldInfo mainConfigField = typeof(Config).field("_" + nameof(Config.main)); // for using in transpiler helper functions
 
-		public class UpdateOptionalPatches: Configuration.Config.Field.ICustomAction { public void customAction() => updateOptionalPatches(); }
+		public class UpdateOptionalPatches: Config.Field.ICustomAction { public void customAction() => updateOptionalPatches(); }
 
-		static FieldInfo getCfgVarField(string cfgVarName)
-		{
-			if (mainConfig == null)
-				mainConfig = Configuration.Config.main;
-
-			return mainConfig?.GetType().field(cfgVarName);
-		}
+		static FieldInfo getCfgVarField(string cfgVarName) =>
+			Config.main?.GetType().field(cfgVarName);
 
 
 		// changing constant to config field

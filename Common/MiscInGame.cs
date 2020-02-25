@@ -46,7 +46,7 @@ namespace Common
 		public static Atlas.Sprite getSprite(object spriteID)
 		{
 			$"TechSpriteHelper.getSprite({spriteID.GetType()}) is not implemented!".logError();
-			return SpriteManager._defaultSprite;
+			return SpriteManager.defaultSprite;
 		}
 	}
 

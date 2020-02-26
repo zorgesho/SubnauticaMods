@@ -13,6 +13,8 @@ namespace WarningsDisabler
 		class Messages
 		{
 			public bool enabled = true;
+
+			[SkipRecursiveAttrProcessing]
 			readonly HashSet<string> messages = null;
 
 			public Messages(params string[] _messages) => messages = new HashSet<string>(_messages);
@@ -21,7 +23,7 @@ namespace WarningsDisabler
 			public bool isMessageAllowed(string message) => enabled || !messages.Contains(message);
 		}
 
-		class AddMessagesAttribute: SkipRecursiveAttrProcessing, IFieldAttribute
+		class AddMessagesAttribute: Attribute, IFieldAttribute
 		{
 			readonly string label;
 
@@ -37,7 +39,7 @@ namespace WarningsDisabler
 					var cfgField = new Field(messages, nameof(Messages.enabled));
 					Options.add(new Options.ToggleOption(cfgField, label));
 
-					(config as ModConfig)?.allMessages.Add(messages);
+					(Config.main as ModConfig).allMessages.Add(messages);
 				}
 			}
 		}

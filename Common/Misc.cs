@@ -23,10 +23,7 @@ namespace Common
 				else
 					field.SetValue(obj, Convert.ChangeType(value, field.FieldType, CultureInfo.InvariantCulture));
 			}
-			catch (Exception e)
-			{
-				Log.msg(e);
-			}
+			catch (Exception e) { Log.msg(e); }
 		}
 	}
 
@@ -117,6 +114,14 @@ namespace Common
 	{
 		public static bool isNullOrEmpty(this string s) => (s == null || s == "");
 
+		public static string clampLength(this string s, int length)
+		{
+			if (length < 5 || s.Length <= length)
+				return s;
+
+			return s.Remove(length / 2, s.Length - length + 3).Insert(length / 2, "...");
+		}
+
 		static string formatFileName(string filename)
 		{
 			if (filename.isNullOrEmpty())
@@ -141,6 +146,28 @@ namespace Common
 		{
 			try { File.AppendAllText(formatFileName(localPath), s + Environment.NewLine); }
 			catch (Exception e) { Log.msg(e); }
+		}
+	}
+
+
+	class UniqueIDs
+	{
+		readonly HashSet<string> allIDs = new HashSet<string>();
+		readonly Dictionary<string, int> nonUniqueIDs = new Dictionary<string, int>();
+
+		public bool ensureUniqueID(ref string id)
+		{
+			if (allIDs.Add(id)) // if this is new id, do nothing
+				return true;
+
+			nonUniqueIDs.TryGetValue(id, out int counter);
+			nonUniqueIDs[id] = ++counter;
+
+			id += "." + counter;																		$"UniqueIDs: fixed ID: {id}".logWarning();
+
+			Debug.assert(allIDs.Add(id)); // checking updated id just in case
+
+			return false;
 		}
 	}
 }

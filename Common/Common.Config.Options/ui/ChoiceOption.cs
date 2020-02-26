@@ -30,7 +30,6 @@ namespace Common.Configuration
 			{
 				int? index = (e as ChoiceChangedEventArgs)?.Index;
 				cfgField.value = (values != null)? values[index ?? 0]: index;
-				base.onEvent(e);
 			}
 		}
 	}

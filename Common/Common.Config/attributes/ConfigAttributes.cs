@@ -5,41 +5,56 @@ namespace Common.Configuration
 {
 	partial class Config
 	{
-		public interface IConfigAttribute
-		{
-			void process(object config);
-		}
+		// for use with class attributes
+		// attributes can be used on config class and inner classes
+		public interface IConfigAttribute { void process(object config); }
 
-		public interface IFieldAttribute
-		{
-			void process(object config, FieldInfo field);
-		}
+		// for use with config field attributes
+		// attributes can be used on config's fields and inner classes fields
+		public interface IFieldAttribute  { void process(object config, FieldInfo field); }
+
+		// for use in attributes that need to know root config
+		// can be used with both class attributes and field attributes
+		public interface IRootConfigInfo  { void setRootConfig(Config config); }
+
 
 		// for use with non-primitive types, inner fields will not be searched for attributes
 		// (other attributes of the field will still be processed)
 		[AttributeUsage(AttributeTargets.Field)]
 		public class SkipRecursiveAttrProcessing: Attribute {}
 
-		void processAttributes() => processAttributes(this); // using static method because of possible nested config classes
-
-		static bool _isFieldValidForRecursiveAttrProcessing(FieldInfo field) =>
+		public static bool _isFieldValidForRecursiveAttrProcessing(FieldInfo field) =>
 			field.FieldType.IsClass && !field.IsStatic && !field.checkAttribute<SkipRecursiveAttrProcessing>();
 
-		static void processAttributes(object config)
+
+		void processAttributes()
 		{
-			if (config == null)
-				return;
+			_processAttributes(this); // recursive
 
-			// processing attributes for config class
-			Attribute.GetCustomAttributes(config.GetType()).forEach(attr => (attr as IConfigAttribute)?.process(config));
+			void _processAttributes(object config)
+			{
+				if (config == null)
+					return;
 
-			// processing attributes for fields and nested classes (don't process static fields)
-			foreach (var field in config.GetType().fields())
-			{																															$"Checking field '{field.Name}' for attributes".logDbg();
-				Attribute.GetCustomAttributes(field).forEach(attr => (attr as IFieldAttribute)?.process(config, field));
+				// processing attributes for config class
+				foreach (var attr in Attribute.GetCustomAttributes(config.GetType()))
+				{
+					(attr as IRootConfigInfo)?.setRootConfig(this); // need to be first
+					(attr as IConfigAttribute)?.process(config);
+				}
 
-				if (_isFieldValidForRecursiveAttrProcessing(field))
-					processAttributes(field.GetValue(config));
+				// processing attributes for fields and nested classes (don't process static fields)
+				foreach (var field in config.GetType().fields())
+				{																															$"Checking field '{field.Name}' for attributes".logDbg();
+					foreach (var attr in Attribute.GetCustomAttributes(field))
+					{
+						(attr as IRootConfigInfo)?.setRootConfig(this); // need to be first
+						(attr as IFieldAttribute)?.process(config, field);
+					}
+
+					if (_isFieldValidForRecursiveAttrProcessing(field))
+						_processAttributes(field.GetValue(config));
+				}
 			}
 		}
 	}

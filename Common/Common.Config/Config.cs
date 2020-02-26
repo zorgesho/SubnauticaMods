@@ -51,9 +51,11 @@ namespace Common.Configuration
 				// saving config even if we just loaded it to update it in case of added or removed fields (and to set configPath var)
 				config.save(configPath);
 
-				Debug.assert(!loadOptions.HasFlag(LoadOptions.SetAsMainConfig) || _main == null, "Config.main is already set");
-				if (loadOptions.HasFlag(LoadOptions.SetAsMainConfig) && _main == null)
-					_main = config;
+				if (loadOptions.HasFlag(LoadOptions.SetAsMainConfig))
+				{																				"Config.main is already set!".logDbgError(_main != null);
+					if (_main == null)
+						_main = config;
+				}
 
 				if (loadOptions.HasFlag(LoadOptions.ProcessAttributes))
 					config.processAttributes();

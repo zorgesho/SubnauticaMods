@@ -17,7 +17,6 @@ namespace Common.Configuration
 			public override void onEvent(EventArgs e)
 			{
 				cfgField.value = (e as KeybindChangedEventArgs)?.Key;
-				base.onEvent(e);
 			}
 		}
 	}

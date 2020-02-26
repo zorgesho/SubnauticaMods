@@ -19,13 +19,19 @@ namespace Common.Configuration
 	partial class Config
 	{
 		[AttributeUsage(AttributeTargets.Class | AttributeTargets.Field)]
-		public class AddToConsoleAttribute: Attribute, IConfigAttribute, IFieldAttribute
+		public class AddToConsoleAttribute: Attribute, IConfigAttribute, IFieldAttribute, IRootConfigInfo
 		{
+#if DEBUG
+			static readonly UniqueIDs uniqueIDs = new UniqueIDs();
+#endif
 			readonly string cfgNamespace = ""; // optional namespace for use in console in case of duplicate names
+
+			Config rootConfig;
+			public void setRootConfig(Config config) => rootConfig = config;
 
 			public AddToConsoleAttribute(string _cfgNamespace = null)
 			{
-				if (_cfgNamespace != null && _cfgNamespace != "")
+				if (!_cfgNamespace.isNullOrEmpty())
 					cfgNamespace = _cfgNamespace + ".";
 			}
 
@@ -40,9 +46,12 @@ namespace Common.Configuration
 
 				if (field.FieldType.IsPrimitive)
 				{
-					string nameForConsole = getFieldNameForConsole(config, field);
-
-					if (ConfigVarsConsoleCommand.addConfigField(nameForConsole, new ConfigVarsConsoleCommand.CfgField(config, field)))
+					var cfgField = new ConfigVarsConsoleCommand.CfgField(config, field, rootConfig);
+					string nameForConsole = (cfgNamespace + cfgField.path).ToLower();
+#if DEBUG
+					uniqueIDs.ensureUniqueID(ref nameForConsole);
+#endif
+					if (ConfigVarsConsoleCommand.addConfigField(nameForConsole, cfgField))
 						ExportedCfgVarFields.addField(nameForConsole);
 				}
 
@@ -50,13 +59,7 @@ namespace Common.Configuration
 					process(field.GetValue(config));
 			}
 
-			#region Internal stuff
-
-			string getFieldNameForConsole(object _, FieldInfo field) // TODO: implement nested naming
-			{
-				return (cfgNamespace + field.Name).ToLower();
-			}
-
+#region Internal stuff
 			static class ConfigVarsConsoleCommand
 			{
 				static GameObject consoleCommands = null;
@@ -67,7 +70,7 @@ namespace Common.Configuration
 				{
 					readonly RangeAttribute range = null;
 
-					public CfgField(object config, FieldInfo field): base(config, field)
+					public CfgField(object parent, FieldInfo field, Config rootConfig): base(parent, field, rootConfig)
 					{
 #if !DEBUG
 						range = field.getAttribute<RangeAttribute>();
@@ -87,7 +90,6 @@ namespace Common.Configuration
 						consoleCommands = PersistentConsoleCommands.createGameObject<SetGetCfgVarCommand>("ConfigConsoleCommands_" + Strings.modName);
 				}
 
-
 				public static bool addConfigField(string nameForConsole, CfgField cfgField)
 				{																									$"ConfigVarsConsoleCommand: adding field {nameForConsole}".logDbg();
 					if (cfgFields.ContainsKey(nameForConsole))
@@ -102,7 +104,6 @@ namespace Common.Configuration
 					}
 				}
 
-
 				static CfgField getConfigField(string fieldName)
 				{
 					if (fieldName == null)
@@ -113,18 +114,13 @@ namespace Common.Configuration
 					return cf;
 				}
 
-
 				static void setFieldValue(string fieldName, string fieldValue)
 				{
 					CfgField cf = getConfigField(fieldName);
 
 					if (cf != null)
-					{
 						cf.value = fieldValue;
-						_main?.save();
-					}
 				}
-
 
 				static object getFieldValue(string fieldName)
 				{
@@ -144,18 +140,18 @@ namespace Common.Configuration
 
 					void OnConsoleCommand_getcfgvar(NotificationCenter.Notification n)
 					{																				$"getcfgvar: '{n.getArg(0)}'".logDbg();
-						if (n.getArgsCount() == 1)
-						{
-							string fieldName = n.getArg(0) as string;
-							object value = getFieldValue(fieldName);
+						if (n.getArgsCount() != 1)
+							return;
 
-							if (value != null)
-								$"{fieldName} = {value}".onScreen();
-						}
+						string fieldName = n.getArg(0) as string;
+						object value = getFieldValue(fieldName);
+
+						if (value != null)
+							$"{fieldName} = {value}".onScreen();
 					}
 				}
 			}
-			#endregion
+#endregion
 		}
 	}
 }

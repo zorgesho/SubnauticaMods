@@ -6,35 +6,78 @@ namespace Common.Configuration
 	{
 		public partial class Field
 		{
-			protected readonly object config;
+			protected readonly Config rootConfig;
+
+			protected readonly object parent;
 			protected readonly FieldInfo field;
 
 			protected readonly ICustomAction action;
 
-			public Field(object _config, FieldInfo _field)
+			public Field(object _parent, FieldInfo _field, Config _rootConfig = null)
 			{
-				config = _config;
+				parent = _parent;
 				field  = _field;
-				Debug.assert(config != null && field != null);
+				Debug.assert(parent != null && field != null);
+
+				rootConfig = _rootConfig ?? parent as Config ?? Config.main;
+				Debug.assert(rootConfig != null, "rootConfig is null");
+				Debug.assert(path != null, "field path is null");
 
 				action = field.getAttribute<CustomActionAttribute>()?.action;
 			}
 
-			public Field(object _config, string fieldName): this(_config, _config?.GetType().field(fieldName)) {}
+			public Field(object parent, string fieldName, Config rootConfig = null):
+				this(parent, parent?.GetType().field(fieldName), rootConfig) {}
 
 			public string name { get => field.Name; }
 
+			public string path { get => _path ?? (_path = rootConfig.getFieldPath(parent, field)); }
+			string _path = null;
+
 			public object value
 			{
-				get => field.GetValue(config);
+				get => field.GetValue(parent);
 
 				set => setFieldValue(value);
 			}
 
 			protected virtual void setFieldValue(object value)
 			{
-				config.setFieldValue(field, value);
+				parent.setFieldValue(field, value);
 				action?.customAction();
+
+				rootConfig.save();
+			}
+		}
+	}
+
+	partial class Config
+	{
+		// dot-separated path to field from config's root
+		string getFieldPath(object parent, FieldInfo fieldInfo)
+		{
+			return _getPath(this);
+
+			string _getPath(object obj)
+			{
+				if (obj == null)
+					return null;
+
+				foreach (var field in obj.GetType().fields())
+				{
+					if (obj == parent && field == fieldInfo)
+						return field.Name;
+
+					if (_isFieldValidForRecursiveAttrProcessing(field))
+					{
+						string path = _getPath(field.GetValue(obj));
+
+						if (path != null)
+							return field.Name + "." + path;
+					}
+				}
+
+				return null;
 			}
 		}
 	}

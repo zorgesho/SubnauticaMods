@@ -9,19 +9,32 @@ namespace Common.Configuration
 	partial class Options: ModOptions
 	{
 		// Attribute for creating options UI elements
-		[AttributeUsage(AttributeTargets.Field)]
-		public class FieldAttribute: Attribute, Config.IFieldAttribute
+		// AttributeTargets.Class is just for convenience during development (try to create options UI elements for all inner fields)
+		[AttributeUsage(AttributeTargets.Class | AttributeTargets.Field)]
+		public class FieldAttribute: Attribute, Config.IConfigAttribute, Config.IFieldAttribute, Config.IRootConfigInfo
 		{
+			Config rootConfig;
+			public void setRootConfig(Config config) => rootConfig = config;
+
 			string label;
 
 			public FieldAttribute(string _label = null) => label = _label;
 
+			public void process(object config)
+			{
+				foreach (var field in config.GetType().fields())
+				{
+					process(config, field);
+					label = null;
+
+					if (Config._isFieldValidForRecursiveAttrProcessing(field))
+						process(field.GetValue(config));
+				}
+			}
+
 			public void process(object config, FieldInfo field)
 			{																				$"Options.FieldAttribute.process fieldName:'{field.Name}' fieldType:{field.FieldType} label: '{label}'".logDbg();
-				if (label == null)
-					label = field.Name;
-
-				Config.Field cfgField = new Config.Field(config, field);
+				Config.Field cfgField = new Config.Field(config, field, rootConfig);
 
 				if (field.FieldType == typeof(bool))
 				{

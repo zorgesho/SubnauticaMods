@@ -55,7 +55,7 @@ namespace Common.Configuration
 						ExportedCfgVarFields.addField(nameForConsole);
 				}
 
-				if (_isFieldValidForRecursiveAttrProcessing(field))
+				if (_isInnerFieldsProcessable(field))
 					process(field.GetValue(config));
 			}
 

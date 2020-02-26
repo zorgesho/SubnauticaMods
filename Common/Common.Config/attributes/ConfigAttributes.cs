@@ -21,10 +21,10 @@ namespace Common.Configuration
 		// for use with non-primitive types, inner fields will not be searched for attributes
 		// (other attributes of the field will still be processed)
 		[AttributeUsage(AttributeTargets.Field)]
-		public class SkipRecursiveAttrProcessing: Attribute {}
+		public class NoInnerFieldsAttrProcessing: Attribute {}
 
-		public static bool _isFieldValidForRecursiveAttrProcessing(FieldInfo field) =>
-			field.FieldType.IsClass && !field.IsStatic && !field.checkAttribute<SkipRecursiveAttrProcessing>();
+		public static bool _isInnerFieldsProcessable(FieldInfo field) =>
+			field.FieldType.IsClass && !field.IsStatic && !field.checkAttribute<NoInnerFieldsAttrProcessing>();
 
 
 		void processAttributes()
@@ -52,7 +52,7 @@ namespace Common.Configuration
 						(attr as IFieldAttribute)?.process(config, field);
 					}
 
-					if (_isFieldValidForRecursiveAttrProcessing(field))
+					if (_isInnerFieldsProcessable(field))
 						_processAttributes(field.GetValue(config));
 				}
 			}

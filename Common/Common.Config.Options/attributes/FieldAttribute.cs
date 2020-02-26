@@ -27,7 +27,7 @@ namespace Common.Configuration
 					process(config, field);
 					label = null;
 
-					if (Config._isFieldValidForRecursiveAttrProcessing(field))
+					if (Config._isInnerFieldsProcessable(field))
 						process(field.GetValue(config));
 				}
 			}

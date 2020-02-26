@@ -68,7 +68,7 @@ namespace Common.Configuration
 					if (obj == parent && field == fieldInfo)
 						return field.Name;
 
-					if (_isFieldValidForRecursiveAttrProcessing(field))
+					if (_isInnerFieldsProcessable(field))
 					{
 						string path = _getPath(field.GetValue(obj));
 

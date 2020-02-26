@@ -14,7 +14,7 @@ namespace WarningsDisabler
 		{
 			public bool enabled = true;
 
-			[SkipRecursiveAttrProcessing]
+			[NoInnerFieldsAttrProcessing]
 			readonly HashSet<string> messages = null;
 
 			public Messages(params string[] _messages) => messages = new HashSet<string>(_messages);
@@ -45,7 +45,7 @@ namespace WarningsDisabler
 		}
 
 		[NonSerialized]
-		[SkipRecursiveAttrProcessing]
+		[NoInnerFieldsAttrProcessing]
 		readonly List<Messages> allMessages = new List<Messages>();
 
 		public bool isMessageAllowed(string message) => !allMessages.Exists(list => !list.isMessageAllowed(message));

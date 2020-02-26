@@ -65,18 +65,18 @@ namespace Common.Configuration
 
 				public class CfgField: Field
 				{
-					readonly BoundsAttribute bounds = null;
+					readonly RangeAttribute range = null;
 
 					public CfgField(object config, FieldInfo field): base(config, field)
 					{
 #if !DEBUG
-						bounds = field.getAttribute<BoundsAttribute>();
+						range = field.getAttribute<RangeAttribute>();
 #endif
 					}
 
 					protected override void setFieldValue(object value)
 					{
-						base.setFieldValue(bounds != null? bounds.applyBounds(value): value);
+						base.setFieldValue(range != null? range.clamp(value): value);
 					}
 				}
 

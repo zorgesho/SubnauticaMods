@@ -9,18 +9,18 @@ namespace CommonTests
 	{
 		class SimpleTestConfig: Config
 		{
-			[Field.Bounds(Min: 20)]
+			[Field.Range(Min: 20)]
 			public int testMin = 15;
 
-			[Field.Bounds(Max: 100)]
+			[Field.Range(Max: 100)]
 			public int testMax = 150;
 
-			[Field.Bounds(100, 200)]
+			[Field.Range(100, 200)]
 			public int test = 150;
 		}
 
 		[Test]
-		public void testBoundsSimple()
+		public void testRangeSimple()
 		{
 			SimpleTestConfig testConfig = Config.tryLoad<SimpleTestConfig>(null);
 
@@ -31,15 +31,15 @@ namespace CommonTests
 
 		class VariableTestConfig: Config
 		{
-			[Field.Bounds(Min: 20)]
+			[Field.Range(Min: 20)]
 			public int testMin20;
 			public static int testMinInitial;
 
-			[Field.Bounds(Max: 50)]
+			[Field.Range(Max: 50)]
 			public float testMax50;
 			public static float testMaxInitial;
 
-			[Field.Bounds(-100, 100)]
+			[Field.Range(-100, 100)]
 			public float testRange_m100_100;
 			public static float testRangeInitial;
 
@@ -52,18 +52,18 @@ namespace CommonTests
 		}
 
 		[Test]
-		public void testBoundsVariable([Values(1000, -1000, 150)] int min, [Values(1000, -1000, 150)] int max, [Values(1000, -1000, 150)] int range)
+		public void testRangeVariable([Values(1000, -1000, 150)] int min, [Values(1000, -1000, 150)] int max, [Values(1000, -1000, 150)] int range)
 		{
-			testBounds(min, max, range);
-		}
-		
-		[Test]
-		public void testBoundsRandom([Random(-1000, 1000, 3)] float min, [Random(-1000, 1000, 3)] float max, [Random(-1000, 1000, 3)] float range)
-		{
-			testBounds(min, max, range);
+			testRange(min, max, range);
 		}
 
-		void testBounds(float min, float max, float range)
+		[Test]
+		public void testRangeRandom([Random(-1000, 1000, 3)] float min, [Random(-1000, 1000, 3)] float max, [Random(-1000, 1000, 3)] float range)
+		{
+			testRange(min, max, range);
+		}
+
+		void testRange(float min, float max, float range)
 		{
 			VariableTestConfig.testMinInitial = (int)min;
 			VariableTestConfig.testMaxInitial = max;

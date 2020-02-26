@@ -6,11 +6,11 @@ namespace RemoteTorpedoDetonator
 	[AddToConsole("rtd")]
 	class ModConfig: Config
 	{
-		[Field.Bounds(Min: 1f)]
+		[Field.Range(Min: 1f)]
 		[Field.CustomAction(typeof(HarmonyHelper.UpdateOptionalPatches))]
 		public readonly float torpedoSpeed = 10f;
 
-		[Field.Bounds(Min: 0f)]
+		[Field.Range(Min: 0f)]
 		public readonly float torpedoCooldown = 5f;
 
 		[Field.CustomAction(typeof(HarmonyHelper.UpdateOptionalPatches))]

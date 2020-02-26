@@ -50,13 +50,13 @@ namespace Common.Configuration
 					{
 						add(new ChoiceOption(cfgField, label, choice.choices, choice.values));
 					}
-					else // creating SliderOption if we also have bounds attribute
-					if (field.getAttribute<Config.Field.BoundsAttribute>() is Config.Field.BoundsAttribute bounds && bounds.isBothBoundsSet())
+					else // creating SliderOption if we also have range attribute
+					if (field.getAttribute<Config.Field.RangeAttribute>() is Config.Field.RangeAttribute range && range.isBothBoundsSet())
 					{
-						add(new SliderOption(cfgField, label, bounds.min, bounds.max));
+						add(new SliderOption(cfgField, label, range.min, range.max));
 					}
 					else
-						$"Options.FieldAttribute: '{field.Name}' For numeric option field you also need to add ChoiceAttribute or FieldBoundsAttribute".logError();
+						$"Options.FieldAttribute: '{field.Name}' For numeric option field you also need to add ChoiceAttribute or RangeAttribute".logError();
 				}
 				else
 					$"Options.FieldAttribute: '{field.Name}' Unsupported field type".logError();

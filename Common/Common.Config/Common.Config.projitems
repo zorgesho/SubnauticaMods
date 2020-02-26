@@ -13,7 +13,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)ConfigField.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ConfigSerialization.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)attributes\ConfigToConsoleAttribute.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)attributes\FieldBoundsAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)attributes\FieldRangeAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)attributes\ConfigAttributes.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Config.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HarmonyHelper.cs" />

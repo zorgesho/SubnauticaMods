@@ -14,11 +14,11 @@ namespace MiscPrototypes
 		public readonly int choice2 = 0;
 
 		[Options.Field("Short description of slider")]
-		[Field.Bounds(0, 1000)]
+		[Field.Range(0, 1000)]
 		public readonly float slider1 = 500f;
 
 		[Options.Field("Long string with description of this slider")]
-		[Field.Bounds(0, 100)]
+		[Field.Range(0, 100)]
 		public readonly float slider2 = 50f;
 
 		[Options.Field("Short description of checkbox")]

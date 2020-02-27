@@ -46,7 +46,7 @@ namespace Common.Configuration
 		// for using SMLHelper's language override files
 		static void registerLabel(string id, ref string label)
 		{
-			id = Strings.modName + ".ids_options_" + id;
+			id = Strings.modName + ".idsOptions." + id;
 			LanguageHandler.SetLanguageLine(id, label);
 			label = id;
 		}

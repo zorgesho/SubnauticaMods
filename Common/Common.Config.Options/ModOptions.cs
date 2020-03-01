@@ -27,13 +27,21 @@ namespace Common.Configuration
 			SliderChanged  += (object sender, SliderChangedEventArgs e)  => eventHandler(e.Id, e);
 			ChoiceChanged  += (object sender, ChoiceChangedEventArgs e)  => eventHandler(e.Id, e);
 			KeybindChanged += (object sender, KeybindChangedEventArgs e) => eventHandler(e.Id, e);
+
+			GameObjectCreated += (object sender, GameObjectCreatedEventArgs e) => eventHandler(e.Id, e);
 		}
 
 		void eventHandler(string id, EventArgs e)
 		{
 			try
 			{
-				modOptions.Find(o => o.id == id)?.onEvent(e);
+				if (modOptions.Find(o => o.id == id) is ModOption target)
+				{
+					if (e is GameObjectCreatedEventArgs)
+						target.onChangeGameObject((e as GameObjectCreatedEventArgs).GameObject);
+					else
+						target.onChangeValue(e);
+				}
 			}
 			catch (Exception ex) { Log.msg(ex); }
 		}

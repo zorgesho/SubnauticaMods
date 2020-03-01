@@ -20,7 +20,7 @@ namespace Common.Configuration
 				options.AddSliderOption(id, label, min, max, cfgField.value.toFloat());
 			}
 
-			public override void onEvent(EventArgs e)
+			public override void onChangeValue(EventArgs e)
 			{
 				cfgField.value = (e as SliderChangedEventArgs)?.Value;
 			}

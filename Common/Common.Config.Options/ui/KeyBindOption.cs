@@ -14,7 +14,7 @@ namespace Common.Configuration
 				options.AddKeybindOption(id, label, GameInput.Device.Keyboard, (UnityEngine.KeyCode)cfgField.value.toInt());
 			}
 
-			public override void onEvent(EventArgs e)
+			public override void onChangeValue(EventArgs e)
 			{
 				cfgField.value = (e as KeybindChangedEventArgs)?.Key;
 			}

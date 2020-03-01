@@ -1,4 +1,6 @@
 ﻿using System;
+
+using UnityEngine;
 using SMLHelper.V2.Options;
 
 namespace Common.Configuration
@@ -13,6 +15,7 @@ namespace Common.Configuration
 			public readonly string id;
 			protected readonly string label;
 
+			protected GameObject gameObject;
 			protected readonly Config.Field cfgField;
 
 			public ModOption(Config.Field _cfgField, string _label)
@@ -29,7 +32,12 @@ namespace Common.Configuration
 			}
 
 			public abstract void addOption(Options options);
-			public abstract void onEvent(EventArgs e);
+
+			public abstract void onChangeValue(EventArgs e);
+			public virtual  void onChangeGameObject(GameObject go)
+			{
+				 gameObject = go;
+			}
 		}
 	}
 }

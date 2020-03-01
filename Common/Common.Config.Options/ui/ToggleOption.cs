@@ -14,7 +14,7 @@ namespace Common.Configuration
 				options.AddToggleOption(id, label, cfgField.value.toBool());
 			}
 
-			public override void onEvent(EventArgs e)
+			public override void onChangeValue(EventArgs e)
 			{
 				cfgField.value = (e as ToggleChangedEventArgs)?.Value;
 			}

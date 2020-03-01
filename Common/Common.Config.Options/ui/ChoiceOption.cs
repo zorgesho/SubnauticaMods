@@ -26,7 +26,7 @@ namespace Common.Configuration
 				options.AddChoiceOption(id, label, choices, defaultIndex < 0? 0: defaultIndex);
 			}
 
-			public override void onEvent(EventArgs e)
+			public override void onChangeValue(EventArgs e)
 			{
 				int? index = (e as ChoiceChangedEventArgs)?.Index;
 				cfgField.value = (values != null)? values[index ?? 0]: index;

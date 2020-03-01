@@ -10,7 +10,9 @@ namespace Common.Configuration
 			readonly string[] choices = null;
 			readonly object[] values  = null;
 
-			public ChoiceOption(Config.Field cfgField, string label, string[] _choices, object[] _values = null): base(cfgField, label)
+			public ChoiceOption(Config.Field cfgField, string label, string[] _choices, object[] _values = null): this(cfgField, label, null, _choices, _values) {}
+
+			public ChoiceOption(Config.Field cfgField, string label, string tooltip, string[] _choices, object[] _values = null): base(cfgField, label, tooltip)
 			{
 				choices = _choices;
 				values  = _values;

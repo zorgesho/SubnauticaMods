@@ -7,7 +7,7 @@ namespace Common.Configuration
 	{
 		public class KeyBindOption: ModOption
 		{
-			public KeyBindOption(Config.Field cfgField, string label): base(cfgField, label) {}
+			public KeyBindOption(Config.Field cfgField, string label, string tooltip = null): base(cfgField, label, tooltip) {}
 
 			public override void addOption(Options options)
 			{

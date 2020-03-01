@@ -11,32 +11,32 @@ namespace Common
 		static bool inited = false;
 
 		// internally using prefix for id strings to avoid conflicts with different mods (all strings are end up in one common list)
-		// don't use prefix in mod's code
+		// don't use prefix in mod's code unless you're sure you need it
 		static readonly string prefix = Strings.modName + ".";
 
 		public static void init()
 		{
-			if (inited)
+			if (inited || !(inited = true))
 				return;
 
-			inited = true;
-
 			// search for any classes that inherited from LanguageHelper and add their static string members to SMLHelper.LanguageHandler
-			foreach (var type in ReflectionHelper.definedTypes.Where(type => typeof(LanguageHelper).IsAssignableFrom(type)))
-			{
-				foreach (FieldInfo field in type.fields())
-				{
-					if (field.FieldType == typeof(string) && field.IsStatic && !field.IsLiteral) // const strings are not added to LanguageHandler
-					{																						$"LanguageHelper.init: adding field '{field.Name}': '{field.GetValue(null)}'".logDbg();
-						if (addString(prefix + field.Name, field.GetValue(null) as string))
-							field.SetValue(null, field.Name); // changing value of string to its name, so we can use it as a string id for 'str' method
-					}
-				}
-			}
+			ReflectionHelper.definedTypes.
+				Where(type => typeof(LanguageHelper).IsAssignableFrom(type)).
+				SelectMany(type => type.fields()).
+				Where(field => field.FieldType == typeof(string) && field.IsStatic && !field.IsLiteral). // const strings are not added to LanguageHandler
+				forEach(field => field.SetValue(null, add(field.Name, field.GetValue(null) as string))); // changing value of string to its name, so we can use it as a string id for 'str' method
 		}
 
 		// get string by id from Language.main
-		public static string str(string ids) => Language.main == null? ids: (Language.main.TryGet(prefix + ids, out string result)? result: ids);
+		public static string str(string ids) =>
+			Language.main == null? ids: (Language.main.TryGet(prefix + ids, out string result)? result: ids);
+
+		// add string to LanguageHandler, use getFullID if you need to get ids with prefix (e.g. for UI labels)
+		public static string add(string ids, string str, bool getFullID = false)
+		{																							$"LanguageHelper: adding string '{ids}': '{str}'".logDbg();
+			string fullID = prefix + ids;
+			return addString(fullID, str)? (getFullID? fullID: ids): str;
+		}
 
 		// wrap method for SMLHelper.LanguageHandler.SetLanguageLine
 		static readonly Func<string, string, bool> addString = _initDynamicMethod();

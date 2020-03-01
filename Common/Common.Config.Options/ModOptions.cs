@@ -46,17 +46,10 @@ namespace Common.Configuration
 			catch (Exception ex) { Log.msg(ex); }
 		}
 
-		public override void BuildModOptions()
-		{
+		public override void BuildModOptions() =>
 			modOptions.ForEach(o => o.addOption(this));
-		}
 
-		// for using SMLHelper's language override files
-		static void registerLabel(string id, ref string label)
-		{
-			id = Strings.modName + ".idsOptions." + id;
-			LanguageHandler.SetLanguageLine(id, label);
-			label = id;
-		}
+		static void registerLabel(string id, ref string label, bool uiInternal = true) => // uiInternal - for UI labels
+			label = LanguageHelper.add("idsOptions." + id, label, uiInternal);
 	}
 }

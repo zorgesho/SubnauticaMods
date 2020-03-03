@@ -45,7 +45,7 @@ namespace Common
 		// can't use just reflection here (MethodInfo.Invoke), in that case SMLHelper can't identify calling mod (it uses StackTrace for that)
 		static Func<string, string, bool> _initDynamicMethod()
 		{
-			MethodInfo SetLanguageLine = ReflectionHelper.safeGetMethod("SMLHelper", "SMLHelper.V2.Handlers.LanguageHandler", "SetLanguageLine");
+			MethodInfo SetLanguageLine = ReflectionHelper.safeGetType("SMLHelper", "SMLHelper.V2.Handlers.LanguageHandler")?.method("SetLanguageLine");
 			Debug.assert(SetLanguageLine != null);
 
 			DynamicMethod dm = new DynamicMethod("_addString", typeof(bool), new Type[] { typeof(string), typeof(string)}, typeof(LanguageHelper));

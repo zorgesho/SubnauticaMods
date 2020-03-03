@@ -38,9 +38,9 @@ namespace Common
 		public static readonly List<Type> definedTypes =
 			Assembly.GetExecutingAssembly().GetTypes().Where(type => !(type.Namespace?.StartsWith(nameof(Common)) ?? true)).ToList();
 
-		public static MethodInfo safeGetMethod(string assemblyName, string typeName, string methodName)
+		public static Type safeGetType(string assemblyName, string typeName)
 		{
-			try   { return Assembly.Load(assemblyName)?.GetType(typeName)?.method(methodName); }
+			try   { return Assembly.Load(assemblyName)?.GetType(typeName, false); }
 			catch { return null; }
 		}
 	}

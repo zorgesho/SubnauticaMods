@@ -117,7 +117,7 @@ namespace Common
 		// making dynamic method to avoid including InputLegacyModule in all references
 		static Func<float> _initDynamicMethod()
 		{
-			MethodInfo GetAxis = ReflectionHelper.safeGetMethod("UnityEngine.InputLegacyModule", "UnityEngine.Input", "GetAxis");
+			MethodInfo GetAxis = ReflectionHelper.safeGetType("UnityEngine.InputLegacyModule", "UnityEngine.Input")?.method("GetAxis");
 			Debug.assert(GetAxis != null);
 
 			DynamicMethod dm = new DynamicMethod("getMouseWheelValue", typeof(float), null, typeof(InputHelper));

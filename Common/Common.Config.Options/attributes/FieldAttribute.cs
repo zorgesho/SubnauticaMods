@@ -71,7 +71,10 @@ namespace Common.Configuration
 					else // creating SliderOption if we also have range attribute
 					if (field.getAttribute<Config.Field.RangeAttribute>() is Config.Field.RangeAttribute range && range.isBothBoundsSet())
 					{
-						add(new SliderOption(cfgField, label, tooltip, range.min, range.max));
+						add(new SliderOption(cfgField, label, tooltip, range.min, range.max)
+						{
+							optionalProps = field.getAttribute<SliderAttribute>()?.optionalProps
+						});
 					}
 					else
 						$"Options.FieldAttribute: '{field.Name}' For numeric option field you also need to add ChoiceAttribute or RangeAttribute".logError();

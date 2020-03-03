@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 using UnityEngine;
 using SMLHelper.V2.Options;
@@ -43,17 +42,7 @@ namespace Common.Configuration
 				gameObject = go;
 
 				if (tooltip != null)
-					Tooltip.addTo(gameObject, tooltip);
-			}
-
-			class Tooltip: MonoBehaviour, ITooltip
-			{
-				// using TranslationLiveUpdate component instead of Text (same result in this case and we don't need to add reference to Unity UI)
-				public static void addTo(GameObject gameObject, string _tooltip) =>
-					gameObject.GetComponentInChildren<TranslationLiveUpdate>().gameObject.AddComponent<Tooltip>().tooltip = _tooltip;
-
-				string tooltip;
-				public void GetTooltip(out string tooltipText, List<TooltipIcon> _) => tooltipText = LanguageHelper.str(tooltip);
+					Components.Tooltip.addTo(gameObject, tooltip);
 			}
 		}
 	}

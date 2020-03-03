@@ -12,6 +12,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)attributes\ChoiceAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)attributes\FieldAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)attributes\NameAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)components\Tooltip.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ModOptions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ui\ChoiceOption.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ui\KeyBindOption.cs" />

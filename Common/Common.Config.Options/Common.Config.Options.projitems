@@ -11,8 +11,10 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)attributes\ChoiceAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)attributes\FieldAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)attributes\HideableAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)attributes\NameAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)attributes\SliderAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)components\Hider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)components\SliderValue.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)components\Tooltip.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ModOptions.cs" />

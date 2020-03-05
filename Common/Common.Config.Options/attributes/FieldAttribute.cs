@@ -93,6 +93,9 @@ namespace Common.Configuration
 					if (tooltipType != null || tooltip != null)
 						option.addHandler(new Components.Tooltip.Add(tooltipType, tooltip));
 
+					if (field.getAttribute<HideableAttribute>() is HideableAttribute hideable)
+						option.addHandler(new Components.Hider.Add(hideable.visChecker, hideable.groupID));
+
 					add(option);
 				}
 			}

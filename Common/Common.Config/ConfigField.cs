@@ -29,9 +29,9 @@ namespace Common.Configuration
 			public Field(object parent, string fieldName, Config rootConfig = null):
 				this(parent, parent?.GetType().field(fieldName), rootConfig) {}
 
-			public string name { get => field.Name; }
+			public string name => field.Name;
 
-			public string path { get => _path ?? (_path = rootConfig.getFieldPath(parent, field)); }
+			public string path => _path ?? (_path = rootConfig.getFieldPath(parent, field));
 			string _path = null;
 
 			public object value

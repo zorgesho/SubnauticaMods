@@ -20,9 +20,7 @@ namespace Common.Configuration
 				public CustomActionAttribute(Type actionType)
 				{
 					action = Activator.CreateInstance(actionType) as ICustomAction;
-
-					if (action == null)
-						$"Field.CustomActionAttribute: '{actionType}' You need to implement ICustomAction in CustomActionType".logError();
+					Debug.assert(action != null, $"Field.CustomActionAttribute: '{actionType}' You need to implement ICustomAction in CustomActionType");
 				}
 			}
 		}

@@ -29,7 +29,7 @@ namespace Common
 
 		// get string by id from Language.main
 		public static string str(string ids) =>
-			Language.main == null? ids: (Language.main.TryGet(prefix + ids, out string result)? result: ids);
+			(Language.main == null || ids == null)? ids: (Language.main.TryGet(prefix + ids, out string result)? result: ids);
 
 		// add string to LanguageHandler, use getFullID if you need to get ids with prefix (e.g. for UI labels)
 		public static string add(string ids, string str, bool getFullID = false)

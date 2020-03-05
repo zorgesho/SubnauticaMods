@@ -1,8 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Text;
-using System.Reflection;
-using System.Collections.Generic;
 
 using UnityEngine;
 
@@ -52,7 +51,7 @@ namespace Common
  
 				foreach (var cmp in go.GetComponents<Component>())
 					dump(cmp, indent + "\t");
- 
+
 				foreach (Transform child in go.transform)
 					dump(child.gameObject, indent + "\t");
 			}
@@ -78,7 +77,7 @@ namespace Common
 				{
 					if (dumpProperties)
 					{
-						var properties = new List<PropertyInfo>(cmpType.properties());
+						var properties = cmpType.properties().ToList();
 						if (properties.Count > 0)
 						{
 							properties.Sort((p1, p2) => p1.Name.CompareTo(p2.Name));
@@ -94,7 +93,7 @@ namespace Common
 
 					if (dumpFields)
 					{
-						var fields = new List<FieldInfo>(cmpType.fields());
+						var fields = cmpType.fields().ToList();
 						if (fields.Count > 0)
 						{
 							fields.Sort((f1, f2) => f1.Name.CompareTo(f2.Name));
@@ -105,10 +104,7 @@ namespace Common
 						}
 					}
 				}
-				catch (Exception e)
-				{
-					Log.msg(e);
-				}
+				catch (Exception e) { Log.msg(e); }
 			}
 		}
 	}

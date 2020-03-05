@@ -10,9 +10,7 @@ namespace Common.Configuration
 			readonly string[] choices = null;
 			readonly object[] values  = null;
 
-			public ChoiceOption(Config.Field cfgField, string label, string[] _choices, object[] _values = null): this(cfgField, label, null, _choices, _values) {}
-
-			public ChoiceOption(Config.Field cfgField, string label, string tooltip, string[] _choices, object[] _values = null): base(cfgField, label, tooltip)
+			public ChoiceOption(Config.Field cfgField, string label, string[] _choices, object[] _values = null): base(cfgField, label)
 			{
 				choices = _choices;
 				values  = _values;
@@ -28,7 +26,7 @@ namespace Common.Configuration
 				options.AddChoiceOption(id, label, choices, defaultIndex < 0? 0: defaultIndex);
 			}
 
-			public override void onChangeValue(EventArgs e)
+			public override void onValueChange(EventArgs e)
 			{
 				int? index = (e as ChoiceChangedEventArgs)?.Index;
 				cfgField.value = (values != null)? values[index ?? 0]: index;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 using UnityEngine;
 using SMLHelper.V2.Options;
@@ -12,14 +13,27 @@ namespace Common.Configuration
 #if DEBUG
 			static readonly UniqueIDs uniqueIDs = new UniqueIDs();
 #endif
+			public interface IOnGameObjectChangeHandler
+			{
+				void init(ModOption option);
+				void handle(GameObject gameObject);
+			}
+
+			readonly List<IOnGameObjectChangeHandler> handlers = new List<IOnGameObjectChangeHandler>();
+
+			public void addHandler(IOnGameObjectChangeHandler handler)
+			{
+				handler.init(this);
+				handlers.Add(handler);
+			}
+
 			public readonly string id;
 			protected readonly string label;
-			protected readonly string tooltip;
 
 			protected GameObject gameObject;
 			protected readonly Config.Field cfgField;
 
-			public ModOption(Config.Field _cfgField, string _label, string _tooltip)
+			public ModOption(Config.Field _cfgField, string _label)
 			{
 				cfgField = _cfgField;
 
@@ -29,20 +43,15 @@ namespace Common.Configuration
 #endif
 				label = _label ?? id.clampLength(40);
 				registerLabel(id, ref label);
-
-				if ((tooltip = _tooltip) != null)
-					registerLabel(id + ".tooltip", ref tooltip, false);
 			}
 
 			public abstract void addOption(Options options);
 
-			public abstract void onChangeValue(EventArgs e);
-			public virtual  void onChangeGameObject(GameObject go)
+			public abstract void onValueChange(EventArgs e);
+			public virtual  void onGameObjectChange(GameObject go)
 			{
 				gameObject = go;
-
-				if (tooltip != null)
-					Components.Tooltip.addTo(gameObject, tooltip);
+				handlers.ForEach(h => h.handle(gameObject));
 			}
 		}
 	}

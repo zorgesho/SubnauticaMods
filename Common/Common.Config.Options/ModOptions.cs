@@ -38,9 +38,9 @@ namespace Common.Configuration
 				if (modOptions.Find(o => o.id == id) is ModOption target)
 				{
 					if (e is GameObjectCreatedEventArgs)
-						target.onChangeGameObject((e as GameObjectCreatedEventArgs).GameObject);
+						target.onGameObjectChange((e as GameObjectCreatedEventArgs).GameObject);
 					else
-						target.onChangeValue(e);
+						target.onValueChange(e);
 				}
 			}
 			catch (Exception ex) { Log.msg(ex); }

@@ -7,14 +7,14 @@ namespace Common.Configuration
 	{
 		public class ToggleOption: ModOption
 		{
-			public ToggleOption(Config.Field cfgField, string label, string tooltip = null): base(cfgField, label, tooltip) {}
+			public ToggleOption(Config.Field cfgField, string label): base(cfgField, label) {}
 
 			public override void addOption(Options options)
 			{
 				options.AddToggleOption(id, label, cfgField.value.toBool());
 			}
 
-			public override void onChangeValue(EventArgs e)
+			public override void onValueChange(EventArgs e)
 			{
 				cfgField.value = (e as ToggleChangedEventArgs)?.Value;
 			}

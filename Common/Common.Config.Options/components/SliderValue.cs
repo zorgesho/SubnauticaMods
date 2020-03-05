@@ -2,14 +2,46 @@
 using System.Collections;
 using System.Collections.Generic;
 
+using UnityEngine;
 using SMLHelper.V2.Options;
 
 namespace Common.Configuration
 {
 	partial class Options: ModOptions
 	{
-		public partial class Components
+		public static partial class Components
 		{
+			public class SliderValue
+			{
+				public class Add: ModOption.IOnGameObjectChangeHandler
+				{
+					readonly Type valueCmpType;
+					readonly string valueFormat;
+
+					public void init(ModOption option)
+					{
+						Debug.assert(option is SliderOption, "SliderValue.Add: option is not a slider");
+					}
+
+					public Add(Type _valueCmpType, string _valueFormat)
+					{
+						valueCmpType = _valueCmpType;
+						valueFormat  = _valueFormat;
+
+						Debug.assert(typeof(ModSliderOption.SliderValue).IsAssignableFrom(valueCmpType),
+							$"Custom value type {valueCmpType} is not derived from ModSliderOption.SliderValue");
+					}
+
+					public void handle(GameObject gameObject)
+					{
+						GameObject slider = gameObject.transform.Find("Slider").gameObject;
+						(slider.AddComponent(valueCmpType) as ModSliderOption.SliderValue).ValueFormat = valueFormat;
+					}
+				}
+			}
+
+
+			// breaks slider to several linear intervals
 			public class NonlinearSliderValue: ModSliderOption.SliderValue
 			{
 				readonly List<Tuple<float, float>> sliderToDisplay = new List<Tuple<float, float>>();
@@ -48,16 +80,10 @@ namespace Common.Configuration
 
 				float convertValue(float value, List<Tuple<float, float>> valueInfo)
 				{
-					float _convert(float fromLeft, float fromRight, float toLeft, float toRight)
-					{
-						float b = (toRight - toLeft) / (fromRight - fromLeft); // zero ?
-						float a = toLeft - fromLeft * b;
-
-						return a + value * b;
-					}
+					float _convert(float fromLeft, float fromRight, float toLeft, float toRight) =>
+						toLeft + (toRight - toLeft) / (fromRight - fromLeft) * (value - fromLeft); // zero ?
 
 					int index = valueInfo.FindIndex(1, info => value <= info.Item1);
-
 					return index < 1? value: _convert(valueInfo[index-1].Item1, valueInfo[index].Item1, valueInfo[index-1].Item2, valueInfo[index].Item2);
 				}
 

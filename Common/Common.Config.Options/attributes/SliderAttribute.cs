@@ -9,13 +9,18 @@ namespace Common.Configuration
 		[AttributeUsage(AttributeTargets.Field)]
 		public class SliderAttribute: Attribute
 		{
-			public SliderOption.OptionalProps optionalProps;
+			public readonly Type customValueType; // component derived from ModSliderOption.SliderValue
+			public readonly float? defaultValue;
+			public readonly string valueFormat;
 
-			public SliderAttribute(float DefaultValue = float.MinValue, string ValueFormat = null, Type CustomValue = null)
+			public SliderAttribute(float DefaultValue = float.MinValue, string ValueFormat = null, Type CustomValueType = null)
 			{
-				float? defaultValue = (DefaultValue == float.MinValue)? (float?)null: DefaultValue; // can't use float? in attributes
+				defaultValue = (DefaultValue == float.MinValue)? (float?)null: DefaultValue; // can't use float? in attributes
+				valueFormat = ValueFormat;
+				customValueType = CustomValueType;
 
-				optionalProps = new SliderOption.OptionalProps(defaultValue, ValueFormat, CustomValue);
+				Debug.assert(customValueType == null || typeof(ModSliderOption.SliderValue).IsAssignableFrom(customValueType),
+					$"Custom value type {customValueType} is not derived from ModSliderOption.SliderValue");
 			}
 		}
 	}

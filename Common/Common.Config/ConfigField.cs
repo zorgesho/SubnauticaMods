@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 
 namespace Common.Configuration
 {
@@ -23,16 +24,19 @@ namespace Common.Configuration
 				Debug.assert(rootConfig != null, "rootConfig is null");
 				Debug.assert(path != null, "field path is null");
 
-				action = field.getAttribute<CustomActionAttribute>()?.action;
+				action = getAttr<CustomActionAttribute>()?.action;
 			}
 
 			public Field(object parent, string fieldName, Config rootConfig = null):
 				this(parent, parent?.GetType().field(fieldName), rootConfig) {}
 
+			public Type type => field.FieldType;
 			public string name => field.Name;
 
 			public string path => _path ?? (_path = rootConfig.getFieldPath(parent, field));
 			string _path = null;
+
+			public A getAttr<A>() where A: Attribute => field.getAttribute<A>();
 
 			public object value
 			{

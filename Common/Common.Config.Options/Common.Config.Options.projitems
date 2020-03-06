@@ -18,6 +18,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)components\SliderValue.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)components\Tooltip.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ModOptions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)OptionsFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ui\ChoiceOption.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ui\KeyBindOption.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ui\SliderOption.cs" />

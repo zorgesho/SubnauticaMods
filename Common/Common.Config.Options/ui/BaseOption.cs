@@ -31,7 +31,7 @@ namespace Common.Configuration
 			protected readonly string label;
 
 			protected GameObject gameObject;
-			protected readonly Config.Field cfgField;
+			public readonly Config.Field cfgField;
 
 			public ModOption(Config.Field _cfgField, string _label)
 			{

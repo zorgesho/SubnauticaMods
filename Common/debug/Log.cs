@@ -40,7 +40,7 @@ namespace Common
 		public enum MsgType { DBG, INFO, WARNING, ERROR, EXCEPTION }
 
 		static readonly string logPrefix = Strings.modName;
-#if TRACE
+#if DEBUG
 		static readonly string customLogPath = Paths.modRootPath + logPrefix + ".log";
 		static Log()
 		{
@@ -52,7 +52,7 @@ namespace Common
 		{
 			string formattedMsg = $"[{logPrefix}] {DateTime.Now.ToString("HH:mm:ss.fff")}   {msgType}: {str}{Environment.NewLine}";
 			Console.Write(formattedMsg);
-#if TRACE
+#if DEBUG
 			try { File.AppendAllText(customLogPath, formattedMsg); }
 			catch (UnauthorizedAccessException) {}
 #endif

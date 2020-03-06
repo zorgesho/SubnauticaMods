@@ -44,7 +44,7 @@ namespace Common
 					return;
 
 				string result = $"{message}: {lastResult} ms";
-				$"PROFILER: {result}".logDbg();
+				$"PROFILER: {result}".log();
 
 				if (filename != null)
 					result.appendToFile(filename);
@@ -53,7 +53,7 @@ namespace Common
 			public static void _logCompare(double prevResult, string filename = null)
 			{
 				string res = $"PROFILER: DIFF {(lastResult - prevResult) / prevResult * 100f:F2} %";
-				res.logDbg();
+				res.log();
 
 				if (filename != null)
 					res.appendToFile(formatFileName(filename));

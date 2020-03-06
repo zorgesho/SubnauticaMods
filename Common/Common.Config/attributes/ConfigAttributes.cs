@@ -29,7 +29,8 @@ namespace Common.Configuration
 
 		void processAttributes()
 		{
-			_processAttributes(this); // recursive
+			using (Debug.profiler("Config.processAttributes()"))
+				_processAttributes(this); // recursive
 
 			void _processAttributes(object config)
 			{

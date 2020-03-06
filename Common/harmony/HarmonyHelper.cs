@@ -40,7 +40,7 @@ namespace Common
 			{
 				HarmonyMethod _harmonyMethod(MethodInfo method) => (method == null)? null: new HarmonyMethod(method);
 
-				using (Debug.profiler("HarmonyHelper.patch"))
+				using (Debug.profiler($"HarmonyHelper.patch '{original}'"))
 					harmonyInstance.Patch(original, _harmonyMethod(prefix), _harmonyMethod(postfix), _harmonyMethod(transpiler));
 			}
 			catch (Exception e)

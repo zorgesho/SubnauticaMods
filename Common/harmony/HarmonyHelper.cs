@@ -35,12 +35,12 @@ namespace Common
 		}
 
 		public static void patch(MethodBase original, MethodInfo prefix = null, MethodInfo postfix = null, MethodInfo transpiler = null)
-		{																					$"HarmonyHelper.patch: patching '{original}' with prefix:'{prefix}' postfix:'{postfix}' transpiler:'{transpiler}'".logDbg();
+		{													$"HarmonyHelper.patch: patching '{original.DeclaringType}.{original.Name}' with prefix:'{prefix}' postfix:'{postfix}' transpiler:'{transpiler}'".logDbg();
 			try
 			{
 				HarmonyMethod _harmonyMethod(MethodInfo method) => (method == null)? null: new HarmonyMethod(method);
 
-				using (Debug.profiler($"HarmonyHelper.patch '{original}'"))
+				using (Debug.profiler($"HarmonyHelper.patch '{original.DeclaringType}.{original.Name}'"))
 					harmonyInstance.Patch(original, _harmonyMethod(prefix), _harmonyMethod(postfix), _harmonyMethod(transpiler));
 			}
 			catch (Exception e)
@@ -64,7 +64,15 @@ namespace Common
 			}
 		}
 
-		static MethodInfo getTargetMethod(this HarmonyMethod harmonyMethod) =>
-			harmonyMethod.declaringType?.method(harmonyMethod.methodName, harmonyMethod.argumentTypes);
+		static MethodBase getTargetMethod(this HarmonyMethod harmonyMethod)
+		{
+			if (harmonyMethod.methodName != null)
+				return harmonyMethod.declaringType?.method(harmonyMethod.methodName, harmonyMethod.argumentTypes);
+
+			if (harmonyMethod.methodType == MethodType.Constructor)
+				return harmonyMethod.declaringType?.GetConstructor(ReflectionHelper.bfAll, null, harmonyMethod.argumentTypes, null);
+
+			return null;
+		}
 	}
 }

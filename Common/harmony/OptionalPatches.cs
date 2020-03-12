@@ -25,7 +25,8 @@ namespace Common
 				if (optionalPatches == null)
 					optionalPatches = ReflectionHelper.definedTypes.Where(type => type.checkAttribute<OptionalPatchAttribute>()).ToList();
 
-				optionalPatches.ForEach(type => updatePatch(type));
+				using (Debug.profiler("Update optional patches"))
+					optionalPatches.ForEach(type => updatePatch(type));
 			}
 
 			// calls setEnabled with result of 'Prepare' method
@@ -49,7 +50,7 @@ namespace Common
 				if (!(patchType.getAttribute<HarmonyPatch>() is HarmonyPatch patch))
 					return;
 
-				MethodInfo method = patch.info.getTargetMethod();
+				MethodBase method = patch.info.getTargetMethod();
 
 				if (method == null && $"OptionalPatches: method is null!".logError())
 					return;

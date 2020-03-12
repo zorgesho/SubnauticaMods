@@ -44,7 +44,7 @@ namespace Common.Configuration
 			{
 				ConfigVarsConsoleCommand.init();
 
-				if (field.FieldType.IsPrimitive)
+				if (field.FieldType.IsPrimitive && field.IsPublic)
 				{
 					var cfgField = new ConfigVarsConsoleCommand.CfgField(config, field, rootConfig);
 					string nameForConsole = (cfgNamespace + cfgField.path).ToLower();

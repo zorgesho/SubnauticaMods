@@ -45,9 +45,12 @@ namespace Common.Configuration
 				set => setFieldValue(value);
 			}
 
-			protected virtual void setFieldValue(object value)
+			protected virtual void setFieldValue(object newValue)
 			{
-				parent.setFieldValue(field, value);
+				if (value.Equals(newValue))
+					return;
+
+				parent.setFieldValue(field, newValue);
 				action?.customAction();
 
 				rootConfig.save();

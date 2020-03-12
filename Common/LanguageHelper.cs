@@ -19,11 +19,11 @@ namespace Common
 			if (inited || !(inited = true))
 				return;
 
-			// search for any classes that inherited from LanguageHelper and add their static string members to SMLHelper.LanguageHandler
+			// search for any classes that inherited from LanguageHelper and add their public static string members to SMLHelper.LanguageHandler
 			ReflectionHelper.definedTypes.
 				Where(type => typeof(LanguageHelper).IsAssignableFrom(type)).
 				SelectMany(type => type.fields()).
-				Where(field => field.FieldType == typeof(string) && field.IsStatic && !field.IsLiteral). // const strings are not added to LanguageHandler
+				Where(field => field.FieldType == typeof(string) && field.IsStatic && field.IsPublic && !field.IsLiteral). // const strings are not added to LanguageHandler
 				forEach(field => field.SetValue(null, add(field.Name, field.GetValue(null) as string))); // changing value of string to its name, so we can use it as a string id for 'str' method
 		}
 

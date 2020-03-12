@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using UnityEngine;
 using SMLHelper.V2.Options;
 using SMLHelper.V2.Handlers;
 
@@ -10,6 +11,11 @@ namespace Common.Configuration
 	{
 		static Options instance = null;
 		static string  optionsName = Strings.modName;
+
+		public enum Mode { Undefined, MainMenu, IngameMenu };
+
+		public static Mode mode { get; private set; } = Mode.Undefined;
+		static GameObject optionsPanelGameObject;
 
 		readonly List<ModOption> modOptions = new List<ModOption>();
 
@@ -46,8 +52,28 @@ namespace Common.Configuration
 			catch (Exception ex) { Log.msg(ex); }
 		}
 
-		public override void BuildModOptions() =>
+		public override void BuildModOptions()
+		{
 			modOptions.ForEach(o => o.addOption(this));
+
+			updateCurrentMode();
+		}
+
+		void updateCurrentMode()
+		{
+			if (optionsPanelGameObject != null) // panel gameobject created once per mode
+				return;
+
+			optionsPanelGameObject = UnityEngine.Object.FindObjectOfType<uGUI_OptionsPanel>().gameObject;
+
+			if (optionsPanelGameObject.GetComponent<MainMenuOptions>())
+				mode = Mode.MainMenu;
+			else
+			if (optionsPanelGameObject.GetComponent<IngameMenuPanel>())
+				mode = Mode.IngameMenu;
+			else
+				mode = Mode.Undefined;
+		}
 
 		static void registerLabel(string id, ref string label, bool uiInternal = true) => // uiInternal - for UI labels
 			label = LanguageHelper.add("idsOptions." + id, label, uiInternal);

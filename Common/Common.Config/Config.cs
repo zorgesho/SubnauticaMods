@@ -5,19 +5,15 @@ namespace Common.Configuration
 {
 	partial class Config
 	{
-		public static Config main { get => _main; }
-
-#pragma warning disable IDE0032 // can't use auto property, need to access this field with reflection
-		static Config _main = null;
-#pragma warning restore
+		public static Config main { get; private set; }
 
 		public enum LoadOptions
 		{
 			None = 0,
 			ProcessAttributes = 1,
-			SetAsMainConfig = 2,
+			MainConfig = 2,
 			ForcedLoad = 4,
-			Default = ProcessAttributes | SetAsMainConfig
+			Default = ProcessAttributes | MainConfig
 		}
 
 		static readonly bool loadFromFile = // can be overrided by LoadOptions.ForcedLoad
@@ -51,10 +47,10 @@ namespace Common.Configuration
 				// saving config even if we just loaded it to update it in case of added or removed fields (and to set configPath var)
 				config.save(configPath);
 
-				if (loadOptions.HasFlag(LoadOptions.SetAsMainConfig))
-				{																				"Config.main is already set!".logDbgError(_main != null);
-					if (_main == null)
-						_main = config;
+				if (loadOptions.HasFlag(LoadOptions.MainConfig))
+				{																				"Config.main is already set!".logDbgError(main != null);
+					if (main == null)
+						main = config;
 				}
 
 				if (loadOptions.HasFlag(LoadOptions.ProcessAttributes))

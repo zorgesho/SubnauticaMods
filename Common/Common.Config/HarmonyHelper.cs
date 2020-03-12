@@ -16,12 +16,10 @@ namespace Common
 
 	static partial class HarmonyHelper // additional transpilers stuff to work with config
 	{
-		static readonly FieldInfo mainConfigField = typeof(Config).field("_" + nameof(Config.main)); // for using in transpiler helper functions
+		// for using in transpiler helper functions
+		static readonly MethodInfo mainConfig = typeof(Config).property(nameof(Config.main)).GetGetMethod();
 
 		public class UpdateOptionalPatches: Config.Field.ICustomAction { public void customAction() => updateOptionalPatches(); }
-
-		static FieldInfo getCfgVarField(string cfgVarName) =>
-			Config.main?.GetType().field(cfgVarName);
 
 
 		// changing constant to config field
@@ -40,25 +38,39 @@ namespace Common
 			ciReplace(list, ci => ci.isLDC(val), _codeForCfgVar<T, C>(val, cfgVarName, ilg));
 
 
+		static CodeInstruction getCfgVarCI(string cfgVarName)
+		{
+			if (Config.main == null)
+				return null;
+
+			if (Config.main.GetType().field(cfgVarName) is FieldInfo varField)
+				return new CodeInstruction(OpCodes.Ldfld, varField);
+
+			if (Config.main.GetType().property(cfgVarName)?.GetGetMethod() is MethodInfo varGetter)
+				return new CodeInstruction(OpCodes.Callvirt, varGetter);
+
+			return null;
+		}
+
 		public static CIEnumerable _codeForCfgVar(string cfgVarName)
 		{
-			FieldInfo varField = getCfgVarField(cfgVarName);
-			Debug.assert(varField != null);
+			var cfgVarCI = getCfgVarCI(cfgVarName);
+			Debug.assert(cfgVarCI != null);
 
-			if (varField == null && $"_codeForCfgVar: varField for {cfgVarName} is not found".logError())
+			if (cfgVarCI == null && $"_codeForCfgVar: member for {cfgVarName} is not found".logError())
 				yield break;
 
-			yield return new CodeInstruction(OpCodes.Ldsfld, mainConfigField);
-			yield return new CodeInstruction(OpCodes.Ldfld, varField);
+			yield return new CodeInstruction(OpCodes.Call, mainConfig);
+			yield return cfgVarCI;
 		}
 
 
 		public static CIEnumerable _codeForCfgVar<T, C>(T val, string cfgVarName, ILGenerator ilg) where C: Component
 		{																												$"HarmonyHelper._codeForCfgVar: injecting {val} => {cfgVarName} ({typeof(C)})".logDbg();
-			FieldInfo varField = getCfgVarField(cfgVarName);
-			Debug.assert(varField != null);
+			var cfgVarCI = getCfgVarCI(cfgVarName);
+			Debug.assert(cfgVarCI != null);
 
-			if (varField == null && $"_codeForCfgVar: varField for {cfgVarName} is not found".logError())
+			if (cfgVarCI == null && $"_codeForCfgVar: member for {cfgVarName} is not found".logError())
 				yield break;
 
 			Label lb1 = ilg.DefineLabel();
@@ -73,8 +85,8 @@ namespace Common
 			yield return new CodeInstruction(LdcOpCode.get<T>(), val);
 			yield return new CodeInstruction(OpCodes.Br_S, lb2);
 
-			yield return new CodeInstruction(OpCodes.Ldsfld, mainConfigField) { labels = new List<Label>{lb1} };
-			yield return new CodeInstruction(OpCodes.Ldfld, varField);
+			yield return new CodeInstruction(OpCodes.Call, mainConfig) { labels = new List<Label>{lb1} };
+			yield return cfgVarCI;
 			yield return new CodeInstruction(OpCodes.Nop) { labels = new List<Label>{lb2} };
 		}
 	}

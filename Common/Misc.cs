@@ -62,6 +62,7 @@ namespace Common
 		public static MethodInfo method(this Type type, string name, params Type[] types) => _method(type, name, types);
 
 		public static FieldInfo field(this Type type, string name) => type.GetField(name, ReflectionHelper.bfAll);
+		public static PropertyInfo property(this Type type, string name) => type.GetProperty(name, ReflectionHelper.bfAll);
 
 		public static FieldInfo[] fields(this Type type) => type.GetFields(ReflectionHelper.bfAll);
 		public static MethodInfo[] methods(this Type type) => type.GetMethods(ReflectionHelper.bfAll);

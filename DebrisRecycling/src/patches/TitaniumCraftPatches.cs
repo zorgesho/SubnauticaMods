@@ -30,23 +30,24 @@ namespace DebrisRecycling
 			{
 				tooltipText = null;
 
-				if (techType == TechType.Titanium)
-				{
-					if (currentPowerRelay.GetPower() < getPowerConsumption() + 7f) // +2 energy units in order not to drain energy completely
-						resetTitaniumRecipe();
-					else
-						updateTitaniumRecipe();
-				}
+				if (techType != TechType.Titanium)
+					return;
+
+				if (Main.config.extraPowerConsumption && currentPowerRelay != null && currentPowerRelay.GetPower() < getPowerConsumption() + 7f) // +2 energy units in order not to drain energy completely
+					resetTitaniumRecipe();
+				else
+					updateTitaniumRecipe();
 			}
 		}
 
 		[HarmonyPatch(typeof(GhostCrafter), "Craft")]
 		static class GhostCrafter_Craft_Patch
 		{
-			static bool Prepare() => Main.config.craftConfig.dynamicTitaniumBlueprint;
+			static bool Prepare() => Main.config.craftConfig.dynamicTitaniumBlueprint && Main.config.extraPowerConsumption;
 
+			[HarmonyPriority(Priority.High)]
 			static void Prefix(GhostCrafter __instance, TechType techType)
-			{																									"Power relays are different!".logDbgError(__instance.powerRelay != currentPowerRelay);
+			{
 				if (techType == TechType.Titanium && extraPowerConsumption > 0f)
 					CrafterLogic.ConsumeEnergy(__instance.powerRelay, extraPowerConsumption);
 			}
@@ -76,6 +77,9 @@ namespace DebrisRecycling
 		// extra power consumption for crafting this amount of titanium
 		static float getPowerConsumption(int craftAmount = 0)
 		{
+			if (!Main.config.extraPowerConsumption)
+				return 0f;
+
 			if (craftAmount == 0)
 				craftAmount = getCraftAmount();
 

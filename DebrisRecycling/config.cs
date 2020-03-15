@@ -59,6 +59,7 @@ namespace DebrisRecycling
 		public readonly bool deconstructValidStaticObjects = true;
 		public readonly bool patchStaticObjects = true;
 		public readonly bool hotkeyForNewObjects = false;
+		public readonly bool extraPowerConsumption = false;
 	};
 
 

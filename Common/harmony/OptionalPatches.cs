@@ -14,6 +14,7 @@ namespace Common
 
 		// dynamic patching/unpatching
 		public static void updateOptionalPatches()				=> OptionalPatches.updatePatches();
+		public static void updateOptionalPatch(Type type)		=> OptionalPatches.updatePatch(type);
 		public static void setPatchEnabled(bool val, Type type) => OptionalPatches.setEnabled(val, type);
 
 		static class OptionalPatches
@@ -30,18 +31,21 @@ namespace Common
 			}
 
 			// calls setEnabled with result of 'Prepare' method
-			static void updatePatch(Type patchType)
+			public static void updatePatch(Type patchType)
 			{
-				MethodInfo prepare = patchType.method("Prepare");
+				using (Debug.profiler($"Update optional patch: {patchType}", allowNested: false))
+				{
+					MethodInfo prepare = patchType.method("Prepare");
 
-				Debug.assert(prepare != null);
-				if (prepare == null)
-					return;
+					Debug.assert(prepare != null);
+					if (prepare == null)
+						return;
 
-				bool? res = prepare.Invoke(null, null) as bool?;
+					bool? res = prepare.Invoke(null, null) as bool?;
 
-				if (res != null)
-					setEnabled((bool)res, patchType);
+					if (res != null)
+						setEnabled((bool)res, patchType);
+				}
 			}
 
 

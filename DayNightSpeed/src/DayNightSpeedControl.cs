@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic; // used in DEBUG section
+﻿#if DEBUG
+using System.Collections.Generic;
+#endif
 
 using Harmony;
 using UnityEngine;
@@ -11,7 +13,6 @@ namespace DayNightSpeed
 	[HarmonyHelper.PatchClass]
 	static partial class DayNightSpeedControl
 	{
-		static bool inited = false;
 		static GameObject gameObject;
 
 		// need to force normal speed during most story events
@@ -57,14 +58,11 @@ namespace DayNightSpeed
 		{
 			public void customAction()
 			{
-				if (forcedNormalSpeed)
+				if (forcedNormalSpeed || DayNightCycle.main == null)
 					return;
 
-				if (DayNightCycle.main != null)
-				{
-					DayNightCycle.main._dayNightSpeed = Main.config.dayNightSpeed;
-					DayNightCycle.main.skipTimeMode = false;
-				}
+				DayNightCycle.main._dayNightSpeed = Main.config.dayNightSpeed;
+				DayNightCycle.main.skipTimeMode = false;
 			}
 		}
 
@@ -105,7 +103,7 @@ namespace DayNightSpeed
 						{
 							const string colorCompleted = "<color=#999900CC>", colorNotCompleted = "<color=#FFFF00FF>";
 
-							bool completed = Story.StoryGoalManager.main.completedGoals.Contains(goal.goalKey);
+							bool completed = StoryGoalsListener.isGoalCompleted(goal.goalKey);
 							string goalName = (completed? colorCompleted: colorNotCompleted) + goal.goalKey + "</color>";
 
 							$"{(goal.timeExecute - DayNightCycle.main.timePassed):#.###}".onScreen(goalName);
@@ -115,13 +113,12 @@ namespace DayNightSpeed
 			}
 		}
 #endif
+		static bool inited = false;
 
 		public static void init()
 		{
-			if (inited)
+			if (inited || !(inited = true))
 				return;
-
-			inited = true;
 
 			gameObject = UnityHelper.createPersistentGameObject<DayNightSpeedCommands>("DayNightSpeedControl");
 			gameObject.AddComponent<StoryGoalsListener>();
@@ -134,10 +131,7 @@ namespace DayNightSpeed
 	// helper for transpilers
 	static class _dnsClamped01
 	{
-		public static CodeInstruction ci
-		{
-			get => new CodeInstruction(System.Reflection.Emit.OpCodes.Call,
-				typeof(DayNightSpeedControl).method(nameof(DayNightSpeedControl.getDayNightSpeedClamped01)));
-		}
+		public static CodeInstruction ci => new CodeInstruction(System.Reflection.Emit.OpCodes.Call,
+			typeof(DayNightSpeedControl).method(nameof(DayNightSpeedControl.getDayNightSpeedClamped01)));
 	}
 }

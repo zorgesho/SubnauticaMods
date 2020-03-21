@@ -3,6 +3,8 @@
 using Harmony;
 using UnityEngine;
 
+using Story;
+
 using Common;
 using Common.GameSerialization;
 
@@ -51,18 +53,20 @@ namespace DayNightSpeed
 				SaveLoad.save(saveName, new SaveData { goals = goals });
 			}
 
-			[HarmonyPatch(typeof(Story.StoryGoalScheduler), "Schedule")][HarmonyPostfix]
-			static void onAddGoal(Story.StoryGoal goal)
+			public static bool isGoalCompleted(string goalKey) => StoryGoalManager.main.completedGoals.Contains(goalKey);
+
+			[HarmonyPatch(typeof(StoryGoalScheduler), "Schedule")][HarmonyPostfix]
+			static void onAddGoal(StoryGoal goal)
 			{
-				if (goal == null || goal.delay > shortGoalDelay)
+				if (goal == null || goal.delay > shortGoalDelay || isGoalCompleted(goal.key))
 					return;
 
 				forcedNormalSpeed = true;
 
-				instance.goals.Add(goal.key);	$"StoryGoalsListener: goal added '{goal.key}'".logDbg();
+				instance.goals.Add(goal.key);											$"StoryGoalsListener: goal added '{goal.key}'".logDbg();
 			}
 
-			[HarmonyPatch(typeof(Story.StoryGoal), "Execute")][HarmonyPostfix]
+			[HarmonyPatch(typeof(StoryGoal), "Execute")][HarmonyPostfix]
 			static void onRemoveGoal(string key)
 			{
 				if (instance.goals.RemoveAll(g => g == key) > 0 && instance.goals.Count == 0)

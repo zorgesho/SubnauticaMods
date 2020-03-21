@@ -153,8 +153,10 @@ namespace DayNightSpeed
 					line("ingame <b>24h</b> = realtime <b>{0}</b>", true);
 			}
 
-			public class DayNightSpeed: Options.Components.Tooltip
+			public class DayNightSpeed: Options.Components.TooltipCached<float>
 			{
+				protected override bool needUpdate => isParamsChanged(Main.config.dayNightSpeed);
+
 				public override string tooltip
 				{
 					get
@@ -168,6 +170,11 @@ namespace DayNightSpeed
 			}
 			#endregion
 
+			public abstract class TooltipSpeed: Options.Components.TooltipCached<float, float>
+			{
+				protected bool isSpeedChanged(float speed) => isParamsChanged(Main.config.dayNightSpeed, speed);
+			}
+
 			#region tooltip: speedHungerThrist
 			partial class L10n
 			{
@@ -177,10 +184,12 @@ namespace DayNightSpeed
 					line(subtitle("water") + "{1}", true);
 			}
 
-			public class HungerThrist: Options.Components.Tooltip
+			public class HungerThrist: TooltipSpeed
 			{
 				const float foodTimeSecs  = 2520f;
 				const float waterTimeSecs = 1800f;
+
+				protected override bool needUpdate => isSpeedChanged(Main.config.speedHungerThrist);
 
 				public override string tooltip =>
 					string.Format(L10n.str(L10n.ids_tooltipFoodWater),
@@ -200,12 +209,14 @@ namespace DayNightSpeed
 					line(subtitle("bulbo tree") + "{3}", true);
 			}
 
-			public class Plants: Options.Components.Tooltip
+			public class Plants: TooltipSpeed
 			{
 				const float growMushrooms = 400f;
 				const float growMelon     = 800f;
 				const float growCreepvine = 1200f;
 				const float growBulboTree = 1600f;
+
+				protected override bool needUpdate => isSpeedChanged(Main.config.speedPlantsGrow);
 
 				public override string tooltip =>
 					string.Format(L10n.str(L10n.ids_tooltipPlants),
@@ -225,10 +236,12 @@ namespace DayNightSpeed
 					line(subtitle("big creatures") + "{1}", true);
 			}
 
-			public class Eggs: Options.Components.Tooltip
+			public class Eggs: TooltipSpeed
 			{
 				const float hatchDaysSmallCreatures = 1f;
 				const float hatchDaysBigCreatures = 1.5f;
+
+				protected override bool needUpdate => isSpeedChanged(Main.config.speedEggsHatching);
 
 				public override string tooltip =>
 					string.Format(L10n.str(L10n.ids_tooltipEggs),
@@ -246,10 +259,12 @@ namespace DayNightSpeed
 					line(subtitle("big creatures") + "{1}", true);
 			}
 
-			public class Creatures: Options.Components.Tooltip
+			public class Creatures: TooltipSpeed
 			{
 				const float growthDaysSmallCreatures = 1f;
 				const float growthDaysBigCreatures = 1.5f;
+
+				protected override bool needUpdate => isSpeedChanged(Main.config.speedCreaturesGrow);
 
 				public override string tooltip =>
 					string.Format(L10n.str(L10n.ids_tooltipCreatures),
@@ -266,9 +281,11 @@ namespace DayNightSpeed
 					line("{0}", true);
 			}
 
-			public class Medkit: Options.Components.Tooltip
+			public class Medkit: TooltipSpeed
 			{
 				const float medkitSpawnIntervalSecs = 600f;
+
+				protected override bool needUpdate => isSpeedChanged(Main.config.speedMedkitInterval);
 
 				public override string tooltip =>
 					string.Format(L10n.str(L10n.ids_tooltipMedkit),
@@ -286,10 +303,12 @@ namespace DayNightSpeed
 					line(subtitle("nuclear reactor") + "{1}", true);
 			}
 
-			public class PowerCharge: Options.Components.Tooltip
+			public class PowerCharge: TooltipSpeed
 			{
 				const float gen100EnergyBReactorSecs = 100f / (1000f / dayNightSecs);
 				const float gen100EnergyNReactorSecs = 100f / (5000f / dayNightSecs);
+
+				protected override bool needUpdate => isSpeedChanged(Main.config.speedPowerCharge);
 
 				public override string tooltip =>
 					string.Format(L10n.str(L10n.ids_tooltipPowerCharge),

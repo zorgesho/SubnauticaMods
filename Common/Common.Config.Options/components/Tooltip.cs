@@ -10,6 +10,7 @@ namespace Common.Configuration
 	{
 		public static partial class Components
 		{
+			#region base tooltip
 			public class Tooltip: MonoBehaviour, ITooltip
 			{
 				public class Add: ModOption.IOnGameObjectChangeHandler
@@ -53,10 +54,9 @@ namespace Common.Configuration
 				}
 				protected string _tooltip;
 
-				public void GetTooltip(out string tooltipText, List<TooltipIcon> _)
-				{
-					tooltipText = tooltip;
-				}
+				protected virtual string getTooltip() => tooltip;
+
+				public void GetTooltip(out string tooltipText, List<TooltipIcon> _) => tooltipText = getTooltip();
 
 				static readonly Type layoutElementType = ReflectionHelper.safeGetType("UnityEngine.UI", "UnityEngine.UI.LayoutElement");
 				void Start()
@@ -66,6 +66,47 @@ namespace Common.Configuration
 					tooltip = LanguageHelper.str(_tooltip); // using field, not property
 				}
 			}
+			#endregion
+
+			#region tooltip with cache
+			public abstract class TooltipCached: Tooltip // to avoid creating strings on each frame
+			{
+				protected abstract bool needUpdate { get; }
+
+				string tooltipCached;
+				protected sealed override string getTooltip() => needUpdate? (tooltipCached = tooltip): tooltipCached;
+			}
+
+			public abstract class TooltipCached<T1>: TooltipCached where T1: struct
+			{
+				T1? param1 = null;
+
+				protected bool isParamsChanged(T1 _param1)
+				{
+					if (_param1.Equals(param1))
+						return false;
+
+					param1 = _param1;
+					return true;
+				}
+			}
+
+			public abstract class TooltipCached<T1, T2>: TooltipCached where T1: struct where T2: struct
+			{
+				T1? param1 = null;
+				T2? param2 = null;
+
+				protected bool isParamsChanged(T1 _param1, T2 _param2)
+				{
+					if (_param1.Equals(param1) && _param2.Equals(param2))
+						return false;
+
+					param1 = _param1;
+					param2 = _param2;
+					return true;
+				}
+			}
+			#endregion
 		}
 	}
 }

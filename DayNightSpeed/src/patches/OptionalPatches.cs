@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Reflection;
 using System.Reflection.Emit;
 using System.Collections.Generic;
 
@@ -8,47 +8,69 @@ using Common;
 
 namespace DayNightSpeed
 {
+	using CIEnumerable = IEnumerable<CodeInstruction>;
+	using static Common.HarmonyHelper;
+
 	// modifying egg hatching time
-	[HarmonyPatch(typeof(CreatureEgg), "Awake")]
-	static class CreatureEgg_Awake_Patch
+	[OptionalPatch]
+	[HarmonyPatch(typeof(CreatureEgg), "GetHatchDuration")]
+	static class CreatureEgg_GetHatchDuration_Patch
 	{
-#if !DEBUG
-		static bool Prepare() => Main.config.speedEggsHatching != 1.0f;
-#endif
-		static void Postfix(CreatureEgg __instance) => __instance.daysBeforeHatching /= Main.config.speedEggsHatching;
+		static bool Prepare() => Main.config.useAuxSpeeds && Main.config.speedEggsHatching != 1.0f;
+
+		static CIEnumerable Transpiler(CIEnumerable cins) =>
+			ciInsert(cins, ci => ci.isLDC(1f), _codeForCfgVar(nameof(ModConfig.speedEggsHatching)), OpCodes.Div);
 	}
 
 	// modifying creature grow and breed time (breed time is half of grow time)
-	[HarmonyPatch(typeof(WaterParkCreatureParameters), MethodType.Constructor)]
-	[HarmonyPatch(new Type[] {typeof(float), typeof(float), typeof(float), typeof(float), typeof(bool)})]
-	static class WaterParkCreature_Constructor_Patch
+	static class WaterParkCreaturePatches
 	{
-#if !DEBUG
-		static bool Prepare() => Main.config.speedCreaturesGrow != 1.0f;
-#endif
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins) =>
-			HarmonyHelper.ciInsert(cins, ci => ci.isLDC(1200f), HarmonyHelper._codeForCfgVar(nameof(ModConfig.speedCreaturesGrow)), OpCodes.Div);
+		static bool prepare() => Main.config.useAuxSpeeds && Main.config.speedCreaturesGrow != 1.0f;
+
+		static CIEnumerable transpiler(CIEnumerable cins)
+		{
+			FieldInfo growingPeriod = typeof(WaterParkCreatureParameters).field("growingPeriod");
+
+			return ciInsert(cins, ci => ci.isOp(OpCodes.Ldfld, growingPeriod), +1, 0,
+				_codeForCfgVar(nameof(ModConfig.speedCreaturesGrow)), OpCodes.Div);
+		}
+
+		[OptionalPatch]
+		[HarmonyPatch(typeof(WaterParkCreature), "Update")]
+		static class WaterParkCreature_Update_Patch
+		{
+			static bool Prepare() => prepare();
+			static CIEnumerable Transpiler(CIEnumerable cins) => transpiler(cins);
+		}
+
+		[OptionalPatch]
+		[HarmonyPatch(typeof(WaterParkCreature), "SetMatureTime")]
+		static class WaterParkCreature_SetMatureTime_Patch
+		{
+			static bool Prepare() => prepare();
+			static CIEnumerable Transpiler(CIEnumerable cins) => transpiler(cins);
+		}
 	}
 
 	// modifying plants grow time
+	[OptionalPatch]
 	[HarmonyPatch(typeof(GrowingPlant), "GetGrowthDuration")]
 	static class GrowingPlant_GetGrowthDuration_Patch
 	{
-#if !DEBUG
-		static bool Prepare() => Main.config.speedPlantsGrow != 1.0f;
-#endif
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins) =>
-			HarmonyHelper.ciInsert(cins, ci => ci.isLDC(1f), HarmonyHelper._codeForCfgVar(nameof(ModConfig.speedPlantsGrow)), OpCodes.Div);
+		static bool Prepare() => Main.config.useAuxSpeeds && Main.config.speedPlantsGrow != 1.0f;
+
+		static CIEnumerable Transpiler(CIEnumerable cins) =>
+			ciInsert(cins, ci => ci.isLDC(1f), _codeForCfgVar(nameof(ModConfig.speedPlantsGrow)), OpCodes.Div);
 	}
 
 	// modifying fruits grow time (on lantern tree)
+	[OptionalPatch]
 	[HarmonyPatch(typeof(FruitPlant), "Initialize")]
 	static class FruitPlant_Initialize_Patch
 	{
-#if !DEBUG
-		static bool Prepare() => Main.config.speedPlantsGrow != 1.0f;
-#endif
-		static void Prefix(FruitPlant __instance)
+		static bool Prepare() => Main.config.useAuxSpeeds && Main.config.speedPlantsGrow != 1.0f;
+
+		static void Prefix(FruitPlant __instance) // don't want to use another transpilers here
 		{
 			if (!__instance.initialized)
 				__instance.fruitSpawnInterval /= Main.config.speedPlantsGrow;
@@ -56,13 +78,14 @@ namespace DayNightSpeed
 	}
 
 	// modifying medkit autocraft time
+	[OptionalPatch]
 	[HarmonyPatch(typeof(MedicalCabinet), "Start")]
 	static class MedicalCabinet_Start_Patch
 	{
 		static float medKitSpawnInterval = 0f;
-#if !DEBUG
-		static bool Prepare() => Main.config.speedMedkitInterval != 1.0f;
-#endif
+
+		static bool Prepare() => Main.config.useAuxSpeeds && Main.config.speedMedkitInterval != 1.0f;
+
 		static void Prefix(MedicalCabinet __instance)
 		{
 			if (medKitSpawnInterval == 0f)

@@ -9,22 +9,15 @@ using Common;
 namespace DayNightSpeed
 {
 	using CIEnumerable = IEnumerable<CodeInstruction>;
-	using CIList = List<CodeInstruction>;
 	using static Common.HarmonyHelper;
 
 	// fixing hunger/thrist timers
 	[HarmonyPatch(typeof(Survival), "UpdateStats")]
 	static class Survival_UpdateStats_Patch
 	{
-		static CIEnumerable Transpiler(CIEnumerable cins)
-		{
-			CIList listToInsert = toCIList(_codeForCfgVar(nameof(ModConfig.dayNightSpeed)), OpCodes.Mul);
-
-			if (Main.config.speedHungerThrist != 1f)
-				listToInsert.AddRange(toCIList(_codeForCfgVar(nameof(ModConfig.speedHungerThrist)), OpCodes.Mul));
-
-			return ciInsert(cins, ci => ci.isLDC(100f), +1, 2, listToInsert);
-		}
+		static CIEnumerable Transpiler(CIEnumerable cins) =>
+			ciInsert(cins, ci => ci.isLDC(100f), +1, 2, _codeForCfgVar(nameof(ModConfig.dayNightSpeed)), OpCodes.Mul,
+														_codeForCfgVar(nameof(ModConfig.auxSpeedHungerThrist)), OpCodes.Mul);
 
 #if DEBUG // debug patch
 		static void Postfix(Survival __instance)

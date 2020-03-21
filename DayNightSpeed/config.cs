@@ -28,22 +28,22 @@ namespace DayNightSpeed
 		public float auxSpeedHungerThrist => useAuxSpeeds? speedHungerThrist: 1.0f;
 
 		[Options.Field("Plants growth", TooltipType: typeof(Tooltips.Plants))]
-		[UpdateOptionalPatches]
+		[HarmonyHelper.UpdatePatchesAction(typeof(GrowingPlant_GetGrowthDuration_Patch), typeof(FruitPlant_Initialize_Patch))]
 		[Slider_0_100][Range_001_100][HideableSpeed]
 		public readonly float speedPlantsGrow = 1.0f;
 
 		[Options.Field("Eggs hatching", TooltipType: typeof(Tooltips.Eggs))]
-		[UpdateOptionalPatches]
+		[HarmonyHelper.UpdatePatchesAction(typeof(CreatureEgg_GetHatchDuration_Patch))]
 		[Slider_0_100][Range_001_100][HideableSpeed]
 		public readonly float speedEggsHatching = 1.0f;
 
 		[Options.Field("Creatures growth", TooltipType: typeof(Tooltips.Creatures))]
-		[UpdateOptionalPatches]
+		[HarmonyHelper.UpdatePatchesAction(typeof(WaterParkCreaturePatches.SetMatureTime_Patch), typeof(WaterParkCreaturePatches.Update_Patch))]
 		[Slider_0_100][Range_001_100][HideableSpeed]
 		public readonly float speedCreaturesGrow = 1.0f;
 
 		[Options.Field("Medkit fabrication", TooltipType: typeof(Tooltips.Medkit))]
-		[UpdateOptionalPatches]
+		[HarmonyHelper.UpdatePatchesAction(typeof(MedicalCabinet_Start_Patch))]
 		[Slider_0_100][Range_001_100][HideableSpeed]
 		public readonly float speedMedkitInterval = 1.0f;
 
@@ -71,8 +71,6 @@ namespace DayNightSpeed
 		class HideableSpeed: Options.HideableAttribute
 			{ public HideableSpeed(): base(typeof(SpeedsHider), "speeds") {} }
 
-		class UpdateOptionalPatches: Field.CustomActionAttribute
-			{ public UpdateOptionalPatches(): base(typeof(HarmonyHelper.UpdateOptionalPatches)) {} }
 		#endregion
 
 		#region nonlinear slider

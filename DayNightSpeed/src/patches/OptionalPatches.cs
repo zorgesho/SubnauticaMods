@@ -37,7 +37,7 @@ namespace DayNightSpeed
 
 		[OptionalPatch]
 		[HarmonyPatch(typeof(WaterParkCreature), "Update")]
-		static class WaterParkCreature_Update_Patch
+		public static class Update_Patch
 		{
 			static bool Prepare() => prepare();
 			static CIEnumerable Transpiler(CIEnumerable cins) => transpiler(cins);
@@ -45,7 +45,7 @@ namespace DayNightSpeed
 
 		[OptionalPatch]
 		[HarmonyPatch(typeof(WaterParkCreature), "SetMatureTime")]
-		static class WaterParkCreature_SetMatureTime_Patch
+		public static class SetMatureTime_Patch
 		{
 			static bool Prepare() => prepare();
 			static CIEnumerable Transpiler(CIEnumerable cins) => transpiler(cins);

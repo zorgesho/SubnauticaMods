@@ -12,6 +12,8 @@ namespace Common
 		{
 			public static double lastResult { get; private set; } = 0d;
 #if DEBUG
+			public static int profilersCount { get; private set; } = 0;
+
 			readonly string message = null;
 			readonly string filename = null;
 			readonly Stopwatch stopwatch = null;
@@ -29,6 +31,8 @@ namespace Common
 
 			public Profiler(string _message, string _filename)
 			{
+				profilersCount++;
+
 				message = _message;
 				filename = formatFileName(_filename);
 
@@ -38,6 +42,10 @@ namespace Common
 			public void Dispose()
 			{
 				stopwatch.Stop();
+
+				profilersCount--;
+				assert(profilersCount >= 0);
+
 				lastResult = stopwatch.Elapsed.TotalMilliseconds;
 
 				if (message == null)
@@ -64,9 +72,9 @@ namespace Common
 #endif
 		}
 
-		public static Profiler profiler(string message = null, string filename = null) =>
+		public static Profiler profiler(string message = null, string filename = null, bool allowNested = true) =>
 #if DEBUG
-			new Profiler(message, filename);
+			allowNested || Profiler.profilersCount == 0? new Profiler(message, filename): null;
 #else
 			null;
 #endif

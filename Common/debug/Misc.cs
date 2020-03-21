@@ -17,6 +17,7 @@ namespace Common
 			readonly string message = null;
 			readonly string filename = null;
 			readonly Stopwatch stopwatch = null;
+			readonly long mem = GC.GetTotalMemory(false);
 
 			static string formatFileName(string filename)
 			{
@@ -47,11 +48,15 @@ namespace Common
 				assert(profilersCount >= 0);
 
 				lastResult = stopwatch.Elapsed.TotalMilliseconds;
+				long memChange = GC.GetTotalMemory(false) - mem;
 
 				if (message == null)
 					return;
 
-				string result = $"{message}: {lastResult} ms";
+				string _format(long m) =>
+					$"{(m > 0? "+": "")}{(Math.Abs(m) > 1024L * 1024L? (m / 1024L / 1024L + "MB"): (m / 1024L + "KB"))} ({m})";
+
+				string result = $"{message}: {lastResult} ms; mem alloc:{_format(memChange)}";
 				$"PROFILER: {result}".log();
 
 				if (filename != null)

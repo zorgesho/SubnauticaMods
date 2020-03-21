@@ -4,8 +4,6 @@
   "Author": "zorgesho",
   "Version": "1.0.0",
   "Dependencies": ["SMLHelper"],
-  "LoadBefore": [],
-  "LoadAfter": [],
   "Enable": true,
   "Game": "Subnautica",
   "AssemblyName": "MiscPrototypes.dll",

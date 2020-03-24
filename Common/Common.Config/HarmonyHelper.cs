@@ -19,9 +19,6 @@ namespace Common
 		// for using in transpiler helper functions
 		static readonly MethodInfo mainConfig = typeof(Config).property(nameof(Config.main)).GetGetMethod();
 
-		[Obsolete]
-		public class UpdateOptionalPatches: Config.Field.ICustomAction { public void customAction() => updateOptionalPatches(); }
-
 		[AttributeUsage(AttributeTargets.Field)]
 		public class UpdatePatchesActionAttribute: Config.Field.CustomActionAttribute
 		{

@@ -54,9 +54,9 @@ namespace DayNightSpeed
 		}
 
 		// called after dayNightSpeed changed via options menu or console
-		public class SettingChanged: Config.Field.ICustomAction
+		public class SettingChanged: Config.Field.IAction
 		{
-			public void customAction()
+			public void action()
 			{
 				if (forcedNormalSpeed || DayNightCycle.main == null)
 					return;

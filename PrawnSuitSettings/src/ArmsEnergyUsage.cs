@@ -9,9 +9,9 @@ namespace PrawnSuitSettings
 {
 	static class ArmsEnergyUsage
 	{
-		public class SettingChanged: Config.Field.ICustomAction
+		public class SettingChanged: Config.Field.IAction
 		{
-			public void customAction() => refresh();
+			public void action() => refresh();
 		}
 
 

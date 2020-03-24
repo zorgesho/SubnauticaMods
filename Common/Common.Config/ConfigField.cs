@@ -12,7 +12,7 @@ namespace Common.Configuration
 			protected readonly object parent;
 			protected readonly FieldInfo field;
 
-			protected readonly ICustomAction[] actions;
+			protected readonly IAction[] actions;
 
 			public Field(object _parent, FieldInfo _field, Config _rootConfig = null)
 			{
@@ -24,10 +24,10 @@ namespace Common.Configuration
 				Debug.assert(rootConfig != null, "rootConfig is null");
 				Debug.assert(path != null, "field path is null");
 
-				CustomActionAttribute[] actionAttrs = field.getAttributes<CustomActionAttribute>();
+				ActionAttribute[] actionAttrs = field.getAttributes<ActionAttribute>();
 				if (actionAttrs.Length > 0)
 				{
-					actions = new ICustomAction[actionAttrs.Length];
+					actions = new IAction[actionAttrs.Length];
 
 					for (int i = 0; i < actions.Length; i++)
 						actions[i] = actionAttrs[i].action;
@@ -58,7 +58,7 @@ namespace Common.Configuration
 					return;
 
 				parent.setFieldValue(field, newValue);
-				actions?.forEach(action => action.customAction());
+				actions?.forEach(a => a.action());
 
 				rootConfig.save();
 			}

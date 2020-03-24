@@ -20,14 +20,14 @@ namespace Common
 		static readonly MethodInfo mainConfig = typeof(Config).property(nameof(Config.main)).GetGetMethod();
 
 		[AttributeUsage(AttributeTargets.Field)]
-		public class UpdatePatchesActionAttribute: Config.Field.CustomActionAttribute
+		public class UpdatePatchesActionAttribute: Config.Field.ActionAttribute
 		{
-			class Action: Config.Field.ICustomAction
+			class Action: Config.Field.IAction
 			{
 				Type[] patchTypes;
 				public void init(Type[] _patchTypes) => patchTypes = _patchTypes;
 
-				public void customAction()
+				public void action()
 				{
 					if (patchTypes == null || patchTypes.Length == 0)
 						updateOptionalPatches();

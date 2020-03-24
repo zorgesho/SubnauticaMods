@@ -9,7 +9,7 @@
     <Import_RootNamespace>Common.Config</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)attributes\FieldCustomActionAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)attributes\FieldActionAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ConfigField.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ConfigSerialization.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)attributes\ConfigToConsoleAttribute.cs" />

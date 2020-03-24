@@ -14,12 +14,13 @@ namespace DayNightSpeed
 
 		[Slider_0_100]
 		[Field.Range(0f, 100f)] // for UI minimum is 0.01f
-		[Field.CustomAction(typeof(DayNightSpeedControl.SettingChanged))]
+		[Field.Action(typeof(DayNightSpeedControl.SettingChanged))]
 		[Options.Field("Day/night speed", TooltipType: typeof(Tooltips.DayNightSpeed))]
 		public readonly float dayNightSpeed = 1.0f;
 
 		[Options.Field("Use additional multipliers")]
-		[Field.CustomAction(typeof(SpeedsHider))]
+		[HarmonyHelper.UpdatePatchesAction]
+		[Field.Action(typeof(SpeedsHider))]
 		public readonly bool useAuxSpeeds = false;
 
 		[Options.Field("Hunger/thrist", TooltipType: typeof(Tooltips.HungerThrist))]
@@ -57,15 +58,10 @@ namespace DayNightSpeed
 		public float auxSpeedPowerConsume => useAuxSpeeds? speedPowerConsume: 1.0f;
 
 		#region aux speeds hider
-		class SpeedsHider: Field.ICustomAction, Options.Components.Hider.IVisibilityChecker
+		class SpeedsHider: Field.IAction, Options.Components.Hider.IVisibilityChecker
 		{
 			public bool visible => Main.config.useAuxSpeeds;
-
-			public void customAction()
-			{
-				Options.Components.Hider.setVisible("speeds", visible);
-				HarmonyHelper.updateOptionalPatches();
-			}
+			public void action() => Options.Components.Hider.setVisible("speeds", visible);
 		}
 
 		class HideableSpeed: Options.HideableAttribute

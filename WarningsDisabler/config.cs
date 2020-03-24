@@ -52,7 +52,7 @@ namespace WarningsDisabler
 
 
 		[Options.Field("Oxygen warnings")]
-		[Field.CustomAction(typeof(OxygenWarnings.HideOxygenHint))]
+		[Field.Action(typeof(OxygenWarnings.HideOxygenHint))]
 		public readonly bool oxygenWarningsEnabled = true;
 
 #pragma warning disable IDE0052 // field is never read

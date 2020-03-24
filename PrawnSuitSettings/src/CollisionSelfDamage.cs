@@ -9,9 +9,9 @@ namespace PrawnSuitSettings
 	// Enables damage to prawn suit from collisions
 	static class CollisionSelfDamage
 	{
-		public class SettingChanged: Config.Field.ICustomAction
+		public class SettingChanged: Config.Field.IAction
 		{
-			public void customAction() => Object.FindObjectsOfType<Exosuit>()?.forEach(ex => refresh(ex));
+			public void action() => Object.FindObjectsOfType<Exosuit>()?.forEach(ex => refresh(ex));
 		}
 
 

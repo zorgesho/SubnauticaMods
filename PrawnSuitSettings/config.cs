@@ -9,30 +9,30 @@ namespace PrawnSuitSettings
 	{
 		public class CollisionSelfDamageSettings
 		{
-			class Hider: Field.ICustomAction, Options.Components.Hider.IVisibilityChecker
+			class Hider: Field.IAction, Options.Components.Hider.IVisibilityChecker
 			{
 				public bool visible => Main.config.collisionSelfDamage.enabled;
-				public void customAction() => Options.Components.Hider.setVisible("collision", visible);
+				public void action() => Options.Components.Hider.setVisible("collision", visible);
 			}
 
 			[Options.Field("Damage from collisions", "Damage for Prawn Suit from collisions with terrain and other objects")]
 			[HarmonyHelper.UpdatePatchesAction]
-			[Field.CustomAction(typeof(Hider))]
-			[Field.CustomAction(typeof(CollisionSelfDamage.SettingChanged))]
+			[Field.Action(typeof(Hider))]
+			[Field.Action(typeof(CollisionSelfDamage.SettingChanged))]
 			public readonly bool enabled = false;
 
 			[Options.Field("\tMinimum speed", "Prawn Suit minimum speed to get self damage from collision")]
 			[Field.Range(0f, 50f)]
 			[Options.Slider(DefaultValue: 20f)]
 			[Options.Hideable(typeof(Hider), "collision")]
-			[Field.CustomAction(typeof(CollisionSelfDamage.SettingChanged))]
+			[Field.Action(typeof(CollisionSelfDamage.SettingChanged))]
 			public readonly float speedMinimumForDamage = 20f;
 
 			[Options.Field("\tMirrored damage fraction", "Fraction of total inflicted collision damage that goes to self damage")]
 			[Field.Range(0f, 1f)]
 			[Options.Slider(DefaultValue: 0.1f, ValueFormat: "{0:P0}")]
 			[Options.Hideable(typeof(Hider), "collision")]
-			[Field.CustomAction(typeof(CollisionSelfDamage.SettingChanged))]
+			[Field.Action(typeof(CollisionSelfDamage.SettingChanged))]
 			public readonly float mirroredSelfDamageFraction = 0.1f;
 		}
 		public readonly CollisionSelfDamageSettings collisionSelfDamage = new CollisionSelfDamageSettings();
@@ -40,37 +40,37 @@ namespace PrawnSuitSettings
 
 		public class ArmsEnergyUsageSettings
 		{
-			class Hider: Field.ICustomAction, Options.Components.Hider.IVisibilityChecker
+			class Hider: Field.IAction, Options.Components.Hider.IVisibilityChecker
 			{
 				public bool visible => Main.config.armsEnergyUsage.enabled;
-				public void customAction() => Options.Components.Hider.setVisible("arms_energy", visible);
+				public void action() => Options.Components.Hider.setVisible("arms_energy", visible);
 			}
 
 			[Options.Field("Arms additional energy usage", "Energy consuming for drill arm and grappling arm")]
 			[HarmonyHelper.UpdatePatchesAction]
-			[Field.CustomAction(typeof(Hider))]
-			[Field.CustomAction(typeof(ArmsEnergyUsage.SettingChanged))]
+			[Field.Action(typeof(Hider))]
+			[Field.Action(typeof(ArmsEnergyUsage.SettingChanged))]
 			public readonly bool enabled = false;
 
 			[Options.Field("\tDrill arm", "Using drill arm costs that much energy units per second")]
 			[Field.Range(0f, 5f)]
 			[Options.Slider(DefaultValue: 0.3f, ValueFormat: "{0:F1}")]
 			[Options.Hideable(typeof(Hider), "arms_energy")]
-			[Field.CustomAction(typeof(ArmsEnergyUsage.SettingChanged))]
+			[Field.Action(typeof(ArmsEnergyUsage.SettingChanged))]
 			public readonly float drillArm = 0.3f;
 
 			[Options.Field("\tGrappling arm (shoot)", "Shooting grappling hook costs that much energy units")]
 			[Field.Range(0f, 5f)]
 			[Options.Slider(DefaultValue: 0.5f, ValueFormat: "{0:F1}")]
 			[Options.Hideable(typeof(Hider), "arms_energy")]
-			[Field.CustomAction(typeof(ArmsEnergyUsage.SettingChanged))]
+			[Field.Action(typeof(ArmsEnergyUsage.SettingChanged))]
 			public readonly float grapplingArmShoot = 0.5f;
 
 			[Options.Field("\tGrappling arm (pull)", "Using grappling arm to pull Prawn Suit costs that much energy units per second")]
 			[Field.Range(0f, 5f)]
 			[Options.Slider(DefaultValue: 0.2f, ValueFormat: "{0:F1}")]
 			[Options.Hideable(typeof(Hider), "arms_energy")]
-			[Field.CustomAction(typeof(ArmsEnergyUsage.SettingChanged))]
+			[Field.Action(typeof(ArmsEnergyUsage.SettingChanged))]
 			public readonly float grapplingArmPull = 0.2f;
 
 			// vanilla energy usage

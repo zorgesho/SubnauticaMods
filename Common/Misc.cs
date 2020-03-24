@@ -70,6 +70,7 @@ namespace Common
 		public static PropertyInfo[] properties(this Type type) => type.GetProperties(ReflectionHelper.bfAll);
 
 		public static A    getAttribute<A>(this MemberInfo memberInfo)   where A: Attribute => Attribute.GetCustomAttribute(memberInfo, typeof(A)) as A;
+		public static A[]  getAttributes<A>(this MemberInfo memberInfo)  where A: Attribute => Attribute.GetCustomAttributes(memberInfo, typeof(A)) as A[];
 		public static bool checkAttribute<A>(this MemberInfo memberInfo) where A: Attribute => Attribute.IsDefined(memberInfo, typeof(A));
 	}
 

@@ -12,7 +12,7 @@ namespace Common.Configuration
 				void customAction();
 			}
 
-			[AttributeUsage(AttributeTargets.Field)]
+			[AttributeUsage(AttributeTargets.Field, AllowMultiple = true)]
 			public class CustomActionAttribute: Attribute
 			{
 				public readonly ICustomAction action;

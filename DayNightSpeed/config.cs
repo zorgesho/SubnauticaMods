@@ -59,11 +59,11 @@ namespace DayNightSpeed
 		#region aux speeds hider
 		class SpeedsHider: Field.ICustomAction, Options.Components.Hider.IVisibilityChecker
 		{
-			public bool isVisible() => Main.config.useAuxSpeeds;
+			public bool visible => Main.config.useAuxSpeeds;
 
 			public void customAction()
 			{
-				Options.Components.Hider.setVisible("speeds", Main.config.useAuxSpeeds);
+				Options.Components.Hider.setVisible("speeds", visible);
 				HarmonyHelper.updateOptionalPatches();
 			}
 		}

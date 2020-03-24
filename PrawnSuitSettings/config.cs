@@ -11,8 +11,8 @@ namespace PrawnSuitSettings
 		{
 			class Hider: Field.ICustomAction, Options.Components.Hider.IVisibilityChecker
 			{
-				public bool isVisible() => Main.config.collisionSelfDamage.enabled;
-				public void customAction() => Options.Components.Hider.setVisible("collision", isVisible());
+				public bool visible => Main.config.collisionSelfDamage.enabled;
+				public void customAction() => Options.Components.Hider.setVisible("collision", visible);
 			}
 
 			[Options.Field("Damage from collisions", "Damage for Prawn Suit from collisions with terrain and other objects")]
@@ -42,8 +42,8 @@ namespace PrawnSuitSettings
 		{
 			class Hider: Field.ICustomAction, Options.Components.Hider.IVisibilityChecker
 			{
-				public bool isVisible() => Main.config.armsEnergyUsage.enabled;
-				public void customAction() => Options.Components.Hider.setVisible("arms_energy", isVisible());
+				public bool visible => Main.config.armsEnergyUsage.enabled;
+				public void customAction() => Options.Components.Hider.setVisible("arms_energy", visible);
 			}
 
 			[Options.Field("Arms additional energy usage", "Energy consuming for drill arm and grappling arm")]

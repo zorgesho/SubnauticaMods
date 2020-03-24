@@ -14,7 +14,7 @@ namespace Common.Configuration
 			// we need separate component for this to avoid conflicts with toggleable option's headings
 			public class Hider: MonoBehaviour
 			{
-				public interface IVisibilityChecker { bool isVisible(); }
+				public interface IVisibilityChecker { bool visible { get; } }
 
 				public class Add: ModOption.IOnGameObjectChangeHandler
 				{
@@ -31,7 +31,7 @@ namespace Common.Configuration
 					}
 
 					public void handle(GameObject gameObject) =>
-						gameObject.AddComponent<Hider>().init(id, groupID, visChecker.isVisible());
+						gameObject.AddComponent<Hider>().init(id, groupID, visChecker.visible);
 				}
 
 				string id, groupID;

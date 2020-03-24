@@ -29,30 +29,33 @@ namespace PrawnSuitSettings
 		public bool isUsingArm() => usingArm;
 	}
 
+	[HarmonyHelper.OptionalPatch]
 	[HarmonyPatch(typeof(Exosuit), "OnPilotModeBegin")]
 	static class Exosuit_OnPilotModeBegin_Patch
 	{
-		static void Postfix(Exosuit __instance)
-		{
-			if (Main.config.toggleableDrillArm)
-				__instance.GetComponentInChildren<PrawnSuitDrillArmToggle>()?.setUsingArm(false);
-		}
+		static bool Prepare() => Main.config.toggleableDrillArm;
+
+		static void Postfix(Exosuit __instance) =>
+			__instance.GetComponentInChildren<PrawnSuitDrillArmToggle>()?.setUsingArm(false);
 	}
 
+	[HarmonyHelper.OptionalPatch]
 	[HarmonyPatch(typeof(ExosuitDrillArm), "IExosuitArm.OnUseDown")]
 	static class ExosuitDrillArm_OnUseDown_Patch
 	{
-		static void Prefix(ExosuitDrillArm __instance)
-		{
-			if (Main.config.toggleableDrillArm)
-				__instance.gameObject.ensureComponent<PrawnSuitDrillArmToggle>().toggleUsingArm();
-		}
+		static bool Prepare() => Main.config.toggleableDrillArm;
+
+		static void Prefix(ExosuitDrillArm __instance) =>
+			__instance.gameObject.ensureComponent<PrawnSuitDrillArmToggle>().toggleUsingArm();
 	}
 
+	[HarmonyHelper.OptionalPatch]
 	[HarmonyPatch(typeof(ExosuitDrillArm), "IExosuitArm.OnUseUp")]
 	static class ExosuitDrillArm_OnUseUp_Patch
 	{
+		static bool Prepare() => Main.config.toggleableDrillArm;
+
 		static bool Prefix(ExosuitDrillArm __instance) =>
-			!(Main.config.toggleableDrillArm && __instance.gameObject.ensureComponent<PrawnSuitDrillArmToggle>().isUsingArm());
+			!__instance.gameObject.ensureComponent<PrawnSuitDrillArmToggle>().isUsingArm();
 	}
 }

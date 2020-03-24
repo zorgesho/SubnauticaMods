@@ -24,8 +24,8 @@ namespace PrawnSuitSettings
 			if (TechTypeHandler.TryGetModdedTechType("GrapplingArmUpgradeModule", out TechType upgradedGrapplingArm))
 				CraftData.energyCost[upgradedGrapplingArm] = grapplingArmEnergyCost;
 
-			CraftData.energyCost[TechType.ExosuitTorpedoArmModule] = Main.config.armsEnergyUsage.torpedoArm;
-			CraftData.energyCost[TechType.ExosuitClawArmModule] = Main.config.armsEnergyUsage.clawArm;
+			CraftData.energyCost[TechType.ExosuitTorpedoArmModule] = Main.config.armsEnergyUsage.enabled? Main.config.armsEnergyUsage.torpedoArm: 0f;
+			CraftData.energyCost[TechType.ExosuitClawArmModule] = Main.config.armsEnergyUsage.enabled? Main.config.armsEnergyUsage.clawArm: 0.1f;
 		}
 
 
@@ -39,30 +39,32 @@ namespace PrawnSuitSettings
 		}
 
 		// Energy usage for drill arm
+		[HarmonyHelper.OptionalPatch]
 		[HarmonyPatch(typeof(ExosuitDrillArm), "IExosuitArm.Update")]
 		static class ExosuitDrillArm_Update_Patch
 		{
+			static bool Prepare() => Main.config.armsEnergyUsage.enabled;
+
 			static void Postfix(ExosuitDrillArm __instance)
 			{
-				if (Main.config.armsEnergyUsage.enabled && __instance.drilling)
+				if (__instance.drilling)
 					consumeEnergyForArmOrStop(__instance.GetComponentInParent<Exosuit>(), __instance, Main.config.armsEnergyUsage.drillArm);
 			}
 		}
 
 		// Energy usage for grappling arm
+		[HarmonyHelper.OptionalPatch]
 		[HarmonyPatch(typeof(ExosuitGrapplingArm), "FixedUpdate")]
 		static class ExosuitGrapplingArm_FixedUpdate_Patch
 		{
 			const float sqrMagnitudeGrapplingArm = 16f; // if hook attached and its sqr length less than that, then don't consume power
 
+			static bool Prepare() => Main.config.armsEnergyUsage.enabled;
+
 			static void Postfix(ExosuitGrapplingArm __instance)
 			{
-				if (Main.config.armsEnergyUsage.enabled &&
-					__instance.hook.attached &&
-					(__instance.hook.transform.position - __instance.front.position).sqrMagnitude > sqrMagnitudeGrapplingArm)
-				{
+				if (__instance.hook.attached && (__instance.hook.transform.position - __instance.front.position).sqrMagnitude > sqrMagnitudeGrapplingArm)
 					consumeEnergyForArmOrStop(__instance.GetComponentInParent<Exosuit>(), __instance, Main.config.armsEnergyUsage.grapplingArmPull);
-				}
 			}
 		}
 	}

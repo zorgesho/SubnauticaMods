@@ -13,6 +13,8 @@ namespace Common.Configuration
 			#region base tooltip
 			public class Tooltip: MonoBehaviour, ITooltip
 			{
+				const int defaultTextSize = 19;
+
 				public class Add: ModOption.IOnGameObjectChangeHandler
 				{
 					string tooltip;
@@ -32,8 +34,14 @@ namespace Common.Configuration
 
 					public void init(ModOption option)
 					{
-						if (tooltip != null)
-							registerLabel(option.id + ".tooltip", ref tooltip, false);
+						if (tooltip == null)
+							return;
+
+						// adjust text size for default tooltip (before we registering string with LanguageHelper)
+						if (tooltipCmpType == null)
+							tooltip = $"<size={defaultTextSize}>" + tooltip + "</size>";
+
+						registerLabel(option.id + ".tooltip", ref tooltip, false);
 					}
 
 					public void handle(GameObject gameObject)

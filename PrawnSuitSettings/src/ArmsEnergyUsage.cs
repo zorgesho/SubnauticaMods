@@ -29,13 +29,9 @@ namespace PrawnSuitSettings
 		}
 
 
-		static void consumeEnergyForArmOrStop(Exosuit exosuit, IExosuitArm arm, float energyPerSec)
-		{
-			if (exosuit != null)
-			{																												$"ArmsEnergyUsage: trying to consume {energyPerSec} energy".logDbg();
-				if (!exosuit.ConsumeEnergy(energyPerSec * Time.deltaTime))
-					arm.OnUseUp(out _);
-			}
+		static bool consumeArmEnergy(MonoBehaviour exosuitArm, float energyPerSec)
+		{																				$"ArmsEnergyUsage: trying to consume {energyPerSec} energy for {exosuitArm}".logDbg();
+			return exosuitArm.GetComponentInParent<Exosuit>().ConsumeEnergy(energyPerSec * Time.deltaTime);
 		}
 
 		// Energy usage for drill arm
@@ -47,8 +43,11 @@ namespace PrawnSuitSettings
 
 			static void Postfix(ExosuitDrillArm __instance)
 			{
-				if (__instance.drilling)
-					consumeEnergyForArmOrStop(__instance.GetComponentInParent<Exosuit>(), __instance, Main.config.armsEnergyUsage.drillArm);
+				if (__instance.drilling && !consumeArmEnergy(__instance, Main.config.armsEnergyUsage.drillArm))
+				{
+					__instance.gameObject.GetComponent<PrawnSuitDrillArmToggle>()?.setUsingArm(false);
+					(__instance as IExosuitArm).OnUseUp(out _);
+				}
 			}
 		}
 
@@ -64,7 +63,8 @@ namespace PrawnSuitSettings
 			static void Postfix(ExosuitGrapplingArm __instance)
 			{
 				if (__instance.hook.attached && (__instance.hook.transform.position - __instance.front.position).sqrMagnitude > sqrMagnitudeGrapplingArm)
-					consumeEnergyForArmOrStop(__instance.GetComponentInParent<Exosuit>(), __instance, Main.config.armsEnergyUsage.grapplingArmPull);
+					if (!consumeArmEnergy(__instance, Main.config.armsEnergyUsage.grapplingArmPull))
+						(__instance as IExosuitArm).OnUseUp(out _);
 			}
 		}
 	}

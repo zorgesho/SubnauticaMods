@@ -77,9 +77,9 @@ namespace Common.Configuration
 #endif
 					}
 
-					protected override void setFieldValue(object value)
+					public override object value
 					{
-						base.setFieldValue(range != null? range.clamp(value): value);
+						set => base.value = range != null? range.clamp(value): value;
 					}
 				}
 

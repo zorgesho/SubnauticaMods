@@ -45,22 +45,20 @@ namespace Common.Configuration
 
 			public A getAttr<A>() where A: Attribute => field.getAttribute<A>();
 
-			public object value
+			public virtual object value
 			{
 				get => field.GetValue(parent);
 
-				set => setFieldValue(value);
-			}
+				set
+				{
+					if (value?.Equals(this.value) == true)
+						return;
 
-			protected virtual void setFieldValue(object newValue)
-			{
-				if (value.Equals(newValue))
-					return;
+					parent.setFieldValue(field, value);
+					actions?.forEach(a => a.action());
 
-				parent.setFieldValue(field, newValue);
-				actions?.forEach(a => a.action());
-
-				rootConfig.save();
+					rootConfig.save();
+				}
 			}
 		}
 	}

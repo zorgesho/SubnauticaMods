@@ -40,6 +40,13 @@ namespace Common.Configuration
 				}
 
 
+				// slider value will be saved exactly as formatted for display
+				public class ExactlyFormatted: ModSliderOption.SliderValue
+				{
+					public override float ConvertToDisplayValue(float value) => string.Format(valueFormat, value).toFloat();
+				}
+
+
 				// breaks slider to several linear intervals
 				public class Nonlinear: ModSliderOption.SliderValue
 				{

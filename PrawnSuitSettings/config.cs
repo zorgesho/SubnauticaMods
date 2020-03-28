@@ -29,8 +29,8 @@ namespace PrawnSuitSettings
 			public readonly float speedMinimumForDamage = 20f;
 
 			[Options.Field("\tMirrored damage fraction", "Fraction of total inflicted collision damage that goes to self damage")]
-			[Field.Range(0f, 1f)]
-			[Options.Slider(DefaultValue: 0.1f, ValueFormat: "{0:P0}")]
+			[Field.Range(Min: 0f)]
+			[Options.Slider(DefaultValue: 0.1f, MaxValue: 1f, ValueFormat: "{0:P0}")]
 			[Options.Hideable(typeof(Hider), "collision")]
 			[Field.Action(typeof(CollisionSelfDamage.SettingChanged))]
 			public readonly float mirroredSelfDamageFraction = 0.1f;
@@ -53,28 +53,31 @@ namespace PrawnSuitSettings
 			public readonly bool enabled = false;
 
 			[Options.Field("\tDrill arm", "Using drill arm costs that much energy units per second")]
-			[Field.Range(0f, 5f)]
-			[Options.Slider(DefaultValue: 0.3f, ValueFormat: "{0:F1}")]
+			[Field.Range(Min: 0f)]
+			[Options.Slider(DefaultValue: 0.3f, MaxValue: 2.0f, ValueFormat: "{0:F1}", CustomValueType: typeof(Options.Components.SliderValue.ExactlyFormatted))]
 			[Options.Hideable(typeof(Hider), "arms_energy")]
 			[Field.Action(typeof(ArmsEnergyUsage.SettingChanged))]
 			public readonly float drillArm = 0.3f;
 
 			[Options.Field("\tGrappling arm (shoot)", "Shooting grappling hook costs that much energy units")]
-			[Field.Range(0f, 5f)]
-			[Options.Slider(DefaultValue: 0.5f, ValueFormat: "{0:F1}")]
+			[Field.Range(Min: 0f)]
+			[Options.Slider(DefaultValue: 0.5f, MaxValue: 2.0f, ValueFormat: "{0:F1}", CustomValueType: typeof(Options.Components.SliderValue.ExactlyFormatted))]
 			[Options.Hideable(typeof(Hider), "arms_energy")]
 			[Field.Action(typeof(ArmsEnergyUsage.SettingChanged))]
 			public readonly float grapplingArmShoot = 0.5f;
 
 			[Options.Field("\tGrappling arm (pull)", "Using grappling arm to pull Prawn Suit costs that much energy units per second")]
-			[Field.Range(0f, 5f)]
-			[Options.Slider(DefaultValue: 0.2f, ValueFormat: "{0:F1}")]
+			[Field.Range(Min: 0f)]
+			[Options.Slider(DefaultValue: 0.2f, MaxValue: 2.0f, ValueFormat: "{0:F1}", CustomValueType: typeof(Options.Components.SliderValue.ExactlyFormatted))]
 			[Options.Hideable(typeof(Hider), "arms_energy")]
 			[Field.Action(typeof(ArmsEnergyUsage.SettingChanged))]
 			public readonly float grapplingArmPull = 0.2f;
 
 			// vanilla energy usage
+			[Field.Range(Min: 0f)]
 			public readonly float torpedoArm = 0f;
+
+			[Field.Range(Min: 0f)]
 			public readonly float clawArm = 0.1f;
 		}
 		public readonly ArmsEnergyUsageSettings armsEnergyUsage = new ArmsEnergyUsageSettings();

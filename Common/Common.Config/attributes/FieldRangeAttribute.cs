@@ -18,8 +18,6 @@ namespace Common.Configuration
 					max = Max;
 				}
 
-				public bool isBothBoundsSet() => min > float.MinValue && max < float.MaxValue;
-
 				public object clamp(object value) => UnityEngine.Mathf.Clamp(value.toFloat(), min, max);
 
 				public void process(object config, FieldInfo field)

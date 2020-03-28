@@ -22,7 +22,8 @@ namespace Common.Configuration
 
 			public override void addOption(Options options)
 			{
-				options.AddSliderOption(id, label, min, max, cfgField.value.toFloat(), defaultValue, valueFormat);
+				float value = cfgField.value.toFloat();
+				options.AddSliderOption(id, label, Math.Min(min, value), Math.Max(max, value), value, defaultValue, valueFormat);
 			}
 
 			public override void onValueChange(EventArgs e)

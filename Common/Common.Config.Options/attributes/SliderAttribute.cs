@@ -9,13 +9,22 @@ namespace Common.Configuration
 		[AttributeUsage(AttributeTargets.Field)]
 		public class SliderAttribute: Attribute
 		{
-			public readonly Type customValueType; // component derived from ModSliderOption.SliderValue
 			public readonly float? defaultValue;
+			public readonly float  minValue, maxValue;
+
+			public readonly Type customValueType; // component derived from ModSliderOption.SliderValue
 			public readonly string valueFormat;
 
-			public SliderAttribute(float DefaultValue = float.MinValue, string ValueFormat = null, Type CustomValueType = null)
+			public SliderAttribute(	float DefaultValue = float.MinValue,
+									float MinValue = float.MinValue,
+									float MaxValue = float.MaxValue,
+									string ValueFormat = null,
+									Type CustomValueType = null)
 			{
+				minValue = MinValue;
+				maxValue = MaxValue;
 				defaultValue = (DefaultValue == float.MinValue)? (float?)null: DefaultValue; // can't use float? in attributes
+
 				valueFormat = ValueFormat;
 				customValueType = CustomValueType;
 

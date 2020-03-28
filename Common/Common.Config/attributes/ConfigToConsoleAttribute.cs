@@ -68,13 +68,11 @@ namespace Common.Configuration
 
 				public class CfgField: Field
 				{
-					readonly RangeAttribute range = null;
+					readonly RangeAttribute range;
 
 					public CfgField(object parent, FieldInfo field, Config rootConfig): base(parent, field, rootConfig)
 					{
-#if !DEBUG
-						range = field.getAttribute<RangeAttribute>();
-#endif
+						range = getAttr<RangeAttribute>();
 					}
 
 					public override object value
@@ -116,9 +114,7 @@ namespace Common.Configuration
 
 				static void setFieldValue(string fieldName, string fieldValue)
 				{
-					CfgField cf = getConfigField(fieldName);
-
-					if (cf != null)
+					if (getConfigField(fieldName) is CfgField cf)
 						cf.value = fieldValue;
 				}
 

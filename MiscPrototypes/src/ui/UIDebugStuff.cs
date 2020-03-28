@@ -165,7 +165,7 @@ namespace MiscPrototypes
 				Cursor.lockState = CursorLockMode.Locked;
 			}
 
-			if (true)
+			if (false)
 			{
 				sb.Clear();
 				sb.AppendLine("");
@@ -183,15 +183,26 @@ namespace MiscPrototypes
 				$"{FPSInputModule.current.lockPauseMenu}".onScreen("lock pause menu");
 			}
 
-			$"{Cursor.lockState}".onScreen("cursor lock");
 			if (false)
 			{
+				$"{Cursor.lockState}".onScreen("cursor lock");
 				Button btn = uGUI.main.userInput.gameObject.getChild("Message/VerticalLayout/Button").GetComponent<Button>();
 
 				//$"{btn.enabled} {btn.interactable} {btn.ish}".onScreen("button");
 				$"{uGUI.main.userInput.gameObject.activeSelf}".onScreen("gameobject");
 				$"{uGUI.main.userInput.isActiveAndEnabled}".onScreen("userinput");
 				$"{Common.Debug.dumpGameObject(uGUI.main.userInput.gameObject, false, false)}".onScreen("userinput_dump");
+			}
+
+			if (false)
+			{
+				sb.Clear();
+				sb.AppendLine("");
+
+				foreach (var slider in FindObjectsOfType<Slider>())
+					sb.AppendLine($"{slider.name} [{slider.minValue} : {slider.maxValue}] = {slider.value}");
+
+				sb.ToString().onScreen("sliders");
 			}
 		}
 	}

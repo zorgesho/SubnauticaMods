@@ -6,13 +6,12 @@
 //#define TEST_MULTIPLE_CONFIGS
 //#define TEST_LANGUAGE_HELPER
 //#define TEST_OPTIONS_ADJUST
-//#define TEST_OPTIONS_NEW_STUFF
 
-#if TEST_OPTIONS_NEW_STUFF
-	#define TEST_TOOLTIPS
-	#define TEST_CUSTOM_FORMATS
-	#define TEST_CUSTOM_VALUE
-#endif
+//options new stuff
+//#define TEST_TOOLTIPS
+//#define TEST_CUSTOM_FORMATS
+//#define TEST_CUSTOM_VALUE
+//#define TEST_SLIDERS_RANGE
 
 #endregion
 
@@ -152,6 +151,56 @@ namespace MiscPrototypes
 		[Options.Slider(ValueFormat:"{0:F0}")]
 		[Field.Range(0, 10000000000)]
 		public readonly float bigSider1 = 0f;
+#endif
+
+#if TEST_SLIDERS_RANGE
+		[AddToConsole("range_test")]
+		public class RangeTest
+		{
+			[Options.Field("1. Range [-10, 10]")]
+			[Field.Range(-10, 10)]
+			public readonly float slider1 = 50f;
+
+			[Options.Field("2. Range [-10, 10], slider [-20, 20]")]
+			[Field.Range(-10, 10)]
+			[Options.Slider(DefaultValue:0f, MinValue: -20, MaxValue: 20)]
+			public readonly float slider2 = 0f;
+
+			[Options.Field("3. Range [-10, 10], slider [-5, 5]")]
+			[Field.Range(-10, 10)]
+			[Options.Slider(DefaultValue:0f, MinValue: -5, MaxValue: 5)]
+			public readonly float slider3 = 0f;
+
+			[Options.Field("4. Range [min:-10], slider [-5, 5]")]
+			[Field.Range(Min: -10)]
+			[Options.Slider(DefaultValue:0f, MinValue: -5, MaxValue: 5)]
+			public readonly float slider4 = 0f;
+
+			[Options.Field("5. Range [min:-10], slider [-20, 20]")]
+			[Field.Range(Min: -10)]
+			[Options.Slider(DefaultValue:0f, MinValue: -20, MaxValue: 20)]
+			public readonly float slider5 = 0f;
+
+			[Options.Field("6. Range [max:10], slider [-5, 5]")]
+			[Field.Range(Max: 10)]
+			[Options.Slider(DefaultValue:0f, MinValue: -5, MaxValue: 5)]
+			public readonly float slider6 = 0f;
+
+			[Options.Field("7. Range [max:10], slider [-20, 20]")]
+			[Field.Range(Max: 10)]
+			[Options.Slider(DefaultValue:0f, MinValue: -20, MaxValue: 20)]
+			public readonly float slider7 = 0f;
+
+			[Options.Field("8. Range [no], slider [-20, 20]")]
+			[Options.Slider(DefaultValue:0f, MinValue: -20, MaxValue: 20, ValueFormat: "{0:F0}")]
+			public readonly float slider8 = 50f;
+
+			// not supposed to be added
+			[Options.Field("9. Range [no], slider [min:-20]")]
+			[Options.Slider(DefaultValue:0f, MinValue: -20)]
+			public readonly float slider9 = 0f;
+		}
+		public readonly RangeTest rangeTest = new RangeTest();
 #endif
 
 #if TEST_CUSTOM_VALUE

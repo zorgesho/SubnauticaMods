@@ -108,10 +108,7 @@ namespace MiscPrototypes
 
 		class NewTooltip: Options.Components.Tooltip
 		{
-			public override string tooltip
-			{
-				get => _tooltip + UnityEngine.Random.value;
-			}
+			public override string tooltip => _tooltip + UnityEngine.Random.value;
 		}
 
 		[Options.Field("Slider with tooltip", "Slider tooltip", typeof(NewTooltip))]

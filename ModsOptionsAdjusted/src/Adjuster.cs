@@ -49,7 +49,7 @@ namespace ModsOptionsAdjusted
 			const float minCaptionWidth_InGame   = 360f;
 
 			GameObject caption = null;
-			protected float captionWidth { get => caption?.GetComponent<RectTransform>().rect.width ?? 0f; }
+			protected float captionWidth => caption?.GetComponent<RectTransform>().rect.width ?? 0f;
 
 			protected void setCaptionGameObject(string gameObjectPath)
 			{

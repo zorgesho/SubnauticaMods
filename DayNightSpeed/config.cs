@@ -70,7 +70,7 @@ namespace DayNightSpeed
 		#endregion
 
 		#region nonlinear slider
-		class SliderValue_0_100: Options.Components.NonlinearSliderValue
+		class SliderValue_0_100: Options.Components.SliderValue.Nonlinear
 		{
 			SliderValue_0_100()
 			{
@@ -79,15 +79,14 @@ namespace DayNightSpeed
 				addValueInfo(0.8f, 10.0f, "{0:F1}", "{0:F0}");
 			}
 
-			public override float ConvertToDisplayValue(float value) =>
-				(float)Math.Max(0.01f, Math.Round(base.ConvertToDisplayValue(value), 4));
+			public override float ConvertToDisplayValue(float value) => (float)Math.Round(base.ConvertToDisplayValue(value), 4);
 		}
 
 		class Range_001_100: Field.RangeAttribute
 			{ public Range_001_100(): base(0.01f, 100f) {} }
 
 		class Slider_0_100: Options.SliderAttribute
-			{ public Slider_0_100(): base(DefaultValue: 1.0f, CustomValueType: typeof(SliderValue_0_100)) {} }
+			{ public Slider_0_100(): base(DefaultValue: 1.0f, MinValue: 0.01f, CustomValueType: typeof(SliderValue_0_100)) {} }
 		#endregion
 
 		class Tooltips

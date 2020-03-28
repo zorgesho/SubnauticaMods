@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 
 using UnityEngine;
-using SMLHelper.V2.Options;
 
 namespace Common.Configuration
 {
-	partial class Options: ModOptions
+	partial class Options
 	{
 		public static partial class Components
 		{

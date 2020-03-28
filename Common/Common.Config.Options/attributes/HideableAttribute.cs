@@ -1,9 +1,8 @@
 ﻿using System;
-using SMLHelper.V2.Options;
 
 namespace Common.Configuration
 {
-	partial class Options: ModOptions
+	partial class Options
 	{
 		// option can be hided (either by option ID or by separate groupID for multiple options)
 		[AttributeUsage(AttributeTargets.Field)]

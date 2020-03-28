@@ -2,11 +2,9 @@
 using System.Linq;
 using System.Collections.Generic;
 
-using SMLHelper.V2.Options;
-
 namespace Common.Configuration
 {
-	partial class Options: ModOptions
+	partial class Options
 	{
 		static class Factory
 		{

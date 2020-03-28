@@ -3,7 +3,7 @@ using System.IO;
 
 namespace Common.Configuration
 {
-	partial class Config
+	abstract partial class Config
 	{
 		public static Config main { get; private set; }
 
@@ -23,8 +23,6 @@ namespace Common.Configuration
 			true;
 #endif
 		string configPath;
-
-		protected Config() {}
 
 		protected virtual void onLoad() {} // called immediately after config loading/creating
 

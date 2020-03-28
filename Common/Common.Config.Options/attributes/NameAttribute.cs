@@ -1,9 +1,8 @@
 ﻿using System;
-using SMLHelper.V2.Options;
 
 namespace Common.Configuration
 {
-	partial class Options: ModOptions
+	partial class Options
 	{
 		// Class attribute for setting mod options name in menu
 		[AttributeUsage(AttributeTargets.Class)]

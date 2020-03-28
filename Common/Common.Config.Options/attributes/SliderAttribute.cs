@@ -3,7 +3,7 @@ using SMLHelper.V2.Options;
 
 namespace Common.Configuration
 {
-	partial class Options: ModOptions
+	partial class Options
 	{
 		// used by FieldAttribute, don't do anything on its own
 		[AttributeUsage(AttributeTargets.Field)]

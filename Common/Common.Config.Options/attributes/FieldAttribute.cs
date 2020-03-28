@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Reflection;
 
-using SMLHelper.V2.Options;
-
 namespace Common.Configuration
 {
-	partial class Options: ModOptions
+	partial class Options
 	{
 		// Attribute for creating options UI elements
 		// AttributeTargets.Class is just for convenience during development (try to create options UI elements for all inner fields)

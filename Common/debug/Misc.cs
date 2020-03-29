@@ -48,15 +48,14 @@ namespace Common
 				assert(profilersCount >= 0);
 
 				lastResult = stopwatch.Elapsed.TotalMilliseconds;
-				long memChange = GC.GetTotalMemory(false) - mem;
 
 				if (message == null)
 					return;
 
-				string _format(long m) =>
-					$"{(m > 0? "+": "")}{(Math.Abs(m) > 1024L * 1024L? (m / 1024L / 1024L + "MB"): (m / 1024L + "KB"))} ({m})";
+				long m = GC.GetTotalMemory(false) - mem;
+				string memChange = $"{(m > 0? "+": "")}{(Math.Abs(m) > 1024L * 1024L? (m / 1024L / 1024L + "MB"): (m / 1024L + "KB"))} ({m})";
 
-				string result = $"{message}: {lastResult} ms; mem alloc:{_format(memChange)}";
+				string result = $"{message}: {lastResult} ms; mem alloc:{memChange}";
 				$"PROFILER: {result}".log();
 
 				if (filename != null)

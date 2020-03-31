@@ -12,6 +12,31 @@ namespace ConsoleImproved
 	{
 		class ConsoleCommands: PersistentConsoleCommands
 		{
+			void OnConsoleCommand_logpatches(NotificationCenter.Notification n)
+			{
+				$"Current patches:\n{HarmonyHelper.getPatchesReport(n.getArgSafe(0) as string)}".log();
+			}
+
+			void OnConsoleCommand_printpatches(NotificationCenter.Notification n)
+			{
+				const float refreshSecs = 0.5f;
+
+				StopAllCoroutines();
+
+				if (n.getArgsCount() > 0)
+					StartCoroutine(_printPatches(n.getArg(0) as string, n.getArgSafe(1)?.toBool() == true));
+
+				IEnumerator _printPatches(string harmonyID, bool omitNames)
+				{
+					while (true)
+					{
+						$"\n{HarmonyHelper.getPatchesReport(harmonyID, omitNames)}".onScreen($"patches ({harmonyID})");
+						yield return new WaitForSeconds(refreshSecs);
+					}
+				}
+			}
+
+
 			void OnConsoleCommand_clearhistory(NotificationCenter.Notification _)
 			{
 				setHistory(new List<string>());

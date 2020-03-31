@@ -77,6 +77,7 @@ namespace Common
 
 		public static int getArgsCount(this NotificationCenter.Notification n) => n?.data?.Count ?? 0;
 		public static object getArg(this NotificationCenter.Notification n, int index) => n.data[index]; // do not check for null at that point
+		public static object getArgSafe(this NotificationCenter.Notification n, int index) => n?.data?.Count > index? n.data[index]: null;
 	}
 
 

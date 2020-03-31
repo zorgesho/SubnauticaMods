@@ -63,22 +63,25 @@ namespace Common
 				var postfix = patchType.method("Postfix");
 				var transpiler = patchType.method("Transpiler");
 
+				Patches patches = harmonyInstance.GetPatchInfo(method);
+
+				bool _contains(IEnumerable<Patch> _list, MethodInfo _method) => _list?.FirstOrDefault(p => p.patch == _method) != null;
+
+				bool prefixActive = _contains(patches?.Prefixes, prefix);
+				bool postfixActive = _contains(patches?.Postfixes, postfix);
+				bool transpilerActive = _contains(patches?.Transpilers, transpiler);
+
 				if (val)
 				{
-					bool _contains(IEnumerable<Patch> _list, MethodInfo _method) => _list.FirstOrDefault(p => p.patch == _method) != null;
-
-					Patches patches = harmonyInstance.GetPatchInfo(method);
-					bool patched =  patches != null &&
-						(_contains(patches.Prefixes, prefix) || _contains(patches.Postfixes, postfix) || _contains(patches.Transpilers, transpiler));
-
-					if (!patched)
+					if (!prefixActive && !postfixActive && !transpilerActive)
 						HarmonyHelper.patch(method, prefix, postfix, transpiler);
 				}
-				else
+				else 
 				{
-					if (prefix != null)		harmonyInstance.Unpatch(method, prefix);
-					if (postfix != null)	harmonyInstance.Unpatch(method, postfix);
-					if (transpiler != null) harmonyInstance.Unpatch(method, transpiler);
+					// need to check if this is actual patches to avoid unnecessary updates in harmony (with transpilers especially)
+					if (prefixActive)	  harmonyInstance.Unpatch(method, prefix);
+					if (postfixActive)	  harmonyInstance.Unpatch(method, postfix);
+					if (transpilerActive) harmonyInstance.Unpatch(method, transpiler);
 				}
 			}
 		}

@@ -19,6 +19,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)LanguageHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Misc.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MiscInGame.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mod.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PathHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UnityExtensions.cs" />
   </ItemGroup>

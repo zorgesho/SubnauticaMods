@@ -89,7 +89,7 @@ namespace DayNightSpeed
 			{ public Slider_0_100(): base(DefaultValue: 1.0f, MinValue: 0.01f, CustomValueType: typeof(SliderValue_0_100)) {} }
 		#endregion
 
-		class Tooltips
+		static class Tooltips
 		{
 			partial class L10n: LanguageHelper
 			{
@@ -156,7 +156,7 @@ namespace DayNightSpeed
 				{
 					get
 					{
-						double speed = Math.Round(Main.config.dayNightSpeed, Main.config.dayNightSpeed < 1.0f? 4 :1);
+						double speed = Math.Round(Main.config.dayNightSpeed, Main.config.dayNightSpeed < 1.0f? 4: 1);
 						TimeSpan timeSpan = TimeSpan.FromSeconds(dayNightSecs / speed);
 
 						return string.Format(L10n.str(L10n.ids_tooltipDayNightSpeed), L10n.toString(timeSpan));
@@ -305,10 +305,14 @@ namespace DayNightSpeed
 
 				protected override bool needUpdate => isSpeedChanged(Main.config.speedPowerCharge);
 
+				static string _getDuration(float timeSecs) =>
+					L10n.toString(TimeSpan.FromDays(timeSecs / dayNightSecs * Math.Min(Main.config.dayNightSpeed, 1f) / Main.config.speedPowerCharge),
+								  TimeSpan.FromSeconds(timeSecs / Math.Max(Main.config.dayNightSpeed, 1f) / Main.config.speedPowerCharge));
+
 				public override string tooltip =>
 					string.Format(L10n.str(L10n.ids_tooltipPowerCharge),
-						getDuration(gen100EnergyBReactorSecs, Main.config.speedPowerCharge),
-						getDuration(gen100EnergyNReactorSecs, Main.config.speedPowerCharge));
+						_getDuration(gen100EnergyBReactorSecs),
+						_getDuration(gen100EnergyNReactorSecs));
 			}
 			#endregion
 		}

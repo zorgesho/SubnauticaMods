@@ -68,6 +68,12 @@ namespace Common
 		public static MethodInfo[] methods(this Type type) => type.GetMethods(ReflectionHelper.bfAll);
 		public static MethodInfo[] methods(this Type type, BindingFlags bf) => type.GetMethods(ReflectionHelper.bfAll | bf);
 		public static PropertyInfo[] properties(this Type type) => type.GetProperties(ReflectionHelper.bfAll);
+	}
+
+
+	static class MemberInfoExtensions
+	{
+		public static string fullName(this MemberInfo memberInfo) => (memberInfo == null)? "[null]": memberInfo.DeclaringType.FullName + "." + memberInfo.Name;
 
 		public static A    getAttribute<A>(this MemberInfo memberInfo)   where A: Attribute => Attribute.GetCustomAttribute(memberInfo, typeof(A)) as A;
 		public static A[]  getAttributes<A>(this MemberInfo memberInfo)  where A: Attribute => Attribute.GetCustomAttributes(memberInfo, typeof(A)) as A[];

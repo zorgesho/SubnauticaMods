@@ -42,7 +42,6 @@ namespace ConsoleImproved
 				setHistory(new List<string>());
 			}
 
-
 			void OnConsoleCommand_clear(NotificationCenter.Notification _)
 			{
 				foreach (var m in ErrorMessage.main.messages)
@@ -60,6 +59,7 @@ namespace ConsoleImproved
 				$"Finded {matched.Count} entries".onScreen();
 				matched.onScreen("TechType: ");
 			}
+
 
 			void OnConsoleCommand_dumpresource(NotificationCenter.Notification n)
 			{
@@ -85,29 +85,31 @@ namespace ConsoleImproved
 
 				if (n.getArg(0) as string == "all")
 				{
-					StartCoroutine(nameof(_dumpAllPrefabs));
+					StartCoroutine(_dumpAllPrefabs());
 				}
 				else
 				{
 					if (UWE.Utils.TryParseEnum(n.getArg(0) as string, out TechType techType))
 						CraftData.GetPrefabForTechType(techType)?.dump(techType.AsString());
 				}
-			}
 
-			IEnumerator _dumpAllPrefabs()
-			{
-				foreach (TechType techType in Enum.GetValues(typeof(TechType)))
+				IEnumerator _dumpAllPrefabs()
 				{
-					CraftData.GetPrefabForTechType(techType)?.dump(techType.AsString());
-					yield return null;
+					foreach (TechType techType in Enum.GetValues(typeof(TechType)))
+					{
+						CraftData.GetPrefabForTechType(techType)?.dump(techType.AsString());
+						yield return null;
+					}
+
+					"Dump complete".onScreen();
 				}
-
-				"Dump complete".onScreen();
 			}
-
 
 			void OnConsoleCommand_dumpobjects(NotificationCenter.Notification n)
 			{
+				if (n.getArgsCount() == 0)
+					return;
+
 				Type getComponentType(string typeName)
 				{
 					foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
@@ -121,36 +123,33 @@ namespace ConsoleImproved
 					return null;
 				}
 
-				if (n.getArgsCount() == 0)
-					return;
-
 				string cmtTypeName = n.getArg(0) as string;
 				Type cmpType = getComponentType(cmtTypeName);
 
 				if (cmpType != null && FindObjectsOfType(cmpType) is Component[] cmps)
-					StartCoroutine(nameof(_dumpObjects), cmps);
-			}
-
-			IEnumerator _dumpObjects(Component[] cmps)
-			{
-				$"Objects to dump: {cmps.Length}".onScreen();
-
-				int index = 0;
-				foreach (var cmp in cmps)
 				{
-					cmp.gameObject.dump(cmp.gameObject.name + "_" + index++);
-					yield return null;
-				}
+					StartCoroutine(_dumpObjects());
 
-				"Dump complete".onScreen();
+					IEnumerator _dumpObjects()
+					{
+						$"Objects to dump: {cmps.Length}".onScreen();
+
+						int index = 0;
+						foreach (var cmp in cmps)
+						{
+							cmp.gameObject.dump(cmp.gameObject.name + "_" + index++);
+							yield return null;
+						}
+
+						"Dump complete".onScreen();
+					}
+				}
 			}
 
 
 			void OnConsoleCommand_printcfgvars(NotificationCenter.Notification n)
 			{
-				string prefix = (n.getArgsCount() == 1)? n.getArg(0) as string: "";
-
-				foreach (var c in cfgVarsCache.findByPrefix(prefix))
+				foreach (var c in cfgVarsCache.findByPrefix(n.getArgSafe(0) as string ?? ""))
 					DevConsole.SendConsoleCommand($"getcfgvar {c}");
 			}
 		}

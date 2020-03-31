@@ -96,62 +96,63 @@ namespace DayNightSpeed
 	}
 
 
-#region Debug patches
 #if DEBUG
-	[HarmonyPatch(typeof(Bed), "GetCanSleep")]
-	static class Bed_GetCanSleep_Patch
+	static class DebugPatches
 	{
-		static bool Prefix(ref bool __result)
+		[HarmonyPatch(typeof(Bed), "GetCanSleep")]
+		static class Bed_GetCanSleep_Patch
 		{
-			__result = true;
-			return false;
-		}
-	}
-
-	[HarmonyPatch(typeof(ToggleLights), "UpdateLightEnergy")]
-	static class ToggleLights_UpdateLightEnergy_Patch
-	{
-		static void Postfix(ToggleLights __instance)
-		{
-			if (Main.config.dbgCfg.showToggleLightStats)
-				$"{__instance.energyMixin?.charge} {__instance.energyPerSecond}".onScreen("energy " + __instance.name);
-		}
-	}
-
-	[HarmonyPatch(typeof(WaterParkCreature), "Update")]
-	static class WaterParkCreature_Update_Patch
-	{
-		static void Postfix(WaterParkCreature __instance)
-		{
-			if (Main.config.dbgCfg.showWaterParkCreatures)
+			static bool Prefix(ref bool __result)
 			{
-				$"age: {__instance.age} canBreed: {__instance.canBreed} matureTime: {__instance.matureTime} isMature: {__instance.isMature}".
-					onScreen("waterpark " + __instance.name + " " + __instance.GetHashCode());
+				__result = true;
+				return false;
 			}
 		}
-	}
 
-	[HarmonyPatch(typeof(CreatureEgg), "UpdateProgress")]
-	static class CreatureEgg_UpdateProgress_Patch
-	{
-		static void Postfix(CreatureEgg __instance)
+		[HarmonyPatch(typeof(ToggleLights), "UpdateLightEnergy")]
+		static class ToggleLights_UpdateLightEnergy_Patch
 		{
-			if (Main.config.dbgCfg.showWaterParkCreatures)
-				$"progress: {__instance.progress}".onScreen("waterpark " + __instance.name + " " + __instance.GetHashCode());
+			static void Postfix(ToggleLights __instance)
+			{
+				if (Main.config.dbgCfg.showToggleLightStats)
+					$"{__instance.energyMixin?.charge} {__instance.energyPerSecond}".onScreen("energy " + __instance.name);
+			}
+		}
+
+		[HarmonyPatch(typeof(WaterParkCreature), "Update")]
+		static class WaterParkCreature_Update_Patch
+		{
+			static void Postfix(WaterParkCreature __instance)
+			{
+				if (Main.config.dbgCfg.showWaterParkCreatures)
+				{
+					$"age: {__instance.age} canBreed: {__instance.canBreed} matureTime: {__instance.matureTime} isMature: {__instance.isMature}".
+						onScreen("waterpark " + __instance.name + " " + __instance.GetHashCode());
+				}
+			}
+		}
+
+		[HarmonyPatch(typeof(CreatureEgg), "UpdateProgress")]
+		static class CreatureEgg_UpdateProgress_Patch
+		{
+			static void Postfix(CreatureEgg __instance)
+			{
+				if (Main.config.dbgCfg.showWaterParkCreatures)
+					$"progress: {__instance.progress}".onScreen("waterpark " + __instance.name + " " + __instance.GetHashCode());
+			}
+		}
+
+		[HarmonyPatch(typeof(Story.StoryGoalScheduler), "Schedule")]
+		static class StoryGoalScheduler_Schedule_Patch
+		{
+			static void Postfix(Story.StoryGoal goal) => $"goal added: {goal.key} {goal.delay} {goal.goalType}".logDbg();
+		}
+
+		[HarmonyPatch(typeof(Story.StoryGoal), "Execute")]
+		static class StoryGoal_Execute_Patch
+		{
+			static void Postfix(string key, GoalType goalType) => $"goal removed: {key} {goalType}".logDbg();
 		}
 	}
-
-	[HarmonyPatch(typeof(Story.StoryGoalScheduler), "Schedule")]
-	static class StoryGoalScheduler_Schedule_Patch
-	{
-		static void Postfix(Story.StoryGoal goal) => $"goal added: {goal.key} {goal.delay} {goal.goalType}".logDbg();
-	}
-
-	[HarmonyPatch(typeof(Story.StoryGoal), "Execute")]
-	static class StoryGoal_Execute_Patch
-	{
-		static void Postfix(string key, GoalType goalType) => $"goal removed: {key} {goalType}".logDbg();
-	}
 #endif
-#endregion
 }

@@ -8,10 +8,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WarningsDisabler", "WarningsDisabler\WarningsDisabler.csproj", "{93C2CDD8-5D48-451F-A5C1-35A0B48DDBE6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{EE6D7B7D-F20A-439A-8C01-97B6A16F9B52}"
-	ProjectSection(SolutionItems) = preProject
-		.editorconfig = .editorconfig
-		post-build.bat = post-build.bat
-	EndProjectSection
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Common.Config", "Common\Common.Config\Common.Config.shproj", "{B39DE674-737E-4F48-A1F7-A26B7E3D501F}"
 EndProject
@@ -74,6 +70,15 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OxygenRefill", "OxygenRefill\OxygenRefill.csproj", "{B3E130A4-0598-40A5-8D01-543D18743A6F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fatigue", "Fatigue\Fatigue.csproj", "{EBFA5C5C-995C-4E6D-9F6E-C9C33F864EF6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "misc", "misc", "{7B8B7765-2191-43CD-ABE0-89BBEF79CFC2}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitignore = .gitignore
+		mods_cleanup.bat = mods_cleanup.bat
+		mods_cleanup.txt = mods_cleanup.txt
+		post-build.bat = post-build.bat
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -174,9 +179,7 @@ Global
 		{93C2CDD8-5D48-451F-A5C1-35A0B48DDBE6}.test_build|Any CPU.ActiveCfg = test_build|Any CPU
 		{93C2CDD8-5D48-451F-A5C1-35A0B48DDBE6}.test_build|Any CPU.Build.0 = test_build|Any CPU
 		{E808117C-7ABE-4140-A1D3-FEA6B1E2F7F0}.dev|Any CPU.ActiveCfg = dev|Any CPU
-		{E808117C-7ABE-4140-A1D3-FEA6B1E2F7F0}.dev|Any CPU.Build.0 = dev|Any CPU
 		{E808117C-7ABE-4140-A1D3-FEA6B1E2F7F0}.publish|Any CPU.ActiveCfg = publish|Any CPU
-		{E808117C-7ABE-4140-A1D3-FEA6B1E2F7F0}.publish|Any CPU.Build.0 = publish|Any CPU
 		{E808117C-7ABE-4140-A1D3-FEA6B1E2F7F0}.test_build|Any CPU.ActiveCfg = test_build|Any CPU
 		{E808117C-7ABE-4140-A1D3-FEA6B1E2F7F0}.test_build|Any CPU.Build.0 = test_build|Any CPU
 		{4EF61A6D-0C6E-48A9-8625-58D196FD5386}.dev|Any CPU.ActiveCfg = dev|Any CPU

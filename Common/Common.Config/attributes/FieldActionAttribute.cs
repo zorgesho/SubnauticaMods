@@ -6,7 +6,7 @@ namespace Common.Configuration
 	{
 		public partial class Field
 		{
-			// implement this to create custom action when config field is changes
+			// implement this to create custom action when value of config field is changed
 			public interface IAction
 			{
 				void action();
@@ -17,11 +17,15 @@ namespace Common.Configuration
 			{
 				public readonly IAction action;
 
-				public ActionAttribute(Type actionType)
+				protected IAction createAction(Type actionType)
 				{
-					action = Activator.CreateInstance(actionType) as IAction;
+					IAction action = Activator.CreateInstance(actionType) as IAction;
 					Debug.assert(action != null, $"Field.ActionAttribute: '{actionType}' You need to implement IAction in ActionType");
+
+					return action;
 				}
+
+				public ActionAttribute(Type actionType) => action = createAction(actionType); // TODO move init to property
 			}
 		}
 	}

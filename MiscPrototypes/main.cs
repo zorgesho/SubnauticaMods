@@ -1,15 +1,18 @@
 ﻿using Common;
 using Common.Crafting;
-using Common.Configuration;
 
 namespace MiscPrototypes
 {
 	public static partial class Main
 	{
-		internal static readonly ModConfig config = Config.tryLoad<ModConfig>();
+		internal static readonly ModConfig config = Mod.init<ModConfig>();
+
+		static partial void initTestConfig();
 
 		public static void patch()
 		{
+			initTestConfig();
+
 			HarmonyHelper.patchAll(true);
 			LanguageHelper.init();
 			CraftHelper.patchAll();

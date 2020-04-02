@@ -14,16 +14,28 @@ namespace Common
 		public static bool  toBool(this object obj)  => Convert.ToBoolean(obj, CultureInfo.InvariantCulture);
 		public static float toFloat(this object obj) => Convert.ToSingle(obj, CultureInfo.InvariantCulture);
 
-		public static void setFieldValue(this object obj, FieldInfo field, object value)
+		// assigns value to field with types conversion
+		// returns `false` if field have equal value after conversion (or in case of exception)
+		// returns 'true' in case of successful assignment
+		public static bool setFieldValue(this object obj, FieldInfo field, object value)
 		{
 			try
 			{
+				object newValue;
+
 				if (field.FieldType.IsEnum)
-					field.SetValue(obj, Convert.ChangeType(value, Enum.GetUnderlyingType(field.FieldType), CultureInfo.InvariantCulture));
+					newValue = Convert.ChangeType(value, Enum.GetUnderlyingType(field.FieldType), CultureInfo.InvariantCulture);
 				else
-					field.SetValue(obj, Convert.ChangeType(value, field.FieldType, CultureInfo.InvariantCulture));
+					newValue = Convert.ChangeType(value, field.FieldType, CultureInfo.InvariantCulture);
+
+				if (Equals(field.GetValue(obj), newValue))
+					return false;
+
+				field.SetValue(obj, newValue);
+
+				return true;
 			}
-			catch (Exception e) { Log.msg(e); }
+			catch (Exception e) { Log.msg(e); return false; }
 		}
 	}
 

@@ -51,12 +51,10 @@ namespace Common.Configuration
 
 				set
 				{
-					if (value?.Equals(this.value) == true)
+					if (!parent.setFieldValue(field, value))
 						return;
 
-					parent.setFieldValue(field, value);
 					actions?.forEach(a => a.action());
-
 					rootConfig.save();
 				}
 			}

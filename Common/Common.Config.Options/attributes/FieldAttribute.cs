@@ -17,11 +17,11 @@ namespace Common.Configuration
 			public readonly string tooltip;
 			public readonly Type tooltipType; // component derived from Options.Components.Tooltip
 
-			public FieldAttribute(string Label = null, string Tooltip = null, Type TooltipType = null)
+			public FieldAttribute(string label = null, string tooltip = null, Type tooltipType = null)
 			{
-				label = Label;
-				tooltip = Tooltip;
-				tooltipType = TooltipType;
+				this.label = label;
+				this.tooltip = tooltip;
+				this.tooltipType = tooltipType;
 			}
 
 			public void process(object config)

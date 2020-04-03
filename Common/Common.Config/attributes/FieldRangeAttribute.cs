@@ -12,10 +12,10 @@ namespace Common.Configuration
 			{
 				public readonly float min, max;
 
-				public RangeAttribute(float Min = float.MinValue, float Max = float.MaxValue)
+				public RangeAttribute(float min = float.MinValue, float max = float.MaxValue)
 				{
-					min = Min;
-					max = Max;
+					this.min = min;
+					this.max = max;
 				}
 
 				public object clamp(object value) => UnityEngine.Mathf.Clamp(value.toFloat(), min, max);

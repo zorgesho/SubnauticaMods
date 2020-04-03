@@ -15,7 +15,7 @@ namespace DayNightSpeed
 		[Slider_0_100]
 		[Field.Range(0f, 100f)] // for UI minimum is 0.01f
 		[Field.Action(typeof(DayNightSpeedControl.SettingChanged))]
-		[Options.Field("Day/night speed", TooltipType: typeof(Tooltips.DayNightSpeed))]
+		[Options.Field("Day/night speed", tooltipType: typeof(Tooltips.DayNightSpeed))]
 		public readonly float dayNightSpeed = 1.0f;
 
 		[Options.Field("Use additional multipliers")]
@@ -23,32 +23,32 @@ namespace DayNightSpeed
 		[Field.Action(typeof(SpeedsHider))]
 		public readonly bool useAuxSpeeds = false;
 
-		[Options.Field("Hunger/thrist", TooltipType: typeof(Tooltips.HungerThrist))]
+		[Options.Field("Hunger/thrist", tooltipType: typeof(Tooltips.HungerThrist))]
 		[Slider_0_100][Range_001_100][HideableSpeed]
 		public readonly float speedHungerThrist = 1.0f;
 		public float auxSpeedHungerThrist => useAuxSpeeds? speedHungerThrist: 1.0f;
 
-		[Options.Field("Plants growth", TooltipType: typeof(Tooltips.Plants))]
+		[Options.Field("Plants growth", tooltipType: typeof(Tooltips.Plants))]
 		[HarmonyHelper.UpdatePatchesAction(typeof(GrowingPlant_GetGrowthDuration_Patch), typeof(FruitPlant_Initialize_Patch))]
 		[Slider_0_100][Range_001_100][HideableSpeed]
 		public readonly float speedPlantsGrow = 1.0f;
 
-		[Options.Field("Eggs hatching", TooltipType: typeof(Tooltips.Eggs))]
+		[Options.Field("Eggs hatching", tooltipType: typeof(Tooltips.Eggs))]
 		[HarmonyHelper.UpdatePatchesAction(typeof(CreatureEgg_GetHatchDuration_Patch))]
 		[Slider_0_100][Range_001_100][HideableSpeed]
 		public readonly float speedEggsHatching = 1.0f;
 
-		[Options.Field("Creatures growth", TooltipType: typeof(Tooltips.Creatures))]
+		[Options.Field("Creatures growth", tooltipType: typeof(Tooltips.Creatures))]
 		[HarmonyHelper.UpdatePatchesAction(typeof(WaterParkCreaturePatches.SetMatureTime_Patch), typeof(WaterParkCreaturePatches.Update_Patch))]
 		[Slider_0_100][Range_001_100][HideableSpeed]
 		public readonly float speedCreaturesGrow = 1.0f;
 
-		[Options.Field("Medkit fabrication", TooltipType: typeof(Tooltips.Medkit))]
+		[Options.Field("Medkit fabrication", tooltipType: typeof(Tooltips.Medkit))]
 		[HarmonyHelper.UpdatePatchesAction(typeof(MedicalCabinet_Start_Patch))]
 		[Slider_0_100][Range_001_100][HideableSpeed]
 		public readonly float speedMedkitInterval = 1.0f;
 
-		[Options.Field("Charging/generating power", TooltipType: typeof(Tooltips.PowerCharge))]
+		[Options.Field("Charging/generating power", tooltipType: typeof(Tooltips.PowerCharge))]
 		[Slider_0_100][Range_001_100][HideableSpeed]
 		public readonly float speedPowerCharge = 1.0f;
 		public float auxSpeedPowerCharge => useAuxSpeeds? speedPowerCharge: 1.0f;
@@ -86,7 +86,7 @@ namespace DayNightSpeed
 			{ public Range_001_100(): base(0.01f, 100f) {} }
 
 		class Slider_0_100: Options.SliderAttribute
-			{ public Slider_0_100(): base(DefaultValue: 1.0f, MinValue: 0.01f, CustomValueType: typeof(SliderValue_0_100)) {} }
+			{ public Slider_0_100(): base(defaultValue: 1.0f, minValue: 0.01f, customValueType: typeof(SliderValue_0_100)) {} }
 		#endregion
 
 		static class Tooltips
@@ -327,11 +327,11 @@ namespace DayNightSpeed
 		#region v1.0.0 -> v1.1.0
 #pragma warning disable CS0414 // unused field
 		// obsolete inverted multipliers (v1.0.0)
-		[Field.LoadOnly] [Field.Range(Min:0.01f)] readonly float multHungerThrist   = 1.0f;
-		[Field.LoadOnly] [Field.Range(Min:0.01f)] readonly float multPlantsGrow     = 1.0f;
-		[Field.LoadOnly] [Field.Range(Min:0.01f)] readonly float multEggsHatching   = 1.0f;
-		[Field.LoadOnly] [Field.Range(Min:0.01f)] readonly float multCreaturesGrow  = 1.0f;
-		[Field.LoadOnly] [Field.Range(Min:0.01f)] readonly float multMedkitInterval = 1.0f;
+		[Field.LoadOnly] [Field.Range(min:0.01f)] readonly float multHungerThrist   = 1.0f;
+		[Field.LoadOnly] [Field.Range(min:0.01f)] readonly float multPlantsGrow     = 1.0f;
+		[Field.LoadOnly] [Field.Range(min:0.01f)] readonly float multEggsHatching   = 1.0f;
+		[Field.LoadOnly] [Field.Range(min:0.01f)] readonly float multCreaturesGrow  = 1.0f;
+		[Field.LoadOnly] [Field.Range(min:0.01f)] readonly float multMedkitInterval = 1.0f;
 #pragma warning restore
 
 		// variables are renamed (mult* -> speed*) and inverted (new = 1.0f/old)

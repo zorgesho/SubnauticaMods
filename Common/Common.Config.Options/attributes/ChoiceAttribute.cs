@@ -8,23 +8,51 @@ namespace Common.Configuration
 		[AttributeUsage(AttributeTargets.Field)]
 		public class ChoiceAttribute: Attribute
 		{
-			public readonly string[] choices = null;
-			public readonly object[] values  = null;
+			// we use properties so constructors used only for storing params
+			public string[] choices
+			{
+				get
+				{
+					processInterleavedParams();
+					return _choices;
+				}
+			}
+			public object[] values
+			{
+				get
+				{
+					processInterleavedParams();
+					return _values;
+				}
+			}
+
+			string[] _choices = null;
+			object[] _values  = null;
 
 			// using default values, just choice index
-			public ChoiceAttribute(params string[] _choices) => choices = _choices;
+			public ChoiceAttribute(params string[] choices) => _choices = choices;
 
 			// using custom values, parameters should be like ("Choice1", 1.0f, "Choice2", 2.0f etc)
-			public ChoiceAttribute(params object[] _choices)
-			{																		$"ChoiceAttribute: counts for choices and values is not equal!".logDbgError(_choices != null && _choices.Length % 2 != 0);
-				choices = new string[_choices.Length / 2];
-				values  = new object[_choices.Length / 2];
+			public ChoiceAttribute(params object[] interleavedParams) => this.interleavedParams = interleavedParams;
 
-				for (int i = 0; i < choices.Length; i++)
+			object[] interleavedParams;
+
+			void processInterleavedParams()
+			{
+				if (interleavedParams == null)
+					return;
+
+				int length = interleavedParams.Length / 2;
+				_choices = new string[length];
+				_values  = new object[length];
+
+				for (int i = 0; i < length; i++)
 				{
-					choices[i] = _choices[i * 2] as string;
-					values[i]  = _choices[i * 2 + 1];
+					_choices[i] = interleavedParams[i * 2] as string;
+					_values[i]  = interleavedParams[i * 2 + 1];
 				}
+
+				interleavedParams = null;
 			}
 		}
 	}

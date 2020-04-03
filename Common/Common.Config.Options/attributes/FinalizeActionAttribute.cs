@@ -13,9 +13,20 @@ namespace Common.Configuration
 		[AttributeUsage(AttributeTargets.Field)]
 		public class FinalizeActionAttribute: Config.Field.ActionAttribute
 		{
-			public FinalizeActionAttribute(Type actionType): base(typeof(ProxyAction))
+			readonly Type innerActionType;
+
+			public FinalizeActionAttribute(Type actionType): base(typeof(ProxyAction)) => innerActionType = actionType;
+
+			public override Config.Field.IAction action
 			{
-				(action as ProxyAction).init(createAction(actionType));
+				get
+				{
+					if (_action == null)
+						(base.action as ProxyAction).init(createAction(innerActionType));
+
+					Debug.assert(_action != null);
+					return _action;
+				}
 			}
 
 

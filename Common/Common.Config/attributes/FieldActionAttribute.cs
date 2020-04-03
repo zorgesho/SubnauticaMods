@@ -15,17 +15,20 @@ namespace Common.Configuration
 			[AttributeUsage(AttributeTargets.Field, AllowMultiple = true)]
 			public class ActionAttribute: Attribute
 			{
-				public readonly IAction action;
+				readonly Type actionType;
 
-				protected IAction createAction(Type actionType)
-				{
-					IAction action = Activator.CreateInstance(actionType) as IAction;
-					Debug.assert(action != null, $"Field.ActionAttribute: '{actionType}' You need to implement IAction in ActionType");
+				public ActionAttribute(Type actionType) => this.actionType = actionType;
+
+				public virtual IAction action => _action ?? (_action = createAction(actionType));
+				protected IAction _action;
+
+				protected IAction createAction(Type _actionType)
+				{																									$"Field.ActionAttribute: creating action object ({_actionType})".logDbg();
+					var action = Activator.CreateInstance(_actionType) as IAction;
+					Debug.assert(action != null, $"Field.ActionAttribute: '{_actionType}' You need to implement IAction in ActionType");
 
 					return action;
 				}
-
-				public ActionAttribute(Type actionType) => action = createAction(actionType); // TODO move init to property
 			}
 		}
 	}

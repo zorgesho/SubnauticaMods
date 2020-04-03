@@ -8,15 +8,24 @@ namespace Common.Configuration
 		[AttributeUsage(AttributeTargets.Field)]
 		public class HideableAttribute: Attribute
 		{
+			readonly Type visCheckerType;
 			public readonly string groupID;
-			public readonly Components.Hider.IVisibilityChecker visChecker;
 
-			public HideableAttribute(Type visCheckerType, string _groupID = null)
+			public HideableAttribute(Type visCheckerType, string groupID = null)
 			{
-				groupID = _groupID;
+				this.groupID = groupID;
+				this.visCheckerType = visCheckerType;
+			}
 
-				visChecker = Activator.CreateInstance(visCheckerType) as Components.Hider.IVisibilityChecker;
-				Debug.assert(visChecker != null, $"Options.HideableAttribute: '{visCheckerType}' You need to implement IVisibilityChecker in visCheckerType");
+			public Components.Hider.IVisibilityChecker visChecker => _visChecker ?? (_visChecker = createVisChecker());
+			Components.Hider.IVisibilityChecker _visChecker;
+
+			Components.Hider.IVisibilityChecker createVisChecker()
+			{
+				var checker = Activator.CreateInstance(visCheckerType) as Components.Hider.IVisibilityChecker;
+				Debug.assert(checker != null, $"Options.HideableAttribute: '{visCheckerType}' You need to implement IVisibilityChecker in visCheckerType");
+
+				return checker;
 			}
 		}
 	}

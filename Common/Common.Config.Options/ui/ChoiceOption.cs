@@ -7,8 +7,8 @@ namespace Common.Configuration
 	{
 		public class ChoiceOption: ModOption
 		{
-			readonly string[] choices = null;
-			readonly object[] values  = null;
+			readonly string[] choices;
+			readonly object[] values;
 
 			public ChoiceOption(Config.Field cfgField, string label, string[] _choices, object[] _values = null): base(cfgField, label)
 			{
@@ -22,14 +22,14 @@ namespace Common.Configuration
 
 			public override void addOption(Options options)
 			{
-				int defaultIndex = (values != null)? values.findIndex(val => val.Equals(cfgField.value)): cfgField.value.toInt();
+				int defaultIndex = values?.findIndex(val => val.Equals(cfgField.value) || val.Equals(cfgField.value.toInt())) ?? cfgField.value.toInt();
 				options.AddChoiceOption(id, label, choices, defaultIndex < 0? 0: defaultIndex);
 			}
 
 			public override void onValueChange(EventArgs e)
 			{
 				int? index = (e as ChoiceChangedEventArgs)?.Index;
-				cfgField.value = (values != null)? values[index ?? 0]: index;
+				cfgField.value = values?[index ?? 0] ?? index;
 			}
 		}
 	}

@@ -67,14 +67,13 @@ namespace Common.Configuration
 			{
 				public ModOption create(Config.Field cfgField)
 				{
-					if (cfgField.type.IsEnum) // add choice option for enum, works only with default enums (zero-based, increased by 1)
+					if (cfgField.type.IsEnum) // add choice option for enum
 					{
-						var list = new List<string>();
+						var values = new List<object>();
+						foreach (var val in Enum.GetValues(cfgField.type))
+							values.Add(val.toInt());
 
-						foreach (var e in Enum.GetValues(cfgField.type))
-							list.Add(e.ToString());
-
-						return new ChoiceOption(cfgField, cfgField.getAttr<FieldAttribute>()?.label, list.ToArray());
+						return new ChoiceOption(cfgField, cfgField.getAttr<FieldAttribute>()?.label, Enum.GetNames(cfgField.type), values.ToArray());
 					}
 
 					if (cfgField.type == typeof(float) || cfgField.type == typeof(int)) // creating ChoiceOption if we also have choice attribute

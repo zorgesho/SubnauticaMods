@@ -2,14 +2,16 @@
 //#define TEST_NESTED_CLASSES
 //#define TEST_MULTIPLE_CONFIGS
 //#define TEST_LANGUAGE_HELPER
-//#define TEST_OPTIONS_ADJUST
 
-//options new stuff
+//#define CONFIG_FORCE_LOAD
+
+//options stuff
+//#define TEST_CHOICES
+//#define TEST_OPTIONS_ADJUST
 //#define TEST_TOOLTIPS
 //#define TEST_CUSTOM_FORMATS
 //#define TEST_CUSTOM_VALUE
 //#define TEST_SLIDERS_RANGE
-
 //#define TEST_ACTIONS
 #endregion
 
@@ -29,7 +31,11 @@ namespace MiscPrototypes
 		// called after Mod.init
 		static partial void initTestConfig()
 		{
-			testConfig = Config.tryLoad<TestConfig>("test_config.json", Config.LoadOptions.ForcedLoad | Config.LoadOptions.ProcessAttributes);
+			testConfig = Config.tryLoad<TestConfig>("test_config.json",
+#if CONFIG_FORCE_LOAD
+				Config.LoadOptions.ForcedLoad |
+#endif
+				Config.LoadOptions.ProcessAttributes);
 		}
 	}
 
@@ -372,6 +378,38 @@ namespace MiscPrototypes
 		}
 		[AddToConsole("deep")]
 		public readonly DeepNestClass deepNestClass = new DeepNestClass();
+#endif
+
+#if TEST_CHOICES
+		[Options.Field]
+		[Options.Choice("Choice 1", "Choice 2", "Choice 3")]
+		public readonly int simpleIntChoice = 1;
+
+		[Options.Field]
+		[Options.Choice("Choice 1", "Choice 2", "Choice 3")]
+		public readonly float simpleFloatChoice = 2f;
+
+		[Options.Field]
+		[Options.Choice("Choice 1 (123)", 123, "Choice 2 (-321)", -321, "Choice 3 (50)", 50)]
+		public readonly int customIntChoice = -321;
+
+		[Options.Field]
+		[Options.Choice("Choice 1 (0.25)", 0.25f, "Choice 2 (-5.75)", -5.75f, "Choice 3 (0.003)", 0.003f)]
+		public readonly float customFloatChoice = -5.75f;
+
+		public enum TestEnum1 { Zero, One, Two, Three };
+
+		[Options.Field]
+		public readonly TestEnum1 simpleEnumChoice = TestEnum1.One;
+
+		public enum TestEnum2 { First_123 = 123, Second_n500 = -500, Third_100 = 100, Fourth_Auto_101 };
+
+		[Options.Field]
+		public readonly TestEnum2 customEnumChoice = TestEnum2.Second_n500;
+
+		[Options.Field]
+		[Options.Choice("Default", "Choice 2", "Choice 3")]
+		public readonly float choiceIncorrectInitial = -100f;
 #endif
 
 #if TEST_OPTIONS_ADJUST

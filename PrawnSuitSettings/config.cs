@@ -75,10 +75,10 @@ namespace PrawnSuitSettings
 
 			// vanilla energy usage
 			[Field.Range(min: 0f)]
-			public readonly float torpedoArm = 0f;
+			public readonly float torpedoArm = 0f; // shooting with torpedo arm costs that much energy units
 
 			[Field.Range(min: 0f)]
-			public readonly float clawArm = 0.1f;
+			public readonly float clawArm = 0.1f; // using claw arm costs that much energy units
 		}
 		public readonly ArmsEnergyUsageSettings armsEnergyUsage = new ArmsEnergyUsageSettings();
 

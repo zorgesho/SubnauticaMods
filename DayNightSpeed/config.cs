@@ -19,8 +19,8 @@ namespace DayNightSpeed
 		public readonly float dayNightSpeed = 1.0f;
 
 		[Options.Field("Use additional multipliers")]
-		[HarmonyHelper.UpdatePatchesAction]
 		[Field.Action(typeof(SpeedsHider))]
+		[Options.FinalizeAction(typeof(HarmonyHelper.UpdateOptionalPatches))]
 		public readonly bool useAuxSpeeds = false;
 
 		[Options.Field("Hunger/thrist", tooltipType: typeof(Tooltips.HungerThrist))]
@@ -29,22 +29,22 @@ namespace DayNightSpeed
 		public float auxSpeedHungerThrist => useAuxSpeeds? speedHungerThrist: 1.0f;
 
 		[Options.Field("Plants growth", tooltipType: typeof(Tooltips.Plants))]
-		[HarmonyHelper.UpdatePatchesAction(typeof(GrowingPlant_GetGrowthDuration_Patch), typeof(FruitPlant_Initialize_Patch))]
+		[Options.FinalizeAction(typeof(HarmonyHelper.UpdateOptionalPatches))]
 		[Slider_0_100][Range_001_100][HideableSpeed]
 		public readonly float speedPlantsGrow = 1.0f;
 
 		[Options.Field("Eggs hatching", tooltipType: typeof(Tooltips.Eggs))]
-		[HarmonyHelper.UpdatePatchesAction(typeof(CreatureEgg_GetHatchDuration_Patch))]
+		[Options.FinalizeAction(typeof(HarmonyHelper.UpdateOptionalPatches))]
 		[Slider_0_100][Range_001_100][HideableSpeed]
 		public readonly float speedEggsHatching = 1.0f;
 
 		[Options.Field("Creatures growth", tooltipType: typeof(Tooltips.Creatures))]
-		[HarmonyHelper.UpdatePatchesAction(typeof(WaterParkCreaturePatches.SetMatureTime_Patch), typeof(WaterParkCreaturePatches.Update_Patch))]
+		[Options.FinalizeAction(typeof(HarmonyHelper.UpdateOptionalPatches))]
 		[Slider_0_100][Range_001_100][HideableSpeed]
 		public readonly float speedCreaturesGrow = 1.0f;
 
 		[Options.Field("Medkit fabrication", tooltipType: typeof(Tooltips.Medkit))]
-		[HarmonyHelper.UpdatePatchesAction(typeof(MedicalCabinet_Start_Patch))]
+		[Options.FinalizeAction(typeof(HarmonyHelper.UpdateOptionalPatches))]
 		[Slider_0_100][Range_001_100][HideableSpeed]
 		public readonly float speedMedkitInterval = 1.0f;
 

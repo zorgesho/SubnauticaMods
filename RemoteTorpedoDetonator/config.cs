@@ -7,19 +7,19 @@ namespace RemoteTorpedoDetonator
 	class ModConfig: Config
 	{
 		[Field.Range(min: 1f)]
-		[HarmonyHelper.UpdatePatchesAction]
+		[Field.Action(typeof(HarmonyHelper.UpdateOptionalPatches))]
 		public readonly float torpedoSpeed = 10f;
 
 		[Field.Range(min: 0f)]
 		public readonly float torpedoCooldown = 5f;
 
-		[HarmonyHelper.UpdatePatchesAction]
+		[Field.Action(typeof(HarmonyHelper.UpdateOptionalPatches))]
 		public readonly bool homingTorpedoes = true;
 
 		public readonly bool showHotkeyMessage = true;
 		public readonly GameInput.Button hotkey = GameInput.Button.Reload;
 
-		[HarmonyHelper.UpdatePatchesAction]
+		[Field.Action(typeof(HarmonyHelper.UpdateOptionalPatches))]
 		public readonly bool cheatInfiniteTorpedoes = false;
 	}
 

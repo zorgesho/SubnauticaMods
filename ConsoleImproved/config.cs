@@ -8,7 +8,7 @@ namespace ConsoleImproved
 		public readonly bool consoleEnabled = true;
 
 		[AddToConsole("console")]
-		[HarmonyHelper.UpdatePatchesAction]
+		[Field.Action(typeof(HarmonyHelper.UpdateOptionalPatches))]
 		public readonly bool keepMessagesOnScreen = true;
 
 		public readonly bool fixVanillaCommandsFloatParse = false;

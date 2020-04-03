@@ -19,28 +19,7 @@ namespace Common
 		// for using in transpiler helper functions
 		static readonly MethodInfo mainConfig = typeof(Config).property(nameof(Config.main)).GetGetMethod();
 
-		[AttributeUsage(AttributeTargets.Field)]
-		public class UpdatePatchesActionAttribute: Config.Field.ActionAttribute
-		{
-			class Action: Config.Field.IAction
-			{
-				Type[] patchTypes;
-				public void init(Type[] _patchTypes) => patchTypes = _patchTypes;
-
-				public void action()
-				{
-					if (patchTypes == null || patchTypes.Length == 0)
-						updateOptionalPatches();
-					else
-						patchTypes.forEach(type => updateOptionalPatch(type));
-				}
-			}
-
-			public UpdatePatchesActionAttribute(): base(typeof(Action)) {}
-
-			public UpdatePatchesActionAttribute(params Type[] patchTypes): this() =>
-				(action as Action).init(patchTypes);
-		}
+		public class UpdateOptionalPatches: Config.Field.IAction { public void action() => updateOptionalPatches(); }
 
 
 		// changing constant to config field

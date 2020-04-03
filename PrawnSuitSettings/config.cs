@@ -16,9 +16,9 @@ namespace PrawnSuitSettings
 			}
 
 			[Options.Field("Damage from collisions", "Damage for Prawn Suit from collisions with terrain and other objects")]
-			[HarmonyHelper.UpdatePatchesAction]
 			[Field.Action(typeof(Hider))]
 			[Field.Action(typeof(CollisionSelfDamage.SettingChanged))]
+			[Options.FinalizeAction(typeof(HarmonyHelper.UpdateOptionalPatches))]
 			public readonly bool enabled = false;
 
 			[Options.Field("\tMinimum speed", "Prawn Suit minimum speed to get self damage from collision")]
@@ -47,9 +47,9 @@ namespace PrawnSuitSettings
 			}
 
 			[Options.Field("Arms additional energy usage", "Energy consuming for drill arm and grappling arm")]
-			[HarmonyHelper.UpdatePatchesAction]
 			[Field.Action(typeof(Hider))]
 			[Field.Action(typeof(ArmsEnergyUsage.SettingChanged))]
+			[Options.FinalizeAction(typeof(HarmonyHelper.UpdateOptionalPatches))]
 			public readonly bool enabled = false;
 
 			[Options.Field("\tDrill arm", "Using drill arm costs that much energy units per second")]
@@ -83,15 +83,15 @@ namespace PrawnSuitSettings
 		public readonly ArmsEnergyUsageSettings armsEnergyUsage = new ArmsEnergyUsageSettings();
 
 		[Options.Field("Propulsion arm 'ready' animation", "Whether propulsion arm should play animation when pointed to something pickupable")]
-		[HarmonyHelper.UpdatePatchesAction]
+		[Options.FinalizeAction(typeof(HarmonyHelper.UpdateOptionalPatches))]
 		public readonly bool readyAnimationForPropulsionCannon = true;
 
 		[Options.Field("Toggleable drill arm", "Whether you need to hold mouse button while using drill arm")]
-		[HarmonyHelper.UpdatePatchesAction]
+		[Options.FinalizeAction(typeof(HarmonyHelper.UpdateOptionalPatches))]
 		public readonly bool toggleableDrillArm = false;
 
 		[Options.Field("Auto pickup resources after drilling", "Drilled resources will be added to the Prawn Suit storage automatically")]
-		[HarmonyHelper.UpdatePatchesAction]
+		[Options.FinalizeAction(typeof(HarmonyHelper.UpdateOptionalPatches))]
 		public readonly bool autoPickupDrillableResources = true;
 	}
 }

@@ -19,13 +19,13 @@ namespace Common.Configuration
 					string tooltip;
 					readonly Type tooltipCmpType;
 
-					public Add(string _tooltip)
+					public Add(string tooltip)
 					{
-						tooltip = _tooltip;
+						this.tooltip = tooltip;
 					}
-					public Add(Type _tooltipCmpType, string _tooltip): this(_tooltip)
+					public Add(Type tooltipCmpType, string tooltip): this(tooltip)
 					{
-						tooltipCmpType = _tooltipCmpType;
+						this.tooltipCmpType = tooltipCmpType;
 
 						Debug.assert(tooltipCmpType == null || typeof(Tooltip).IsAssignableFrom(tooltipCmpType),
 							$"Tooltip type {tooltipCmpType} is not derived from Options.Components.Tooltip");
@@ -43,13 +43,33 @@ namespace Common.Configuration
 						registerLabel(option.id + ".tooltip", ref tooltip, false);
 					}
 
+					protected virtual GameObject getTargetGameObject(GameObject optionGameObject) => optionGameObject;
+
 					public void handle(GameObject gameObject)
 					{
+						GameObject targetGameObject = getTargetGameObject(gameObject);
+
 						// using TranslationLiveUpdate component instead of Text (same result in this case and we don't need to add reference to Unity UI)
-						GameObject caption = gameObject.GetComponentInChildren<TranslationLiveUpdate>().gameObject;
+						GameObject caption = targetGameObject.GetComponentInChildren<TranslationLiveUpdate>().gameObject;
 
 						Type cmpType = tooltipCmpType ?? typeof(Tooltip);
 						(caption.AddComponent(cmpType) as Tooltip).tooltip = tooltip;
+					}
+				}
+
+				// for addind tooltip to the options heading
+				// warning: supposed to be used on the first added option only
+				public class AddToHeading: Add
+				{
+					public AddToHeading(Type tooltipCmpType, string tooltip): base(tooltipCmpType, tooltip) {}
+
+					protected override GameObject getTargetGameObject(GameObject optionGameObject)
+					{
+						int index = optionGameObject.transform.GetSiblingIndex();
+						Debug.assert(index > 0);
+						GameObject heading = optionGameObject.transform.parent.GetChild(index - 1).gameObject;
+
+						return heading;
 					}
 				}
 

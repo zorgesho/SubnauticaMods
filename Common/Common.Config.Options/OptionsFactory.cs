@@ -131,6 +131,25 @@ namespace Common.Configuration
 				}
 			}
 
+			class HeadingTooltipModifier: IModifier
+			{
+				static bool processed = false;
+
+				public void process(ModOption option)
+				{
+					if (processed || !(processed = true)) // process only the first added option
+						return;
+
+					Debug.assert(instance == null); // if this the first option, ModOptions shouldn't be created yet
+
+					if (option.cfgField.getAttr<NameAttribute>(true) is NameAttribute nameAttr)
+					{
+						if (nameAttr.tooltipType != null || nameAttr.tooltip != null)
+							option.addHandler(new Components.Tooltip.AddToHeading(nameAttr.tooltipType, nameAttr.tooltip));
+					}
+				}
+			}
+
 			class HideableModifier: IModifier
 			{
 				public void process(ModOption option)

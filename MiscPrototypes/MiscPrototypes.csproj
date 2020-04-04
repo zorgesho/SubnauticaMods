@@ -93,6 +93,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="src\ModManager.cs" />
     <None Include="src\TestConfig.cs" />
     <None Include="src\ui\UIDebugStuff.cs" />
     <None Include="src\EmergencyPowerStation.cs" />

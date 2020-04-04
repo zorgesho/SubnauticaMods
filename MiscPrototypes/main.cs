@@ -16,6 +16,8 @@ namespace MiscPrototypes
 			HarmonyHelper.patchAll(true);
 			LanguageHelper.init();
 			CraftHelper.patchAll();
+
+			ModManager.init();
 		}
 	}
 }

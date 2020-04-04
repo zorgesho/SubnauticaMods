@@ -30,7 +30,10 @@ namespace Common.Configuration
 					actions = new IAction[actionAttrs.Length];
 
 					for (int i = 0; i < actions.Length; i++)
+					{
 						actions[i] = actionAttrs[i].action;
+						(actions[i] as IRootConfigInfo)?.setRootConfig(rootConfig);
+					}
 				}
 			}
 

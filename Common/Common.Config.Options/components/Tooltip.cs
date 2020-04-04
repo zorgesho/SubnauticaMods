@@ -19,6 +19,8 @@ namespace Common.Configuration
 					string tooltip;
 					readonly Type tooltipCmpType;
 
+					ModOption parentOption;
+
 					public Add(string tooltip)
 					{
 						this.tooltip = tooltip;
@@ -33,6 +35,8 @@ namespace Common.Configuration
 
 					public void init(ModOption option)
 					{
+						parentOption = option;
+
 						if (tooltip == null)
 							return;
 
@@ -53,7 +57,7 @@ namespace Common.Configuration
 						GameObject caption = targetGameObject.GetComponentInChildren<TranslationLiveUpdate>().gameObject;
 
 						Type cmpType = tooltipCmpType ?? typeof(Tooltip);
-						(caption.AddComponent(cmpType) as Tooltip).tooltip = tooltip;
+						(caption.AddComponent(cmpType) as Tooltip).init(tooltip, parentOption);
 					}
 				}
 
@@ -73,6 +77,13 @@ namespace Common.Configuration
 					}
 				}
 
+				void init(string tooltip, ModOption parentOption)
+				{
+					this.tooltip = tooltip;
+					this.parentOption = parentOption;
+				}
+
+				protected ModOption parentOption;
 
 				public virtual string tooltip
 				{

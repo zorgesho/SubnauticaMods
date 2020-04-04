@@ -39,6 +39,7 @@ namespace Common.Configuration
 
 			public Type type => field.FieldType;
 			public string name => field.Name;
+			public object parentObject => parent;
 
 			public string path => _path ?? (_path = rootConfig.getFieldPath(parent, field));
 			string _path = null;

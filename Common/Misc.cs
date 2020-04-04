@@ -87,7 +87,24 @@ namespace Common
 	{
 		public static string fullName(this MemberInfo memberInfo) => (memberInfo == null)? "[null]": memberInfo.DeclaringType.FullName + "." + memberInfo.Name;
 
-		public static A    getAttribute<A>(this MemberInfo memberInfo)   where A: Attribute => Attribute.GetCustomAttribute(memberInfo, typeof(A)) as A;
+		public static A getAttribute<A>(this MemberInfo memberInfo, bool includeDeclaringTypes = false) where A: Attribute
+		{
+			A attr = Attribute.GetCustomAttribute(memberInfo, typeof(A)) as A;
+
+			if (!includeDeclaringTypes)
+				return attr;
+
+			Type declaringType = memberInfo.DeclaringType;
+
+			while (attr == null && declaringType != null)
+			{
+				attr = declaringType.getAttribute<A>();
+				declaringType = declaringType.DeclaringType;
+			}
+
+			return attr;
+		}
+
 		public static A[]  getAttributes<A>(this MemberInfo memberInfo)  where A: Attribute => Attribute.GetCustomAttributes(memberInfo, typeof(A)) as A[];
 		public static bool checkAttribute<A>(this MemberInfo memberInfo) where A: Attribute => Attribute.IsDefined(memberInfo, typeof(A));
 	}

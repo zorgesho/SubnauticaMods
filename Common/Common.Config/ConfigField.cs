@@ -43,7 +43,8 @@ namespace Common.Configuration
 			public string path => _path ?? (_path = rootConfig.getFieldPath(parent, field));
 			string _path = null;
 
-			public A getAttr<A>() where A: Attribute => field.getAttribute<A>();
+			public A getAttr<A>(bool includeDeclaringTypes = false) where A: Attribute =>
+				field.getAttribute<A>(includeDeclaringTypes);
 
 			public virtual object value
 			{

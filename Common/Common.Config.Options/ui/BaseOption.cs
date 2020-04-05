@@ -29,7 +29,7 @@ namespace Common.Configuration
 			public readonly string id;
 			protected readonly string label;
 
-			protected GameObject gameObject;
+			public GameObject gameObject { get; protected set; }
 			public readonly Config.Field cfgField;
 
 			public ModOption(Config.Field _cfgField, string _label)

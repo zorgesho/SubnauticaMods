@@ -200,8 +200,10 @@ namespace Common
 			nonUniqueIDs.TryGetValue(id, out int counter);
 			nonUniqueIDs[id] = ++counter;
 
-			id += "." + counter;																		$"UniqueIDs: fixed ID: {id}".logWarning();
-
+			id += "." + counter;
+#if DEBUG
+			$"UniqueIDs: fixed ID: {id}".logWarning();
+#endif
 			Debug.assert(allIDs.Add(id)); // checking updated id just in case
 
 			return false;

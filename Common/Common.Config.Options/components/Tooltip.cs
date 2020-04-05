@@ -19,6 +19,8 @@ namespace Common.Configuration
 					string tooltip;
 					readonly Type tooltipCmpType;
 
+					static readonly UniqueIDs uniqueIDs = new UniqueIDs();
+
 					ModOption parentOption;
 
 					public Add(string tooltip)
@@ -44,7 +46,10 @@ namespace Common.Configuration
 						if (tooltipCmpType == null)
 							tooltip = $"<size={defaultTextSize}>" + tooltip + "</size>";
 
-						registerLabel(option.id + ".tooltip", ref tooltip, false);
+						string stringID = option.id + ".tooltip";
+						uniqueIDs.ensureUniqueID(ref stringID); // in case we add more than one tooltip to the option (e.g. for heading)
+
+						registerLabel(stringID, ref tooltip, false);
 					}
 
 					protected virtual GameObject getTargetGameObject(GameObject optionGameObject) => optionGameObject;
@@ -71,9 +76,8 @@ namespace Common.Configuration
 					{
 						int index = optionGameObject.transform.GetSiblingIndex();
 						Debug.assert(index > 0);
-						GameObject heading = optionGameObject.transform.parent.GetChild(index - 1).gameObject;
 
-						return heading;
+						return optionGameObject.transform.parent.GetChild(index - 1).gameObject;
 					}
 				}
 
@@ -119,12 +123,12 @@ namespace Common.Configuration
 			{
 				T1? param1 = null;
 
-				protected bool isParamsChanged(T1 _param1)
+				protected bool isParamsChanged(T1 param1)
 				{
-					if (_param1.Equals(param1))
+					if (Equals(this.param1, param1))
 						return false;
 
-					param1 = _param1;
+					this.param1 = param1;
 					return true;
 				}
 			}
@@ -134,13 +138,13 @@ namespace Common.Configuration
 				T1? param1 = null;
 				T2? param2 = null;
 
-				protected bool isParamsChanged(T1 _param1, T2 _param2)
+				protected bool isParamsChanged(T1 param1, T2 param2)
 				{
-					if (_param1.Equals(param1) && _param2.Equals(param2))
+					if (Equals(this.param1, param1) && Equals(this.param2, param2))
 						return false;
 
-					param1 = _param1;
-					param2 = _param2;
+					this.param1 = param1;
+					this.param2 = param2;
 					return true;
 				}
 			}

@@ -51,16 +51,14 @@ namespace DebrisRecycling
 	[CraftHelper.NoAutoPatch]
 	class TitaniumFromScrap: CraftableObject
 	{
-		static bool nodesInited = false;
-
 		readonly TechType sourceTech;
 		readonly int sourceCount, resultCount;
 
-		public TitaniumFromScrap(TechType _sourceTech, int _sourceCount, int _resultCount): base(nameof(TitaniumFromScrap) + _resultCount)
+		public TitaniumFromScrap(TechType sourceTech, int sourceCount, int resultCount): base(nameof(TitaniumFromScrap) + resultCount)
 		{
-			sourceTech = _sourceTech;
-			sourceCount = _sourceCount;
-			resultCount = _resultCount;
+			this.sourceTech  = sourceTech;
+			this.sourceCount = sourceCount;
+			this.resultCount = resultCount;
 		}
 
 		public override GameObject getGameObject() => Object.Instantiate(CraftData.GetPrefabForTechType(TechType.Titanium));
@@ -75,7 +73,7 @@ namespace DebrisRecycling
 
 		public override void patch()
 		{
-			if (Main.config.craftConfig.dynamicTitaniumBlueprint)
+			if (Main.config.craftConfig.dynamicTitaniumRecipe)
 				return;
 
 			initNodes();
@@ -83,14 +81,15 @@ namespace DebrisRecycling
 			register($"Titanium (x{resultCount})", "Ti. Basic building material.", TechType.Titanium);
 			setCraftingTime(0.7f * resultCount);
 			addCraftingNodeTo(CraftTree.Type.Fabricator, "Resources/Titanium");
+			unlockOnStart();
 		}
+
+		static bool nodesInited = false;
 
 		static void initNodes()
 		{
-			if (nodesInited)
+			if (nodesInited || !(nodesInited = true))
 				return;
-
-			nodesInited = true;
 
 			CraftTreeHandler.RemoveNode(CraftTree.Type.Fabricator, "Resources", "BasicMaterials", "Titanium");
 			CraftTreeHandler.AddTabNode(CraftTree.Type.Fabricator, "Titanium", "Titanium", SpriteManager.Get(TechType.Titanium), "Resources");
@@ -99,8 +98,8 @@ namespace DebrisRecycling
 	}
 
 	// for CraftHelper patchAll
-	class T1: TitaniumFromScrap  { public T1(): base(ScrapMetalSmall.TechType, 1, 1) {} }
-	class T5: TitaniumFromScrap  { public T5(): base(ScrapMetalSmall.TechType, 5, 5) {} }
+	class T1: TitaniumFromScrap  { public T1(): base(ScrapMetalSmall.TechType, 1, 1 * Main.config.craftConfig.titaniumPerSmallScrap) {} }
+	class T5: TitaniumFromScrap  { public T5(): base(ScrapMetalSmall.TechType, 5, 5 * Main.config.craftConfig.titaniumPerSmallScrap) {} }
 	//class T10: TitaniumFromScrap { public T10(): base(ScrapMetalSmall.TechType, 10, 10) {} }
 	//class T20: TitaniumFromScrap { public T20(): base(TechType.ScrapMetal, 5, 20) {} }
 }

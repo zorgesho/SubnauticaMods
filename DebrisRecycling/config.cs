@@ -15,28 +15,24 @@ namespace DebrisRecycling
 	}
 
 
-	[Options.Name("Debris Recycling <color=#CCCCCCFF>(restart game to apply options)</color>")]
+	[Options.Name("Debris Recycling", "<size=20>You'll need to restart the game in order to apply options</size>", typeof(HideableHeadingTooltip))]
 	class ModConfig: Config
 	{
-#pragma warning disable CS0414 // unused field
-		[Field.LoadOnly] readonly bool dynamicMetalScrapRequirements = true; // obsolete
-#pragma warning restore
+		class HideableHeadingTooltip: Options.Components.Tooltip
+		{
+			// heading tooltip actually belongs to first added option, so we can check if it active
+			protected override string getTooltip() => parentOption.gameObject.activeSelf? tooltip: null;
+		}
 
 		public class CraftConfig
 		{
-			[Options.Field("Dynamic titanium blueprint")]
-			public readonly bool dynamicTitaniumBlueprint = true;
+			[Options.Field("Dynamic recipe for titanium", "Dynamic recipe for titanium includes all scrap in the inventory")]
+			public readonly bool dynamicTitaniumRecipe = true;
 
 			public readonly int titaniumPerBigScrap = 4;
 			public readonly int titaniumPerSmallScrap = 1;
 		}
 		public readonly CraftConfig craftConfig = new CraftConfig();
-
-		protected override void onLoad() // v1.0.0 -> v1.0.1 (dynamicMetalScrapRequirements -> craftConfig.dynamicTitaniumBlueprint)
-		{
-			if (!dynamicMetalScrapRequirements)
-				typeof(CraftConfig).field(nameof(CraftConfig.dynamicTitaniumBlueprint)).SetValue(craftConfig, false); // using reflection to keep field readonly
-		}
 
 		public class PrefabsConfig
 		{

@@ -9,7 +9,7 @@ namespace DebrisRecycling
 		[HarmonyPatch(typeof(uGUI_CraftingMenu), "Open")]
 		static class uGUICraftingMenu_Open_Patch
 		{
-			static bool Prepare() => Main.config.craftConfig.dynamicTitaniumBlueprint;
+			static bool Prepare() => Main.config.craftConfig.dynamicTitaniumRecipe;
 
 			static void Prefix(CraftTree.Type treeType, ITreeActionReceiver receiver)
 			{
@@ -24,7 +24,7 @@ namespace DebrisRecycling
 		[HarmonyPatch(typeof(TooltipFactory), "Recipe")]
 		static class TooltipFactory_Recipe_Patch
 		{
-			static bool Prepare() => Main.config.craftConfig.dynamicTitaniumBlueprint;
+			static bool Prepare() => Main.config.craftConfig.dynamicTitaniumRecipe;
 
 			static void Prefix(TechType techType, out string tooltipText)
 			{
@@ -43,7 +43,7 @@ namespace DebrisRecycling
 		[HarmonyPatch(typeof(GhostCrafter), "Craft")]
 		static class GhostCrafter_Craft_Patch
 		{
-			static bool Prepare() => Main.config.craftConfig.dynamicTitaniumBlueprint && Main.config.extraPowerConsumption;
+			static bool Prepare() => Main.config.craftConfig.dynamicTitaniumRecipe && Main.config.extraPowerConsumption;
 
 			[HarmonyPriority(Priority.High)]
 			static void Prefix(GhostCrafter __instance, TechType techType)

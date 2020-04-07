@@ -33,6 +33,13 @@ namespace Common.Crafting
 				CraftDataHandler.SetTechData(TechType, techData);
 		}
 
+		protected void useExactPrefab()
+		{																												$"Already using exact prefab! ({ClassID})".logDbgError(isUsingExactPrefab);
+			isUsingExactPrefab = true;
+			PrefabDatabasePatcher.addPrefab(this);
+		}
+
+
 		protected void register(TechType techType) // for already existing techtypes
 		{
 			TechType = techType;
@@ -57,11 +64,12 @@ namespace Common.Crafting
 			return TechType;
 		}
 
-		protected void useExactPrefab()
-		{																												$"Already using exact prefab! ({ClassID})".logDbgError(isUsingExactPrefab);
-			isUsingExactPrefab = true;
-			PrefabDatabasePatcher.addPrefab(this);
-		}
+
+		protected void unlockOnStart() => KnownTechHandler.UnlockOnStart(TechType);
+
+		protected void setTechTypeForUnlock(TechType techType) =>
+			KnownTechHandler.SetAnalysisTechEntry(techType, new TechType[1] { TechType });
+
 
 		protected void addToGroup(TechGroup group, TechCategory category, TechType after = TechType.None)
 		{
@@ -70,24 +78,6 @@ namespace Common.Crafting
 			if (group >= TechGroup.BasePieces && group <= TechGroup.Miscellaneous) // little hack
 				CraftDataHandler.AddBuildable(TechType);
 		}
-
-		protected void setEquipmentType(EquipmentType equipmentType, QuickSlotType quickSlotType = QuickSlotType.None)
-		{
-			CraftDataHandler.SetEquipmentType(TechType, equipmentType);
-
-			if (quickSlotType != QuickSlotType.None)
-				CraftDataHandler.SetQuickSlotType(TechType, quickSlotType);
-		}
-
-		protected void setTechTypeForUnlock(TechType techType, string message = "NotificationBlueprintUnlocked")
-		{
-			KnownTechHandler.SetAnalysisTechEntry(techType, new TechType[1] { TechType }, message);
-		}
-
-		//protected void setAllTechTypesForUnlock(TechType t1, TechType t2)
-		//{
-		//	UnlockTechHelper.setTechTypesForUnlock(UnlockTechHelper.UnlockType.All, TechType, new TechType[] { t1, t2 });
-		//}
 
 		protected void addCraftingNodeTo(CraftTree.Type craftTree, string craftPath) =>
 			CraftTreeHandler.AddCraftingNode(craftTree, TechType, craftPath.Split('/'));
@@ -98,12 +88,19 @@ namespace Common.Crafting
 		protected void addCraftingNodeTo(ModCraftTreeLinkingNode modCraftTreeNode) =>
 			modCraftTreeNode.AddCraftingNode(TechType);
 
+
+		protected void setEquipmentType(EquipmentType equipmentType, QuickSlotType quickSlotType = QuickSlotType.None)
+		{
+			CraftDataHandler.SetEquipmentType(TechType, equipmentType);
+
+			if (quickSlotType != QuickSlotType.None)
+				CraftDataHandler.SetQuickSlotType(TechType, quickSlotType);
+		}
+
 		protected void setBackgroundType(CraftData.BackgroundType backgroundType) => CraftDataHandler.SetBackgroundType(TechType, backgroundType);
 
 		protected void setItemSize(int width, int height) => CraftDataHandler.SetItemSize(TechType, width, height);
 
 		protected void setCraftingTime(float time) => CraftDataHandler.SetCraftingTime(TechType, time);
-
-		protected void unlockOnStart() => KnownTechHandler.UnlockOnStart(TechType);
 	}
 }

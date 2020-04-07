@@ -186,24 +186,4 @@ namespace MiscPatches
 			CraftData.useEatSound.Add(TechType.Coffee, "event:/player/drink");
 		}
 	}
-
-	// fixing known eggs that appear as unknown
-	// most of the eggs somehow dont subscribe to KnownTech event and remain unknown
-	// UPDATE: it seems to be fixed in Nov-06 update
-	//[HarmonyPatch(typeof(Pickupable), "OnHandHover")]
-	//static class Pickupable_OnHandHover_Patch
-	//{
-	//	static void Prefix(Pickupable __instance)
-	//	{
-	//		if (!__instance.overrideTechUsed)
-	//			return;
-
-	//		CreatureEgg egg = __instance.GetComponent<CreatureEgg>();
-	//		if (egg && KnownTech.Contains(egg.eggType))
-	//		{
-	//			__instance.ResetTechTypeOverride();
-	//			egg.Subscribe(false); // just in case
-	//		}
-	//	}
-	//}
 }

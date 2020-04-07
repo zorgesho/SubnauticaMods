@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using Harmony;
+﻿using Harmony;
+using UnityEngine;
 
 namespace MiscPatches
 {
@@ -40,14 +40,14 @@ namespace MiscPatches
 		{
 			reel.nodes.Remove(node.gameObject);
 			node.DestroySelf(0.1f);
-			
+
 			recalcNodes(reel);
 		}
 
 		static void recalcNodes(DiveReel reel)
 		{
 			reel.nodePositions.Clear();
-			
+
 			Transform prevTransform = reel.transform;
 
 			foreach	(var nodeObj in reel.nodes)

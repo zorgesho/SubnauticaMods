@@ -2,6 +2,9 @@
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Collections.Generic;
+
+using Harmony;
 
 namespace Common
 {
@@ -37,6 +40,28 @@ namespace Common
 			string fullID = prefix + ids;
 			return addString(fullID, str)? (getFullID? fullID: ids): str;
 		}
+
+
+		static Dictionary<string, string> substitutedStrings = null; // 'key' string using value of 'value' string
+
+		// use 'substituteStringID' string as value for 'stringID' (for using before Language.main is loaded)
+		public static void substituteString(string stringID, string substituteStringID)
+		{
+			if (substitutedStrings == null)
+			{
+				substitutedStrings = new Dictionary<string, string>();
+				HarmonyHelper.patch();
+			}
+
+			substitutedStrings[stringID] = substituteStringID;
+		}
+
+		[HarmonyPostfix]
+		[HarmonyAfter("com.ahk1221.smlhelper")]
+		[HarmonyPatch(typeof(Language), "LoadLanguageFile")]
+		static void substituteStrings(Language __instance) =>
+			substitutedStrings.forEach(subst => __instance.strings[subst.Key] = __instance.strings[subst.Value]);
+
 
 		// wrap method for SMLHelper.LanguageHandler.SetLanguageLine
 		static readonly Func<string, string, bool> addString = _initDynamicMethod();

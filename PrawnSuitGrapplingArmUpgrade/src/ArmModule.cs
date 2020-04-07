@@ -32,7 +32,11 @@ namespace PrawnSuitGrapplingArmUpgrade
 			addCraftingNodeTo(CraftTree.Type.Workbench, "ExosuitMenu");
 			setEquipmentType(EquipmentType.ExosuitArm, QuickSlotType.Selectable);
 			setBackgroundType(CraftData.BackgroundType.ExosuitArm);
-			setTechTypeForUnlock(TechType.ExosuitGrapplingArmModule);
+
+			if (Main.config.fragmentCountToUnlock > 0)
+				setFragmentToUnlock(TechType.ExosuitGrapplingArmFragment, Main.config.fragmentCountToUnlock, 7f);
+			else
+				setTechTypeForUnlock(TechType.ExosuitGrapplingArmModule);
 		}
 	}
 }

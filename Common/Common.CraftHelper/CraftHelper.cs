@@ -15,30 +15,30 @@ namespace Common.Crafting
 
 		static bool allPatched = false;
 
+		// search for classes derived from CraftableObject and patch them
+		// can be controlled by using attributes above ^
 		public static void patchAll()
 		{
-			if (allPatched)
+			if (allPatched || !(allPatched = true))
 				return;
-
-			allPatched = true;
 
 			List<Type> toPatch = new List<Type>();
 
 			foreach (var type in ReflectionHelper.definedTypes)
 			{
-				if (typeof(CraftableObject).IsAssignableFrom(type) && !type.checkAttribute<NoAutoPatchAttribute>())
-				{
-					if (type.checkAttribute<PatchFirstAttribute>())
-						patchObject(type);
-					else
-						toPatch.Add(type);
-				}
+				if (!typeof(CraftableObject).IsAssignableFrom(type) || type.checkAttribute<NoAutoPatchAttribute>())
+					continue;
+
+				if (type.checkAttribute<PatchFirstAttribute>())
+					patchClass(type);
+				else
+					toPatch.Add(type);
 			}
 
-			toPatch.ForEach(type => patchObject(type));
+			toPatch.ForEach(type => patchClass(type));
 		}
 
-		static void patchObject(Type type)
+		static void patchClass(Type type)
 		{																						$"CraftHelper: patching {type}".logDbg();
 			(Activator.CreateInstance(type) as CraftableObject)?.patch();
 		}

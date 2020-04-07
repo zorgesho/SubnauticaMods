@@ -1,70 +1,108 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
+using System.Reflection.Emit;
+using System.Collections.Generic;
 
 using Harmony;
+using SMLHelper.V2.Handlers;
 
 namespace Common.Crafting
 {
 	static class UnlockTechHelper
 	{
-		public enum UnlockType {Any, All};
-		
-		class CompoundTech
+		// key - original fragment tech type, value - substitute fragment tech type
+		static readonly Dictionary<TechType, TechType> fragments = new Dictionary<TechType, TechType>();
+
+		// key - tech for unlocking, value - tech for unlockPopup sprite (can be tech type or fragment type)
+		static readonly Dictionary<TechType, TechType> unlockPopups = new Dictionary<TechType, TechType>();
+
+		static bool inited = false;
+		static void init()
 		{
-			public TechType techType;
-			public List<TechType> dependencies;
+			if (!inited && (inited = true))
+				HarmonyHelper.patch();
 		}
 
-		static readonly List<CompoundTech> compoundTech = new List<CompoundTech>();
-
-		public static void setTechTypesForUnlock(UnlockType unlockType, TechType techForUnlock, TechType[] techToUnlock)
+		public static void setFragmentTypeToUnlock(TechType unlockTechType, TechType origFragTechType, TechType substFragTechType, int fragCount, float scanTime)
 		{
-			if (unlockType == UnlockType.All)
+			init();
+
+			PDAHandler.AddCustomScannerEntry(new PDAScanner.EntryData()
 			{
-				compoundTech.Add(new CompoundTech { techType = techForUnlock, dependencies = new List<TechType>(techToUnlock) });
-			}
-			else
-			{
-				// use smlhelper?
-			}
+				key = substFragTechType,
+				blueprint = unlockTechType,
+				totalFragments = fragCount,
+				scanTime = scanTime,
+				destroyAfterScan = true,
+				locked = true,
+				isFragment = true
+			});
+
+			fragments[origFragTechType] = substFragTechType;
+			setUnlockNotification(unlockTechType, origFragTechType);
 		}
 
-		[HarmonyPatch(typeof(KnownTech), "Add")] // todo optional patch
-		static class KnownTech_Add_Patch
+		public static void setUnlockNotification(TechType techType, UnityEngine.Sprite unlockPopup)
 		{
-			static void Postfix(TechType techType)
-			{
-				foreach (var c in compoundTech)
-				{
-					if (c.dependencies.Contains(techType) && !KnownTech.Contains(c.techType))
-					{
-						bool unlock = true;
-						c.dependencies.ForEach(d => unlock &= KnownTech.Contains(d));
+			KnownTechHandler.SetAnalysisTechEntry(techType, new TechType[0], UnlockSprite: unlockPopup);
+		}
 
-						if (unlock)
-							KnownTech.Add(c.techType, true);
-					}
-				}
+		public static void setUnlockNotification(TechType techType, TechType unlockPopupTechType)
+		{
+			setUnlockNotification(techType, null);
+			unlockPopups[techType] = unlockPopupTechType;
+		}
+
+
+		#region patches
+		// substitute fragment tech type if it already known (for use in transpiler)
+		static TechType substituteTechType(TechType scanTechType)
+		{
+			if (!fragments.TryGetValue(scanTechType, out TechType substTechType))
+				return scanTechType;
+
+			return PDAScanner.complete.Contains(scanTechType)? substTechType: scanTechType;
+		}
+
+		[HarmonyTranspiler]
+		[HarmonyPatch(typeof(PDAScanner), "Scan")]
+		static IEnumerable<CodeInstruction> scannerPatch(IEnumerable<CodeInstruction> cins) =>
+			HarmonyHelper.ciInsert(cins,
+				cin => cin.isOp(OpCodes.Stloc_0), +1, 1,
+					OpCodes.Ldloc_0,
+					new CodeInstruction(OpCodes.Call, typeof(UnlockTechHelper).method(nameof(UnlockTechHelper.substituteTechType))),
+					OpCodes.Stloc_0);
+
+		[HarmonyPrefix]
+		[HarmonyPatch(typeof(PDAScanner), "ContainsCompleteEntry")] // for loot spawning
+		static bool fragmentCheckOverride(TechType techType, ref bool __result)
+		{
+			if (!fragments.TryGetValue(techType, out TechType substTechType))
+				return true;
+
+			__result = PDAScanner.complete.Contains(substTechType);
+			return false;
+		}
+
+		[HarmonyPostfix]
+		[HarmonyAfter("com.ahk1221.smlhelper")]
+		[HarmonyPatch(typeof(KnownTech), "Initialize")]
+		static void unlockPopupsUpdate()
+		{
+			KnownTech.AnalysisTech _getEntry(TechType techType) =>
+				KnownTech.analysisTech.Where(tech => tech.techType == techType).FirstOrDefault();
+
+			foreach (var popup in unlockPopups)
+			{
+				var tech   = _getEntry(popup.Key);
+				var sprite = _getEntry(popup.Value)?.unlockPopup;
+
+				if (sprite == null && PDAScanner.GetEntryData(popup.Value) is PDAScanner.EntryData fragData)
+					sprite = _getEntry(fragData.blueprint)?.unlockPopup; // try popup.Value as fragment tech type
+
+				if (sprite != null)
+					tech.unlockPopup = sprite;
 			}
 		}
+		#endregion
 	}
-
-
-	//[HarmonyPatch(typeof(KnownTech), "Analyze")]
-	//static class Exosuit_SpawnArm_Patch11111
-	//{
-	//	static void Postfix(TechType techType)
-	//	{
-	//		$"-------- ANALYZED {techType}".log();
-	//	}
-	//}
-	
-	//[HarmonyPatch(typeof(PDAScanner), "Unlock")]
-	//static class Exosuit_SpawnArm_Patch11111111
-	//{
-	//	static void Postfix(PDAScanner.EntryData entryData)
-	//	{
-	//		$"-------- SCANNED {entryData.key}".log();
-	//	}
-	//}
-
 }

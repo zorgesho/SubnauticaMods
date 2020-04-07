@@ -70,6 +70,17 @@ namespace Common.Crafting
 		protected void setTechTypeForUnlock(TechType techType) =>
 			KnownTechHandler.SetAnalysisTechEntry(techType, new TechType[1] { TechType });
 
+		// for using already existing fragments (will be used for this tech if fragment own tech is unlocked)
+		protected void setFragmentToUnlock(TechType fragTechType, int fragCount, float scanTime = 1f)
+		{
+			string fragTechID = ClassID + "_Fragment";
+
+			TechType substFragTechType = TechTypeHandler.AddTechType(fragTechID, "", "");
+			LanguageHelper.substituteString(fragTechID, fragTechType.AsString(false)); // use name from original fragment
+
+			UnlockTechHelper.setFragmentTypeToUnlock(TechType, fragTechType, substFragTechType, fragCount, scanTime);
+		}
+
 
 		protected void addToGroup(TechGroup group, TechCategory category, TechType after = TechType.None)
 		{

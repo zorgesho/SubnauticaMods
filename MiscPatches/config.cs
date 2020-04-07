@@ -1,4 +1,5 @@
-﻿using Common.Configuration;
+﻿using Common;
+using Common.Configuration;
 
 namespace MiscPatches
 {
@@ -28,5 +29,11 @@ namespace MiscPatches
 		public readonly bool  chargersAbsoluteSpeed = true;    // charge speed is not linked to capacity (default false)
 		public readonly float batteryChargerSpeed   = 0.0015f; // 0.0015f
 		public readonly float powerCellChargerSpeed = 0.0025f; // 0.0025f
+
+		// debug stuff
+		[Field.Range(min: 0)]
+		[AddToConsole("misc")]
+		[Field.Action(typeof(HarmonyHelper.UpdateOptionalPatches))]
+		public readonly int loolSpawnRerollCount = 0;
 	}
 }

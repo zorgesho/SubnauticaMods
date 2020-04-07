@@ -29,6 +29,11 @@ namespace MiscPatches
 				if (n.getArgsCount() > 0 && Player.main?.GetVehicle()?.GetComponent<LiveMixin>() is LiveMixin liveMixin)
 					liveMixin.health = liveMixin.maxHealth * (n.getArg(0).toFloat());
 			}
+
+			void OnConsoleCommand_unloadloot(NotificationCenter.Notification _)
+			{
+				LargeWorldStreamer.main?.ForceUnloadAll();
+			}
 		}
 
 		public static void init()

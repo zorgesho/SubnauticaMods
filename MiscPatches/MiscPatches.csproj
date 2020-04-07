@@ -91,6 +91,7 @@
   <ItemGroup>
     <Compile Include="config.cs" />
     <Compile Include="src\ConsoleCommands.cs" />
+    <Compile Include="src\DebugPatches.cs" />
     <Compile Include="src\DiveReelPatches.cs" />
     <Compile Include="src\Vehicles.cs" />
     <Compile Include="src\CraftPatches.cs" />

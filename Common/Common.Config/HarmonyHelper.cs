@@ -22,6 +22,8 @@ namespace Common
 		public class UpdateOptionalPatches: Config.Field.IAction { public void action() => updateOptionalPatches(); }
 
 
+		// warning: nested classes are not supported for cfgVarName!
+
 		// changing constant to config field
 		public static CIList constToCfgVar<T>(CIEnumerable cins, T val, string cfgVarName) =>
 			constToCfgVar(cins.ToList(), val, cfgVarName);
@@ -55,9 +57,9 @@ namespace Common
 		public static CIEnumerable _codeForCfgVar(string cfgVarName)
 		{
 			var cfgVarCI = getCfgVarCI(cfgVarName);
-			Debug.assert(cfgVarCI != null);
+			Debug.assert(cfgVarCI != null, $"_codeForCfgVar: member for {cfgVarName} is not found");
 
-			if (cfgVarCI == null && $"_codeForCfgVar: member for {cfgVarName} is not found".logError())
+			if (cfgVarCI == null)
 				yield break;
 
 			yield return new CodeInstruction(OpCodes.Call, mainConfig);
@@ -68,9 +70,9 @@ namespace Common
 		public static CIEnumerable _codeForCfgVar<T, C>(T val, string cfgVarName, ILGenerator ilg) where C: Component
 		{																												$"HarmonyHelper._codeForCfgVar: injecting {val} => {cfgVarName} ({typeof(C)})".logDbg();
 			var cfgVarCI = getCfgVarCI(cfgVarName);
-			Debug.assert(cfgVarCI != null);
+			Debug.assert(cfgVarCI != null, $"_codeForCfgVar: member for {cfgVarName} is not found");
 
-			if (cfgVarCI == null && $"_codeForCfgVar: member for {cfgVarName} is not found".logError())
+			if (cfgVarCI == null)
 				yield break;
 
 			Label lb1 = ilg.DefineLabel();

@@ -89,7 +89,7 @@ namespace Common.Crafting
 		static void unlockPopupsUpdate()
 		{
 			KnownTech.AnalysisTech _getEntry(TechType techType) =>
-				KnownTech.analysisTech.Where(tech => tech.techType == techType).FirstOrDefault();
+				KnownTech.analysisTech.FirstOrDefault(tech => tech.techType == techType);
 
 			foreach (var popup in unlockPopups)
 			{

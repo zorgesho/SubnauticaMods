@@ -1,17 +1,21 @@
 ﻿using Common;
-using Common.Configuration;
+using Common.Crafting;
 
 namespace GravTrapImproved
 {
 	public static class Main
 	{
-		internal static readonly ModConfig config = Config.tryLoad<ModConfig>();
+		internal static readonly ModConfig config = Mod.init<ModConfig>();
 
 		public static void patch()
 		{
-			HarmonyHelper.patchAll();
+			LanguageHelper.init();
 
-			//Options.init();
+			HarmonyHelper.patchAll();
+			CraftHelper.patchAll();
+
+			if (config.mk2Enabled)
+				HarmonyHelper.patch(typeof(GravTrapMK2Patches));
 		}
 	}
 }

@@ -14,7 +14,17 @@ namespace GravTrapImproved
 	[HarmonyPatch(typeof(Gravsphere), "AddAttractable")]
 	static class Gravsphere_AddAttractable_Patch
 	{
-		static void Postfix(Rigidbody r) => GravTrapObjectsType.handleAttracted(r);
+		static void Postfix(Gravsphere __instance, Rigidbody r) => __instance.GetComponent<GravTrapObjectsType>().handleAttracted(r, true);
+	}
+
+	[HarmonyPatch(typeof(Gravsphere), "DestroyEffect")]
+	static class Gravsphere_DestroyEffect_Patch
+	{
+		static void Postfix(Gravsphere __instance, int index)
+		{
+			if (__instance.attractableList[index] is Rigidbody rigidBody)
+				__instance.GetComponent<GravTrapObjectsType>().handleAttracted(rigidBody, false);
+		}
 	}
 
 	[HarmonyPatch(typeof(Gravsphere), "IsValidTarget")]

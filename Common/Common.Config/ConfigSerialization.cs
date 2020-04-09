@@ -38,7 +38,11 @@ namespace Common.Configuration
 				return property;
 			}
 		}
-		static readonly JsonSerializerSettings serializerSettings = new JsonSerializerSettings() { ContractResolver = new ConfigContractResolver() };
+		static readonly JsonSerializerSettings serializerSettings = new JsonSerializerSettings()
+		{
+			ContractResolver = new ConfigContractResolver(),
+			ObjectCreationHandling = ObjectCreationHandling.Replace
+		};
 
 
 		string serialize() => JsonConvert.SerializeObject(this, Formatting.Indented, serializerSettings);

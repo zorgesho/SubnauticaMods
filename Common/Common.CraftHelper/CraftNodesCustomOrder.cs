@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using SMLHelper.V2.Handlers;
 
 namespace Common.Crafting
 {
@@ -27,21 +28,37 @@ namespace Common.Crafting
 	{
 		class CraftNode // hides global CraftNode
 		{
-			public readonly TechType techType;
+			public readonly string id;
+			public readonly string idAfter;
 			public readonly string[] path;
-			public readonly string   idAfter;
 
-			public CraftNode(TechType _techType, string _path, TechType techTypeAfter)
+			public readonly TechType techType;
+			public readonly TreeAction treeAction;
+
+			CraftNode(string id, TechType techType, string path, string idAfter)
 			{
-				techType = _techType;
-				path = _path.Split('/');
-				idAfter = (techTypeAfter == TechType.None? null: techTypeAfter.AsString());
+				this.id = id;
+				this.techType = techType;
+				this.path = path.Split('/');
+				this.idAfter = idAfter;
+			}
+
+			public CraftNode(TechType techType, string path, TechType techTypeAfter):
+				this(techType.AsString(), techType, path, techTypeAfter == TechType.None? null: techTypeAfter.AsString())
+			{
+				treeAction = TreeAction.Craft;
+			}
+
+			public CraftNode(string id, string path, string idAfter):
+				this(id, TechType.None, path, idAfter)
+			{
+				treeAction = TreeAction.Expand;
 			}
 		}
 
 		static readonly Dictionary<CraftTree.Type, List<CraftNode>> nodesToAdd = new Dictionary<CraftTree.Type, List<CraftNode>>();
 
-		public static void addNode(CraftTree.Type treeType, TechType techType, string path, TechType techTypeAfter)
+		static List<CraftNode> getNodeList(CraftTree.Type treeType)
 		{
 			// patching craft tree only if we need to
 			if (!nodesToAdd.TryGetValue(treeType, out List<CraftNode> nodes))
@@ -51,15 +68,30 @@ namespace Common.Crafting
 				nodesToAdd[treeType] = nodes;
 			}
 
-			nodes.Add(new CraftNode(techType, path, techTypeAfter));
+			return nodes;
+		}
+
+		// for adding crafting node
+		public static void addNode(CraftTree.Type treeType, TechType techType, string path, TechType techTypeAfter)
+		{
+			getNodeList(treeType).Add(new CraftNode(techType, path, techTypeAfter));
+		}
+
+		// for adding group node
+		public static void addNode(CraftTree.Type treeType, string id, string displayName, string path, string idAfter, TechType spriteTechType)
+		{
+			getNodeList(treeType).Add(new CraftNode(id, path, idAfter));
+
+			LanguageHandler.SetLanguageLine($"{treeType.ToString()}Menu_{id}", displayName);
+			SpriteHandler.RegisterSprite(SpriteManager.Group.Category, $"{treeType.ToString()}_{id}", SpriteManager.Get(spriteTechType));
 		}
 
 		static void addNodesToTree(CraftTree.Type treeType, ref global::CraftNode rootNode)
 		{
 			foreach (CraftNode node in nodesToAdd[treeType])
 			{
-				TreeNode parentNode = rootNode.FindNodeByPath(node.path);
-				parentNode?.insertNode(node.idAfter, new global::CraftNode(node.techType.AsString(), TreeAction.Craft, node.techType));
+				TreeNode parentNode = rootNode.FindNodeByPath(node.path) ?? rootNode;
+				parentNode.insertNode(node.idAfter, new global::CraftNode(node.id, node.treeAction, node.techType));
 			}
 		}
 

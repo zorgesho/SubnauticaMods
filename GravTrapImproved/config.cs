@@ -100,7 +100,7 @@ namespace GravTrapImproved
 				TechType.Boomerang,
 				TechType.CaveCrawler,
 				TechType.CrabSquid,
-				TechType.Crash, // added
+				TechType.Crash,
 				TechType.Eyeye,
 				TechType.GarryFish,
 				TechType.GhostRayBlue,
@@ -126,44 +126,28 @@ namespace GravTrapImproved
 			(
 				"Resources",
 
-				TechType.AcidOld,
 				TechType.Aerogel,
 				TechType.AluminumOxide,
-				TechType.AminoAcids,
 				TechType.AramidFibers,
-				TechType.BasaltChunk,
-				TechType.BatteryAcidOld,
 				TechType.Benzene,
 				TechType.Bleach,
-				TechType.CalciumChunk,
-				TechType.CombustibleOld,
 				TechType.ComputerChip,
 				TechType.Copper,
-				//TechType.CrashPowder,
 				TechType.DepletedReactorRod,
 				TechType.Diamond,
-				TechType.Enamel,
 				TechType.EnameledGlass,
-				TechType.Fiber,
 				TechType.FiberMesh,
 				TechType.GasPod,
 				TechType.Glass,
 				TechType.Gold,
-				TechType.Graphene,
 				TechType.HydrochloricAcid,
 				TechType.Kyanite,
 				TechType.Lead,
 				TechType.LimestoneChunk,
 				TechType.Lithium,
-				TechType.Lodestone,
 				TechType.Lubricant,
-				TechType.Magnesium,
 				TechType.Magnetite,
-				TechType.MercuryOre,
-				TechType.Nanowires,
 				TechType.Nickel,
-				TechType.ObsidianChunk,
-				TechType.OpalGem,
 				TechType.PlasteelIngot,
 				TechType.Polyaniline,
 				TechType.PowerCell,
@@ -179,21 +163,12 @@ namespace GravTrapImproved
 				TechType.Sulphur,
 				TechType.Titanium,
 				TechType.TitaniumIngot,
-				TechType.UraniniteCrystal,
-				TechType.Uranium,
-				TechType.VesselOld
+				TechType.UraniniteCrystal
 			),
 			new TechTypeList
 			(
 				"Eggs",
 
-				TechType.GrandReefsEgg,
-				TechType.GrassyPlateausEgg,
-				TechType.KelpForestEgg,
-				TechType.KooshZoneEgg,
-				TechType.LavaZoneEgg,
-				TechType.MushroomForestEgg,
-				TechType.TwistyBridgesEgg,
 				TechType.BonesharkEgg,
 				TechType.BonesharkEggUndiscovered,
 				TechType.CrabsnakeEgg,
@@ -225,8 +200,7 @@ namespace GravTrapImproved
 				TechType.SpadefishEgg,
 				TechType.SpadefishEggUndiscovered,
 				TechType.StalkerEgg,
-				TechType.StalkerEggUndiscovered,
-				TechType.GenericEgg
+				TechType.StalkerEggUndiscovered
 			),
 #if DEBUG
 			new TechTypeList
@@ -236,7 +210,8 @@ namespace GravTrapImproved
 				TechType.StalkerTooth,
 				TechType.Flare,
 				TechType.Beacon,
-				TechType.TimeCapsule
+				TechType.TimeCapsule,
+				TechType.GasPod
 			)
 #endif
 		};

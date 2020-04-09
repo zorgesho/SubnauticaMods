@@ -18,7 +18,7 @@ namespace GravTrapImproved
 			if (config.mk2Enabled)
 				HarmonyHelper.patch(typeof(GravTrapMK2Patches));
 
-			GravTrapObjectsType.init(Config.tryLoad<TypesConfig>("types_config.json", Config.LoadOptions.None));
+			GravTrapObjectsType.init(Config.tryLoad<TypesConfig>("types_config.json", Config.LoadOptions.ReadOnly));
 		}
 	}
 }

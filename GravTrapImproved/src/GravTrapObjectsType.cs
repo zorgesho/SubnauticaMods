@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
-
 using UnityEngine;
-
 using Common.GameSerialization;
 
 namespace GravTrapImproved
@@ -20,12 +18,14 @@ namespace GravTrapImproved
 				listCount = typesConfig.techTypeLists.Count;
 
 				typeLists = typesConfig.techTypeLists;
-				typeLists.Insert(0, new TypesConfig.TechTypeList("All"));
+				typeLists.Insert(0, new TypesConfig.TechTypeList("ids_All"));
 
 				for (int i = 1; i <= listCount; i++)
 				{
 					if (!typesConfig.noJoin.Contains(typeLists[i].name))
 						typeLists[0].add(typeLists[i]);
+
+					L10n.add(typeLists[i].name, typeLists[i].name);
 				}
 			}
 		}
@@ -46,7 +46,7 @@ namespace GravTrapImproved
 		public string techTypeListName => Types.getListName(techTypeListIndex);
 
 		public void OnProtoDeserialize(ProtobufSerializer serializer) =>
-			techTypeListIndex = Mathf.Max(Types.listCount, SaveLoad.load<SaveData>(id)?.trapObjType ?? 0);
+			techTypeListIndex = Mathf.Min(Types.listCount, SaveLoad.load<SaveData>(id)?.trapObjType ?? 0);
 
 		public void OnProtoSerialize(ProtobufSerializer serializer) =>
 			SaveLoad.save(id, new SaveData { trapObjType = techTypeListIndex });

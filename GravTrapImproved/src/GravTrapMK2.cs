@@ -29,7 +29,7 @@ namespace GravTrapImproved
 
 		public override void patch()
 		{
-			TechType = register("Grav trap MK2", "TODO", TechType.Gravsphere);
+			TechType = register(L10n.ids_GravTrapMK2, L10n.ids_GravTrapMK2Description, TechType.Gravsphere);
 
 			addToGroup(TechGroup.Workbench, TechCategory.Workbench);
 			addCraftingNodeTo(CraftTree.Type.Workbench, "ExosuitMenu");

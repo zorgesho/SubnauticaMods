@@ -23,7 +23,7 @@ namespace GravTrapImproved
 				if (Main.config.useWheelScroll && InputHelper.getMouseWheelValue() != 0f) // not exactly right to do it here, but I didn't find a better way
 					GravTrapObjectsType.getFrom(obj).techTypeListIndex += Math.Sign(InputHelper.getMouseWheelValue());
 
-				TooltipFactory.WriteDescription(sb, "Objects type: " + GravTrapObjectsType.getFrom(obj).techTypeListName);
+				TooltipFactory.WriteDescription(sb, L10n.str("ids_objectsType") + L10n.str(GravTrapObjectsType.getFrom(obj).techTypeListName));
 			}
 		}
 
@@ -31,13 +31,13 @@ namespace GravTrapImproved
 		static class TooltipFactory_ItemActions_Patch
 		{
 			static readonly string buttons = (Main.config.useWheelClick? Strings.Mouse.middleButton: "") +
-											((Main.config.useWheelClick && Main.config.useWheelScroll)? " or ": "") +
+											((Main.config.useWheelClick && Main.config.useWheelScroll)? L10n.str("ids_or"): "") +
 											 (Main.config.useWheelScroll? (Strings.Mouse.scrollUp + "/" + Strings.Mouse.scrollDown): "");
 
 			static void Postfix(StringBuilder sb, InventoryItem item)
 			{
 				if ((Main.config.useWheelClick || Main.config.useWheelScroll) && item.item.GetTechType().isGravTrap())
-					TooltipFactory.WriteAction(sb, buttons, "switch objects type");
+					TooltipFactory.WriteAction(sb, buttons, L10n.str("ids_switchObjectsType"));
 			}
 		}
 

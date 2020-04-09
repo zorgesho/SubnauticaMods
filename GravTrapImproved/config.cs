@@ -3,6 +3,7 @@
 using Oculus.Newtonsoft.Json;
 using Oculus.Newtonsoft.Json.Converters;
 
+using Common;
 using Common.Configuration;
 
 namespace GravTrapImproved
@@ -39,6 +40,19 @@ namespace GravTrapImproved
 		public readonly float mk2MaxRadius = 25f; // default: 17f
 
 		public readonly LargeWorldEntity.CellLevel _changeTrapCellLevel = LargeWorldEntity.CellLevel.Near;
+	}
+
+
+	class L10n: LanguageHelper
+	{
+		public const string ids_GravTrapMK2 = "Grav trap MK2";
+		public const string ids_GravTrapMK2Description = "TODO";
+
+		public static readonly string ids_objectsType = "Objects type: ";
+		public static readonly string ids_switchObjectsType = "switch objects type";
+		public static readonly string ids_or = " or ";
+
+		public static readonly string ids_All = "All";
 	}
 
 

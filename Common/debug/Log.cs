@@ -58,7 +58,8 @@ namespace Common
 #endif
 		}
 
-		public static void msg(Exception e, string str = "") => msg(str + (str == ""? "": "\t") + formatException(e), MsgType.EXCEPTION);
+		public static void msg(Exception e, string str = "", bool verbose = true) =>
+			msg($"{str}{(str == ""? "": ": ")}{(verbose? formatException(e): e.Message)}", MsgType.EXCEPTION);
 
 		static string formatException(Exception e) =>
 			(e == null)? "": $"\r\n{e.GetType()}: {e.Message}\r\nSTACKTRACE:\r\n{e.StackTrace}\r\n" + formatException(e.InnerException);

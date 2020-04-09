@@ -13,14 +13,15 @@ namespace Common.Configuration
 			ProcessAttributes = 1,
 			MainConfig = 2,
 			ForcedLoad = 4,
+			ReadOnly = 8,
 			Default = ProcessAttributes | MainConfig
 		}
 
-		static readonly bool loadFromFile = // can be overrided by LoadOptions.ForcedLoad
+		static readonly bool ignoreExistingFile = // can be overrided by LoadOptions.ForcedLoad
 #if (DEBUG && !LOAD_CONFIG)
-			false;
-#else
 			true;
+#else
+			false;
 #endif
 		string configPath;
 
@@ -29,21 +30,25 @@ namespace Common.Configuration
 		// try to load config from mod folder. If file not found, create default config and save it to that path
 		public static C tryLoad<C>(string localPath = "config.json", LoadOptions loadOptions = LoadOptions.Default) where C: Config, new()
 		{
-			string configPath = localPath != null? Paths.modRootPath + localPath: null;
-			C config = null;
+			C config;
+			string configPath = localPath.isNullOrEmpty()? null: Paths.modRootPath + localPath;
 
 			try
 			{
-				bool isNeedToLoad = loadFromFile || loadOptions.HasFlag(LoadOptions.ForcedLoad);
+				bool createDefault = (ignoreExistingFile && !loadOptions.HasFlag(LoadOptions.ForcedLoad)) || !File.Exists(configPath);
 
-				if (!isNeedToLoad)
-					"Loading from config is DISABLED".logWarning();
+				if (createDefault)
+					$"Creating default '{localPath}'".log();
 
-				config = (!isNeedToLoad || !File.Exists(configPath))? new C(): deserialize<C>(File.ReadAllText(configPath));
+				config = createDefault? new C(): deserialize<C>(File.ReadAllText(configPath));
 				config.onLoad();
 
-				// saving config even if we just loaded it to update it in case of added or removed fields (and to set configPath var)
-				config.save(configPath);
+				// saving config even if we just loaded it to update it in case of added or removed fields
+				if (createDefault || !loadOptions.HasFlag(LoadOptions.ReadOnly))
+					config.save(configPath);
+
+				if (!loadOptions.HasFlag(LoadOptions.ReadOnly))
+					config.configPath = configPath;
 
 				if (loadOptions.HasFlag(LoadOptions.MainConfig))
 				{																				"Config.main is already set!".logDbgError(main != null);
@@ -54,22 +59,23 @@ namespace Common.Configuration
 				if (loadOptions.HasFlag(LoadOptions.ProcessAttributes))
 					config.processAttributes();
 			}
-			catch (Exception e) { Log.msg(e); }
+			catch (Exception e)
+			{
+				Log.msg(e, $"Exception while loading '{localPath}'", false);
+				config = null;
+			}
 
 			return config;
 		}
 
-		public void save(string _configPath = null)
+		public void save(string configPath = null)
 		{
-			if (_configPath != null)
-				configPath = _configPath;
+			string path = configPath ?? this.configPath;
+			if (path == null)
+				return;
 
-			try
-			{
-				if (configPath != null)
-					File.WriteAllText(configPath, serialize());
-			}
-			catch (Exception e) { Log.msg(e); }
+			try { File.WriteAllText(path, serialize()); }
+			catch (Exception e) { Log.msg(e, $"Exception while saving '{path}'", false); }
 		}
 	}
 }

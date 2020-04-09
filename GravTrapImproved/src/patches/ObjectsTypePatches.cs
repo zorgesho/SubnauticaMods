@@ -14,7 +14,7 @@ namespace GravTrapImproved
 	[HarmonyPatch(typeof(Gravsphere), "AddAttractable")]
 	static class Gravsphere_AddAttractable_Patch
 	{
-		static void Postfix(Gravsphere __instance, Rigidbody r) => __instance.GetComponent<GravTrapObjectsType>().handleAttracted(r);
+		static void Postfix(Rigidbody r) => GravTrapObjectsType.handleAttracted(r);
 	}
 
 	[HarmonyPatch(typeof(Gravsphere), "IsValidTarget")]

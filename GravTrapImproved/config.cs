@@ -13,11 +13,12 @@ namespace GravTrapImproved
 		public readonly bool useWheelScroll = true;
 		public readonly bool useWheelClick = false;
 
-		public readonly float treaderSpawnChunkProbability = 1f;
+		public readonly float treaderChunkSpawnFactor = 1f;
 
 		public readonly bool mk2Enabled = true;
 
-		[Field.Range(0, 30)] public readonly int mk2FragmentCountToUnlock = 4; // unlock with vanilla gravtrap if zero
+		[Field.Range(0, 30)]
+		public readonly int mk2FragmentCountToUnlock = 4; // unlock with vanilla gravtrap if zero
 
 		[Field.Range(12, rangesLimited? 24: 1000)]
 		[AddToConsole("gt_mk2")]
@@ -31,5 +32,7 @@ namespace GravTrapImproved
 		[AddToConsole("gt_mk2")]
 		[Field.Action(typeof(GravTrapMK2Patches.UpdateRadiuses))]
 		public readonly float mk2MaxRadius = 25f; // default: 17f
+
+		public readonly LargeWorldEntity.CellLevel _changeTrapCellLevel = LargeWorldEntity.CellLevel.Near;
 	}
 }

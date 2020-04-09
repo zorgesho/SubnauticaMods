@@ -62,27 +62,24 @@ namespace GravTrapImproved
 			}
 		}
 
-		public void handleAttracted(Rigidbody r)
+		public static void handleAttracted(Rigidbody rigidBody)
 		{
-			SinkingGroundChunk sgc = r.gameObject.GetComponent<SinkingGroundChunk>();
-		
-			if (sgc)
+			if (rigidBody.gameObject.GetComponent<Crash>() is Crash crash)
+			{
+				crash.AttackLastTarget(); // if target object is CrashFish we want to pull it out
+			}
+			else
+			if (rigidBody.gameObject.GetComponent<SinkingGroundChunk>() is SinkingGroundChunk sgc)
 			{
 				Destroy(sgc);
 
-				BoxCollider c = r.gameObject.AddComponent<BoxCollider>();
+				BoxCollider c = rigidBody.gameObject.AddComponent<BoxCollider>();
 				c.size = new Vector3(0.736f,0.51f,0.564f);
 				c.center = new Vector3(0.076f,0.224f,0.012f);
-				
-				r.gameObject.FindChild("models").transform.localPosition = Vector3.zero;
 
-				return;
+				rigidBody.gameObject.FindChild("models").transform.localPosition = Vector3.zero;
 			}
-
-			// if target object is CrashFish we want to pull it out
-			r.gameObject.GetComponent<Crash>()?.AttackLastTarget();
 		}
-		
 
 		public bool isValidTarget(GameObject obj)
 		{

@@ -21,9 +21,9 @@ namespace GravTrapImproved
 					return;
 
 				if (Main.config.useWheelScroll && InputHelper.getMouseWheelValue() != 0f) // not exactly right to do it here, but I didn't find a better way
-					GravTrapObjectsType.getFrom(obj).ObjType += Math.Sign(InputHelper.getMouseWheelValue());
+					GravTrapObjectsType.getFrom(obj).techTypeListIndex += Math.Sign(InputHelper.getMouseWheelValue());
 
-				TooltipFactory.WriteDescription(sb, "Objects type: " + GravTrapObjectsType.getFrom(obj).ObjType);
+				TooltipFactory.WriteDescription(sb, "Objects type: " + GravTrapObjectsType.getFrom(obj).techTypeListName);
 			}
 		}
 
@@ -42,12 +42,14 @@ namespace GravTrapImproved
 		}
 
 		[HarmonyPatch(typeof(uGUI_InventoryTab), "OnPointerClick")]
-		static class uGUI_InventoryTab_OnPointerClick_Patch
+		static class uGUIInventoryTab_OnPointerClick_Patch
 		{
+			static bool Prepare() => Main.config.useWheelClick;
+
 			static void Postfix(InventoryItem item, int button)
 			{
 				if (Main.config.useWheelClick && item.item.GetTechType().isGravTrap() && button == 2)
-					GravTrapObjectsType.getFrom(item.item.gameObject).ObjType += 1;
+					GravTrapObjectsType.getFrom(item.item.gameObject).techTypeListIndex++;
 			}
 		}
 	}

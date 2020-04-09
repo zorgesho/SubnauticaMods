@@ -1,65 +1,73 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
 
-using Common;
+using UnityEngine;
+
 using Common.GameSerialization;
 
 namespace GravTrapImproved
 {
 	class GravTrapObjectsType: MonoBehaviour, IProtoEventListener
 	{
-		class SaveData { public ObjectsType trapObjType; }
+		static class Types
+		{
+			public static int listCount { get; private set; }
+			static List<TypesConfig.TechTypeList> typeLists;
 
-		static readonly int[] techIndex = new int[] {0, 26, 82, 122}; // indexes in GravSphere.allowedTechTypes[]
+			public static string getListName(int index) => typeLists[index].name;
+			public static bool contains(int index, TechType techType) => typeLists[index].contains(techType);
+			public static void init(TypesConfig typesConfig)
+			{
+				listCount = typesConfig.techTypeLists.Count;
 
-		public enum ObjectsType {All = 0, Creatures = 1, Resources = 2, Eggs = 3, count}; // also used in UI
+				typeLists = typesConfig.techTypeLists;
+				typeLists.Insert(0, new TypesConfig.TechTypeList("All"));
 
+				for (int i = 1; i <= listCount; i++)
+				{
+					if (!typesConfig.noJoin.Contains(typeLists[i].name))
+						typeLists[0].add(typeLists[i]);
+				}
+			}
+		}
+
+		public static void init(TypesConfig typesConfig) => Types.init(typesConfig);
+
+		class SaveData { public int trapObjType; }
 		string id;
-		bool inited = false;
 
-		public ObjectsType ObjType
+		public int techTypeListIndex
 		{
-			get => objType;
-			
-			set
-			{
-				objType = value;
+			get => _techTypeListIndex;
 
-				if (objType < 0)
-					objType = ObjectsType.count - 1;
-
-				if (objType >= ObjectsType.count)
-					objType = 0;
-			}
+			set => _techTypeListIndex = value < 0? Types.listCount: value % (Types.listCount + 1);
 		}
-		ObjectsType objType = ObjectsType.All;
+		int _techTypeListIndex = 0;
 
-		public void OnProtoDeserialize(ProtobufSerializer serializer) => objType = SaveLoad.load<SaveData>(id)?.trapObjType ?? 0;
-		
-		public void OnProtoSerialize(ProtobufSerializer serializer) => SaveLoad.save(id, new SaveData { trapObjType = objType });
+		public string techTypeListName => Types.getListName(techTypeListIndex);
 
-		// we may add this component while gameobject is inactive (while in inventory) and Awake for it is not calling, so we need init it that way
-		public static GravTrapObjectsType getFrom(GameObject go)
-		{
-			GravTrapObjectsType cmp = go.GetComponent<GravTrapObjectsType>();
-			if (!cmp)
-			{
-				cmp = go.AddComponent<GravTrapObjectsType>();
-				cmp.init();
-			}
-			
-			return cmp;
-		}
-		
+		public void OnProtoDeserialize(ProtobufSerializer serializer) =>
+			techTypeListIndex = Mathf.Max(Types.listCount, SaveLoad.load<SaveData>(id)?.trapObjType ?? 0);
+
+		public void OnProtoSerialize(ProtobufSerializer serializer) =>
+			SaveLoad.save(id, new SaveData { trapObjType = techTypeListIndex });
+
+		// we may add this component while gameobject is inactive (while in inventory) and Awake for it is not called
+		// so we need initialize it that way
+		public static GravTrapObjectsType getFrom(GameObject go) =>
+			go.GetComponent<GravTrapObjectsType>() ?? go.AddComponent<GravTrapObjectsType>().init();
+
 		void Awake() => init();
-		
-		void init()
+
+		bool inited = false;
+		GravTrapObjectsType init()
 		{
-			if (!inited)
+			if (!inited && (inited = true))
 			{
-				inited = true;
 				id = GetComponent<PrefabIdentifier>().Id;
 				OnProtoDeserialize(null);
 			}
+
+			return this;
 		}
 
 		public static void handleAttracted(Rigidbody rigidBody)
@@ -81,26 +89,20 @@ namespace GravTrapImproved
 			}
 		}
 
+		TechType getObjectTechType(GameObject obj)
+		{
+			if (obj.GetComponentInParent<SinkingGroundChunk>() || obj.name.Contains("TreaderShale"))
+				return TechType.ShaleChunk;
+
+			return CraftData.GetTechType(obj);
+		}
+
 		public bool isValidTarget(GameObject obj)
 		{
-			if (obj.GetComponent<Pickupable>()?.attached ?? false)
+			if (obj.GetComponent<Pickupable>()?.attached == true)
 				return false;
 
-			if (obj.GetComponentInParent<SinkingGroundChunk>() || obj.name.Contains("TreaderShale"))
-				return (objType == ObjectsType.All || objType == ObjectsType.Resources);
-
-			TechType techType = CraftData.GetTechType(obj);
-
-			if (techType == TechType.Crash)
-				return (objType == ObjectsType.All || objType == ObjectsType.Creatures);
-			
-			if (techType == TechType.CrashPowder)
-				return false;
-
-			int begin = (objType == ObjectsType.All)? 0: techIndex[(int)objType - 1];
-			int end = (objType == ObjectsType.All)? Gravsphere.allowedTechTypes.Length: techIndex[(int)objType];
-
-			return 0 <= Gravsphere.allowedTechTypes.findIndex(begin, end, t => t == techType);
+			return Types.contains(techTypeListIndex, getObjectTechType(obj));
 		}
 	}
 }

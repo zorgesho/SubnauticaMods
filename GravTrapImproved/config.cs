@@ -38,6 +38,7 @@ namespace GravTrapImproved
 		public readonly float mk2MaxRadius = 30f; // default: 17f
 
 		public readonly float treaderChunkSpawnFactor = 1f;
+		public readonly bool raysVisible = true;
 		public readonly bool extraGUIText = true;
 		public readonly LargeWorldEntity.CellLevel _changeTrapCellLevel = LargeWorldEntity.CellLevel.Near;
 	}

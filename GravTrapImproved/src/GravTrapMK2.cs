@@ -32,6 +32,9 @@ namespace GravTrapImproved
 
 		public override void patch()
 		{
+			if (!Main.config.mk2Enabled)
+				return;
+
 			TechType = register(L10n.ids_GravTrapMK2, L10n.ids_GravTrapMK2Description, TechType.Gravsphere);
 
 			addToGroup(TechGroup.Workbench, TechCategory.Workbench);

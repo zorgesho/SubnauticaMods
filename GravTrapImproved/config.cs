@@ -24,20 +24,20 @@ namespace GravTrapImproved
 		[Field.Range(12, 1000)]
 #endif
 		[AddToConsole("gt_mk2")]
-		public readonly int mk2MaxObjectCount = 18; // default: 12
+		public readonly int mk2MaxObjectCount = 20; // default: 12
 
 #if !DEBUG
 		[Field.Range(15, 1000)]
 #endif
 		[AddToConsole("gt_mk2")]
-		public readonly float mk2MaxForce = 25f; // default: 15f
+		public readonly float mk2MaxForce = 20f; // default: 15f
 
 #if !DEBUG
 		[Field.Range(17, 1000)]
 #endif
 		[AddToConsole("gt_mk2")]
 		[Field.Action(typeof(GravTrapMK2Patches.UpdateRadiuses))]
-		public readonly float mk2MaxRadius = 25f; // default: 17f
+		public readonly float mk2MaxRadius = 30f; // default: 17f
 
 		public readonly LargeWorldEntity.CellLevel _changeTrapCellLevel = LargeWorldEntity.CellLevel.Near;
 	}
@@ -46,7 +46,8 @@ namespace GravTrapImproved
 	class L10n: LanguageHelper
 	{
 		public const string ids_GravTrapMK2 = "Grav trap MK2";
-		public const string ids_GravTrapMK2Description = "TODO";
+		public const string ids_GravTrapMK2Description = "More powerful model with increased range and ability to attract more objects simultaneously.";
+		public const string ids_GravTrapMenu = "Grav Trap Upgrades";
 
 		public static readonly string ids_objectsType = "Objects type: ";
 		public static readonly string ids_switchObjectsType = "switch objects type";

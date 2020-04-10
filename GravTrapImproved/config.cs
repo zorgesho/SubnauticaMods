@@ -10,12 +10,6 @@ namespace GravTrapImproved
 {
 	class ModConfig: Config
 	{
-		const bool rangesLimited =
-#if DEBUG
-			false;
-#else
-			true;
-#endif
 		public readonly bool useWheelScroll = true;
 		public readonly bool useWheelClick = false;
 
@@ -26,15 +20,21 @@ namespace GravTrapImproved
 		[Field.Range(0, 30)]
 		public readonly int mk2FragmentCountToUnlock = 4; // unlock with vanilla gravtrap if zero
 
-		[Field.Range(12, rangesLimited? 24: 1000)]
+#if !DEBUG
+		[Field.Range(12, 1000)]
+#endif
 		[AddToConsole("gt_mk2")]
 		public readonly int mk2MaxObjectCount = 18; // default: 12
 
-		[Field.Range(15, rangesLimited? 100: 1000)]
+#if !DEBUG
+		[Field.Range(15, 1000)]
+#endif
 		[AddToConsole("gt_mk2")]
 		public readonly float mk2MaxForce = 25f; // default: 15f
 
-		[Field.Range(17, rangesLimited? 50: 1000)]
+#if !DEBUG
+		[Field.Range(17, 1000)]
+#endif
 		[AddToConsole("gt_mk2")]
 		[Field.Action(typeof(GravTrapMK2Patches.UpdateRadiuses))]
 		public readonly float mk2MaxRadius = 25f; // default: 17f
@@ -61,10 +61,7 @@ namespace GravTrapImproved
 		public class TechTypeList
 		{
 			[JsonArray(ItemConverterType = typeof(StringEnumConverter))]
-			class TechTypes: HashSet<TechType>
-			{
-				public TechTypes(IEnumerable<TechType> enumerable): base(enumerable) {}
-			}
+			class TechTypes: HashSet<TechType> { public TechTypes(IEnumerable<TechType> techs): base(techs) {} }
 
 			public readonly string name;
 			readonly TechTypes techTypes;
@@ -211,7 +208,8 @@ namespace GravTrapImproved
 				TechType.Flare,
 				TechType.Beacon,
 				TechType.TimeCapsule,
-				TechType.GasPod
+				TechType.GasPod,
+				TechType.Gravsphere
 			)
 #endif
 		};

@@ -43,7 +43,21 @@ namespace GravTrapImproved
 		}
 		int _techTypeListIndex = 0;
 
-		public string techTypeListName => Types.getListName(techTypeListIndex);
+		public string techTypeListName // for GUI
+		{
+			get
+			{
+				if (_cachedIndex != techTypeListIndex)
+				{
+					_cachedGUIString = L10n.str("ids_objectsType") + L10n.str(Types.getListName(techTypeListIndex));
+					_cachedIndex = techTypeListIndex;
+				}
+
+				return _cachedGUIString;
+			}
+		}
+		int _cachedIndex = -1;
+		string _cachedGUIString = null;
 
 		public void OnProtoDeserialize(ProtobufSerializer serializer) =>
 			techTypeListIndex = Mathf.Min(Types.listCount, SaveLoad.load<SaveData>(id)?.trapObjType ?? 0);

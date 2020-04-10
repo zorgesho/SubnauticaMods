@@ -23,7 +23,7 @@ namespace GravTrapImproved
 				if (Main.config.useWheelScroll && InputHelper.getMouseWheelValue() != 0f) // not exactly right to do it here, but I didn't find a better way
 					GravTrapObjectsType.getFrom(obj).techTypeListIndex += Math.Sign(InputHelper.getMouseWheelValue());
 
-				TooltipFactory.WriteDescription(sb, L10n.str("ids_objectsType") + L10n.str(GravTrapObjectsType.getFrom(obj).techTypeListName));
+				TooltipFactory.WriteDescription(sb, GravTrapObjectsType.getFrom(obj).techTypeListName);
 			}
 		}
 
@@ -34,9 +34,11 @@ namespace GravTrapImproved
 											((Main.config.useWheelClick && Main.config.useWheelScroll)? L10n.str("ids_or"): "") +
 											 (Main.config.useWheelScroll? (Strings.Mouse.scrollUp + "/" + Strings.Mouse.scrollDown): "");
 
+			static bool Prepare() => Main.config.useWheelClick || Main.config.useWheelScroll; // just in case
+
 			static void Postfix(StringBuilder sb, InventoryItem item)
 			{
-				if ((Main.config.useWheelClick || Main.config.useWheelScroll) && item.item.GetTechType().isGravTrap())
+				if (item.item.GetTechType().isGravTrap())
 					TooltipFactory.WriteAction(sb, buttons, L10n.str("ids_switchObjectsType"));
 			}
 		}
@@ -48,8 +50,35 @@ namespace GravTrapImproved
 
 			static void Postfix(InventoryItem item, int button)
 			{
-				if (Main.config.useWheelClick && item.item.GetTechType().isGravTrap() && button == 2)
+				if (button == 2 && item.item.GetTechType().isGravTrap())
 					GravTrapObjectsType.getFrom(item.item.gameObject).techTypeListIndex++;
+			}
+		}
+
+		[HarmonyPatch(typeof(GUIHand), "OnUpdate")]
+		static class GUIHand_OnUpdate_Patch
+		{
+			static bool Prepare() => Main.config.extraGUIText;
+
+			static void Postfix(GUIHand __instance)
+			{
+				if (!__instance.player.IsFreeToInteract() || !AvatarInputHandler.main.IsEnabled())
+					return;
+
+				if (__instance.GetTool() is PlayerTool tool && tool.pickupable.GetTechType().isGravTrap())
+					HandReticle.main.SetUseTextRaw(tool.GetCustomUseText(), GravTrapObjectsType.getFrom(tool.gameObject).techTypeListName);
+			}
+		}
+
+		[HarmonyPatch(typeof(Pickupable), "OnHandHover")]
+		static class Pickupable_OnHandHover_Patch
+		{
+			static bool Prepare() => Main.config.extraGUIText;
+
+			static void Postfix(Pickupable __instance)
+			{
+				if (__instance.GetTechType().isGravTrap())
+					HandReticle.main.interactText2 = GravTrapObjectsType.getFrom(__instance.gameObject).techTypeListName;
 			}
 		}
 	}

@@ -13,8 +13,6 @@ namespace GravTrapImproved
 		public readonly bool useWheelScroll = true;
 		public readonly bool useWheelClick = false;
 
-		public readonly float treaderChunkSpawnFactor = 1f;
-
 		public readonly bool mk2Enabled = true;
 
 		[Field.Range(0, 30)]
@@ -39,6 +37,8 @@ namespace GravTrapImproved
 		[Field.Action(typeof(GravTrapMK2Patches.UpdateRadiuses))]
 		public readonly float mk2MaxRadius = 30f; // default: 17f
 
+		public readonly float treaderChunkSpawnFactor = 1f;
+		public readonly bool extraGUIText = true;
 		public readonly LargeWorldEntity.CellLevel _changeTrapCellLevel = LargeWorldEntity.CellLevel.Near;
 	}
 

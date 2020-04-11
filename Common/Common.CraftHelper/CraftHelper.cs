@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Common.Crafting
 {
-	static class CraftHelper
+	static partial class CraftHelper
 	{
 		// classes with this attribute will not be patched by patchAll
 		[AttributeUsage(AttributeTargets.Class, Inherited = false)]
@@ -22,7 +22,7 @@ namespace Common.Crafting
 			if (allPatched || !(allPatched = true))
 				return;
 
-			List<Type> toPatch = new List<Type>();
+			var toPatch = new List<Type>();
 
 			foreach (var type in ReflectionHelper.definedTypes)
 			{

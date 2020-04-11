@@ -55,6 +55,7 @@ namespace Common
 		// can't use vanilla GetVehicle in OnPlayerModeChange after 06.11 update :(
 		public static Vehicle getVehicle(this Player player) => player.GetComponentInParent<Vehicle>();
 
+		[System.Obsolete]
 		public static Constructable initDefault(this Constructable c, GameObject model)
 		{
 			c.allowedInBase = false;

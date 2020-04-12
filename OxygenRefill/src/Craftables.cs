@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-using UnityEngine;
+﻿using UnityEngine;
 using SMLHelper.V2.Crafting;
 using SMLHelper.V2.Handlers;
 
@@ -14,10 +12,10 @@ namespace OxygenRefill
 		public static ModCraftTreeRoot treeRootNode { get; private set; } = null;
 		CraftTree.Type treeType;
 
-		protected override TechData getTechData() => new TechData() { craftAmount = 1, Ingredients = new List<Ingredient>
-		{
-			new Ingredient(TechType.AdvancedWiringKit, 1),
-		}};
+		protected override TechData getTechData() => new TechData
+		(
+			new Ingredient(TechType.AdvancedWiringKit, 1)
+		)	{ craftAmount = 1 };
 
 		public override void patch()
 		{
@@ -30,7 +28,7 @@ namespace OxygenRefill
 
 		public override GameObject getGameObject()
 		{
-			GameObject prefab = Object.Instantiate(CraftData.GetPrefabForTechType(TechType.Workbench));
+			GameObject prefab = CraftHelper.Utils.prefabCopy(TechType.Workbench);
 
 			GhostCrafter crafter = prefab.GetComponent<Workbench>();
 			crafter.craftTree = treeType;
@@ -65,15 +63,15 @@ namespace OxygenRefill
 		readonly float craftingTime;
 		readonly TechType tankType;
 
-		public TankRefill(TechType _tankType, float _craftingTime): base(_tankType.AsString() + "_Refill")
+		public TankRefill(TechType tankType, float craftingTime): base(tankType.AsString() + "_Refill")
 		{
-			tankType = _tankType;
-			craftingTime = _craftingTime;
+			this.tankType = tankType;
+			this.craftingTime = craftingTime;
 		}
 
 		public override GameObject getGameObject()
 		{
-			GameObject prefab = Object.Instantiate(CraftData.GetPrefabForTechType(tankType));
+			GameObject prefab = CraftHelper.Utils.prefabCopy(tankType);
 			prefab.AddComponent<RefillOxygen>();
 
 			return prefab; // using this as exact prefab, so no need in LinkedItems

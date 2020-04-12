@@ -29,17 +29,17 @@ namespace MiscObjects
 
 		public override GameObject getGameObject()
 		{
-			GameObject prefab = Object.Instantiate(Resources.Load<GameObject>("Submarine/Build/submarine_locker_04"));
-			GameObject model = prefab.FindChild("submarine_locker_04");
+			var prefab = CraftHelper.Utils.prefabCopy("Submarine/Build/submarine_locker_04");
+			var model = prefab.FindChild("submarine_locker_04");
 
-			GameObject door = prefab.FindChild("submarine_locker_03_door_01");
+			var door = prefab.FindChild("submarine_locker_03_door_01");
 			door.setParent(model, false);
 			door.destroyComponentInChildren<BoxCollider>();
 
 			prefab.AddComponent<TechTag>(); // just in case
 			prefab.destroyComponent<Rigidbody>();
 
-			Constructable constructable = prefab.AddComponent<Constructable>().initDefault(model);
+			var constructable = CraftHelper.Utils.initConstructable(prefab, model);
 			constructable.allowedInBase = true;
 			constructable.allowedInSub = true;
 			constructable.allowedOnGround = true;
@@ -47,7 +47,7 @@ namespace MiscObjects
 			constructable.forceUpright = true;
 			constructable.placeDefaultDistance = 3f;
 
-			StorageHelper.addStorageToPrefab(prefab, L10n.str("ids_OpenLocker"), L10n.str("ids_LockerInv"), 4, 8);
+			CraftHelper.Utils.addStorageToPrefab(prefab, 4, 8, L10n.str("ids_OpenLocker"), L10n.str("ids_LockerInv"));
 
 			return prefab;
 		}

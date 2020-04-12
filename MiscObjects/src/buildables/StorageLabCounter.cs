@@ -34,10 +34,10 @@ namespace MiscObjects
 
 		public override GameObject getGameObject()
 		{
-			GameObject prefab = Object.Instantiate(CraftData.GetPrefabForTechType(TechType.LabCounter));
+			GameObject prefab = CraftHelper.Utils.prefabCopy(TechType.LabCounter);
 			prefab.AddComponent<TechTag>(); // just in case
 
-			StorageHelper.addStorageToPrefab(prefab, L10n.str("ids_OpenDrawers"), L10n.str("ids_DrawersInv"), 7, 4);
+			CraftHelper.Utils.addStorageToPrefab(prefab, 7, 4, L10n.str("ids_OpenDrawers"), L10n.str("ids_DrawersInv"));
 
 			return prefab;
 		}

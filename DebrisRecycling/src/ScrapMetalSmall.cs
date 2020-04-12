@@ -21,7 +21,7 @@ namespace DebrisRecycling
 
 		public override GameObject getGameObject()
 		{
-			GameObject prefab = Object.Instantiate(CraftData.GetPrefabForTechType(TechType.Titanium));
+			GameObject prefab = CraftHelper.Utils.prefabCopy(TechType.Titanium);
 
 			prefab.destroyComponent<ResourceTracker>();
 
@@ -61,7 +61,7 @@ namespace DebrisRecycling
 			this.resultCount = resultCount;
 		}
 
-		public override GameObject getGameObject() => Object.Instantiate(CraftData.GetPrefabForTechType(TechType.Titanium));
+		public override GameObject getGameObject() => CraftHelper.Utils.prefabCopy(TechType.Titanium);
 
 		protected override TechData getTechData()
 		{

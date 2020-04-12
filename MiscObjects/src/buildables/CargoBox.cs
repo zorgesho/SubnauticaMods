@@ -20,12 +20,12 @@ namespace MiscObjects
 
 		public override GameObject getGameObject()
 		{
-			GameObject prefab = Object.Instantiate(Resources.Load<GameObject>("WorldEntities/Doodads/Debris/Wrecks/Decoration/Starship_cargo"));
-			GameObject model = prefab.FindChild("Starship_cargo");
+			var prefab = CraftHelper.Utils.prefabCopy("WorldEntities/Doodads/Debris/Wrecks/Decoration/Starship_cargo");
+			var model = prefab.FindChild("Starship_cargo");
 
 			prefab.destroyComponent<Rigidbody>();
 
-			Constructable constructable = prefab.AddComponent<Constructable>().initDefault(model);
+			var constructable = CraftHelper.Utils.initConstructable(prefab, model);
 			constructable.allowedInBase = true;
 			constructable.allowedInSub = true;
 			constructable.allowedOnGround = true;
@@ -33,7 +33,7 @@ namespace MiscObjects
 			constructable.forceUpright = true;
 			constructable.placeDefaultDistance = 3f;
 
-			StorageHelper.addStorageToPrefab(prefab, L10n.str(L10n.ids_OpenBox), L10n.str(L10n.ids_BoxInv), 5, 5);
+			CraftHelper.Utils.addStorageToPrefab(prefab, 5, 5, L10n.str(L10n.ids_OpenBox), L10n.str(L10n.ids_BoxInv));
 
 			return prefab;
 		}

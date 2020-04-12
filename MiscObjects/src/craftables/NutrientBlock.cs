@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-using UnityEngine;
+﻿using UnityEngine;
 using SMLHelper.V2.Crafting;
 
 using Common.Crafting;
@@ -9,17 +7,17 @@ namespace MiscObjects
 {
 	class NutrientBlockCraftable: CraftableObject
 	{
-		protected override TechData getTechData() => new TechData() { craftAmount = 1, Ingredients = new List<Ingredient>
-		{
+		protected override TechData getTechData() => new TechData
+		(
 			new Ingredient(TechType.CuredPeeper, 1),
 			new Ingredient(TechType.CuredReginald, 1),
 			new Ingredient(TechType.PurpleVegetable, 2),
-			new Ingredient(TechType.CreepvinePiece, 2),
-		}};
+			new Ingredient(TechType.CreepvinePiece, 2)
+		)	{ craftAmount = 1};
 
 		public override GameObject getGameObject()
 		{
-			GameObject prefab = Object.Instantiate(CraftData.GetPrefabForTechType(TechType.NutrientBlock));
+			GameObject prefab = CraftHelper.Utils.prefabCopy(TechType.NutrientBlock);
 
 			var food = prefab.GetComponent<Eatable>();
 			food.foodValue = 60;

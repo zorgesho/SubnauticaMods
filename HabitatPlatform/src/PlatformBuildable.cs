@@ -24,7 +24,7 @@ namespace HabitatPlatform
 
 		public override GameObject getGameObject()
 		{
-			GameObject prefab = Object.Instantiate(CraftData.GetPrefabForTechType(TechType.RocketBase));
+			GameObject prefab = CraftHelper.Utils.prefabCopy(TechType.RocketBase);
 
 			prefab.AddComponent<PlatformInitializer>();
 			prefab.AddComponent<PlatformMove>();

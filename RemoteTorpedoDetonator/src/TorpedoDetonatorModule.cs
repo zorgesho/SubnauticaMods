@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-using UnityEngine;
+﻿using UnityEngine;
 using SMLHelper.V2.Crafting;
 
 using Common.Crafting;
@@ -11,13 +9,13 @@ namespace RemoteTorpedoDetonator
 	{
 		public static new TechType TechType { get; private set; } = 0;
 
-		protected override TechData getTechData() => new TechData() { craftAmount = 1, Ingredients = new List<Ingredient>
-		{
+		protected override TechData getTechData() => new TechData
+		(
 			new Ingredient(TechType.AdvancedWiringKit, 1),
-			new Ingredient(TechType.Magnetite, 1),
-		}};
+			new Ingredient(TechType.Magnetite, 1)
+		)	{ craftAmount = 1};
 
-		public override GameObject getGameObject() => Object.Instantiate(CraftData.GetPrefabForTechType(TechType.VehicleArmorPlating));
+		public override GameObject getGameObject() => CraftHelper.Utils.prefabCopy(TechType.VehicleArmorPlating);
 
 		public override void patch()
 		{

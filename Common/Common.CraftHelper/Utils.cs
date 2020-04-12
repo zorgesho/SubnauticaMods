@@ -10,8 +10,10 @@ namespace Common.Crafting
 			public static GameObject prefabCopy(string resourcePath) => Object.Instantiate(Resources.Load<GameObject>(resourcePath));
 
 
-			public static Constructable initConstructable(Constructable c, GameObject model)
+			public static Constructable initConstructable(GameObject prefab, GameObject model)
 			{
+				Constructable c = prefab.ensureComponent<Constructable>();
+
 				c.allowedInBase = false;
 				c.allowedInSub = false;
 				c.allowedOutside = false;

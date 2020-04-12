@@ -99,7 +99,6 @@
     <Compile Include="src\craftables\NutrientBlock.cs" />
     <Compile Include="src\buildables\StorageLabCounter.cs" />
     <Compile Include="src\craftables\LuggageBag.cs" />
-    <Compile Include="src\StorageHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="mod.json" />

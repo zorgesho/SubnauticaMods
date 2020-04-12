@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-using UnityEngine;
+﻿using UnityEngine;
 using SMLHelper.V2.Crafting;
 using SMLHelper.V2.Handlers;
 
@@ -15,7 +13,7 @@ namespace TrfHabitatBuilder
 
 		public override GameObject getGameObject()
 		{
-			GameObject prefab = Object.Instantiate(CraftData.GetPrefabForTechType(TechType.Terraformer));
+			GameObject prefab = CraftHelper.Utils.prefabCopy(TechType.Terraformer);
 
 			Terraformer trfCmp = prefab.GetComponent<Terraformer>();
 			BuilderTool bldCmp = prefab.AddComponent<BuilderTool>();
@@ -30,20 +28,20 @@ namespace TrfHabitatBuilder
 
 			prefab.AddComponent<TrfBuilderControl>();
 
-			VFXFabricating vfxFab = prefab.GetComponentInChildren<VFXFabricating>();
-			vfxFab.eulerOffset = new Vector3(-10f, 90f, 0f);
-			vfxFab.posOffset = new Vector3(-0.4f, 0.11f, 0f);
-			vfxFab.localMaxY = 0.24f;
+			CraftHelper.Utils.initVFXFab(prefab,
+				eulerOffset: new Vector3(-10f, 90f, 0f),
+				posOffset: new Vector3(-0.4f, 0.11f, 0f),
+				localMaxY: 0.24f);
 
 			return prefab;
 		}
 
-		protected override TechData getTechData() => new TechData() { craftAmount = 1, Ingredients = new List<Ingredient>
-		{
+		protected override TechData getTechData() => new TechData
+		(
 			new Ingredient(TechType.ComputerChip, 1),
 			new Ingredient(TechType.WiringKit, 1),
 			new Ingredient(TechType.Battery, 1)
-		}};
+		)	{ craftAmount = 1};
 
 		public override void patch()
 		{

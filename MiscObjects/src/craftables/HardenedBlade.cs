@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-using UnityEngine;
+﻿using UnityEngine;
 using SMLHelper.V2.Crafting;
 
 using Common.Crafting;
@@ -9,15 +7,15 @@ namespace MiscObjects
 {
 	class DiamondBlade: CraftableObject
 	{
-		protected override TechData getTechData() => new TechData() { craftAmount = 1, Ingredients = new List<Ingredient>
-		{
+		protected override TechData getTechData() => new TechData
+		(
 			new Ingredient(TechType.Knife, 1),
-			new Ingredient(TechType.Diamond, 2),
-		}};
+			new Ingredient(TechType.Diamond, 2)
+		)	{ craftAmount = 1 };
 
 		public override GameObject getGameObject()
 		{
-			GameObject prefab = Object.Instantiate(Resources.Load<GameObject>("WorldEntities/Tools/DiamondBlade"));
+			GameObject prefab = CraftHelper.Utils.prefabCopy("WorldEntities/Tools/DiamondBlade");
 			prefab.GetComponent<Knife>().bleederDamage = 30f;
 
 			return prefab;

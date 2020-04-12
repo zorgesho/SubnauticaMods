@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Collections.Generic;
 
 using Harmony;
@@ -10,6 +11,42 @@ namespace Common
 {
 	static partial class HarmonyHelper
 	{
+#region CodeInstruction debug extensions
+
+		public static void log(this CodeInstruction ci) => $"{ci.opcode} {ci.operand}".log();
+
+		public static void log(this IEnumerable<CodeInstruction> cins, bool searchFirstOps = false)
+		{
+			var list = cins.ToList();
+
+			int _findLabel(object label) => // find target index for jumps
+				list.FindIndex(_ci => _ci.labels?.FindIndex(l => l.Equals(label)) != -1);
+
+			string _labelsInfo(CodeInstruction ci)
+			{
+				if ((ci.labels?.Count ?? 0) == 0)
+					return "";
+
+				string res = $"=> labels({ci.labels.Count}): ";
+				foreach (var l in ci.labels)
+					res += "Label" + l.GetHashCode() + " ";
+
+				return res;
+			}
+
+			for (int i = 0; i < list.Count; i++)
+			{
+				var ci = list[i];
+
+				int labelIndex = (ci.operand?.GetType() == typeof(Label))? _findLabel(ci.operand): -1;
+				string operandInfo = labelIndex != -1? "jump to " + labelIndex: ci.operand?.ToString();
+				string isFirstOp = (searchFirstOps && list.FindIndex(_ci => _ci.opcode == ci.opcode) == i)? " 1ST":""; // is such an opcode is first encountered in this instruction
+
+				$"{i}{isFirstOp}: {ci.opcode} {operandInfo} {_labelsInfo(ci)}".log();
+			}
+		}
+#endregion
+
 		// produces a list of all methods patched by all Harmony instances and their respective patches
 		public static string getPatchesReport(string harmonyID = null, bool omitNames = false) => PatchesReport.get(harmonyID, omitNames);
 

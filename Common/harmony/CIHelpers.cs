@@ -13,46 +13,10 @@ namespace Common
 
 	static partial class HarmonyHelper
 	{
-#region CodeInstruction extensions
-
 		public static bool isLDC<T>(this CodeInstruction ci, T val) => ci.isOp(LdcOpCode.get<T>(), val);
 
 		public static bool isOp(this CodeInstruction ci, OpCode opcode, object operand = null) =>
 			ci.opcode == opcode && (operand == null || ci.operand.Equals(operand));
-
-		public static void log(this CodeInstruction ci) => $"{ci.opcode} {ci.operand}".log();
-
-		public static void log(this CIEnumerable cins, bool searchFirstOps = false)
-		{
-			var list = cins.ToList();
-
-			int _findLabel(object label) => // find target index for jumps
-				list.FindIndex(_ci => _ci.labels?.FindIndex(l => l.Equals(label)) != -1);
-
-			string _labelsInfo(CodeInstruction ci)
-			{
-				if ((ci.labels?.Count ?? 0) == 0)
-					return "";
-
-				string res = $"=> labels({ci.labels.Count}): ";
-				foreach (var l in ci.labels)
-					res += "Label" + l.GetHashCode() + " ";
-
-				return res;
-			}
-
-			for (int i = 0; i < list.Count; i++)
-			{
-				var ci = list[i];
-
-				int labelIndex = (ci.operand?.GetType() == typeof(Label))? _findLabel(ci.operand): -1;
-				string operandInfo = labelIndex != -1? "jump to " + labelIndex: ci.operand?.ToString();
-				string isFirstOp = (searchFirstOps && list.FindIndex(_ci => _ci.opcode == ci.opcode) == i)? " 1ST":""; // is such an opcode is first encountered in this instruction
-
-				$"{i}{isFirstOp}: {ci.opcode} {operandInfo} {_labelsInfo(ci)}".log();
-			}
-		}
-#endregion
 
 #region CodeInstruction sequences manipulation methods
 

@@ -121,7 +121,7 @@ namespace GravTrapImproved
 			return CraftData.GetTechType(obj);
 		}
 
-		public bool isValidTarget(GameObject obj)
+		public bool isValidTarget(GameObject obj) // ! called on each frame for each attracted object
 		{
 			if (obj.GetComponent<Pickupable>()?.attached == true)
 				return false;

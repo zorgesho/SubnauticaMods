@@ -12,33 +12,33 @@ namespace GravTrapImproved
 {
 	static class GravTrapMK2Patches
 	{
-		public static void updateMaxRadius(Gravsphere gravsphere)
+		public static void updateRange(Gravsphere gravsphere)
 		{
 			if (!gravsphere.GetComponent<GravTrapMK2.Tag>())
 				return;
 
 			if (gravsphere.gameObject.GetComponents<SphereCollider>()?.FirstOrDefault(s => s.radius > 10) is SphereCollider sphere)
-				sphere.radius = Main.config.mk2MaxRadius;
+				sphere.radius = Main.config.mk2Range;
 		}
 
-		public class UpdateRadiuses: Config.Field.IAction
+		public class UpdateRanges: Config.Field.IAction
 		{
-			public void action() => Object.FindObjectsOfType<Gravsphere>().ForEach(sphere => updateMaxRadius(sphere));
+			public void action() => Object.FindObjectsOfType<Gravsphere>().ForEach(sphere => updateRange(sphere));
 		}
 
 
 		[HarmonyPostfix]
-		[HarmonyPatch(typeof(Gravsphere), "Start")] // patching work radius of a gravsphere
+		[HarmonyPatch(typeof(Gravsphere), "Start")] // patching work range
 		static void patchMaxRadius(Gravsphere __instance)
 		{
-			updateMaxRadius(__instance);
+			updateRange(__instance);
 		}
 
 		[HarmonyTranspiler]
 		[HarmonyPatch(typeof(Gravsphere), "OnTriggerEnter")] // patching max count of attracted objects
 		static IEnumerable<CodeInstruction> patchObjectMaxCount(IEnumerable<CodeInstruction> cins, ILGenerator ilg)
 		{
-			return HarmonyHelper.constToCfgVar<sbyte, GravTrapMK2.Tag>(cins, 12, nameof(Main.config.mk2MaxObjectCount), ilg);
+			return HarmonyHelper.constToCfgVar<sbyte, GravTrapMK2.Tag>(cins, 12, nameof(Main.config.mk2MaxObjects), ilg);
 		}
 
 		[HarmonyTranspiler]

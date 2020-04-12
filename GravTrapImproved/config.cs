@@ -22,7 +22,7 @@ namespace GravTrapImproved
 		[Field.Range(12, 1000)]
 #endif
 		[AddToConsole("gt_mk2")]
-		public readonly int mk2MaxObjectCount = 20; // default: 12
+		public readonly int mk2MaxObjects = 20; // default: 12
 
 #if !DEBUG
 		[Field.Range(15, 1000)]
@@ -34,8 +34,8 @@ namespace GravTrapImproved
 		[Field.Range(17, 1000)]
 #endif
 		[AddToConsole("gt_mk2")]
-		[Field.Action(typeof(GravTrapMK2Patches.UpdateRadiuses))]
-		public readonly float mk2MaxRadius = 30f; // default: 17f
+		[Field.Action(typeof(GravTrapMK2Patches.UpdateRanges))]
+		public readonly float mk2Range = 30f; // default: 17f
 
 		public readonly float treaderChunkSpawnFactor = 1f;
 		public readonly bool raysVisible = true;

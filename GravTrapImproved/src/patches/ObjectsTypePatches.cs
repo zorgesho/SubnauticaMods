@@ -23,8 +23,9 @@ namespace GravTrapImproved
 	{
 		static void Postfix(Gravsphere __instance, int index)
 		{
-			if (__instance.attractableList[index])
-				__instance.GetComponent<GravTrapObjectsType>().handleAttracted(__instance.attractableList[index].gameObject, false);
+			var rigidBody = __instance.attractableList[index];
+			if (rigidBody)
+				__instance.GetComponent<GravTrapObjectsType>().handleAttracted(rigidBody.gameObject, false);
 		}
 	}
 

@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Collections.Generic;
 
 using Oculus.Newtonsoft.Json;
+using Oculus.Newtonsoft.Json.Converters;
 using Oculus.Newtonsoft.Json.Serialization;
 
 namespace Common.Configuration
@@ -41,7 +42,8 @@ namespace Common.Configuration
 		static readonly JsonSerializerSettings serializerSettings = new JsonSerializerSettings()
 		{
 			ContractResolver = new ConfigContractResolver(),
-			ObjectCreationHandling = ObjectCreationHandling.Replace
+			ObjectCreationHandling = ObjectCreationHandling.Replace,
+			Converters = new List<JsonConverter> { new StringEnumConverter() }
 		};
 
 

@@ -1,8 +1,5 @@
 ﻿using System.Collections.Generic;
 
-using Oculus.Newtonsoft.Json;
-using Oculus.Newtonsoft.Json.Converters;
-
 using Common;
 using Common.Configuration;
 
@@ -62,11 +59,8 @@ namespace GravTrapImproved
 	{
 		public class TechTypeList
 		{
-			[JsonArray(ItemConverterType = typeof(StringEnumConverter))]
-			class TechTypes: HashSet<TechType> { public TechTypes(IEnumerable<TechType> techs): base(techs) {} }
-
 			public readonly string name;
-			readonly TechTypes techTypes;
+			readonly HashSet<TechType> techTypes;
 
 			public void add(TechTypeList list) => add(list.techTypes);
 			public void add(IEnumerable<TechType> list) => techTypes.AddRange(list);
@@ -76,7 +70,7 @@ namespace GravTrapImproved
 			public TechTypeList(string name, params TechType[] techTypes)
 			{
 				this.name = name;
-				this.techTypes = new TechTypes(techTypes);
+				this.techTypes = new HashSet<TechType>(techTypes);
 			}
 		}
 

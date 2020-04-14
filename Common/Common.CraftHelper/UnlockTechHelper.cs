@@ -18,8 +18,13 @@ namespace Common.Crafting
 		static bool inited = false;
 		static void init()
 		{
-			if (!inited && (inited = true))
-				HarmonyHelper.patch();
+			if (inited || !(inited = true))
+				return;
+
+			HarmonyHelper.patch();
+
+			// patching separately because of HarmonyPriority
+			HarmonyHelper.patch(typeof(KnownTech).method("Initialize"), postfix: typeof(UnlockTechHelper).method(nameof(unlockPopupsUpdate)));
 		}
 
 		public static void setFragmentTypeToUnlock(TechType unlockTechType, TechType origFragTechType, TechType substFragTechType, int fragCount, float scanTime)
@@ -83,9 +88,7 @@ namespace Common.Crafting
 			return false;
 		}
 
-		[HarmonyPostfix]
-		[HarmonyAfter("com.ahk1221.smlhelper")]
-		[HarmonyPatch(typeof(KnownTech), "Initialize")]
+		[HarmonyPriority(Priority.Low)]
 		static void unlockPopupsUpdate()
 		{
 			KnownTech.AnalysisTech _getEntry(TechType techType) =>

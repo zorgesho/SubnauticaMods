@@ -50,15 +50,15 @@ namespace Common
 			if (substitutedStrings == null)
 			{
 				substitutedStrings = new Dictionary<string, string>();
-				HarmonyHelper.patch();
+
+				HarmonyHelper.patch(typeof(Language).method("LoadLanguageFile"),
+					postfix: typeof(LanguageHelper).method(nameof(substituteStrings)));
 			}
 
 			substitutedStrings[stringID] = substituteStringID;
 		}
 
-		[HarmonyPostfix]
-		[HarmonyAfter("com.ahk1221.smlhelper")]
-		[HarmonyPatch(typeof(Language), "LoadLanguageFile")]
+		[HarmonyPriority(Priority.Low)]
 		static void substituteStrings(Language __instance) =>
 			substitutedStrings.forEach(subst => __instance.strings[subst.Key] = __instance.strings[subst.Value]);
 

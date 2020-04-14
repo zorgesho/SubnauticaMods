@@ -16,7 +16,11 @@ namespace Common
 		public static bool isLDC<T>(this CodeInstruction ci, T val) => ci.isOp(LdcOpCode.get<T>(), val);
 
 		public static bool isOp(this CodeInstruction ci, OpCode opcode, object operand = null) =>
-			ci.opcode == opcode && (operand == null || ci.operand.Equals(operand));
+			ci.opcode == opcode && (operand == null || Equals(ci.operand, operand));
+
+		// for local variables ops
+		public static bool isOpLoc(this CodeInstruction ci, OpCode opcode, int index) =>
+			ci.opcode == opcode && ((ci.operand as LocalBuilder)?.LocalIndex == index);
 
 #region CodeInstruction sequences manipulation methods
 

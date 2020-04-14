@@ -1,12 +1,11 @@
 ﻿using Common;
 using Common.Crafting;
-using Common.Configuration;
 
 namespace TrfHabitatBuilder
 {
 	public static class Main
 	{
-		internal static readonly ModConfig config = Config.tryLoad<ModConfig>();
+		internal static readonly ModConfig config = Mod.init<ModConfig>();
 
 		public static void patch()
 		{

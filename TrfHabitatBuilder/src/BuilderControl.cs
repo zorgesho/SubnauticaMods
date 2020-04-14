@@ -1,4 +1,5 @@
 ﻿//#define DBG_CPOINTS
+
 using System;
 using System.Collections.Generic;
 
@@ -192,10 +193,9 @@ namespace TrfHabitatBuilder
 
 		public void init()
 		{
-			if (inited)
+			if (inited || !(inited = true))
 				return;
 
-			inited = true;
 			AnimationHelper.init();
 
 			//cbeams[0] = new ConstructionBeam(builderTool.beamLeft, builderTool.nozzleLeft);

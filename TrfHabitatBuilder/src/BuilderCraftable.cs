@@ -25,6 +25,7 @@ namespace TrfHabitatBuilder
 			Object.DestroyImmediate(trfCmp);
 
 			bldCmp.animator = prefab.getChild("terraformer_anim").GetComponent<Animator>();
+			bldCmp.powerConsumptionConstruct = bldCmp.powerConsumptionDeconstruct = Main.config.powerConsumption;
 
 			prefab.AddComponent<TrfBuilderControl>();
 
@@ -45,7 +46,11 @@ namespace TrfHabitatBuilder
 
 		public override void patch()
 		{
-			TechType = register("Habitat builder", "Fabricates habitat compartments and appliances from raw materials.");
+			TechType = register();
+
+			// using language strings from vanilla builder
+			LanguageHelper.substituteString(ClassID, "Builder");
+			LanguageHelper.substituteString("Tooltip_" + ClassID, "Tooltip_Builder");
 
 			addToGroup(TechGroup.Personal, TechCategory.Tools, TechType.Flare);
 			addCraftingNodeTo(CraftTree.Type.Fabricator, "Personal/Tools", TechType.Flare);

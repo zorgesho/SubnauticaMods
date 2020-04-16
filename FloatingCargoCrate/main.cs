@@ -1,17 +1,17 @@
 ﻿using Common;
 using Common.Crafting;
-using Common.Configuration;
 
 namespace FloatingCargoCrate
 {
 	public static class Main
 	{
-		internal static ModConfig config = Config.tryLoad<ModConfig>();
+		internal static readonly ModConfig config = Mod.init<ModConfig>();
 
 		public static void patch()
 		{
+			LanguageHelper.init();
+
 			HarmonyHelper.patchAll();
-			
 			CraftHelper.patchAll();
 		}
 	}

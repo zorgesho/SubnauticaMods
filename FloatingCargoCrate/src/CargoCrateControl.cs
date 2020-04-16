@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+
 using UnityEngine;
 
 using Common;
@@ -14,20 +15,20 @@ namespace FloatingCargoCrate
 		const float distanceBeaconAttach = 4f;
 		const float distancePhysicsOff	 = 40f;
 		const float distanceHide		 = 200f;
-		
+
 		const float distanceBeaconAttachSqr = distanceBeaconAttach * distanceBeaconAttach;
 		const float distanceHideSqr = distanceHide * distanceHide;
 		const float distancePhysicsOffSqr = distancePhysicsOff * distancePhysicsOff;
 
 		const float dtPhysicsChangeMin = 10f;
 		const float dtPhysicsChangeMax = 20f;
-		
+
 		float timeNextPhysicsChange = 0f;
 		float gravitySign = 1.0f;
 
 		bool lastPhysicsEnabled = false;
 		bool lastVisible = true;
-		
+
 		public bool needShowBeaconText { get; private set; }
 
 		int containerSize = 0;
@@ -40,7 +41,7 @@ namespace FloatingCargoCrate
 		Beacon beaconAttached = null;
 		string _beaconID; // used after loading
 		static readonly Dictionary<Beacon, FloatingCargoCrateControl> allBeaconsAttached = new Dictionary<Beacon, FloatingCargoCrateControl>();
-		
+
 		void Awake()
 		{
 			rigidbody = gameObject.GetComponent<Rigidbody>();
@@ -78,16 +79,17 @@ namespace FloatingCargoCrate
 
 		public bool CanDeconstruct(out string reason)
 		{
-			if (beaconAttached)
-			{
-				reason = "You need to remove beacon first.";
-				return false;
-			}
+			if (!beaconAttached)
+				return storageContainer.CanDeconstruct(out reason);
 
-			return storageContainer.CanDeconstruct(out reason);
+			reason = L10n.str(L10n.ids_removeBeaconFirst);
+			return false;
 		}
 
-		public void OnConstructedChanged(bool constructed) {}
+		public void OnConstructedChanged(bool constructed)
+		{
+			gameObject.GetComponentInChildren<StorageContainer>().enabled = constructed;
+		}
 
 		void updateMass()
 		{
@@ -103,7 +105,7 @@ namespace FloatingCargoCrate
 
 			if (itemCount == 0) // if we didn't open storage, itemsMap will be empty
 				itemCount = storageContainer.container.count;
-			
+
 			rigidbody.mass = (Main.config.crateMassFull - Main.config.crateMassEmpty) * ((float)itemCount / containerSize) + Main.config.crateMassEmpty;
 		}
 
@@ -115,36 +117,35 @@ namespace FloatingCargoCrate
 
 		void setRigidBodyPhysicsEnabled(bool val)
 		{
-			if (val != lastPhysicsEnabled)
-			{
-				lastPhysicsEnabled = val;
-				rigidbody.isKinematic = !val;
-			}
+			if (val == lastPhysicsEnabled)
+				return;
+
+			lastPhysicsEnabled = val;
+			rigidbody.isKinematic = !val;
 		}
-		
+
 		void setVisible(bool val)
 		{
-			if (lastVisible != val)
-			{
-				lastVisible = val;
+			if (lastVisible == val)
+				return;
 
-				foreach (var r in gameObject.GetComponent<SkyApplier>().renderers)
-					r.enabled = val;
-			}
+			lastVisible = val;
+
+			foreach (var r in gameObject.GetComponent<SkyApplier>().renderers)
+				r.enabled = val;
 		}
 
 		void updateBeaconText(bool distVal)
 		{
-			needShowBeaconText = distVal && !beaconAttached && (Inventory.main.GetHeldTool() && Inventory.main.GetHeldTool().pickupable.GetTechType() == TechType.Beacon);
+			needShowBeaconText = distVal && !beaconAttached && GameUtils.getHeldToolType() == TechType.Beacon;
 		}
 
 		void updateDistanceFromCam()
 		{
-			LargeWorldStreamer lwsMain = LargeWorldStreamer.main;
-			if (lwsMain == null)
+			if (LargeWorldStreamer.main == null)
 				return;
 
-			float distanceFromCamSqr = (gameObject.transform.position - lwsMain.cachedCameraPosition).sqrMagnitude;
+			float distanceFromCamSqr = (gameObject.transform.position - LargeWorldStreamer.main.cachedCameraPosition).sqrMagnitude;
 
 			setRigidBodyPhysicsEnabled(distanceFromCamSqr < distancePhysicsOffSqr);
 			setVisible(distanceFromCamSqr < distanceHideSqr || gameObject.transform.position.y > -3);
@@ -195,12 +196,12 @@ namespace FloatingCargoCrate
 				allBeaconsAttached.Add(beacon, this);
 			else
 				allBeaconsAttached.Remove(beacon);
-				
+
 			beaconAttached = attaching? beacon: null;
 
 			return true;
 		}
-		
+
 		public bool tryAttachBeacon(Beacon beacon)
 		{
 			if (beacon && !beaconAttached && (gameObject.transform.position - beacon.gameObject.transform.position).sqrMagnitude < distanceBeaconAttachSqr)
@@ -223,7 +224,7 @@ namespace FloatingCargoCrate
 
 		public void OnProtoDeserialize(ProtobufSerializer serializer) =>
 			_beaconID = SaveLoad.load<SaveData>(id)?.beaconID ?? "";
-		
+
 		public void OnProtoSerialize(ProtobufSerializer serializer) =>
 			SaveLoad.save(id, new SaveData { beaconID = beaconAttached?.GetComponent<UniqueIdentifier>().Id ?? "" });
 	}

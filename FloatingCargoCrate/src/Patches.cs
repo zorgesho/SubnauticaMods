@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using Harmony;
+﻿using Harmony;
+using UnityEngine;
 
 using Common;
 
@@ -11,9 +11,9 @@ namespace FloatingCargoCrate
 		static void Postfix(StorageContainer __instance)
 		{
 			FloatingCargoCrateControl fccControl = __instance.GetComponentInParent<FloatingCargoCrateControl>();
-			
+
 			if (fccControl && fccControl.needShowBeaconText && HandReticle.main.interactText1 != "")
-				HandReticle.main.interactText1 += $"\nAttach beacon to crate ({uGUI.FormatButton(GameInput.Button.RightHand)})";
+				HandReticle.main.interactText1 += string.Format(L10n.str(L10n.ids_attachBeaconToCrate), uGUI.FormatButton(GameInput.Button.RightHand));
 		}
 	}
 
@@ -32,7 +32,7 @@ namespace FloatingCargoCrate
 			{
 				if (f.tryAttachBeacon(__instance))
 				{
-					"Beacon attached".onScreen();
+					L10n.str(L10n.ids_beaconAttached).onScreen();
 					break;
 				}
 			}
@@ -51,7 +51,7 @@ namespace FloatingCargoCrate
 
 			if (Builder.placePosition.y > 0)
 				return false;
-		
+
 			Transform aimTransform = Builder.GetAimTransform();
 			Builder.placementTarget = null;
 

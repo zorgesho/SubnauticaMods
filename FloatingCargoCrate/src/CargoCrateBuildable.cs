@@ -19,7 +19,7 @@ namespace FloatingCargoCrate
 
 		public override void patch()
 		{
-			TechType = register("Floating cargo crate", "Big cargo crate that floats and maintains position in the water.");
+			TechType = register(L10n.ids_crateName, L10n.ids_crateDesc);
 
 			addToGroup(TechGroup.ExteriorModules, TechCategory.ExteriorOther);
 			setTechTypeForUnlock(TechType.AirBladder);
@@ -57,12 +57,12 @@ namespace FloatingCargoCrate
 
 			StorageContainer storageContainer = prefab.GetComponentInChildren<StorageContainer>();
 			storageContainer.modelSizeRadius *= 3f;
-			storageContainer.hoverText = "Open crate";
-			storageContainer.storageLabel = "CRATE";
-
+			storageContainer.hoverText = L10n.str(L10n.ids_hoverText);
+			storageContainer.storageLabel = L10n.str(L10n.ids_storageLabel);
 			storageContainer.width  = Main.config.storageWidth;
 			storageContainer.height = Main.config.storageHeight;
 			storageContainer.preventDeconstructionIfNotEmpty = true;
+			storageContainer.enabled = false; // disable until fully constructed
 
 
 			prefab.destroyChild("LidLabel");

@@ -21,6 +21,9 @@ namespace Common.Configuration
 		[AttributeUsage(AttributeTargets.Class | AttributeTargets.Field)]
 		public class AddToConsoleAttribute: Attribute, IConfigAttribute, IFieldAttribute, IRootConfigInfo
 		{
+			[AttributeUsage(AttributeTargets.Field)]
+			public class SkipAttribute: Attribute {} // don't add field to console
+
 #if DEBUG
 			static readonly UniqueIDs uniqueIDs = new UniqueIDs();
 #endif
@@ -44,7 +47,7 @@ namespace Common.Configuration
 			{
 				ConfigVarsConsoleCommand.init();
 
-				if (field.FieldType.IsPrimitive && field.IsPublic)
+				if (field.FieldType.IsPrimitive && field.IsPublic && !field.checkAttribute<SkipAttribute>())
 				{
 					var cfgField = new ConfigVarsConsoleCommand.CfgField(config, field, rootConfig);
 					string nameForConsole = (cfgNamespace + cfgField.path).ToLower();

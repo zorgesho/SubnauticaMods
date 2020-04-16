@@ -17,7 +17,7 @@ namespace FloatingCargoCrate
 		class AnimFixer
 		{
 			readonly Animator animator;
-			readonly Transform parentTransform, childTransform;
+			readonly Transform pillowTransform;
 
 			readonly int animHash = Animator.StringToHash("open/close.deploy");
 
@@ -26,8 +26,7 @@ namespace FloatingCargoCrate
 				animator = model.GetComponent<Animator>();
 				animator.enabled = true;
 
-				parentTransform = model.transform.Find("main");
-				childTransform = parentTransform.Find("attach");
+				pillowTransform = model.transform.Find("main/attach");
 
 				animator.Rebind();
 				animator.Play("deploy");
@@ -35,8 +34,7 @@ namespace FloatingCargoCrate
 
 			public bool update()
 			{
-				// keep x & z same as parent's
-				childTransform.position = new Vector3(parentTransform.position.x, childTransform.transform.position.y, parentTransform.transform.position.z);
+				pillowTransform.localPosition = new Vector3(0f, -0.1875f, 0f);
 
 				bool animPlaying = animator.GetCurrentAnimatorStateInfo(0).fullPathHash == animHash;
 
@@ -73,7 +71,8 @@ namespace FloatingCargoCrate
 		int containerSize = 0;
 
 		Rigidbody rigidbody;
-		StorageContainer storageContainer;
+		StorageContainer storageContainer => _cachedSC ?? (_cachedSC = gameObject.GetComponentInChildren<StorageContainer>());
+		StorageContainer _cachedSC;
 
 		string id;
 
@@ -83,10 +82,15 @@ namespace FloatingCargoCrate
 
 		void Awake()
 		{
+			if (LargeWorldStreamer.main?.globalRoot == null) // that's probably prefab that loaded early
+			{
+				gameObject.SetActive(false);
+				return;
+			}
+
 			rigidbody = gameObject.GetComponent<Rigidbody>();
 			rigidbody.isKinematic = true; // switch physics off by default
 
-			storageContainer = gameObject.GetComponentInChildren<StorageContainer>();
 			containerSize = storageContainer.width * storageContainer.height;
 
 			id = GetComponent<PrefabIdentifier>().Id;
@@ -243,6 +247,9 @@ namespace FloatingCargoCrate
 
 		public bool tryAttachBeacon(Beacon beacon)
 		{
+			if (GetComponent<Constructable>()?.constructed == false)
+				return false;
+
 			if (beacon && !beaconAttached && (gameObject.transform.position - beacon.gameObject.transform.position).sqrMagnitude < distanceBeaconAttachSqr)
 				return setBeaconAttached(beacon, true);
 

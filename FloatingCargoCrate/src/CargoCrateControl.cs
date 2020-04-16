@@ -11,30 +11,69 @@ namespace FloatingCargoCrate
 	{
 		class SaveData { public string beaconID; }
 
-		const float maxGravityChange	 = 0.1f;
-		const float distanceBeaconAttach = 4f;
-		const float distancePhysicsOff	 = 40f;
-		const float distanceHide		 = 200f;
+		// deploy animation for pillow also contains translate and we don't need it
+		// so when animation will play we'll keep pillow on the same position relative to parent
+		// and we disable animator after animation, so it won't play on deconstruct
+		class AnimFixer
+		{
+			readonly Animator animator;
+			readonly Transform parentTransform, childTransform;
 
-		const float distanceBeaconAttachSqr = distanceBeaconAttach * distanceBeaconAttach;
+			readonly int animHash = Animator.StringToHash("open/close.deploy");
+
+			public AnimFixer(GameObject model)
+			{
+				animator = model.GetComponent<Animator>();
+				animator.enabled = true;
+
+				parentTransform = model.transform.Find("main");
+				childTransform = parentTransform.Find("attach");
+
+				animator.Rebind();
+				animator.Play("deploy");
+			}
+
+			public bool update()
+			{
+				// keep x & z same as parent's
+				childTransform.position = new Vector3(parentTransform.position.x, childTransform.transform.position.y, parentTransform.transform.position.z);
+
+				bool animPlaying = animator.GetCurrentAnimatorStateInfo(0).fullPathHash == animHash;
+
+				if (!animPlaying)
+					animator.enabled = false;
+
+				return animPlaying;
+			}
+		}
+		AnimFixer animFixer;
+
+
+		const float maxGravityChange	 = 0.1f;
+
+		const float distanceHide		 = 200f;
+		const float distancePhysicsOff	 = 40f;
+		const float distanceBeaconAttach = 4f;
+
 		const float distanceHideSqr = distanceHide * distanceHide;
 		const float distancePhysicsOffSqr = distancePhysicsOff * distancePhysicsOff;
+		const float distanceBeaconAttachSqr = distanceBeaconAttach * distanceBeaconAttach;
 
 		const float dtPhysicsChangeMin = 10f;
 		const float dtPhysicsChangeMax = 20f;
 
-		float timeNextPhysicsChange = 0f;
 		float gravitySign = 1.0f;
+		float timeNextPhysicsChange = 0f;
 
-		bool lastPhysicsEnabled = false;
 		bool lastVisible = true;
+		bool lastPhysicsEnabled = false;
 
 		public bool needShowBeaconText { get; private set; }
 
 		int containerSize = 0;
 
-		StorageContainer storageContainer;
 		Rigidbody rigidbody;
+		StorageContainer storageContainer;
 
 		string id;
 
@@ -59,8 +98,8 @@ namespace FloatingCargoCrate
 
 		void Start()
 		{
-			if ((!Builder.prefab || CraftData.GetTechType(Builder.prefab) != FloatingCargoCrate.TechType))
-				Invoke(nameof(playDeployAnimation), 0.5f);
+			if (!Builder.prefab || CraftData.GetTechType(Builder.prefab) != FloatingCargoCrate.TechType) // don't play animation for ghost model
+				animFixer = new AnimFixer(gameObject.getChild("3rd_person_model/floating_storage_cube_tp"));
 		}
 
 		void Update()
@@ -77,8 +116,20 @@ namespace FloatingCargoCrate
 			}
 		}
 
+		void LateUpdate()
+		{
+			if (animFixer != null && !animFixer.update())
+				animFixer = null;
+		}
+
 		public bool CanDeconstruct(out string reason)
 		{
+			if (animFixer != null) // don't deconstruct while deploy animation is played
+			{
+				reason = null;
+				return false;
+			}
+
 			if (!beaconAttached)
 				return storageContainer.CanDeconstruct(out reason);
 
@@ -88,7 +139,7 @@ namespace FloatingCargoCrate
 
 		public void OnConstructedChanged(bool constructed)
 		{
-			gameObject.GetComponentInChildren<StorageContainer>().enabled = constructed;
+			storageContainer.enabled = constructed;
 		}
 
 		void updateMass()
@@ -150,18 +201,6 @@ namespace FloatingCargoCrate
 			setRigidBodyPhysicsEnabled(distanceFromCamSqr < distancePhysicsOffSqr);
 			setVisible(distanceFromCamSqr < distanceHideSqr || gameObject.transform.position.y > -3);
 			updateBeaconText(distanceFromCamSqr < distanceBeaconAttachSqr);
-		}
-
-		void playDeployAnimation() // TODO: is all this lines necessary ?
-		{
-			GameObject model = gameObject.getChild("3rd_person_model");
-			model.SetActive(true);
-
-			Animator animator = model.GetComponentInChildren<Animator>();
-			animator.enabled = true;
-			animator.StartPlayback();
-			animator.Rebind();
-			animator.Play("deploy");
 		}
 
 		public bool setBeaconAttached(Beacon beacon, bool attaching)

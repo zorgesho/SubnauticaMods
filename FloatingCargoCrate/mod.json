@@ -1,11 +1,9 @@
 {
   "Id": "FloatingCargoCrate",
-  "DisplayName": "FloatingCargoCrate",
+  "DisplayName": "Floating Cargo Crate",
   "Author": "zorgesho",
-  "Version": "1.1.1",
+  "Version": "1.1.2",
   "Dependencies": ["SMLHelper"],
-  "LoadBefore": [],
-  "LoadAfter": [],
   "Enable": true,
   "Game": "Subnautica",
   "AssemblyName": "FloatingCargoCrate.dll",

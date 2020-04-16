@@ -8,7 +8,7 @@ namespace MiscPatches
 	[HarmonyPatch(typeof(CellManager), "GetPrefabForSlot")]
 	static class CellManager_GetPrefabForSlot_Patch
 	{
-		static bool Prepare() => Main.config.loolSpawnRerollCount > 0;
+		static bool Prepare() => Main.config.dbg.loolSpawnRerollCount > 0;
 
 		static bool Prefix(CellManager __instance, IEntitySlot slot, ref EntitySlot.Filler __result)
 		{
@@ -18,7 +18,7 @@ namespace MiscPatches
 				return false;
 			}
 
-			for (int i = 0; i < Main.config.loolSpawnRerollCount; i++)
+			for (int i = 0; i < Main.config.dbg.loolSpawnRerollCount; i++)
 			{
 				__result = __instance.spawner.GetPrefabForSlot(slot, true);
 
@@ -26,6 +26,20 @@ namespace MiscPatches
 					break;
 			}
 
+			return false;
+		}
+	}
+
+	// ignore limits for propulsion cannon
+	[HarmonyHelper.OptionalPatch]
+	[HarmonyPatch(typeof(PropulsionCannon), "ValidateObject")]
+	static class PropulsionCannon_ValidateObject_Patch
+	{
+		static bool Prepare() => Main.config.dbg.propulsionCannonIgnoreLimits;
+
+		static bool Prefix(ref bool __result)
+		{
+			__result = true;
 			return false;
 		}
 	}

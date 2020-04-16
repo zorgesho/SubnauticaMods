@@ -30,10 +30,16 @@ namespace MiscPatches
 		public readonly float batteryChargerSpeed   = 0.0015f; // 0.0015f
 		public readonly float powerCellChargerSpeed = 0.0025f; // 0.0025f
 
-		// debug stuff
-		[Field.Range(min: 0)]
 		[AddToConsole("misc")]
-		[Field.Action(typeof(HarmonyHelper.UpdateOptionalPatches))]
-		public readonly int loolSpawnRerollCount = 0;
+		public class Debug
+		{
+			[Field.Range(min: 0)]
+			[Field.Action(typeof(HarmonyHelper.UpdateOptionalPatches))]
+			public readonly int loolSpawnRerollCount = 0;
+
+			[Field.Action(typeof(HarmonyHelper.UpdateOptionalPatches))]
+			public readonly bool propulsionCannonIgnoreLimits = false;
+		}
+		public Debug dbg = new Debug();
 	}
 }

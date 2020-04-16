@@ -95,7 +95,7 @@ namespace TrfHabitatBuilder
 
 		static void Prefix()
 		{
-			var list = Main.config.lockedTabs.get(GameUtils.getCurrentTool());
+			var list = Main.config.lockedTabs.get(GameUtils.getHeldToolType());
 			var icons = getToolbar().icons;
 
 			int firstUnlocked = -1;
@@ -127,7 +127,7 @@ namespace TrfHabitatBuilder
 		{
 			static List<TechType> lockedBlueprints;
 
-			public static void init() => lockedBlueprints = Main.config.lockedBlueprints.get(GameUtils.getCurrentTool());
+			public static void init() => lockedBlueprints = Main.config.lockedBlueprints.get(GameUtils.getHeldToolType());
 
 			public static void updateUnlockState(TechType techType, ref TechUnlockState unlockState)
 			{

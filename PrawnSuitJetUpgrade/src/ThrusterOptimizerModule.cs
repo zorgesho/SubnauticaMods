@@ -21,7 +21,7 @@ namespace PrawnSuitJetUpgrade
 
 		public override void patch()
 		{
-			TechType = register("Prawn suit thrusters optimizer", "Thrusters work longer before need to recharge.");
+			TechType = register(L10n.ids_optimizerName, L10n.ids_optimizerDesc);
 
 			addToGroup(TechGroup.VehicleUpgrades, TechCategory.VehicleUpgrades);
 			addCraftingNodeTo(CraftTree.Type.SeamothUpgrades, "ExosuitModules");

@@ -185,4 +185,15 @@ namespace MiscPatches
 			}
 		}
 	}
+
+	// fix for loading inside the vehicle (https://github.com/Remodor/Subnautica_Mods/blob/master/Rm_VehicleLoadFix/src/patcher/VehiclePatcher.cs)
+	[HarmonyPatch(typeof(Vehicle), "Start")]
+	static class Vehicle_Start_Patch
+	{
+		static void Postfix(Vehicle __instance)
+		{
+			if (__instance.pilotId != null && UniqueIdentifier.TryGetIdentifier(__instance.pilotId, out UniqueIdentifier pilotID))
+				__instance.EnterVehicle(pilotID.GetComponent<Player>(), true, false);
+		}
+	}
 }

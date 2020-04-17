@@ -39,6 +39,10 @@ namespace MiscPatches
 
 			[Field.Action(typeof(HarmonyHelper.UpdateOptionalPatches))]
 			public readonly bool propulsionCannonIgnoreLimits = false;
+
+			[Field.Action(typeof(VFXController_SpawnFX_Patch.Purge))]
+			[Field.Action(typeof(HarmonyHelper.UpdateOptionalPatches))]
+			public readonly bool keepParticleSystemsAlive = false;
 		}
 		public Debug dbg = new Debug();
 	}

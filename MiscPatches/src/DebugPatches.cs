@@ -1,5 +1,8 @@
 ﻿using Harmony;
+using UnityEngine;
+
 using Common;
+using Common.Configuration;
 
 namespace MiscPatches
 {
@@ -41,6 +44,25 @@ namespace MiscPatches
 		{
 			__result = true;
 			return false;
+		}
+	}
+
+	// keep particles alive on pause
+	[HarmonyPatch(typeof(VFXController), "SpawnFX")]
+	static class VFXController_SpawnFX_Patch
+	{
+		static bool Prepare() => Main.config.dbg.keepParticleSystemsAlive;
+
+		public class Purge: Config.Field.IAction
+		{
+			public void action() =>
+				Object.FindObjectsOfType<VFXDestroyAfterSeconds>().forEach(vfx => vfx.lifeTime = 0f);
+		}
+
+		static void Postfix(VFXController __instance, int i)
+		{
+			if (__instance.emitters[i].instanceGO.GetComponent<VFXDestroyAfterSeconds>() is VFXDestroyAfterSeconds vfx)
+				vfx.lifeTime = float.PositiveInfinity;
 		}
 	}
 }

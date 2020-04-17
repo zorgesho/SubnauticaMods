@@ -11,7 +11,9 @@ namespace Common
 	{
 		public static string onScreen(this string s)
 		{
-			ErrorMessage.AddDebug(s);
+			if (!SaveLoadManager.main.isLoading && Time.timeScale != 0f)
+				ErrorMessage.AddDebug(s);
+
 			return s;
 		}
 

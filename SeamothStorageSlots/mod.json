@@ -1,11 +1,8 @@
 {
   "Id": "SeamothStorageSlots",
-  "DisplayName": "SeamothStorageSlots",
+  "DisplayName": "Seamoth Storage Slots Fix",
   "Author": "zorgesho",
   "Version": "1.0.0",
-  "Dependencies": [],
-  "LoadBefore": ["SlotExtender"],
-  "LoadAfter": [],
   "Enable": true,
   "Game": "Subnautica",
   "AssemblyName": "SeamothStorageSlots.dll",

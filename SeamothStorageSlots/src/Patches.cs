@@ -1,48 +1,38 @@
-﻿#define SLOTS9_12
+﻿using System.Reflection;
+using System.Reflection.Emit;
+using System.Collections.Generic;
 
 using Harmony;
+
 using Common;
 
 namespace SeamothStorageSlots
 {
-	[HarmonyPatch(typeof(SeamothStorageInput), "OnHandClick")]
-	static class SeamothStorageInput_OnHandClick_Patch
+	static class SeamothStorageInputPatches
 	{
-		static bool Prefix(SeamothStorageInput __instance)
+		static ItemsContainer getStorageInSlot(Vehicle vehicle, int slotID, TechType techType) =>
+			 vehicle.GetStorageInSlot(slotID, techType) ?? vehicle.GetStorageInSlot(slotID + Main.config.slotsDelta, techType);
+
+		// substitute call for 'this.seamoth.GetStorageInSlot()' with method above
+		static IEnumerable<CodeInstruction> substSlotGetter(IEnumerable<CodeInstruction> cins)
 		{
-			// dont check anything, just open the box
-			__instance.ChangeFlapState(true, true);
-			return false;
+			MethodInfo substMethod = typeof(SeamothStorageInputPatches).method(nameof(SeamothStorageInputPatches.getStorageInSlot));
+
+			return HarmonyHelper.ciReplace(cins, ci => ci.isOp(OpCodes.Callvirt), new CodeInstruction(OpCodes.Call, substMethod));
 		}
-	}
 
-		
-	[HarmonyPatch(typeof(SeamothStorageInput), "OpenPDA")]
-	static class SeamothStorageInput_OpenPDA_Patch
-	{
-		static bool Prefix(SeamothStorageInput __instance)
+		[HarmonyPatch(typeof(SeamothStorageInput), "OpenPDA")]
+		static class OpenPDA_Patch
 		{
-#if SLOTS9_12
-			ItemsContainer storageInSlot = __instance.seamoth.GetStorageInSlot(__instance.slotID + 8, TechType.VehicleStorageModule);
-#else
-			ItemsContainer storageInSlot = __instance.seamoth.GetStorageInSlot(__instance.slotID, TechType.VehicleStorageModule);
-				
-			if (storageInSlot == null)
-				storageInSlot = __instance.seamoth.GetStorageInSlot(__instance.slotID + 4, TechType.VehicleStorageModule);
-#endif
-			if (storageInSlot != null)
-			{
-				PDA pda = Player.main.GetPDA();
-				Inventory.main.SetUsedStorage(storageInSlot, false);
-				if (!pda.Open(PDATab.Inventory, __instance.tr, new PDA.OnClose(__instance.OnClosePDA), -1f))
-					__instance.OnClosePDA(pda);
-			}
-			else
-			{
-				__instance.OnClosePDA(null);
-			}
+			static bool Prepare() => Main.config.slotsDelta > 0;
+			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins) => substSlotGetter(cins);
+		}
 
-			return false;
+		[HarmonyPatch(typeof(SeamothStorageInput), "OnHandClick")]
+		static class OnHandClick_Patch
+		{
+			static bool Prepare() => Main.config.slotsDelta > 0;
+			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins) => substSlotGetter(cins);
 		}
 	}
 
@@ -50,52 +40,38 @@ namespace SeamothStorageSlots
 	[HarmonyPatch(typeof(Equipment), "AllowedToAdd")]
 	static class Equipment_AllowedToAdd_Patch
 	{
+		static bool Prepare() => Main.config.slotsDelta > 0;
+
+		[HarmonyPriority(Priority.HigherThanNormal)]
 		static bool Prefix(Equipment __instance, string slot, Pickupable pickupable, bool verbose, ref bool __result)
 		{
-			TechType techType = pickupable.GetTechType();	
-			__result = true;
+			TechType techType = pickupable.GetTechType();
 
-			// no storage modules allowed in "linked" slots (slot N and slot N+4)
-			if (techType == TechType.VehicleStorageModule && slot.StartsWith("SeamothModule"))
+			if (techType != TechType.VehicleStorageModule || !slot.StartsWith("SeamothModule"))
+				return true;
+
+			SeaMoth seamoth = __instance.owner.GetComponent<SeaMoth>();
+			if (seamoth == null)
+				return true;
+
+			int slotID = int.Parse(slot.Substring(13)) - 1;
+
+			if (slotID > 3 && (slotID < Main.config.slotsDelta || slotID > Main.config.slotsDelta + 3))
+				return true;
+
+			// HACK: trying to swap one storage to another while drag, silently refusing because of ui problems
+			if (seamoth.GetSlotItem(slotID)?.item.GetTechType() == TechType.VehicleStorageModule)
 			{
-				int slotID = int.Parse(slot.Substring(13));
-				
-				if (slotID < 9)
-				{
-#if SLOTS9_12
-					__result = false;
-				}
-				
+				__result = false;
 				return false;
-#else
-					SeaMoth seamoth = __instance.owner.GetComponent<SeaMoth>();
-				
-					if (seamoth != null)
-					{
-						InventoryItem itemInSlot = seamoth.GetSlotItem(slotID - 1);
-					
-						// HACK: trying to swap one storage to another while drag, silently refusing because of ui problems
-						if (itemInSlot != null && seamoth.GetSlotItem(slotID - 1).item.GetTechType() == TechType.VehicleStorageModule)
-						{
-							__result = false;
-							return false;
-						}
-			
-						SeamothStorageInput seamothStorageInput = seamoth.storageInputs[((slotID < 5)? slotID - 1: slotID - 5)];
-
-						if (seamothStorageInput.state) //already active
-						{
-							$"Storage module is already in slot {((slotID < 5)? slotID + 4: slotID - 4)}".onScreen();
-							__result = false;
-						}
-						
-						return false;
-					}
-				}
-#endif
 			}
 
-			return true;
+			__result = !seamoth.storageInputs[slotID % Main.config.slotsDelta].state; //already active
+
+			if (!__result && verbose)
+				$"Storage module is already in slot {(slotID < 4? slotID + Main.config.slotsDelta: slotID - Main.config.slotsDelta) + 1}".onScreen();
+
+			return false;
 		}
 	}
 
@@ -103,28 +79,23 @@ namespace SeamothStorageSlots
 	[HarmonyPatch(typeof(Vehicle), "OnUpgradeModuleChange")]
 	static class Vehicle_OnUpgradeModuleChange_Patch
 	{
+		static bool Prepare() => Main.config.slotsDelta > 0;
+
 		static void Postfix(Vehicle __instance, int slotID, TechType techType, bool added)
 		{
-			if (__instance.GetType() == typeof(SeaMoth))
+			if (__instance is SeaMoth seamoth)
 			{
 				//any non-storage module added in seamoth slots 1-4 disables corresponding storage, checking if we need to enable it again
 				if (slotID < 4 && techType != TechType.VehicleStorageModule)
 				{
-#if SLOTS9_12
-					if (__instance.GetSlotItem(slotID + 8) != null &&__instance.GetSlotItem(slotID + 8).item.GetTechType() == TechType.VehicleStorageModule)
-#else
-					if (__instance.GetSlotItem(slotID + 4) != null &&__instance.GetSlotItem(slotID + 4).item.GetTechType() == TechType.VehicleStorageModule)
-#endif
-						(__instance as SeaMoth).storageInputs[slotID].SetEnabled(true);
+					if (__instance.GetSlotItem(slotID + Main.config.slotsDelta)?.item.GetTechType() == TechType.VehicleStorageModule)
+						seamoth.storageInputs[slotID].SetEnabled(true);
 				}
-				// if we adding/removing storage module in slots 4-8, we need to activate/deactivate corresponing storage unit
-#if SLOTS9_12
-				else if (slotID >= 8 && slotID <= 12 && techType == TechType.VehicleStorageModule) 
-					((__instance as SeaMoth).storageInputs[slotID - 8]).SetEnabled(added);
-#else
-				else if (slotID > 3 && slotID < 8 && techType == TechType.VehicleStorageModule) 
-					((__instance as SeaMoth).storageInputs[slotID - 4]).SetEnabled(added);
-#endif
+				else // if we adding/removing storage module in linked slots, we need to activate/deactivate corresponing storage unit
+				if (slotID >= Main.config.slotsDelta && slotID < Main.config.slotsDelta + 4 && techType == TechType.VehicleStorageModule)
+				{
+					seamoth.storageInputs[slotID - Main.config.slotsDelta].SetEnabled(added);
+				}
 			}
 		}
 	}

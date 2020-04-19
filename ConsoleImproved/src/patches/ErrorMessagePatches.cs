@@ -47,12 +47,12 @@ namespace ConsoleImproved
 			// is console visible
 			void _injectStateCheck(int indexToInject, object labelToJump)
 			{
-				HarmonyHelper.ciInsert(list, indexToInject, new List<CodeInstruction>()
-				{
-					new CodeInstruction(OpCodes.Ldsfld, typeof(DevConsole).field(nameof(DevConsole.instance))),
-					new CodeInstruction(OpCodes.Ldfld,  typeof(DevConsole).field(nameof(DevConsole.state))),
-					new CodeInstruction(OpCodes.Brtrue_S, labelToJump)
-				});
+				HarmonyHelper.ciInsert(list, indexToInject, HarmonyHelper.toCIList
+				(
+					OpCodes.Ldsfld, typeof(DevConsole).field(nameof(DevConsole.instance)),
+					OpCodes.Ldfld,  typeof(DevConsole).field(nameof(DevConsole.state)),
+					OpCodes.Brtrue_S, labelToJump
+				));
 			}
 
 			// ignoring (time > message.timeEnd) loop if console is visible (just jumping to "float num = this.offsetY * 7f" line)

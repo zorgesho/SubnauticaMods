@@ -123,42 +123,40 @@ namespace TrfHabitatBuilder
 	{
 		static bool Prepare() => Main.config.limitBlueprints;
 
-		static class helper // for transpiler
+
+		static List<TechType> lockedBlueprints;
+		public static void init() => lockedBlueprints = Main.config.lockedBlueprints.get(GameUtils.getHeldToolType());
+
+		public static void updateUnlockState(TechType techType, ref TechUnlockState unlockState)
 		{
-			static List<TechType> lockedBlueprints;
-
-			public static void init() => lockedBlueprints = Main.config.lockedBlueprints.get(GameUtils.getHeldToolType());
-
-			public static void updateUnlockState(TechType techType, ref TechUnlockState unlockState)
-			{
-				if (unlockState == TechUnlockState.Available && lockedBlueprints.Contains(techType))
-					unlockState = TechUnlockState.Locked;
-			}
-
-			public static void lockIcon(TechUnlockState unlockState, string stringForInt)
-			{
-				if (unlockState == TechUnlockState.Locked)
-					uGUI_BuilderMenu.singleton.iconGrid.GetIcon(stringForInt).manager = null;
-			}
+			if (unlockState == TechUnlockState.Available && lockedBlueprints.Contains(techType))
+				unlockState = TechUnlockState.Locked;
 		}
+
+		public static void lockIcon(TechUnlockState unlockState, string stringForInt)
+		{
+			if (unlockState == TechUnlockState.Locked)
+				uGUI_BuilderMenu.singleton.iconGrid.GetIcon(stringForInt).manager = null;
+		}
+
 
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins)
 		{
 			var list = cins.ToList();
 
-			list.Insert(0, new CodeInstruction(OpCodes.Call, typeof(helper).method(nameof(helper.init))));
+			list.Insert(0, new CodeInstruction(OpCodes.Call, typeof(uGUIBuilderMenu_UpdateItems_Patch).method(nameof(init))));
 
 			// insert after "TechUnlockState techUnlockState = KnownTech.GetTechUnlockState(techType);"
 			HarmonyHelper.ciInsert(list, cin => cin.isOpLoc(OpCodes.Stloc_S, 4), +1, 1,
 				OpCodes.Ldloc_3,
-				new CodeInstruction(OpCodes.Ldloca_S, 4),
-				new CodeInstruction(OpCodes.Call, typeof(helper).method(nameof(helper.updateUnlockState))));
+				OpCodes.Ldloca_S, 4,
+				OpCodes.Call, typeof(uGUIBuilderMenu_UpdateItems_Patch).method(nameof(updateUnlockState)));
 
 			// insert after "this.iconGrid.AddItem"
 			HarmonyHelper.ciInsert(list, cin => cin.isOp(OpCodes.Ceq), +4, 1,
-				new CodeInstruction(OpCodes.Ldloc_S, 4),
-				new CodeInstruction(OpCodes.Ldloc_S, 5),
-				new CodeInstruction(OpCodes.Call, typeof(helper).method(nameof(helper.lockIcon))));
+				OpCodes.Ldloc_S, 4,
+				OpCodes.Ldloc_S, 5,
+				OpCodes.Call, typeof(uGUIBuilderMenu_UpdateItems_Patch).method(nameof(lockIcon)));
 
 			return list;
 		}

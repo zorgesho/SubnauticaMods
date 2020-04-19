@@ -16,7 +16,7 @@ namespace SeamothStorageSlots
 		// substitute call for 'this.seamoth.GetStorageInSlot()' with method above
 		static IEnumerable<CodeInstruction> substSlotGetter(IEnumerable<CodeInstruction> cins)
 		{
-			MethodInfo substMethod = typeof(SeamothStorageInputPatches).method(nameof(SeamothStorageInputPatches.getStorageInSlot));
+			MethodInfo substMethod = typeof(SeamothStorageInputPatches).method(nameof(getStorageInSlot));
 
 			return HarmonyHelper.ciReplace(cins, ci => ci.isOp(OpCodes.Callvirt), new CodeInstruction(OpCodes.Call, substMethod));
 		}

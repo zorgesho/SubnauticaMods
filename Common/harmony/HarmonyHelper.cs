@@ -8,15 +8,14 @@ namespace Common
 {
 	static partial class HarmonyHelper
 	{
-		public static HarmonyInstance harmonyInstance { get; private set; } = null;
+		public static HarmonyInstance harmonyInstance => _harmonyInstance ?? (_harmonyInstance = HarmonyInstance.Create(Strings.modName));
+		static HarmonyInstance _harmonyInstance;
 
 		// is class have methods that can be used as harmony patches (for more: void patch(Type typeWithPatchMethods))
 		public class PatchClassAttribute: Attribute {}
 
 		public static void patchAll(bool searchForPatchClasses = false)
 		{
-			harmonyInstance = HarmonyInstance.Create(Strings.modName);
-
 			try
 			{
 				using (Debug.profiler($"HarmonyHelper.patchAll {Strings.modName}"))

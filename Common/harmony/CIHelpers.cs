@@ -37,14 +37,19 @@ namespace Common
 					case CIEnumerable ciList:
 						list.AddRange(ciList);
 						break;
-					case OpCode opcode:
-						list.Add(new CodeInstruction(opcode));
-						break;
 					case CodeInstruction ci:
 						list.Add(ci);
 						break;
+					case OpCode opcode:
+						list.Add(new CodeInstruction(opcode));
+						break;
+					case object operand: // if none of the above, it's probably operand for the last instruction
+						Debug.assert(list.Count > 0 && list[list.Count - 1].operand == null, $"toCIList: error while trying use {i} ({i.GetType()}) as operand");
+
+						list[list.Count - 1].operand = operand;
+						break;
 					default:
-						Debug.assert(false, $"toCIList: unsupported type {i.GetType()}");
+						Debug.assert(false, $"toCIList: one of the params is null?");
 						break;
 				}
 			}

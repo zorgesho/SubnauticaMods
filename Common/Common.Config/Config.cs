@@ -5,7 +5,11 @@ namespace Common.Configuration
 {
 	abstract partial class Config
 	{
+		public const string defaultName = "config.json";
+
 		public static Config main { get; private set; }
+
+		public static string lastError { get; private set; }
 
 		public enum LoadOptions
 		{
@@ -28,7 +32,7 @@ namespace Common.Configuration
 		protected virtual void onLoad() {} // called immediately after config loading/creating
 
 		// try to load config from mod folder. If file not found, create default config and save it to that path
-		public static C tryLoad<C>(string localPath = "config.json", LoadOptions loadOptions = LoadOptions.Default) where C: Config, new()
+		public static C tryLoad<C>(string localPath = defaultName, LoadOptions loadOptions = LoadOptions.Default) where C: Config, new()
 		{
 			C config;
 			string configPath = localPath.isNullOrEmpty()? null: Paths.modRootPath + localPath;
@@ -61,7 +65,9 @@ namespace Common.Configuration
 			}
 			catch (Exception e)
 			{
-				Log.msg(e, $"Exception while loading '{localPath}'", false);
+				Log.msg(e, $"Exception while loading '{localPath}'");
+				lastError = e.Message;
+
 				config = null;
 			}
 
@@ -75,7 +81,7 @@ namespace Common.Configuration
 				return;
 
 			try { File.WriteAllText(path, serialize()); }
-			catch (Exception e) { Log.msg(e, $"Exception while saving '{path}'", false); }
+			catch (Exception e) { Log.msg(e, $"Exception while saving '{path}'"); }
 		}
 	}
 }

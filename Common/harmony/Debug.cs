@@ -80,6 +80,9 @@ namespace Common
 			{
 				int patchCount = patchInfo.Prefixes.Count + patchInfo.Postfixes.Count + patchInfo.Transpilers.Count;
 
+				if (patchCount == 0) // it can be zero if we first patch and then unpatch method
+					return;
+
 				sb.Append($"{method.fullName()}:");
 				if (patchCount > 1)
 					sb.AppendLine();

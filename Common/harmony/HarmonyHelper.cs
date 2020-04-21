@@ -37,7 +37,7 @@ namespace Common
 		{													$"HarmonyHelper.patch: patching '{original.DeclaringType}.{original.Name}' with prefix:'{prefix}' postfix:'{postfix}' transpiler:'{transpiler}'".logDbg();
 			try
 			{
-				HarmonyMethod _harmonyMethod(MethodInfo method) => (method == null)? null: new HarmonyMethod(method);
+				static HarmonyMethod _harmonyMethod(MethodInfo method) => (method == null)? null: new HarmonyMethod(method);
 
 				using (Debug.profiler($"HarmonyHelper.patch '{original.DeclaringType}.{original.Name}'"))
 					harmonyInstance.Patch(original, _harmonyMethod(prefix), _harmonyMethod(postfix), _harmonyMethod(transpiler));

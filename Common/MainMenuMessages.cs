@@ -67,7 +67,7 @@ namespace Common
 			SceneManager.sceneLoaded -= onSceneLoaded;
 			ErrorMessage.main.StartCoroutine(_waitForLoad());
 
-			IEnumerator _waitForLoad()
+			static IEnumerator _waitForLoad()
 			{
 				yield return new WaitForSeconds(1f);
 

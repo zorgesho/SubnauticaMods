@@ -65,8 +65,9 @@ namespace Common.Configuration
 #region Internal stuff
 			static class ConfigVarsConsoleCommand
 			{
+#pragma warning disable IDE0052
 				static GameObject consoleCommands = null;
-
+#pragma warning restore
 				static readonly Dictionary<string, CfgField> cfgFields = new Dictionary<string, CfgField>();
 
 				public class CfgField: Field
@@ -87,8 +88,7 @@ namespace Common.Configuration
 
 				public static void init()
 				{
-					if (consoleCommands == null)
-						consoleCommands = PersistentConsoleCommands.createGameObject<SetGetCfgVarCommand>("ConfigConsoleCommands_" + Strings.modName);
+					consoleCommands ??= PersistentConsoleCommands.createGameObject<SetGetCfgVarCommand>("ConfigConsoleCommands_" + Strings.modName);
 				}
 
 				public static bool addConfigField(string nameForConsole, CfgField cfgField)

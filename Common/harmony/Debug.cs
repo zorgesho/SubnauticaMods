@@ -22,7 +22,7 @@ namespace Common
 			int _findLabel(object label) => // find target index for jumps
 				list.FindIndex(_ci => _ci.labels?.FindIndex(l => l.Equals(label)) != -1);
 
-			string _labelsInfo(CodeInstruction ci)
+			static string _labelsInfo(CodeInstruction ci)
 			{
 				if ((ci.labels?.Count ?? 0) == 0)
 					return "";

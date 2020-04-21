@@ -17,8 +17,7 @@ namespace Common
 
 		public static void dump(this GameObject go, string filename = null)
 		{
-			if (filename == null)
-				filename = go.name.Replace("(Clone)", "").ToLower();
+			filename ??= go.name.Replace("(Clone)", "").ToLower();
 #if DEBUG
 			Directory.CreateDirectory(pathForDumps);
 			filename = pathForDumps + filename;
@@ -58,7 +57,7 @@ namespace Common
  
 			static void dump(Component cmp, string indent)
 			{
-				string _formatValue(object value)
+				static string _formatValue(object value)
 				{
 					if (value == null)
 						return "";

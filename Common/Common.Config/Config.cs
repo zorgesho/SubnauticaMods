@@ -9,8 +9,7 @@ namespace Common.Configuration
 
 		public static Config main { get; private set; }
 
-		public static string lastError { get; private set; }
-
+		[Flags]
 		public enum LoadOptions
 		{
 			None = 0,
@@ -27,6 +26,8 @@ namespace Common.Configuration
 #else
 			false;
 #endif
+		public static string lastError { get; private set; }
+
 		string configPath;
 
 		protected virtual void onLoad() {} // called immediately after config loading/creating
@@ -56,8 +57,7 @@ namespace Common.Configuration
 
 				if (loadOptions.HasFlag(LoadOptions.MainConfig))
 				{																				"Config.main is already set!".logDbgError(main != null);
-					if (main == null)
-						main = config;
+					main ??= config;
 				}
 
 				if (loadOptions.HasFlag(LoadOptions.ProcessAttributes))

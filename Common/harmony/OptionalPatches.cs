@@ -23,8 +23,7 @@ namespace Common
 
 			public static void updatePatches()
 			{
-				if (optionalPatches == null)
-					optionalPatches = ReflectionHelper.definedTypes.Where(type => type.checkAttribute<OptionalPatchAttribute>()).ToList();
+				optionalPatches ??= ReflectionHelper.definedTypes.Where(type => type.checkAttribute<OptionalPatchAttribute>()).ToList();
 
 				using (Debug.profiler("Update optional patches"))
 					optionalPatches.ForEach(type => updatePatch(type));
@@ -65,7 +64,7 @@ namespace Common
 
 				Patches patches = harmonyInstance.GetPatchInfo(method);
 
-				bool _contains(IEnumerable<Patch> _list, MethodInfo _method) => _list?.FirstOrDefault(p => p.patch == _method) != null;
+				static bool _contains(IEnumerable<Patch> _list, MethodInfo _method) => _list?.FirstOrDefault(p => p.patch == _method) != null;
 
 				bool prefixActive = _contains(patches?.Prefixes, prefix);
 				bool postfixActive = _contains(patches?.Postfixes, postfix);

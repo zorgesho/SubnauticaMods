@@ -122,12 +122,12 @@ namespace Common
 
 		public static void forEach<T>(this IEnumerable<T> sequence, Action<T> action)
 		{
-			if (sequence != null)
-			{
-				var enumerator = sequence.GetEnumerator();
-				while (enumerator.MoveNext())
-					action(enumerator.Current);
-			}
+			if (sequence == null)
+				return;
+
+			var enumerator = sequence.GetEnumerator();
+			while (enumerator.MoveNext())
+				action(enumerator.Current);
 		}
 
 		public static T[] init<T>(this T[] array) where T: new()

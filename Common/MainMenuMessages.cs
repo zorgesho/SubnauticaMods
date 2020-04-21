@@ -1,4 +1,5 @@
-﻿using System.Reflection.Emit;
+﻿using System.Reflection;
+using System.Reflection.Emit;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -10,18 +11,26 @@ namespace Common
 {
 	static class MainMenuMessages
 	{
-		const int size = 20;
-		const string color = "red";
+		const int defaultSize = 25;
+		const string defaultColor = "red";
 
 		static List<string> messageQueue;
 		static List<ErrorMessage._Message> messages;
 
-		public static void add(string msg, bool useRaw = false)
-		{
-			init();
+		static readonly MethodInfo qmmAddMessage = ReflectionHelper.safeGetType("QModInstaller", "QModManager.Utility.MainMenuMessages")?.method("Add");
 
-			if (!useRaw)
+		public static void add(string msg, int size = defaultSize, string color = defaultColor, bool autoformat = true)
+		{
+			if (autoformat)
 				msg = $"<size={size}><color={color}><b>[{Strings.modName}]:</b> {msg}</color></size>";
+
+			if (qmmAddMessage != null)
+			{
+				qmmAddMessage.Invoke(null, new object[] { msg, size, color, false });
+				return;
+			}
+
+			init();
 
 			if (ErrorMessage.main != null)
 				_add(msg);
@@ -101,11 +110,9 @@ namespace Common
 			[HarmonyPatch(typeof(ErrorMessage), "OnUpdate")]
 			static IEnumerable<CodeInstruction> updateMessages(IEnumerable<CodeInstruction> cins)
 			{
-				return HarmonyHelper.ciInsert(cins, cin => cin.isOpLoc(OpCodes.Stloc_S, 11),
-						OpCodes.Ldloc_S, 11,
+				return HarmonyHelper.ciInsert(cins, cin => cin.isOpLoc(OpCodes.Stloc_S, 11), +0, 1,
 						OpCodes.Ldloc_S, 6,
-						OpCodes.Call, typeof(Patches).method(nameof(_getVal)),
-						OpCodes.Stloc_S, 11);
+						OpCodes.Call, typeof(Patches).method(nameof(_getVal)));
 			}
 		}
 	}

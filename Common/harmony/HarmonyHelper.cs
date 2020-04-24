@@ -8,7 +8,7 @@ namespace Common
 {
 	static partial class HarmonyHelper
 	{
-		public static HarmonyInstance harmonyInstance => _harmonyInstance ?? (_harmonyInstance = HarmonyInstance.Create(Strings.modName));
+		public static HarmonyInstance harmonyInstance => _harmonyInstance ??= HarmonyInstance.Create(Strings.modName);
 		static HarmonyInstance _harmonyInstance;
 
 		// is class have methods that can be used as harmony patches (for more: void patch(Type typeWithPatchMethods))

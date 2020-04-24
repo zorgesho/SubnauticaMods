@@ -17,7 +17,7 @@ namespace Common.Configuration
 				this.visCheckerType = visCheckerType;
 			}
 
-			public Components.Hider.IVisibilityChecker visChecker => _visChecker ?? (_visChecker = createVisChecker());
+			public Components.Hider.IVisibilityChecker visChecker => _visChecker ??= createVisChecker();
 			Components.Hider.IVisibilityChecker _visChecker;
 
 			Components.Hider.IVisibilityChecker createVisChecker()

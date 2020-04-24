@@ -19,7 +19,7 @@ namespace Common.Configuration
 
 				public ActionAttribute(Type actionType) => this.actionType = actionType;
 
-				public virtual IAction action => _action ?? (_action = createAction(actionType));
+				public virtual IAction action => _action ??= createAction(actionType);
 				protected IAction _action;
 
 				protected IAction createAction(Type _actionType)

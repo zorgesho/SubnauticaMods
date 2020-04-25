@@ -24,9 +24,8 @@ namespace Common.Configuration
 			[AttributeUsage(AttributeTargets.Field)]
 			public class SkipAttribute: Attribute {} // don't add field to console
 
-#if DEBUG
 			static readonly UniqueIDs uniqueIDs = new UniqueIDs();
-#endif
+
 			readonly string cfgNamespace = ""; // optional namespace for use in console in case of duplicate names
 
 			Config rootConfig;
@@ -51,9 +50,8 @@ namespace Common.Configuration
 				{
 					var cfgField = new ConfigVarsConsoleCommand.CfgField(config, field, rootConfig);
 					string nameForConsole = (cfgNamespace + cfgField.path).ToLower();
-#if DEBUG
 					uniqueIDs.ensureUniqueID(ref nameForConsole);
-#endif
+
 					if (ConfigVarsConsoleCommand.addConfigField(nameForConsole, cfgField))
 						ExportedCfgVarFields.addField(nameForConsole);
 				}

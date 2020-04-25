@@ -9,9 +9,8 @@ namespace Common.Configuration
 	{
 		public abstract class ModOption
 		{
-#if DEBUG
 			static readonly UniqueIDs uniqueIDs = new UniqueIDs();
-#endif
+
 			public interface IOnGameObjectChangeHandler
 			{
 				void init(ModOption option);
@@ -37,9 +36,8 @@ namespace Common.Configuration
 				cfgField = _cfgField;
 
 				id = cfgField.path;
-#if DEBUG
 				uniqueIDs.ensureUniqueID(ref id);
-#endif
+
 				label = _label ?? id.clampLength(40);
 				registerLabel(id, ref label);
 			}

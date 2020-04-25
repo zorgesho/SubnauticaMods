@@ -80,6 +80,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "misc", "misc", "{7B8B7765-2
 		post-build.bat = post-build.bat
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleModManager", "SimpleModManager\SimpleModManager.csproj", "{C3985FBE-6652-4230-934F-0C931F448DC2}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Common\Common.Config.Options\Common.Config.Options.projitems*{0610f2c1-4b75-45f9-b517-9d747e3edd41}*SharedItemsImports = 13
@@ -147,6 +149,9 @@ Global
 		Common\Common.projitems*{b574e84f-e5bf-4e99-abac-3698b6643e5a}*SharedItemsImports = 4
 		Common\Common.Config\Common.Config.projitems*{bfb9336c-f678-4af1-8b10-0bddcd3aeac8}*SharedItemsImports = 4
 		Common\Common.projitems*{bfb9336c-f678-4af1-8b10-0bddcd3aeac8}*SharedItemsImports = 4
+		Common\Common.Config.Options\Common.Config.Options.projitems*{c3985fbe-6652-4230-934f-0c931f448dc2}*SharedItemsImports = 4
+		Common\Common.Config\Common.Config.projitems*{c3985fbe-6652-4230-934f-0c931f448dc2}*SharedItemsImports = 4
+		Common\Common.projitems*{c3985fbe-6652-4230-934f-0c931f448dc2}*SharedItemsImports = 4
 		Common\Common.Config\Common.Config.projitems*{c504563a-b554-4a91-ae30-14cfcd626007}*SharedItemsImports = 4
 		Common\Common.CraftHelper\Common.CraftHelper.projitems*{c504563a-b554-4a91-ae30-14cfcd626007}*SharedItemsImports = 4
 		Common\Common.projitems*{c504563a-b554-4a91-ae30-14cfcd626007}*SharedItemsImports = 4
@@ -302,6 +307,12 @@ Global
 		{EBFA5C5C-995C-4E6D-9F6E-C9C33F864EF6}.publish|Any CPU.ActiveCfg = publish|Any CPU
 		{EBFA5C5C-995C-4E6D-9F6E-C9C33F864EF6}.test_build|Any CPU.ActiveCfg = test_build|Any CPU
 		{EBFA5C5C-995C-4E6D-9F6E-C9C33F864EF6}.test_build|Any CPU.Build.0 = test_build|Any CPU
+		{C3985FBE-6652-4230-934F-0C931F448DC2}.dev|Any CPU.ActiveCfg = dev|Any CPU
+		{C3985FBE-6652-4230-934F-0C931F448DC2}.dev|Any CPU.Build.0 = dev|Any CPU
+		{C3985FBE-6652-4230-934F-0C931F448DC2}.publish|Any CPU.ActiveCfg = publish|Any CPU
+		{C3985FBE-6652-4230-934F-0C931F448DC2}.publish|Any CPU.Build.0 = publish|Any CPU
+		{C3985FBE-6652-4230-934F-0C931F448DC2}.test_build|Any CPU.ActiveCfg = test_build|Any CPU
+		{C3985FBE-6652-4230-934F-0C931F448DC2}.test_build|Any CPU.Build.0 = test_build|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

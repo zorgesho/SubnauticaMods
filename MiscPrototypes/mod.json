@@ -1,6 +1,6 @@
 {
   "Id": "MiscPrototypes",
-  "DisplayName": "MiscPrototypes",
+  "DisplayName": "Misc Prototypes",
   "Author": "zorgesho",
   "Version": "1.0.0",
   "Dependencies": ["SMLHelper"],

@@ -47,10 +47,7 @@ namespace TrfHabitatBuilder
 		public override void patch()
 		{
 			TechType = register();
-
-			// using language strings from vanilla builder
-			LanguageHelper.substituteString(ClassID, "Builder");
-			LanguageHelper.substituteString("Tooltip_" + ClassID, "Tooltip_Builder");
+			useTextFrom(TechType.Builder, TechType.Builder);
 
 			addToGroup(TechGroup.Personal, TechCategory.Tools, TechType.Flare);
 			addCraftingNodeTo(CraftTree.Type.Fabricator, "Personal/Tools", TechType.Flare);

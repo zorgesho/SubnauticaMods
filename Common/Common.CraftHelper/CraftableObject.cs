@@ -49,19 +49,28 @@ namespace Common.Crafting
 		protected TechType register() =>  // just for convenience during development
 			register(ClassID, ClassID);
 
-		protected TechType register(string friendlyName, string description) => // using external sprite
-			register(friendlyName, description, SpriteHelper.getSprite(ClassID));
+		protected TechType register(string name, string description) => // using external sprite
+			register(name, description, SpriteHelper.getSprite(ClassID));
 
-		protected TechType register(string friendlyName, string description, TechType spriteTechType) => // using sprite for another techtype
-			register(friendlyName, description, SpriteHelper.getSprite(spriteTechType));
+		protected TechType register(string name, string description, TechType spriteTechType) => // using sprite for another techtype
+			register(name, description, SpriteHelper.getSprite(spriteTechType));
 
-		protected TechType register(string friendlyName, string description, Atlas.Sprite sprite)
+		protected TechType register(string name, string description, Atlas.Sprite sprite)
 		{
-			TechType = TechTypeHandler.AddTechType(ClassID, friendlyName, description, sprite, false);
+			TechType = TechTypeHandler.AddTechType(ClassID, name, description, sprite, false);
 
 			registerPrefabAndTechData();
 
 			return TechType;
+		}
+
+		protected void useTextFrom(TechType nameFrom = TechType.None, TechType descriptionFrom = TechType.None)
+		{
+			if (nameFrom != TechType.None)
+				LanguageHelper.substituteString(ClassID, nameFrom.AsString());
+
+			if (descriptionFrom != TechType.None)
+				LanguageHelper.substituteString("Tooltip_" + ClassID, "Tooltip_" + descriptionFrom.AsString());
 		}
 
 
@@ -76,7 +85,7 @@ namespace Common.Crafting
 			string fragTechID = ClassID + "_Fragment";
 
 			TechType substFragTechType = TechTypeHandler.AddTechType(fragTechID, "", "");
-			LanguageHelper.substituteString(fragTechID, fragTechType.AsString(false)); // use name from original fragment
+			LanguageHelper.substituteString(fragTechID, fragTechType.AsString()); // use name from original fragment
 
 			UnlockTechHelper.setFragmentTypeToUnlock(TechType, fragTechType, substFragTechType, fragCount, scanTime);
 		}

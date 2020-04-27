@@ -16,7 +16,8 @@ namespace DebrisRecycling
 
 		public override void patch()
 		{
-			TechType = register(L10n.str(L10n.ids_smallScrapName), L10n.str(L10n.ids_smallScrapDesc), TechType.ScrapMetal);
+			TechType = register(L10n.str(L10n.ids_smallScrapName), "", TechType.ScrapMetal);
+			useTextFrom(descriptionFrom: TechType.ScrapMetal);
 		}
 
 		public override GameObject getGameObject()
@@ -78,7 +79,9 @@ namespace DebrisRecycling
 
 			initNodes();
 
-			register($"Titanium (x{resultCount})", "Ti. Basic building material.", TechType.Titanium);
+			register($"Titanium (x{resultCount})", "", TechType.Titanium);
+			useTextFrom(descriptionFrom: TechType.Titanium);
+
 			setCraftingTime(0.7f * resultCount);
 			addCraftingNodeTo(CraftTree.Type.Fabricator, "Resources/Titanium");
 			unlockOnStart();

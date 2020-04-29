@@ -8,13 +8,21 @@ namespace DebrisRecycling
 	[HarmonyPatch(typeof(PropulsionCannon), "GrabObject")]
 	static class PropulsionCannon_GrabObject_Patch
 	{
-		static void Prefix(GameObject target) => CellLevelSwitcher.tryAddTo(target);
+		static void Prefix(GameObject target)
+		{
+			CellLevelSwitcher.tryAddTo(target);
+			target.GetComponent<ResourceTracker>()?.StartUpdatePosition();
+		}
 	}
 
 	[HarmonyPatch(typeof(RepulsionCannon), "ShootObject")]
 	static class RepulsionCannon_ShootObject_Patch
 	{
-		static void Prefix(Rigidbody rb) => CellLevelSwitcher.tryAddTo(rb.gameObject);
+		static void Prefix(Rigidbody rb)
+		{
+			CellLevelSwitcher.tryAddTo(rb.gameObject);
+			rb.gameObject.GetComponent<ResourceTracker>()?.StartUpdatePosition();
+		}
 	}
 
 

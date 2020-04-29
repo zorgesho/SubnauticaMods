@@ -13,17 +13,19 @@ namespace DebrisRecycling
 			if (Main.config.deconstructValidStaticObjects)
 				return true;
 
-			Rigidbody rigidbody = gameObject.getComponentInHierarchy<Rigidbody>(true, false);
-			return (rigidbody && !rigidbody.isKinematic);
+			return gameObject.getComponentInHierarchy<Rigidbody>(true, false)?.isKinematic == false;
 		}
 
-		public void OnConstructedChanged(bool constructed) {}
+		public void OnConstructedChanged(bool constructed) => DebrisPatcher.untrackResource(gameObject);
 	}
 
 
 	static class DebrisPatcher
 	{
 		static readonly Dictionary<string, int> validPrefabs = new Dictionary<string, int>();
+
+		public static bool isValidPrefab(string prefabID) => validPrefabs.ContainsKey(prefabID);
+
 		static bool inited = false;
 
 		public static void init(ModConfig.PrefabsConfig prefabsConfig, PrefabIDs prefabIDs)
@@ -53,6 +55,16 @@ namespace DebrisRecycling
 				validPrefabs.addRange(prefabIDs.debrisStatic);
 #endif
 			$"Debris patcher inited, prefabs id count:{validPrefabs.Count}".logDbg();
+		}
+
+
+		public static void untrackResource(GameObject go)
+		{
+			if (go.GetComponent<ResourceTracker>() is ResourceTracker rt)
+			{
+				rt.Unregister();
+				Object.Destroy(rt);
+			}
 		}
 
 
@@ -121,7 +133,7 @@ namespace DebrisRecycling
 
 				$"-----id:{prefabID.Id} classID:{prefabID.ClassId} name:{prefabID.gameObject.name}".log();
 
-				if (!validPrefabs.ContainsKey(prefabID.ClassId))
+				if (!isValidPrefab(prefabID.ClassId))
 				{
 					validPrefabs.Add(prefabID.ClassId, 10);
 					dbgPrefabs.Add(prefabID.ClassId, 10);

@@ -13,7 +13,7 @@ namespace DebrisRecycling
 			HarmonyHelper.patchAll();
 			CraftHelper.patchAll();
 
-			LanguageHelper.init();
+			LanguageHelper.init(); // after CraftHelper
 
 			DebrisPatcher.init(config.prefabsConfig, Mod.loadConfig<PrefabIDs>("prefabs_config.json", Config.LoadOptions.None));
 		}

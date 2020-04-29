@@ -8,7 +8,6 @@ namespace DebrisRecycling
 	class L10n: LanguageHelper
 	{
 		public const string ids_smallScrapName = "Small piece of salvage";
-		public const string ids_smallScrapDesc = "Composed primarily of titanium.";
 
 		public static string ids_salvageableDebris = "Salvageable debris";
 		public static string ids_tryMoveObject = "Try to move object"; // probably not used very often
@@ -33,6 +32,9 @@ namespace DebrisRecycling
 			public readonly int titaniumPerSmallScrap = 1;
 		}
 		public readonly CraftConfig craftConfig = new CraftConfig();
+
+		[Options.Field]
+		public readonly bool addDebrisToScannerRoom = true; // TODO
 
 		public class PrefabsConfig
 		{

@@ -7,6 +7,17 @@ using Common.Crafting;
 
 namespace DebrisRecycling
 {
+	class SalvageableDebrisDR: CraftableObject // just for scanner room
+	{
+		public static new TechType TechType { get; private set; } = 0;
+
+		protected override TechData getTechData()  => null;
+		public override GameObject getGameObject() => null;
+
+		public override void patch() => TechType = register(L10n.ids_salvageableDebris, "", TechType.ScrapMetal);
+	}
+
+
 	[CraftHelper.PatchFirst]
 	class ScrapMetalSmall: CraftableObject
 	{

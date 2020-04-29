@@ -95,13 +95,12 @@ namespace DebrisRecycling
 
 		static bool checkIfTooBig(GameObject go, float sizeTooBig)
 		{
-			if (go.transform.localScale.x > sizeTooBig) // too big
-			{																					$"{go.name} is too big, removing Constructable".logDbg();
-				go.destroyComponent<Constructable>(false);
-				return true;
-			}
-
-			return false;
+			if (go.transform.localScale.x <= sizeTooBig)
+				return false;
+																		$"{go.name} is too big, removing Constructable".logDbg();
+			go.destroyComponent<Constructable>(false);
+			DebrisPatcher.untrackResource(go);
+			return true;
 		}
 
 		static void process_Starship_exploded_debris_01(GameObject go)

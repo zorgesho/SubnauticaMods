@@ -97,6 +97,7 @@
     <Compile Include="src\DebrisPatcher.cs" />
     <Compile Include="src\DebrisSpecialProcess.cs" />
     <Compile Include="src\patches\LandscapeCollisionPatch.cs" />
+    <Compile Include="src\patches\DebrisTracker.cs" />
     <Compile Include="src\patches\TitaniumCraftPatches.cs" />
     <Compile Include="src\ScrapMetalSmall.cs" />
     <Compile Include="src\patches\BuilderToolPatches.cs" />

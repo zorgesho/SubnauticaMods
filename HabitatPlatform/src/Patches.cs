@@ -5,6 +5,8 @@ using Harmony;
 
 using Common;
 
+#pragma warning disable
+
 namespace HabitatPlatform
 {
 	[HarmonyPatch(typeof(Constructor), "GetItemSpawnPoint")]

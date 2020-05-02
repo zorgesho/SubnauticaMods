@@ -26,7 +26,7 @@ namespace ConsoleImproved
 				if (n.getArgsCount() > 0)
 					StartCoroutine(_printPatches(n.getArg(0) as string, n.getArgSafe(1)?.toBool() == true));
 
-				IEnumerator _printPatches(string harmonyID, bool omitNames)
+				static IEnumerator _printPatches(string harmonyID, bool omitNames)
 				{
 					while (true)
 					{
@@ -93,7 +93,7 @@ namespace ConsoleImproved
 						CraftData.GetPrefabForTechType(techType)?.dump(techType.AsString());
 				}
 
-				IEnumerator _dumpAllPrefabs()
+				static IEnumerator _dumpAllPrefabs()
 				{
 					foreach (TechType techType in Enum.GetValues(typeof(TechType)))
 					{
@@ -110,7 +110,7 @@ namespace ConsoleImproved
 				if (n.getArgsCount() == 0)
 					return;
 
-				Type getComponentType(string typeName)
+				static Type getComponentType(string typeName)
 				{
 					foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
 					{

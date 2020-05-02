@@ -1,6 +1,8 @@
 ﻿using System;
 using UnityEngine;
 
+#pragma warning disable
+
 namespace Fatigue
 {
 	public class EnergySurvival: MonoBehaviour

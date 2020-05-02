@@ -9,10 +9,10 @@ namespace CommonTests
 	{
 		class SimpleTestConfig: Config
 		{
-			[Field.Range(Min: 20)]
+			[Field.Range(min: 20)]
 			public int testMin = 15;
 
-			[Field.Range(Max: 100)]
+			[Field.Range(max: 100)]
 			public int testMax = 150;
 
 			[Field.Range(100, 200)]
@@ -31,11 +31,11 @@ namespace CommonTests
 
 		class VariableTestConfig: Config
 		{
-			[Field.Range(Min: 20)]
+			[Field.Range(min: 20)]
 			public int testMin20;
 			public static int testMinInitial;
 
-			[Field.Range(Max: 50)]
+			[Field.Range(max: 50)]
 			public float testMax50;
 			public static float testMaxInitial;
 

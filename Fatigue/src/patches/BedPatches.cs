@@ -4,6 +4,8 @@ using Harmony;
 
 using Common;
 
+#pragma warning disable
+
 namespace Fatigue
 {
 	[HarmonyPatch(typeof(Bed), "Start")] // HACK TODO: 

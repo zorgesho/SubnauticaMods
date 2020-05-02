@@ -3,6 +3,8 @@ using UnityEngine.UI;
 
 using UWE;
 
+#pragma warning disable
+
 namespace Fatigue
 {
 	class uGUI_StatsBar: MonoBehaviour

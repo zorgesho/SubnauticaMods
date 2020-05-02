@@ -6,6 +6,8 @@ using UnityEngine.EventSystems;
 using Common;
 using Common.UI;
 
+#pragma warning disable
+
 namespace Fatigue
 {
 	class SleepGUI: uGUI_InputGroup

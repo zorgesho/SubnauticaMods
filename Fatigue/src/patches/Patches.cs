@@ -10,6 +10,8 @@ using UnityEngine.UI;
 
 using UnityEngine.EventSystems;
 
+#pragma warning disable
+
 namespace Fatigue
 {
 	[HarmonyPatch(typeof(Player), "Awake")]

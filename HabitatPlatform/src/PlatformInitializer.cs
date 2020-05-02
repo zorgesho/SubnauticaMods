@@ -5,6 +5,8 @@ using UnityEngine;
 
 using Common;
 
+#pragma warning disable
+
 namespace HabitatPlatform
 {
 	class PlatformInitializer: MonoBehaviour

@@ -48,12 +48,24 @@ namespace Common
 
 		// for getting mod's defined types, don't include any of Common projects types (or types without namespace)
 		public static readonly List<Type> definedTypes =
-			Assembly.GetExecutingAssembly().GetTypes().Where(type => !(type.Namespace?.StartsWith(nameof(Common)) ?? true)).ToList();
+			Assembly.GetExecutingAssembly().GetTypes().Where(type => type.Namespace?.StartsWith(nameof(Common)) == false).ToList();
 
 		public static Type safeGetType(string assemblyName, string typeName)
 		{
 			try   { return Assembly.Load(assemblyName)?.GetType(typeName, false); }
 			catch { return null; }
+		}
+
+		// for use with publicized assemblies (can throw exception)
+		public class Event<T>
+		{
+			readonly MulticastDelegate eventDelegate;
+
+			public Event(string name, object obj = null) =>
+				eventDelegate = typeof(T).field(name)?.GetValue(obj) as MulticastDelegate;
+
+			public void raise(params object[] eventParams) =>
+				eventDelegate?.GetInvocationList().forEach(dlg => dlg.Method.Invoke(dlg.Target, eventParams));
 		}
 	}
 

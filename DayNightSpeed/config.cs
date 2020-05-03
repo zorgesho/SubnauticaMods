@@ -58,15 +58,11 @@ namespace DayNightSpeed
 		public float auxSpeedPowerConsume => useAuxSpeeds? speedPowerConsume: 1.0f;
 
 		#region aux speeds hider
-		class SpeedsHider: Field.IAction, Options.Components.Hider.IVisibilityChecker
-		{
-			public bool visible => Main.config.useAuxSpeeds;
-			public void action() => Options.Components.Hider.setVisible("speeds", visible);
-		}
+		class SpeedsHider: Options.Components.Hider.Simple
+		{ public SpeedsHider(): base("speeds", () => Main.config.useAuxSpeeds) {} }
 
 		class HideableSpeed: Options.HideableAttribute
-			{ public HideableSpeed(): base(typeof(SpeedsHider), "speeds") {} }
-
+		{ public HideableSpeed(): base(typeof(SpeedsHider), "speeds") {} }
 		#endregion
 
 		#region nonlinear slider
@@ -83,10 +79,10 @@ namespace DayNightSpeed
 		}
 
 		class Range_001_100: Field.RangeAttribute
-			{ public Range_001_100(): base(0.01f, 100f) {} }
+		{ public Range_001_100(): base(0.01f, 100f) {} }
 
 		class Slider_0_100: Options.SliderAttribute
-			{ public Slider_0_100(): base(defaultValue: 1.0f, minValue: 0.01f, customValueType: typeof(SliderValue_0_100)) {} }
+		{ public Slider_0_100(): base(defaultValue: 1.0f, minValue: 0.01f, customValueType: typeof(SliderValue_0_100)) {} }
 		#endregion
 
 		static class Tooltips

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 
 using UnityEngine;
@@ -14,6 +15,21 @@ namespace Common.Configuration
 			public class Hider: MonoBehaviour
 			{
 				public interface IVisibilityChecker { bool visible { get; } }
+
+				public class Simple: Config.Field.IAction, IVisibilityChecker
+				{
+					readonly string groupID;
+					readonly Func<bool> visChecker;
+
+					public Simple(string groupID, Func<bool> visChecker)
+					{
+						this.groupID = groupID;
+						this.visChecker = visChecker;
+					}
+
+					public bool visible => visChecker();
+					public void action() => setVisible(groupID, visible);
+				}
 
 				public class Add: ModOption.IOnGameObjectChangeHandler
 				{

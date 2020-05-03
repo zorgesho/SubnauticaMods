@@ -14,6 +14,12 @@ namespace Common
 		static readonly MethodInfo qmmServicesMain = qmmServices?.property("Main").GetGetMethod();
 		static readonly MethodInfo qmmAddMessage = qmmServices?.method("AddCriticalMessage");
 
+		static readonly MethodInfo qmmGetMyMod = qmmServices?.method("GetMyMod");
+		static readonly MethodInfo qmmQModDisplayName = ReflectionHelper.safeGetType("QModInstaller", "QModManager.API.IQMod")?.property("DisplayName")?.GetGetMethod();
+
+		public static readonly string id = Assembly.GetExecutingAssembly().GetName().Name;
+		public static readonly string name = qmmQModDisplayName.Invoke(qmmGetMyMod.Invoke(qmmServicesMain.Invoke(null, null), new object[0]), new object[0]) as string;
+
 		// supposed to be called before any other mod's code
 		public static void init()
 		{

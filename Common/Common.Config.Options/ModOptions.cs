@@ -10,7 +10,7 @@ namespace Common.Configuration
 	partial class Options: ModOptions
 	{
 		static Options instance = null;
-		static string  optionsName = Mod.id;
+		static string  optionsName = Mod.name;
 
 		public enum Mode { Undefined, MainMenu, IngameMenu };
 
@@ -22,7 +22,10 @@ namespace Common.Configuration
 		public static void add(ModOption option)
 		{
 			if (instance == null)
+			{
+				registerLabel("Name", ref optionsName);
 				OptionsPanelHandler.RegisterModOptions(instance = new Options());
+			}
 
 			instance.modOptions.Add(option);
 		}

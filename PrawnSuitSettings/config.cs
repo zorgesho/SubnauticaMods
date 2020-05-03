@@ -4,7 +4,6 @@ using Common.Configuration;
 namespace PrawnSuitSettings
 {
 	[AddToConsole("pss")]
-	[Options.Name("Prawn Suit Settings")]
 	class ModConfig: Config
 	{
 		public class CollisionSelfDamageSettings

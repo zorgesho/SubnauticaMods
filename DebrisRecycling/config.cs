@@ -14,7 +14,7 @@ namespace DebrisRecycling
 	}
 
 
-	[Options.Name("Debris Recycling", "<size=20>You'll need to restart the game in order to apply options</size>", typeof(HideableHeadingTooltip))]
+	[Options.Name(tooltip: "<size=20>You'll need to restart the game in order to apply options</size>", tooltipType: typeof(HideableHeadingTooltip))]
 	class ModConfig: Config
 	{
 		class HideableHeadingTooltip: Options.Components.Tooltip

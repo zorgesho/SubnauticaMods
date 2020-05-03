@@ -8,11 +8,11 @@ namespace Common.Configuration
 		[AttributeUsage(AttributeTargets.Class)]
 		public class NameAttribute: Attribute, Config.IConfigAttribute
 		{
-			string name;
+			readonly string name;
 			public readonly string tooltip;
 			public readonly Type tooltipType; // component derived from Options.Components.Tooltip
 
-			public NameAttribute(string name, string tooltip = null, Type tooltipType = null)
+			public NameAttribute(string name = null, string tooltip = null, Type tooltipType = null)
 			{
 				this.name = name;
 				this.tooltip = tooltip;
@@ -21,8 +21,8 @@ namespace Common.Configuration
 
 			public void process(object config)
 			{
-				registerLabel("Name", ref name);
-				optionsName = name;
+				if (name != null)
+					optionsName = name;
 			}
 		}
 	}

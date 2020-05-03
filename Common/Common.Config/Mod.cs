@@ -17,7 +17,7 @@ namespace Common
 
 			if (config == null)
 			{
-				MainMenuMessages.add($"Error while loading <color=orange>{name}</color>, using default now! ({Config.lastError})");
+				addCriticalMessage($"Error while loading <color=orange>{name}</color>, using default now! ({Config.lastError})");
 				config = Config.tryLoad<C>(null, loadOptions);
 			}
 

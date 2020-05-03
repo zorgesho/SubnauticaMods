@@ -1,6 +1,4 @@
-﻿using System;
-using System.Reflection;
-using System.Reflection.Emit;
+﻿using System.Reflection.Emit;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -12,24 +10,14 @@ namespace Common
 {
 	static class MainMenuMessages
 	{
-		const int defaultSize = 25;
-		const string defaultColor = "red";
+		public const int defaultSize = 25;
+		public const string defaultColor = "red";
 
 		static List<string> messageQueue;
 		static List<ErrorMessage._Message> messages;
 
-		static readonly Type qmmServices = ReflectionHelper.safeGetType("QModInstaller", "QModManager.API.QModServices");
-		static readonly MethodInfo qmmServicesMain = qmmServices?.property("Main").GetGetMethod();
-		static readonly MethodInfo qmmAddMessage = qmmServices?.method("AddCriticalMessage");
-
 		public static void add(string msg, int size = defaultSize, string color = defaultColor, bool autoformat = true)
 		{
-			if (qmmAddMessage != null)
-			{
-				qmmAddMessage.Invoke(qmmServicesMain.Invoke(null, null), new object[] { msg, size, color, true });
-				return;
-			}
-
 			if (autoformat)
 				msg = $"<size={size}><color={color}><b>[{Strings.modName}]:</b> {msg}</color></size>";
 

@@ -86,7 +86,7 @@ namespace Common.Configuration
 
 				public static void init()
 				{
-					consoleCommands ??= PersistentConsoleCommands.createGameObject<SetGetCfgVarCommand>("ConfigConsoleCommands_" + Strings.modName);
+					consoleCommands ??= PersistentConsoleCommands.createGameObject<SetGetCfgVarCommand>("ConfigConsoleCommands_" + Mod.id);
 				}
 
 				public static bool addConfigField(string nameForConsole, CfgField cfgField)

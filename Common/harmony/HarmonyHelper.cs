@@ -8,7 +8,7 @@ namespace Common
 {
 	static partial class HarmonyHelper
 	{
-		public static HarmonyInstance harmonyInstance => _harmonyInstance ??= HarmonyInstance.Create(Strings.modName);
+		public static HarmonyInstance harmonyInstance => _harmonyInstance ??= HarmonyInstance.Create(Mod.id);
 		static HarmonyInstance _harmonyInstance;
 
 		// is class have methods that can be used as harmony patches (for more: void patch(Type typeWithPatchMethods))
@@ -18,7 +18,7 @@ namespace Common
 		{
 			try
 			{
-				using (Debug.profiler($"HarmonyHelper.patchAll {Strings.modName}"))
+				using (Debug.profiler($"HarmonyHelper.patchAll {Mod.id}"))
 				{
 					harmonyInstance.PatchAll(Assembly.GetExecutingAssembly());
 

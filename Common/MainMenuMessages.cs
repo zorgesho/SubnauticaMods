@@ -19,7 +19,7 @@ namespace Common
 		public static void add(string msg, int size = defaultSize, string color = defaultColor, bool autoformat = true)
 		{
 			if (autoformat)
-				msg = $"<size={size}><color={color}><b>[{Strings.modName}]:</b> {msg}</color></size>";
+				msg = $"<size={size}><color={color}><b>[{Mod.name}]:</b> {msg}</color></size>";
 
 			init();
 

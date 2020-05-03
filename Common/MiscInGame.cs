@@ -39,9 +39,6 @@ namespace Common
 			public static readonly string scrollUp		= _str(57406);
 			public static readonly string scrollDown	= _str(57407);
 		}
-
-		[System.Obsolete]
-		public static readonly string modName = Assembly.GetExecutingAssembly().GetName().Name;
 	}
 
 	static partial class SpriteHelper // extended in other Common projects

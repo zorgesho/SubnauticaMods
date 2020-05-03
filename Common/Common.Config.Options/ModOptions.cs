@@ -10,7 +10,7 @@ namespace Common.Configuration
 	partial class Options: ModOptions
 	{
 		static Options instance = null;
-		static string  optionsName = Strings.modName;
+		static string  optionsName = Mod.id;
 
 		public enum Mode { Undefined, MainMenu, IngameMenu };
 

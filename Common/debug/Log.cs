@@ -39,7 +39,7 @@ namespace Common
 	{
 		public enum MsgType { DBG, INFO, WARNING, ERROR, EXCEPTION }
 
-		static readonly string logPrefix = Strings.modName;
+		static readonly string logPrefix = Mod.id;
 #if DEBUG
 		static readonly string customLogPath = Paths.modRootPath + logPrefix + ".log";
 		static Log()

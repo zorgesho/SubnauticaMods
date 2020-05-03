@@ -15,7 +15,7 @@ namespace Common
 
 		// internally using prefix for id strings to avoid conflicts with different mods (all strings are end up in one common list)
 		// don't use prefix in mod's code unless you're sure you need it
-		static readonly string prefix = Strings.modName + ".";
+		static readonly string prefix = Mod.id + ".";
 
 		public static void init()
 		{

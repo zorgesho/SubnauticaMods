@@ -158,5 +158,13 @@ namespace MiscPatches
 				return Main.config.dbg.fastStart.loadEscapePod;
 			}
 		}
+
+		[HarmonyHelper.OptionalPatch]
+		[HarmonyPatch(typeof(uGUI_OptionsPanel), "SyncTerrainChangeRequiresRestartText")]
+		static class ModOptionsPanelFix
+		{
+			static bool Prepare() => Main.config.dbg.fastStart.enabled;
+			static bool Prefix()  => false;
+		}
 	}
 }

@@ -38,8 +38,16 @@ namespace MiscPatches
 
 			void OnConsoleCommand_spawnresource(NotificationCenter.Notification n)
 			{
-				if (n.getArgsCount() > 0)
-					Utils.CreatePrefab(Resources.Load<GameObject>(n.getArg(0) as string));
+				if (n.getArgsCount() == 0)
+					return;
+
+				string prefabParam = n.getArg(0) as string;
+
+				// if parameter is prefabID
+				if (UWE.PrefabDatabase.TryGetPrefabFilename(prefabParam, out string prefabPath))
+					prefabParam = prefabPath;
+
+				Utils.CreatePrefab(Resources.Load<GameObject>(prefabParam));
 			}
 		}
 

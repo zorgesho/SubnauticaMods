@@ -1,5 +1,11 @@
-﻿using Harmony;
+﻿using System.Linq;
+using System.Reflection.Emit;
+using System.Collections;
+using System.Collections.Generic;
+
+using Harmony;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 using Common;
 using Common.Configuration;
@@ -92,6 +98,64 @@ namespace MiscPatches
 			{
 				__result = 0f;
 				return false;
+			}
+		}
+	}
+
+
+	static class FastStart
+	{
+		[HarmonyHelper.OptionalPatch]
+		[HarmonyPatch(typeof(MainGameController), "Start")]
+		static class MainGameController_Start_Patch
+		{
+			static bool Prepare() => Main.config.dbg.fastStart.enabled;
+
+			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins)
+			{
+				var list = cins.ToList();
+				list[list.FindIndex(cin => cin.opcode == OpCodes.Call)].operand = typeof(MainGameController_Start_Patch).method(nameof(StartGame));
+
+				return list;
+			}
+
+			static IEnumerator StartGame(MainGameController _)
+			{																												"Fast start".logDbg();
+				Physics.autoSyncTransforms = Physics2D.autoSimulation = false;
+
+				if (Main.config.dbg.fastStart.loadEssentials)
+					yield return SceneManager.LoadSceneAsync("Essentials", LoadSceneMode.Additive);
+
+				Application.backgroundLoadingPriority = ThreadPriority.Normal;
+
+				if (!Main.config.dbg.fastStart.loadEssentials)
+					new GameObject("ConsoleCommands", typeof(InventoryConsoleCommands), typeof(SpawnConsoleCommand));
+
+				if (Main.config.dbg.fastStart.initPrefabCache)
+					CraftData.PreparePrefabIDCache();
+
+				foreach (var cmd in Main.config.dbg.fastStart.commandsAfterLoad)
+					DevConsole.SendConsoleCommand(cmd);
+			}
+		}
+
+		[HarmonyHelper.OptionalPatch]
+		[HarmonyPatch(typeof(LightmappedPrefabs), "Awake")]
+		static class LightmappedPrefabs_Awake_Patch
+		{
+			static bool Prepare() => Main.config.dbg.fastStart.enabled;
+
+			static bool Prefix(LightmappedPrefabs __instance)
+			{
+				if (Main.config.dbg.fastStart.loadEscapePod)
+				{
+					__instance.autoloadScenes = new LightmappedPrefabs.AutoLoadScene[]
+					{
+						new LightmappedPrefabs.AutoLoadScene() { sceneName = "EscapePod", spawnOnStart = true }
+					};
+				}
+
+				return Main.config.dbg.fastStart.loadEscapePod;
 			}
 		}
 	}

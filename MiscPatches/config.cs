@@ -52,6 +52,34 @@ namespace MiscPatches
 			[Options.Field("Scanner room cheat")]
 			[Options.FinalizeAction(typeof(HarmonyHelper.UpdateOptionalPatches))]
 			public readonly bool scannerRoomCheat = false;
+
+			public class FastStart
+			{
+				class Hider: Options.Components.Hider.Simple
+				{ public Hider(): base("fast", () => Main.config.dbg.fastStart.enabled) {} }
+
+				[Options.Field("Fast start")]
+				[Field.Action(typeof(Hider))]
+				[Options.FinalizeAction(typeof(HarmonyHelper.UpdateOptionalPatches))]
+				public readonly bool enabled = false;
+
+				[Options.Field("\tLoad essentials")]
+				[Options.Hideable(typeof(Hider), "fast")]
+				public readonly bool loadEssentials = true;
+
+				[Options.Field("\tLoad escape pod")]
+				[Options.Hideable(typeof(Hider), "fast")]
+				public readonly bool loadEscapePod = false;
+
+				[Options.Field("\tInit prefab cache")]
+				[Options.Hideable(typeof(Hider), "fast")]
+				public readonly bool initPrefabCache = false;
+
+				public readonly string[] commandsAfterLoad = new string[]
+				{
+				};
+			}
+			public readonly FastStart fastStart = new FastStart();
 		}
 		public Debug dbg = new Debug();
 	}

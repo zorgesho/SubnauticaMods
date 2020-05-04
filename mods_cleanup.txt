@@ -3,7 +3,6 @@ DebrisRecycling
 FloatingCargoCrate
 GravTrapImproved
 MiscObjects
-MiscPatches
 MiscPrototypes
 OxygenRefill
 PrawnSuitGrapplingArmUpgrade

@@ -95,7 +95,7 @@ namespace Common
 			while ((index = list.FindIndex(index0, predicate)) != -1 && (anyInserts = true))
 			{
 				ciInsert(list, index + indexDelta, listToInsert);
-				Debug.assert(indexDelta <= 1 || list.FindIndex(index + 1, indexDelta - 1, predicate) == -1, "indexDelta"); // just in case if indexDelta > 1
+				Debug.assert(indexDelta <= 1 || list.FindIndex(index + 1, indexDelta - 1, predicate) == -1); // just in case if indexDelta > 1
 
 				index0 = index + indexIncrement; // next after finded or next after inserted
 

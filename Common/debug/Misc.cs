@@ -3,6 +3,16 @@ using System.IO;
 using System.Text;
 using System.Reflection;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
+
+namespace System.Runtime.CompilerServices // nice trick (for use in .NET 4.0)
+{
+	// https://thomaslevesque.com/2012/06/13/using-c-5-caller-info-attributes-when-targeting-earlier-versions-of-the-net-framework/
+
+	[AttributeUsage(AttributeTargets.Parameter)] public class CallerFilePathAttribute: Attribute {}
+	[AttributeUsage(AttributeTargets.Parameter)] public class CallerMemberNameAttribute: Attribute {}
+	[AttributeUsage(AttributeTargets.Parameter)] public class CallerLineNumberAttribute: Attribute {}
+}
 
 namespace Common
 {
@@ -105,15 +115,15 @@ namespace Common
 		}
 
 		[Conditional("DEBUG")]
-		public static void assert(bool condition, string message = null)
+		public static void assert(bool condition, string message = null, [CallerFilePath] string __filename = "", [CallerLineNumber] int __line = 0)
 		{
-			if (!condition)
-			{
-				string msg = $"Assertion failed: {message}";
+			if (condition)
+				return;
 
-				$"{msg}".logError();
-				throw new Exception(msg);
-			}
+			string msg = "Assertion failed" + (message != null? $": {message}": "") + $" ({__filename}:{__line})";
+
+			$"{msg}".logError();
+			throw new Exception(msg);
 		}
 	}
 }

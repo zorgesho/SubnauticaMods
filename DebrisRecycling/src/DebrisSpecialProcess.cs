@@ -9,6 +9,8 @@ namespace DebrisRecycling
 {
 	static class DebrisSpecialProcess
 	{
+		class DebrisProcessed: MonoBehaviour {}
+
 		static readonly Dictionary<string, Action<GameObject>> debrisSpecial = new Dictionary<string, Action<GameObject>>()
 		{
 			{"078b41f8-968e-4ca3-8a7e-4e3d7d98422c", process_SubmarineLocker05},				// submarine_locker_05
@@ -30,27 +32,33 @@ namespace DebrisRecycling
 			if (debrisSpecial.TryGetValue(prefabID.ClassId, out Action<GameObject> processFunc))
 			{																					$"Special processing {prefabID.gameObject.name}".logDbg();
 				processFunc(prefabID.gameObject);
+				prefabID.gameObject.ensureComponent<DebrisProcessed>();
 			}
 		}
 
 		static void process_Room06Wreck(GameObject go)
 		{
-			GameObject model = UnityEngine.Object.Instantiate(go);
-			model.destroyChild("Cube (13)");
-			model.destroyComponent<WorldForces>();
-			model.destroyComponent<PrefabIdentifier>();
-			model.destroyComponent<Rigidbody>();
-			model.destroyComponent<Constructable>();
-			model.destroyComponent<LargeWorldEntity>();
+			if (!go.GetComponent<DebrisProcessed>())
+			{
+				GameObject model = UnityEngine.Object.Instantiate(go);
+				model.name = "model";
+				model.destroyChild("Cube (13)");
+				model.destroyComponent<WorldForces>();
+				model.destroyComponent<PrefabIdentifier>();
+				model.destroyComponent<Rigidbody>();
+				model.destroyComponent<Constructable>();
+				model.destroyComponent<LargeWorldEntity>();
+				model.destroyComponent<ResourceTracker>();
 
-			model.transform.parent = go.transform;
-			model.transform.localPosition = Vector3.zero;
-			model.transform.localEulerAngles = Vector3.zero;
+				model.transform.parent = go.transform;
+				model.transform.localPosition = Vector3.zero;
+				model.transform.localEulerAngles = Vector3.zero;
 
-			go.destroyComponent<MeshFilter>();
-			go.destroyComponent<MeshRenderer>();
+				go.destroyComponent<MeshFilter>();
+				go.destroyComponent<MeshRenderer>();
+			}
 
-			go.GetComponent<Constructable>().model = model;
+			go.GetComponent<Constructable>().model = go.getChild("model");
 		}
 
 		static void process_TechBox(GameObject go)
@@ -76,18 +84,21 @@ namespace DebrisRecycling
 
 		static void process_SubmarineLocker05(GameObject go)
 		{
-			GameObject modelRoot = new GameObject();
-			modelRoot.transform.parent = go.transform;
+			if (!go.GetComponent<DebrisProcessed>())
+			{
+				GameObject modelRoot = new GameObject("modelroot");
+				modelRoot.transform.parent = go.transform;
 
-			go.getChild("mirror").transform.parent = modelRoot.transform;
-			go.getChild("paper_01").transform.parent = modelRoot.transform;
-			go.getChild("paper_02").transform.parent = modelRoot.transform;
-			go.getChild("girl_photo").transform.parent = modelRoot.transform;
-			go.getChild("submarine_locker_05").transform.parent = modelRoot.transform;
-			go.getChild("submarine_locker_03_door_01/Cube (1)").transform.parent = go.getChild("collision").transform;
-			go.getChild("submarine_locker_03_door_01").transform.parent = modelRoot.transform;
+				go.getChild("mirror").transform.parent = modelRoot.transform;
+				go.getChild("paper_01").transform.parent = modelRoot.transform;
+				go.getChild("paper_02").transform.parent = modelRoot.transform;
+				go.getChild("girl_photo").transform.parent = modelRoot.transform;
+				go.getChild("submarine_locker_05").transform.parent = modelRoot.transform;
+				go.getChild("submarine_locker_03_door_01/Cube (1)").transform.parent = go.getChild("collision").transform;
+				go.getChild("submarine_locker_03_door_01").transform.parent = modelRoot.transform;
+			}
 
-			go.GetComponent<Constructable>().model = modelRoot;
+			go.GetComponent<Constructable>().model = go.getChild("modelroot");
 		}
 
 

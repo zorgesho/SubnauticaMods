@@ -74,7 +74,10 @@ namespace DebrisRecycling
 
 
 		public static void unpatchObject(GameObject go, bool removeDebrisCmp)
-		{																			$"DebrisPatcher: unpatching object {go.name}".logDbg();
+		{
+			if (go.GetComponent<Constructable>()?.constructed == false) // don't unpatch partially deconstructed objects
+				return;
+																					$"DebrisPatcher: unpatching object {go.name}".logDbg();
 			go.destroyComponent<Constructable>(false);
 
 			if (removeDebrisCmp)

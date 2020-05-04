@@ -6,6 +6,8 @@ namespace MiscPatches
 	[HarmonyPatch(typeof(SubRoot), "Start")]
 	static class SubRoot_Start_Patch
 	{
+		static bool Prepare() => Main.config.gameplayPatches;
+
 		static void Postfix(SubRoot __instance)
 		{
 			if (!__instance.isBase) // we're in cyclops
@@ -21,6 +23,8 @@ namespace MiscPatches
 	[HarmonyPatch(typeof(CyclopsHelmHUDManager), "Update")]
 	static class CyclopsHelmHUDManager_Update_Patch
 	{
+		static bool Prepare() => Main.config.gameplayPatches;
+
 		static void Postfix(CyclopsHelmHUDManager __instance)
 		{
 			if (__instance.LOD.IsFull() && __instance.engineOffText.gameObject.activeSelf)

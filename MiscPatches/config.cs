@@ -5,12 +5,13 @@ namespace MiscPatches
 {
 	class ModConfig: Config
 	{
+		[Options.Field("Gameplay patches", "Reload in order to apply")]
+		public readonly bool gameplayPatches = false;
+
 		public readonly float torpedoPunchForce = 30; //real default is 70, but in code default is 30
 
 		public readonly float flareBurnTime = 300; // default is 1800
 		public readonly float flareIntensity = 3;  // default is 6
-
-		public readonly UnityEngine.KeyCode forceBuildAllowKey = UnityEngine.KeyCode.V;
 
 		public readonly int maxSlotsCountSeamoth = 8;
 		public readonly int maxSlotsCountPrawnSuit = 4; // and +2 for arms
@@ -33,9 +34,13 @@ namespace MiscPatches
 		[AddToConsole("misc")]
 		public class Debug
 		{
-			[Field.Range(min: 0)]
-			[Field.Action(typeof(HarmonyHelper.UpdateOptionalPatches))]
-			public readonly int loolSpawnRerollCount = 0;
+			public readonly bool buildAnywhere = true;
+			public readonly UnityEngine.KeyCode forceBuildAllowKey = UnityEngine.KeyCode.V;
+
+			[Options.Field("Loot reroll")]
+			[Options.Choice("None", 0, "x10", 10, "x100", 100)]
+			[Options.FinalizeAction(typeof(HarmonyHelper.UpdateOptionalPatches))]
+			public readonly int lootSpawnRerollCount = 0;
 
 			[Field.Action(typeof(HarmonyHelper.UpdateOptionalPatches))]
 			public readonly bool propulsionCannonIgnoreLimits = false;

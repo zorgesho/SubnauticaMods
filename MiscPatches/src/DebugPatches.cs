@@ -11,7 +11,7 @@ namespace MiscPatches
 	[HarmonyPatch(typeof(CellManager), "GetPrefabForSlot")]
 	static class CellManager_GetPrefabForSlot_Patch
 	{
-		static bool Prepare() => Main.config.dbg.loolSpawnRerollCount > 0;
+		static bool Prepare() => Main.config.dbg.lootSpawnRerollCount > 0;
 
 		static bool Prefix(CellManager __instance, IEntitySlot slot, ref EntitySlot.Filler __result)
 		{
@@ -21,7 +21,7 @@ namespace MiscPatches
 				return false;
 			}
 
-			for (int i = 0; i < Main.config.dbg.loolSpawnRerollCount; i++)
+			for (int i = 0; i < Main.config.dbg.lootSpawnRerollCount; i++)
 			{
 				__result = __instance.spawner.GetPrefabForSlot(slot, true);
 

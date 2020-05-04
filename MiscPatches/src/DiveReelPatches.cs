@@ -7,6 +7,8 @@ namespace MiscPatches
 	[HarmonyPatch(typeof(DiveReelNode), "Update")]
 	static class DiveReelNode_Update_Patch
 	{
+		static bool Prepare() => Main.config.gameplayPatches;
+
 		static void Postfix(DiveReelNode __instance)
 		{
 			if (__instance.destroySelf && __instance.selfScale < 0.0001f)
@@ -18,6 +20,8 @@ namespace MiscPatches
 	[HarmonyPatch(typeof(DiveReel), "OnToolUseAnim")]
 	static class DiveReel_RemoveNodes_Patch
 	{
+		static bool Prepare() => Main.config.gameplayPatches;
+
 		static bool Prefix(DiveReel __instance)
 		{
 			Targeting.GetTarget(Player.main.gameObject, 2f, out GameObject gameObject, out float num, null);

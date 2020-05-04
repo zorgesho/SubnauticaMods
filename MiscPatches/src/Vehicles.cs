@@ -20,6 +20,8 @@ namespace MiscPatches
 	{
 		const float time = 1.2f;
 
+		static bool Prepare() => Main.config.gameplayPatches;
+
 		static void Postfix(Vehicle __instance) =>
 			__instance.gameObject.callAfterDelay(time, new UnityAction(() =>
 			{
@@ -40,6 +42,8 @@ namespace MiscPatches
 		[HarmonyPatch(typeof(Exosuit), "Awake")]
 		static class Exosuit_Awake_Patch
 		{
+			static bool Prepare() => Main.config.gameplayPatches;
+
 			static void Postfix(Exosuit __instance)
 			{
 				var toggleLights = __instance.gameObject.ensureComponent<ToggleLights>();
@@ -55,6 +59,8 @@ namespace MiscPatches
 		[HarmonyPatch(typeof(Exosuit), "Update")]
 		static class Exosuit_Update_Patch
 		{
+			static bool Prepare() => Main.config.gameplayPatches;
+
 			static void Postfix(Exosuit __instance)
 			{
 				if (__instance.GetComponent<ToggleLights>() is ToggleLights toggleLights)
@@ -107,6 +113,7 @@ namespace MiscPatches
 		[HarmonyPatch(typeof(Vehicle), "Awake")]
 		static class Vehicle_Awake_Patch
 		{
+			static bool Prepare() => Main.config.gameplayPatches;
 			static void Postfix(Vehicle __instance) => __instance.gameObject.ensureComponent<LowHealthExtraDamage>();
 		}
 	}
@@ -134,12 +141,14 @@ namespace MiscPatches
 		[HarmonyPatch(typeof(Vehicle), "GetSlotBinding", new Type[] {})]
 		static class Vehicle_GetSlotBinding_Patch
 		{
+			static bool Prepare() => Main.config.gameplayPatches;
 			static CIEnumerable Transpiler(CIEnumerable cins) => transpiler(cins, true);
 		}
 
 		[HarmonyPatch(typeof(Exosuit), "GetSlotBinding", new Type[] {})]
 		static class Exosuit_GetSlotBinding_Patch
 		{
+			static bool Prepare() => Main.config.gameplayPatches;
 			static CIEnumerable Transpiler(CIEnumerable cins) => transpiler(cins, false);
 		}
 	}
@@ -149,6 +158,8 @@ namespace MiscPatches
 	[HarmonyPatch(typeof(SeaMoth), "OnDockedChanged")]
 	static class SeaMoth_OnDockedChanged_Patch
 	{
+		static bool Prepare() => Main.config.gameplayPatches;
+
 		static void Postfix(SeaMoth __instance, Vehicle.DockType dockType)
 		{
 			foreach (var silo in new string[] {"TorpedoSiloLeft", "TorpedoSiloRight"})
@@ -166,6 +177,8 @@ namespace MiscPatches
 		static class Vehicle_Start_Patch
 		{
 			const float time = 7f;
+
+			static bool Prepare() => Main.config.gameplayPatches;
 
 			static void Postfix(Vehicle __instance)
 			{
@@ -190,6 +203,8 @@ namespace MiscPatches
 	[HarmonyPatch(typeof(Vehicle), "Start")]
 	static class Vehicle_Start_Patch
 	{
+		static bool Prepare() => Main.config.gameplayPatches;
+
 		static void Postfix(Vehicle __instance)
 		{
 			if (__instance.pilotId != null && UniqueIdentifier.TryGetIdentifier(__instance.pilotId, out UniqueIdentifier pilotID))

@@ -16,6 +16,8 @@ namespace MiscPatches
 	[HarmonyPatch(typeof(SeamothTorpedoWhirlpool), "Awake")]
 	static class SeamothTorpedoWhirlpool_Awake_Patch
 	{
+		static bool Prepare() => Main.config.gameplayPatches;
+
 		static void Postfix(SeamothTorpedoWhirlpool __instance) => __instance.punchForce = Main.config.torpedoPunchForce;
 	}
 
@@ -23,6 +25,8 @@ namespace MiscPatches
 	[HarmonyPatch(typeof(Flare), "Awake")]
 	static class Flare_Awake_Patch
 	{
+		static bool Prepare() => Main.config.gameplayPatches;
+
 		static void Postfix(Flare __instance)
 		{
 			if (__instance.energyLeft == 1800)
@@ -36,6 +40,8 @@ namespace MiscPatches
 	[HarmonyPatch(typeof(TooltipFactory), "ItemCommons")]
 	static class TooltipFactory_ItemCommons_Patch
 	{
+		static bool Prepare() => Main.config.gameplayPatches;
+
 		static void Postfix(StringBuilder sb, TechType techType, GameObject obj)
 		{
 			if (techType == TechType.Flare)
@@ -53,6 +59,8 @@ namespace MiscPatches
 	{
 		const float timeToStopAnimator = 5f;
 
+		static bool Prepare() => Main.config.gameplayPatches;
+
 		static void Postfix(CreatureDeath __instance) =>
 			__instance.gameObject.callAfterDelay(timeToStopAnimator, new UnityAction(() =>
 			{
@@ -67,6 +75,8 @@ namespace MiscPatches
 	{
 		static GameObject deathEffect = null;
 		const float maxHealth = 10f;
+
+		static bool Prepare() => Main.config.gameplayPatches;
 
 		static void Postfix(HangingStinger __instance)
 		{

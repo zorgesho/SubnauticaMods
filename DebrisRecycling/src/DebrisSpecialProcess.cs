@@ -7,8 +7,6 @@ using Common;
 
 namespace DebrisRecycling
 {
-	using Object = UnityEngine.Object;
-
 	static class DebrisSpecialProcess
 	{
 		static readonly Dictionary<string, Action<GameObject>> debrisSpecial = new Dictionary<string, Action<GameObject>>()
@@ -37,7 +35,7 @@ namespace DebrisRecycling
 
 		static void process_Room06Wreck(GameObject go)
 		{
-			GameObject model = Object.Instantiate(go);
+			GameObject model = UnityEngine.Object.Instantiate(go);
 			model.destroyChild("Cube (13)");
 			model.destroyComponent<WorldForces>();
 			model.destroyComponent<PrefabIdentifier>();
@@ -98,8 +96,7 @@ namespace DebrisRecycling
 			if (go.transform.localScale.x <= sizeTooBig)
 				return false;
 																		$"{go.name} is too big, removing Constructable".logDbg();
-			go.destroyComponent<Constructable>(false);
-			DebrisPatcher.untrackResource(go);
+			DebrisPatcher.unpatchObject(go, false);
 			return true;
 		}
 

@@ -39,7 +39,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'publish|AnyCPU'">
     <OutputPath>bin\publish\</OutputPath>
-    <DefineConstants>EXCLUDE_STATIC_DEBRIS</DefineConstants>
+    <DefineConstants>
+    </DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>8.0</LangVersion>
     <Optimize>true</Optimize>
@@ -97,7 +98,7 @@
     <Compile Include="src\DebrisPatcher.cs" />
     <Compile Include="src\DebrisSpecialProcess.cs" />
     <Compile Include="src\patches\LandscapeCollisionPatch.cs" />
-    <Compile Include="src\patches\DebrisTracker.cs" />
+    <Compile Include="src\DebrisTracker.cs" />
     <Compile Include="src\patches\TitaniumCraftPatches.cs" />
     <Compile Include="src\ScrapMetalSmall.cs" />
     <Compile Include="src\patches\BuilderToolPatches.cs" />

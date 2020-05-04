@@ -16,55 +16,48 @@ namespace DebrisRecycling
 			return gameObject.getComponentInHierarchy<Rigidbody>(true, false)?.isKinematic == false;
 		}
 
-		public void OnConstructedChanged(bool constructed) => DebrisPatcher.untrackResource(gameObject);
+		public void OnConstructedChanged(bool constructed) => DebrisTracker.untrack(gameObject);
 	}
 
 
 	static class DebrisPatcher
 	{
-		static readonly Dictionary<string, int> validPrefabs = new Dictionary<string, int>();
+		static PrefabsConfig prefabsConfig;
+		static Dictionary<string, int> validPrefabs;
 
-		public static bool isValidPrefab(string prefabID) => validPrefabs.ContainsKey(prefabID);
+		public static bool isValidObject(GameObject go) => isValidPrefab(go?.GetComponent<PrefabIdentifier>()?.ClassId);
+		public static bool isValidPrefab(string prefabID) => prefabID != null? validPrefabs.ContainsKey(prefabID): false;
 
-		static bool inited = false;
-
-		public static void init(ModConfig.PrefabsConfig prefabsConfig, PrefabIDs prefabIDs)
+		public static void init(PrefabsConfig config)
 		{
-			if (inited)
-				return;
-
-			inited = true;
-
-			validPrefabs.addRange(prefabIDs.debrisCargoOpened);
-			validPrefabs.addRange(prefabIDs.debrisMiscMovable);
-
-			if (prefabsConfig.includeFurniture)
-				validPrefabs.addRange(prefabIDs.debrisFurniture);
-
-			if (prefabsConfig.includeLockers)
-				validPrefabs.addRange(prefabIDs.debrisLockers);
-
-			if (prefabsConfig.includeTech)
-				validPrefabs.addRange(prefabIDs.debrisTech);
-
-			if (prefabsConfig.includeClosedCargo)
-				validPrefabs.addRange(prefabIDs.debrisCargoClosed);
-
-#if !EXCLUDE_STATIC_DEBRIS
-			if (prefabsConfig.includeBigStatic)
-				validPrefabs.addRange(prefabIDs.debrisStatic);
-#endif
-			$"Debris patcher inited, prefabs id count:{validPrefabs.Count}".logDbg();
+			prefabsConfig = config;
+			refreshValidPrefabs(false);
 		}
 
-
-		public static void untrackResource(GameObject go)
+		public static void refreshValidPrefabs(bool searchForDebris)
 		{
-			if (go.GetComponent<ResourceTracker>() is ResourceTracker rt)
+			validPrefabs = prefabsConfig.getValidPrefabs();
+
+			if (!searchForDebris)
+				return;
+
+			foreach (var pid in Object.FindObjectsOfType<PrefabIdentifier>())
 			{
-				rt.Unregister();
-				Object.Destroy(rt);
+				if (isValidPrefab(pid.ClassId))
+				{
+					DebrisTracker.track(pid.gameObject);
+				}
+				else
+				{
+					if (pid.gameObject.GetComponent<DebrisDeconstructable>())
+						unpatchObject(pid.gameObject, true);
+
+					if (pid.gameObject.GetComponent<ResourceTracker>()?.overrideTechType == SalvageableDebrisDR.TechType)
+						DebrisTracker.untrack(pid.gameObject);
+				}
 			}
+
+			DebrisTracker.untrackInvalid();											$"DebrisPatcher: prefabs refreshed ({validPrefabs.Count} valid prefabs)".logDbg();
 		}
 
 
@@ -80,6 +73,17 @@ namespace DebrisRecycling
 		}
 
 
+		public static void unpatchObject(GameObject go, bool removeDebrisCmp)
+		{																			$"DebrisPatcher: unpatching object {go.name}".logDbg();
+			go.destroyComponent<Constructable>(false);
+
+			if (removeDebrisCmp)
+				go.destroyComponent<DebrisDeconstructable>(false);
+
+			DebrisTracker.untrack(go);
+		}
+
+
 		static bool isValidForPatching(GameObject go)
 		{
 			// checking both DebrisDeconstructable and Constructable because we can delete Constructable later in special processing
@@ -89,14 +93,13 @@ namespace DebrisRecycling
 			if (Main.config.patchStaticObjects)
 				return true;
 
-			Rigidbody rigidbody = go.getComponentInHierarchy<Rigidbody>(false);
-			return (rigidbody && !rigidbody.isKinematic); // and if object movable
+			return go.getComponentInHierarchy<Rigidbody>(false)?.isKinematic == false; // and if object movable
 		}
 
 
 		static void tryPatchObject(GameObject go)
 		{
-			PrefabIdentifier prefabID = go.getComponentInHierarchy<PrefabIdentifier>(false);
+			var prefabID = go.getComponentInHierarchy<PrefabIdentifier>(false);
 
 			if (prefabID && validPrefabs.TryGetValue(prefabID.ClassId, out int resourcesCount))
 			{
@@ -105,12 +108,11 @@ namespace DebrisRecycling
 			}
 		}
 
-
 		static void addConstructableComponent(GameObject go, int resourcesCount)
 		{																						$"GameObject '{go.name} already have Constructable!'".logDbgError(go.GetComponent<Constructable>());
 			go.AddComponent<DebrisDeconstructable>();
 
-			Constructable constructable = go.AddComponent<Constructable>();
+			var constructable = go.AddComponent<Constructable>();
 
 			constructable.model = go.GetComponentInChildren<MeshRenderer>()?.gameObject;
 
@@ -126,7 +128,7 @@ namespace DebrisRecycling
 		{
 			if (Input.GetKeyDown(KeyCode.PageUp))
 			{
-				PrefabIdentifier prefabID = go.getComponentInHierarchy<PrefabIdentifier>(false);
+				var prefabID = go.getComponentInHierarchy<PrefabIdentifier>(false);
 
 				if (prefabID == null)
 					return;
@@ -135,8 +137,8 @@ namespace DebrisRecycling
 
 				if (!isValidPrefab(prefabID.ClassId))
 				{
-					validPrefabs.Add(prefabID.ClassId, 10);
-					dbgPrefabs.Add(prefabID.ClassId, 10);
+					validPrefabs[prefabID.ClassId] = 10;
+					dbgPrefabs[prefabID.ClassId] = 10;
 				}
 
 				string prefabs = "-----dbgPrefabs\r\n";

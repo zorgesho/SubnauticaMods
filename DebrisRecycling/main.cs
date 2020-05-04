@@ -15,7 +15,9 @@ namespace DebrisRecycling
 
 			LanguageHelper.init(); // after CraftHelper
 
-			DebrisPatcher.init(config.prefabsConfig, Mod.loadConfig<PrefabIDs>("prefabs_config.json", Config.LoadOptions.None));
+			DebrisPatcher.init(Mod.loadConfig<PrefabsConfig>("prefabs_config.json", Config.LoadOptions.ProcessAttributes));
+
+			PersistentConsoleCommands.createGameObject<DumpCommand>(); // TODO remove
 		}
 	}
 }

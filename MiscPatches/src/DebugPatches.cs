@@ -65,4 +65,34 @@ namespace MiscPatches
 				vfx.lifeTime = float.PositiveInfinity;
 		}
 	}
+
+
+	static class ScannerRoomCheat
+	{
+		[HarmonyHelper.OptionalPatch]
+		[HarmonyPatch(typeof(MapRoomFunctionality), "GetScanRange")]
+		static class MapRoomFunctionality_GetScanRange_Patch
+		{
+			static bool Prepare() => Main.config.dbg.scannerRoomCheat;
+
+			static bool Prefix(ref float __result)
+			{
+				__result = 500f;
+				return false;
+			}
+		}
+
+		[HarmonyHelper.OptionalPatch]
+		[HarmonyPatch(typeof(MapRoomFunctionality), "GetScanInterval")]
+		static class MapRoomFunctionality_GetScanInterval_Patch
+		{
+			static bool Prepare() => Main.config.dbg.scannerRoomCheat;
+
+			static bool Prefix(ref float __result)
+			{
+				__result = 0f;
+				return false;
+			}
+		}
+	}
 }

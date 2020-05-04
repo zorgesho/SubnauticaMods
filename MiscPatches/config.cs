@@ -48,6 +48,10 @@ namespace MiscPatches
 			[Field.Action(typeof(VFXController_SpawnFX_Patch.Purge))]
 			[Field.Action(typeof(HarmonyHelper.UpdateOptionalPatches))]
 			public readonly bool keepParticleSystemsAlive = false;
+
+			[Options.Field("Scanner room cheat")]
+			[Options.FinalizeAction(typeof(HarmonyHelper.UpdateOptionalPatches))]
+			public readonly bool scannerRoomCheat = false;
 		}
 		public Debug dbg = new Debug();
 	}

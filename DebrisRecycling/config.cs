@@ -17,6 +17,9 @@ namespace DebrisRecycling
 	}
 
 
+#if DEBUG
+	[AddToConsole("dr")]
+#endif
 	[Options.Name(tooltip: "<size=20>You'll need to restart the game in order to apply options</size>", tooltipType: typeof(HideableHeadingTooltip))]
 	class ModConfig: Config
 	{
@@ -43,6 +46,7 @@ namespace DebrisRecycling
 		public readonly bool patchStaticObjects = true;
 		public readonly bool hotkeyForNewObjects = false;
 		public readonly bool extraPowerConsumption = false;
+		public readonly bool fixLandscapeCollisions = true;
 	};
 
 

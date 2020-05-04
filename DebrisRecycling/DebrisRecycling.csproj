@@ -97,7 +97,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\DebrisPatcher.cs" />
     <Compile Include="src\DebrisSpecialProcess.cs" />
-    <Compile Include="src\patches\LandscapeCollisionPatch.cs" />
+    <Compile Include="src\patches\MovableObjectsFix.cs" />
     <Compile Include="src\DebrisTracker.cs" />
     <Compile Include="src\patches\TitaniumCraftPatches.cs" />
     <Compile Include="src\ScrapMetalSmall.cs" />

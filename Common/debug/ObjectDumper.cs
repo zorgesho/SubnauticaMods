@@ -15,8 +15,14 @@ namespace Common
 		public static string dumpGameObject(GameObject go, bool dumpProperties = true, bool dumpFields = false) =>
 			ObjectDumper.dump(go, dumpProperties, dumpFields);
 
-		public static void dump(this GameObject go, string filename = null)
+		public static void dump(this GameObject go, string filename = null, int dumpParent = 0)
 		{
+			while (dumpParent > 0 && go.transform.parent)
+			{
+				go = go.transform.parent.gameObject;
+				dumpParent--;
+			}
+
 			filename ??= go.name.Replace("(Clone)", "").ToLower();
 #if DEBUG
 			Directory.CreateDirectory(pathForDumps);

@@ -3,6 +3,8 @@ using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
 
+using UnityEngine;
+
 using Common;
 using Common.Configuration;
 
@@ -14,6 +16,7 @@ namespace DebrisRecycling
 
 		public static string ids_salvageableDebris = "Salvageable debris";
 		public static string ids_tryMoveObject = "Try to move object"; // probably not used very often
+		public static string ids_customDebrisAdded = "<color=#adf8ffff><b>{0}</b></color> is added as salvageable debris";
 	}
 
 
@@ -42,9 +45,39 @@ namespace DebrisRecycling
 		[Options.Field] // TODO
 		public readonly bool addDebrisToScannerRoom = true;
 
+		public class CustomObjects
+		{
+			public readonly bool addToOptionsMenu = true; // TODO false
+			public readonly int defaultResourceCount = 1;
+
+			class Hider: Options.Components.Hider.IVisibilityChecker
+			{
+				public bool visible => Main.config.customObjects.addToOptionsMenu;
+			}
+
+			class HotKeysHider: Field.IAction, Options.Components.Hider.IVisibilityChecker
+			{
+				public bool visible => Main.config.customObjects.addToOptionsMenu && Main.config.customObjects.hotkeysEnabled;
+				public void action() => Options.Components.Hider.setVisible("hotkeys", visible);
+			}
+
+			[Options.Field] // TODO
+			[Options.Hideable(typeof(Hider))]
+			[Field.Action(typeof(HotKeysHider))]
+			public readonly bool hotkeysEnabled = true; // TODO false
+
+			[Options.Field] // TODO
+			[Options.Hideable(typeof(HotKeysHider), "hotkeys")]
+			public readonly KeyCode hotkey = KeyCode.PageUp;
+
+			[Options.Field] // TODO
+			[Options.Hideable(typeof(HotKeysHider), "hotkeys")]
+			public readonly KeyCode hotkeyTemp = KeyCode.PageDown;
+		}
+		public readonly CustomObjects customObjects = new CustomObjects();
+
 		public readonly bool deconstructValidStaticObjects = true;
 		public readonly bool patchStaticObjects = true;
-		public readonly bool hotkeyForNewObjects = false;
 		public readonly bool extraPowerConsumption = false;
 		public readonly bool fixLandscapeCollisions = true;
 	};
@@ -71,13 +104,18 @@ namespace DebrisRecycling
 				this.prefabs = prefabs;
 			}
 
-			public void addPrefab(string prefabID, int resourceCount) // resourceCount: see above ^
+			public void clear() => prefabs.Clear();
+			public bool empty() => prefabs.Count == 0;
+
+			public string addPrefab(string prefabID, int resourceCount) // resourceCount: see above ^
 			{
 				if (!UWE.PrefabDatabase.TryGetPrefabFilename(prefabID, out string prefabPath))
-					return;
+					return null;
 
 				string prefabName = prefabPath.Substring(prefabPath.LastIndexOf("/") + 1);
 				prefabs[$"{prefabName}.{prefabID}"] = resourceCount;
+
+				return prefabName;
 			}
 
 			public void copyPrefabsTo(Dictionary<string, int> validPrefabs)
@@ -88,6 +126,14 @@ namespace DebrisRecycling
 
 		class AddPrefabListAttribute: Attribute, IFieldAttribute, IRootConfigInfo
 		{
+			class VisChecker: Options.Components.Hider.IVisibilityChecker
+			{
+				readonly PrefabList parentPrefabList;
+				public VisChecker(PrefabList parentPrefabList) => this.parentPrefabList = parentPrefabList;
+
+				public bool visible => !parentPrefabList.empty();
+			}
+
 			readonly string label;
 
 			public AddPrefabListAttribute(string label = null) => this.label = label;
@@ -106,13 +152,16 @@ namespace DebrisRecycling
 					return;
 
 				var cfgField = new Field(prefabs, nameof(PrefabList.enabled), rootConfig);
-				Options.add(new Options.ToggleOption(cfgField, label));
+				var option = new Options.ToggleOption(cfgField, label);
+				option.addHandler(new Options.Components.Hider.Add(new VisChecker(prefabs)));
+
+				Options.add(option);
 			}
 		}
 
 		[NonSerialized]
 		[NoInnerFieldsAttrProcessing]
-		public readonly List<PrefabList> allLists = new List<PrefabList>();
+		readonly List<PrefabList> allLists = new List<PrefabList>();
 
 		public Dictionary<string, int> getValidPrefabs()
 		{
@@ -122,6 +171,11 @@ namespace DebrisRecycling
 			return validPrefabs;
 		}
 
+		protected override void onLoad()
+		{
+			debrisCustomTemp.clear();
+			debrisCustomTemp.enabled = true;
+		}
 
 #if DEBUG
 		[AddPrefabList("<color=#a0a0a0ff>debrisCargoOpened</color>")]
@@ -245,6 +299,11 @@ namespace DebrisRecycling
 			{"starship_girder_09.7ec3cd94-4981-4877-be57-e7bfdfbbce00", 10},
 		});
 #endif
+		[AddPrefabList("Deconstruct custom objects")]
+		public readonly PrefabList debrisCustom = new PrefabList(true, new Dictionary<string, int>());
+
+		[AddPrefabList("Deconstruct temporary custom objects")]
+		public readonly PrefabList debrisCustomTemp = new PrefabList(true, new Dictionary<string, int>());
 	}
 
 	class Prefabs_v100: Config // for conversion v1.0.0 -> v1.1.0

@@ -36,6 +36,8 @@ namespace DebrisRecycling
 
 		public static void refreshValidPrefabs(bool searchForDebris)
 		{
+			Common.Debug.assert(prefabsConfig != null);
+
 			validPrefabs = prefabsConfig.getValidPrefabs();
 
 			if (!searchForDebris)
@@ -66,10 +68,36 @@ namespace DebrisRecycling
 			if (!isValidForPatching(go))
 				return;
 
-			if (Main.config.hotkeyForNewObjects)
-				updateHotkeys(go);
+			if (Main.config.customObjects.hotkeysEnabled)
+				processCustomObject(go);
 
 			tryPatchObject(go);
+		}
+
+
+		public static void processCustomObject(GameObject go)
+		{
+			PrefabsConfig.PrefabList targetList = null;
+
+			if (Input.GetKey(Main.config.customObjects.hotkey))
+				targetList = prefabsConfig.debrisCustom;
+			else
+			if (Input.GetKey(Main.config.customObjects.hotkeyTemp))
+				targetList = prefabsConfig.debrisCustomTemp;
+
+			if (targetList == null)
+				return;
+
+			var prefabID = go.getComponentInHierarchy<PrefabIdentifier>(false);
+
+			if (prefabID == null || isValidPrefab(prefabID.ClassId))
+				return;
+
+			string prefabName = targetList.addPrefab(prefabID.ClassId, Main.config.customObjects.defaultResourceCount);
+			prefabsConfig.save();
+			refreshValidPrefabs(true);
+
+			string.Format(L10n.str(L10n.ids_customDebrisAdded), prefabName).onScreen();
 		}
 
 
@@ -111,6 +139,7 @@ namespace DebrisRecycling
 			}
 		}
 
+
 		static void addConstructableComponent(GameObject go, int resourcesCount)
 		{																						$"GameObject '{go.name} already have Constructable!'".logDbgError(go.GetComponent<Constructable>());
 			go.AddComponent<DebrisDeconstructable>();
@@ -122,35 +151,6 @@ namespace DebrisRecycling
 			constructable.resourceMap = new List<TechType>();
 			constructable.resourceMap.add(TechType.ScrapMetal, resourcesCount / 10);
 			constructable.resourceMap.add(ScrapMetalSmall.TechType, resourcesCount % 10);		$"Constructable added to {go.name}".logDbg();
-		}
-
-
-		static readonly Dictionary<string, int> dbgPrefabs = new Dictionary<string, int>();
-
-		static void updateHotkeys(GameObject go)
-		{
-			if (Input.GetKeyDown(KeyCode.PageUp))
-			{
-				var prefabID = go.getComponentInHierarchy<PrefabIdentifier>(false);
-
-				if (prefabID == null)
-					return;
-
-				$"-----id:{prefabID.Id} classID:{prefabID.ClassId} name:{prefabID.gameObject.name}".log();
-
-				if (!isValidPrefab(prefabID.ClassId))
-				{
-					validPrefabs[prefabID.ClassId] = 10;
-					dbgPrefabs[prefabID.ClassId] = 10;
-				}
-
-				string prefabs = "-----dbgPrefabs\r\n";
-				foreach (KeyValuePair<string, int> v in dbgPrefabs)
-					prefabs += $"{{\"{v.Key}\", {v.Value}}},\r\n";
-
-				prefabs.log();
-				"-----".log();
-			}
 		}
 	}
 }

@@ -39,10 +39,10 @@ namespace Common.Configuration
 
 					public void init(ModOption option) => id = option.id;
 
-					public Add(IVisibilityChecker _visChecker, string _groupID)
+					public Add(IVisibilityChecker visChecker, string groupID = null)
 					{
-						visChecker = _visChecker;
-						groupID = _groupID;
+						this.visChecker = visChecker;
+						this.groupID = groupID;
 					}
 
 					public void handle(GameObject gameObject) =>
@@ -52,11 +52,11 @@ namespace Common.Configuration
 				string id, groupID;
 				bool visible;
 
-				void init(string _id, string _groupID, bool _visible)
+				void init(string id, string groupID, bool visible)
 				{
-					id = _id;
-					groupID = _groupID;
-					visible = _visible;
+					this.id = id;
+					this.groupID = groupID;
+					this.visible = visible;
 				}
 
 				static readonly List<Hider> hiders = new List<Hider>();

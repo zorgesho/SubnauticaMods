@@ -23,10 +23,10 @@ namespace Common.Configuration
 						Debug.assert(option is SliderOption, "SliderValue.Add: option is not a slider");
 					}
 
-					public Add(Type _valueCmpType, string _valueFormat)
+					public Add(Type valueCmpType, string valueFormat)
 					{
-						valueCmpType = _valueCmpType;
-						valueFormat  = _valueFormat;
+						this.valueCmpType = valueCmpType;
+						this.valueFormat  = valueFormat;
 
 						Debug.assert(typeof(ModSliderOption.SliderValue).IsAssignableFrom(valueCmpType),
 							$"Custom value type {valueCmpType} is not derived from ModSliderOption.SliderValue");

@@ -80,10 +80,10 @@ namespace DebrisRecycling
 			PrefabsConfig.PrefabList targetList = null;
 
 			if (Input.GetKey(Main.config.customObjects.hotkey))
-				targetList = prefabsConfig.debrisCustom;
+				targetList = prefabsConfig.dbsCustom;
 			else
 			if (Input.GetKey(Main.config.customObjects.hotkeyTemp))
-				targetList = prefabsConfig.debrisCustomTemp;
+				targetList = prefabsConfig.dbsCustomTemp;
 
 			if (targetList == null)
 				return;

@@ -19,7 +19,6 @@ namespace DebrisRecycling
 		public static string ids_customDebrisAdded = "<color=#adf8ffff><b>{0}</b></color> is added as salvageable debris";
 	}
 
-
 #if DEBUG
 	[AddToConsole("dr")]
 #endif
@@ -104,8 +103,8 @@ namespace DebrisRecycling
 				this.prefabs = prefabs;
 			}
 
+			public bool empty => prefabs.Count == 0;
 			public void clear() => prefabs.Clear();
-			public bool empty() => prefabs.Count == 0;
 
 			public string addPrefab(string prefabID, int resourceCount) // resourceCount: see above ^
 			{
@@ -131,7 +130,7 @@ namespace DebrisRecycling
 				readonly PrefabList parentPrefabList;
 				public VisChecker(PrefabList parentPrefabList) => this.parentPrefabList = parentPrefabList;
 
-				public bool visible => !parentPrefabList.empty();
+				public bool visible => !parentPrefabList.empty;
 			}
 
 			readonly string label;
@@ -144,7 +143,7 @@ namespace DebrisRecycling
 			public void process(object config, FieldInfo field)
 			{
 				PrefabList prefabs = field.GetValue(config) as PrefabList;
-				Debug.assert(prefabs != null);
+				Common.Debug.assert(prefabs != null);
 
 				rootConfig.allLists.Add(prefabs);
 
@@ -173,8 +172,10 @@ namespace DebrisRecycling
 
 		protected override void onLoad()
 		{
-			debrisCustomTemp.clear();
-			debrisCustomTemp.enabled = true;
+			dbsCustomTemp.clear();
+			dbsCustomTemp.enabled = true;
+
+			_updateTo110();
 		}
 
 #if DEBUG
@@ -182,7 +183,7 @@ namespace DebrisRecycling
 #else
 		[AddPrefabList]
 #endif
-		public readonly PrefabList debrisCargoOpened = new PrefabList(true, new Dictionary<string, int>()
+		public readonly PrefabList dbsCargoOpened = new PrefabList(true, new Dictionary<string, int>()
 		{
 			{"Starship_cargo_opened.c390fcfc-3bf4-470a-93bf-39dafb8b2267", 2},
 			{"Starship_cargo_damaged_opened_01.8c3d54c0-4330-4949-91ad-f046cfd67c7c", 2},
@@ -197,7 +198,7 @@ namespace DebrisRecycling
 #else
 		[AddPrefabList]
 #endif
-		public readonly PrefabList debrisMiscMovable = new PrefabList(true, new Dictionary<string, int>()
+		public readonly PrefabList dbsMiscMovable = new PrefabList(true, new Dictionary<string, int>()
 		{
 			{"Starship_exploded_debris_01.5cd34124-935f-4628-b694-a266bc2f5517", 11},
 			{"Starship_exploded_debris_06.df36cdfb-abee-41f1-bdc6-fec6566d3557", 10},
@@ -210,7 +211,7 @@ namespace DebrisRecycling
 		});
 
 		[AddPrefabList("Deconstruct closed crates")]
-		public readonly PrefabList debrisCargoClosed = new PrefabList(true, new Dictionary<string, int>()
+		public readonly PrefabList dbsCargoClosed = new PrefabList(true, new Dictionary<string, int>()
 		{
 			{"Starship_cargo.354ebf4e-def3-48a6-839d-bf0f478ca915", 2},
 			{"Starship_cargo_02.d21bca5e-6dd2-48d8-bbf0-2f1d5df7fa9c", 2},
@@ -223,7 +224,7 @@ namespace DebrisRecycling
 		});
 
 		[AddPrefabList("Deconstruct lockers")]
-		public readonly PrefabList debrisLockers = new PrefabList(true, new Dictionary<string, int>()
+		public readonly PrefabList dbsLockers = new PrefabList(true, new Dictionary<string, int>()
 		{
 			{"submarine_locker_04_open.bca9b19c-616d-4948-8742-9bb6f4296dc3", 3},
 			{"submarine_locker_04_door.779d4bbe-6e34-4ca5-bee5-b32d65288f5f", 1},
@@ -231,7 +232,7 @@ namespace DebrisRecycling
 		});
 
 		[AddPrefabList("Deconstruct furniture")]
-		public readonly PrefabList debrisFurniture = new PrefabList(false, new Dictionary<string, int>()
+		public readonly PrefabList dbsFurniture = new PrefabList(false, new Dictionary<string, int>()
 		{
 			{"discovery_lab_cart_01.af165b07-a2a3-4d85-8ad7-0c801334c115", 2},
 			{"Starship_work_desk_01_empty.04a07ec0-e3f4-4285-a087-688215fdb142", 3},
@@ -251,7 +252,7 @@ namespace DebrisRecycling
 #else
 		[AddPrefabList]
 #endif
-		public readonly PrefabList debrisTech = new PrefabList(false, new Dictionary<string, int>()
+		public readonly PrefabList dbsTech = new PrefabList(false, new Dictionary<string, int>()
 		{
 			{"tech_light_deco.8ce870ba-b559-45d7-9c10-a5477967db24", 2},				// special processing
 			{"Starship_tech_box_01_02.0f779340-8064-4308-8baa-6be9324a1e05", 3},		// special processing
@@ -264,7 +265,7 @@ namespace DebrisRecycling
 
 #if DEBUG
 		[AddPrefabList("<color=#a0a0a0ff>debrisStatic</color>")]
-		public readonly PrefabList debrisStatic = new PrefabList(false, new Dictionary<string, int>()
+		public readonly PrefabList dbsStatic = new PrefabList(false, new Dictionary<string, int>()
 		{
 			{"Starship_exploded_debris_25.a5f0e345-1e46-410f-8bf1-eeeed3e5a126", 10},
 			{"Starship_exploded_debris_12.1235093d-3e84-4e98-9823-602db2e8fa5f", 10},
@@ -300,52 +301,45 @@ namespace DebrisRecycling
 		});
 #endif
 		[AddPrefabList("Deconstruct custom objects")]
-		public readonly PrefabList debrisCustom = new PrefabList(true, new Dictionary<string, int>());
+		public readonly PrefabList dbsCustom = new PrefabList(true, new Dictionary<string, int>());
 
 		[AddPrefabList("Deconstruct temporary custom objects")]
-		public readonly PrefabList debrisCustomTemp = new PrefabList(true, new Dictionary<string, int>());
-	}
+		public readonly PrefabList dbsCustomTemp = new PrefabList(true, new Dictionary<string, int>());
 
-	class Prefabs_v100: Config // for conversion v1.0.0 -> v1.1.0
-	{
-		public readonly Dictionary<string, int> debrisCargoOpened = new Dictionary<string, int>();
-		public readonly Dictionary<string, int> debrisMiscMovable = new Dictionary<string, int>();
-		public readonly Dictionary<string, int> debrisLockers = new Dictionary<string, int>();
-		public readonly Dictionary<string, int> debrisTech = new Dictionary<string, int>();
-		public readonly Dictionary<string, int> debrisCargoClosed = new Dictionary<string, int>();
-		public readonly Dictionary<string, int> debrisFurniture = new Dictionary<string, int>();
-	}
 
-	class DumpCommand: PersistentConsoleCommands // TODO remove
-	{
-		void OnConsoleCommand_dr_dump(NotificationCenter.Notification _)
+		#region v1.0.0 -> v1.1.0
+		int __cfgVer = 0;
+
+		void _updateTo110()
 		{
-			static string _getPrefabNameByID(string prefabID)
+			if (__cfgVer >= 110)
+				return;
+
+			CraftData.PreparePrefabIDCache(); // so PrefabList.addPrefab will find prefab names
+
+			try
 			{
-				if (!UWE.PrefabDatabase.TryGetPrefabFilename(prefabID, out string prefabPath))
-					return null;
-
-				return prefabPath.Substring(prefabPath.LastIndexOf("/") + 1);
-			}
-
-			var prefabs = Config.tryLoad<Prefabs_v100>(null, Config.LoadOptions.None);
-
-			foreach (var field in typeof(Prefabs_v100).fields())
-				dumpObjects(field.Name, field.GetValue(prefabs) as Dictionary<string, int>);
-
-			static void dumpObjects(string name, Dictionary<string, int> list)
-			{
-				var sb = new System.Text.StringBuilder();
-				sb.AppendLine(name);
-
-				foreach (var obj in list)
+				foreach (var name in new string[] {"CargoOpened", "MiscMovable", "Lockers", "Tech", "CargoClosed", "Furniture"})
 				{
-					if (_getPrefabNameByID(obj.Key) is string objName)
-						sb.AppendLine($"\t\t\t{{\"{objName}.{obj.Key}\", {obj.Value}}},");
-				}
+					var oldList = GetType().field("debris" + name).GetValue(this) as Dictionary<string, int>;
+					var newList = GetType().field("dbs" + name).GetValue(this) as PrefabList;
 
-				sb.ToString().log();
+					oldList.ForEach(debrisInfo => newList.addPrefab(debrisInfo.Key, debrisInfo.Value));
+				}
 			}
+			catch (Exception e) { Log.msg(e); }
+
+			__cfgVer = 110;
 		}
+
+#pragma warning disable IDE0044, IDE0052
+		[Field.LoadOnly] [NoInnerFieldsAttrProcessing] Dictionary<string, int> debrisCargoOpened = new Dictionary<string, int>();
+		[Field.LoadOnly] [NoInnerFieldsAttrProcessing] Dictionary<string, int> debrisMiscMovable = new Dictionary<string, int>();
+		[Field.LoadOnly] [NoInnerFieldsAttrProcessing] Dictionary<string, int> debrisLockers	 = new Dictionary<string, int>();
+		[Field.LoadOnly] [NoInnerFieldsAttrProcessing] Dictionary<string, int> debrisTech		 = new Dictionary<string, int>();
+		[Field.LoadOnly] [NoInnerFieldsAttrProcessing] Dictionary<string, int> debrisCargoClosed = new Dictionary<string, int>();
+		[Field.LoadOnly] [NoInnerFieldsAttrProcessing] Dictionary<string, int> debrisFurniture	 = new Dictionary<string, int>();
+#pragma warning restore
+		#endregion
 	}
 }

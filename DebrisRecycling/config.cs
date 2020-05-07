@@ -13,6 +13,7 @@ namespace DebrisRecycling
 	class L10n: LanguageHelper
 	{
 		public const string ids_smallScrapName = "Small piece of salvage";
+		public const string ids_restartGame = "<color=yellow>Restart the game to apply changes.</color>";
 
 		public static string ids_salvageableDebris = "Salvageable debris";
 		public static string ids_tryMoveObject = "Try to move object"; // probably not used very often
@@ -22,18 +23,11 @@ namespace DebrisRecycling
 #if DEBUG
 	[AddToConsole("dr")]
 #endif
-	[Options.Name(tooltip: "<size=20>You'll need to restart the game in order to apply options</size>", tooltipType: typeof(HideableHeadingTooltip))]
 	class ModConfig: Config
 	{
-		class HideableHeadingTooltip: Options.Components.Tooltip
-		{
-			// heading tooltip actually belongs to first added option, so we can check if it active
-			protected override string getTooltip() => parentOption.gameObject.activeSelf? tooltip: null;
-		}
-
 		public class CraftConfig
 		{
-			[Options.Field("Dynamic recipe for titanium", "Dynamic recipe for titanium includes all scrap in the inventory")]
+			[Options.Field("Dynamic recipe for titanium", "Dynamic recipe for titanium includes all scrap in the inventory.\n" + L10n.ids_restartGame)]
 			public readonly bool dynamicTitaniumRecipe = true;
 
 			public readonly int titaniumPerBigScrap = 4;
@@ -41,12 +35,17 @@ namespace DebrisRecycling
 		}
 		public readonly CraftConfig craftConfig = new CraftConfig();
 
-		[Options.Field] // TODO
+		[Options.Field("Show debris in the Scanner Room", L10n.ids_restartGame)]
 		public readonly bool addDebrisToScannerRoom = true;
 
 		public class CustomObjects
 		{
-			public readonly bool addToOptionsMenu = true; // TODO false
+			public readonly bool addToOptionsMenu =
+#if DEBUG
+				true;
+#else
+				false;
+#endif
 			public readonly int defaultResourceCount = 1;
 
 			class Hider: Options.Components.Hider.IVisibilityChecker
@@ -54,22 +53,27 @@ namespace DebrisRecycling
 				public bool visible => Main.config.customObjects.addToOptionsMenu;
 			}
 
-			class HotKeysHider: Field.IAction, Options.Components.Hider.IVisibilityChecker
+			class HotKeysHider: Options.Components.Hider.Simple
 			{
-				public bool visible => Main.config.customObjects.addToOptionsMenu && Main.config.customObjects.hotkeysEnabled;
-				public void action() => Options.Components.Hider.setVisible("hotkeys", visible);
+				public HotKeysHider(): base("hotkeys", () => Main.config.customObjects.addToOptionsMenu && Main.config.customObjects.hotkeysEnabled) {}
 			}
 
-			[Options.Field] // TODO
+			[Options.Field("Allow to add custom debris",
+								"Allows to mark most of the objects as salvageab-\nle debris.\n" +
+								"To mark an object point the <b>Habitat Builder</b> to it and press the corresponding hotkey.\n" +
+								"Deconstructing some of the objects can cause various bugs. <color=yellow>Use at your own risk!</color>")]
 			[Options.Hideable(typeof(Hider))]
 			[Field.Action(typeof(HotKeysHider))]
-			public readonly bool hotkeysEnabled = true; // TODO false
+			public readonly bool hotkeysEnabled = false;
 
-			[Options.Field] // TODO
+			[Options.Field("\tMark object as debris",
+								"Press to add an object to the <b>permanent</b> custom list in the <b>" + Main.prefabsConfigName + "</b>.")]
 			[Options.Hideable(typeof(HotKeysHider), "hotkeys")]
 			public readonly KeyCode hotkey = KeyCode.PageUp;
 
-			[Options.Field] // TODO
+			[Options.Field("\tMark object as debris (temp.)",
+								"Press to add an object to the <b>temporary</b> custom list in the <b>" + Main.prefabsConfigName + "</b> " +
+								"(cleared at the beginning of each game session).")]
 			[Options.Hideable(typeof(HotKeysHider), "hotkeys")]
 			public readonly KeyCode hotkeyTemp = KeyCode.PageDown;
 		}

@@ -6,6 +6,8 @@ namespace DebrisRecycling
 {
 	public static class Main
 	{
+		internal const string prefabsConfigName = "prefabs_config.json";
+
 		internal static readonly ModConfig config = Mod.init<ModConfig>();
 
 		public static void patch()
@@ -15,7 +17,7 @@ namespace DebrisRecycling
 
 			LanguageHelper.init(); // after CraftHelper
 
-			DebrisPatcher.init(Mod.loadConfig<PrefabsConfig>("prefabs_config.json", Config.LoadOptions.ProcessAttributes));
+			DebrisPatcher.init(Mod.loadConfig<PrefabsConfig>(prefabsConfigName, Config.LoadOptions.ProcessAttributes));
 		}
 	}
 }

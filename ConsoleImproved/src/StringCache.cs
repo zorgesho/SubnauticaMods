@@ -68,10 +68,8 @@ namespace ConsoleImproved
 
 				foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
 				{
-					Type cfgvars = assembly.GetType(exportCfgVarClassName, false);
-
-					if (cfgvars != null && cfgvars.GetMethod(exportCfgVarGetFields)?.Invoke(null, null) is List<string> fields)
-					{																													fields.logDbg("CfgVarsCache added field ");
+					if (assembly.GetType(exportCfgVarClassName, false)?.methodWrap(exportCfgVarGetFields).invoke() is List<string> fields)
+					{																															fields.logDbg("CfgVarsCache added field ");
 						for (int i = 0; i < fields.Count; i++)
 							fields[i] += " "; // adding space for convenience
 

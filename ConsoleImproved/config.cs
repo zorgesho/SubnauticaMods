@@ -15,15 +15,6 @@ namespace ConsoleImproved
 
 		public readonly int  historySizeToSave = 100;
 
-		[AddToConsole("console")]
-		public readonly bool setInvariantCultureAppWide =
-#if DEBUG
-			true;
-#else
-			false;
-#endif
-
-
 #if VER_1_1_0
 		public class MessagesSettings
 		{

@@ -56,7 +56,7 @@ namespace ConsoleImproved
 			}
 
 			// ignoring (time > message.timeEnd) loop if console is visible (just jumping to "float num = this.offsetY * 7f" line)
-			int indexToJump1 = list.FindIndex(ci => ci.isLDC(7f)) - 2;																$"ErrorMessage.OnUpdate patch: indexToJump1: {indexToJump1}".logDbg();
+			int indexToJump1 = list.FindIndex(ci => ci.isLDC(7f)) - 2;
 
 			Debug.assert(indexToJump1 >= 0);
 			if (indexToJump1 < 0)
@@ -71,7 +71,7 @@ namespace ConsoleImproved
 
 			// ignoring alpha changes for message entry if console is visible (last two lines in the second loop)
 			MethodInfo CanvasRenderer_SetAlpha = typeof(CanvasRenderer).method(nameof(CanvasRenderer.SetAlpha));
-			int indexToJump2 = list.FindIndex(indexToJump1, ci => ci.isOp(OpCodes.Callvirt, CanvasRenderer_SetAlpha)) + 1;			$"ErrorMessage.OnUpdate patch: indexToJump2: {indexToJump2}".logDbg();
+			int indexToJump2 = list.FindIndex(indexToJump1, ci => ci.isOp(OpCodes.Callvirt, CanvasRenderer_SetAlpha)) + 1;
 
 			Debug.assert(indexToJump2 >= 0);
 			if (indexToJump2 < 0)
@@ -81,7 +81,7 @@ namespace ConsoleImproved
 			list[indexToJump2].labels.Add(lb2);
 
 			MethodInfo Transform_setLocalPosition = typeof(Transform).method("set_localPosition");
-			int indexToInject2 = list.FindIndex(indexToJump1, ci => ci.isOp(OpCodes.Callvirt, Transform_setLocalPosition)) + 1;		$"ErrorMessage.OnUpdate patch: indexToInject2: {indexToInject2}".logDbg();
+			int indexToInject2 = list.FindIndex(indexToJump1, ci => ci.isOp(OpCodes.Callvirt, Transform_setLocalPosition)) + 1;
 
 			Debug.assert(indexToInject2 >= 0);
 			if (indexToInject2 < 0)

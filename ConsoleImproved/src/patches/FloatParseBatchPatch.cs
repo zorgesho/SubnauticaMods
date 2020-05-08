@@ -12,8 +12,6 @@ namespace ConsoleImproved
 	// patching vanilla console commands that use float.Parse method to use locale independent conversion
 	static class CommandsFloatParsePatch
 	{
-		static bool patched = false;
-
 		static IEnumerable<CodeInstruction> transpiler(IEnumerable<CodeInstruction> cins)
 		{
 			MethodInfo floatParse = typeof(float).method("Parse", typeof(string));
@@ -29,7 +27,6 @@ namespace ConsoleImproved
 		}
 		static readonly MethodInfo patch = typeof(CommandsFloatParsePatch).method(nameof(transpiler));
 
-
 		static readonly MethodInfo[] toPatch = new MethodInfo[]
 		{
 			typeof(BaseFloodSim).method("OnConsoleCommand_baseflood"),
@@ -44,13 +41,11 @@ namespace ConsoleImproved
 			typeof(WaterParkCreature).method("OnConsoleCommand_setwpcage"),
 		};
 
+		static bool patched = false;
 		public static void patchAll()
 		{
-			if (!patched)
-			{																													$"floatParse toPatch size: {toPatch.Length}".logDbg();
+			if (!patched && (patched = true))
 				toPatch.forEach(p => HarmonyHelper.patch(p, transpiler: patch));
-				patched = true;
-			}
 		}
 	}
 }

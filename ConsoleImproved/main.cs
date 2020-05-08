@@ -1,17 +1,13 @@
 ﻿using Common;
-using Common.Configuration;
 
 namespace ConsoleImproved
 {
 	public static class Main
 	{
-		internal static readonly ModConfig config = Config.tryLoad<ModConfig>();
+		internal static readonly ModConfig config = Mod.init<ModConfig>();
 
 		public static void patch()
 		{
-			if (config.setInvariantCultureAppWide)
-				System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
-
 			HarmonyHelper.patchAll();
 
 			if (config.fixVanillaCommandsFloatParse)

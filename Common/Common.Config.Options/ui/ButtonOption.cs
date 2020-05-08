@@ -37,8 +37,17 @@ namespace Common.Configuration
 				base.onGameObjectChange(newGO);
 			}
 
-			// cfgField will run attached actions when we change its value
-			void onClick() => cfgField.value = (cfgField.value as int?) + 1;
+			// using reflection to avoid including UnityEngine.UI in all projects
+			static readonly Type eventSystem = ReflectionHelper.safeGetType("UnityEngine.UI", "UnityEngine.EventSystems.EventSystem");
+			static readonly ReflectionHelper.PropertyWrapper currentEventSystem = eventSystem.propertyWrap("current");
+			static readonly ReflectionHelper.MethodWrapper setSelectedGameObject = eventSystem.methodWrap("SetSelectedGameObject", typeof(GameObject));
+
+			void onClick()
+			{
+				cfgField.value = (cfgField.value as int?) + 1; // cfgField will run attached actions when we change its value
+
+				setSelectedGameObject.invoke(currentEventSystem.get(), null); // so button don't stays pressed after click
+			}
 		}
 	}
 }

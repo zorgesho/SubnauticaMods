@@ -34,13 +34,13 @@ namespace Common
 			{
 				using (Debug.profiler($"Update optional patch: {patchType}", allowNested: false))
 				{
-					MethodInfo prepare = patchType.method("Prepare");
+					var prepare = patchType.methodWrap("Prepare");
 
-					Debug.assert(prepare != null);
-					if (prepare == null)
+					Debug.assert(prepare);
+					if (!prepare)
 						return;
 
-					bool? res = prepare.Invoke(null, null) as bool?;
+					var res = prepare.invoke<bool>();
 
 					if (res != null)
 						setEnabled((bool)res, patchType);

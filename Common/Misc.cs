@@ -56,6 +56,60 @@ namespace Common
 			catch { return null; }
 		}
 
+		public class MethodWrapper
+		{
+			readonly MethodBase method;
+			public static implicit operator bool(MethodWrapper mw) => mw.method != null;
+
+			public MethodWrapper(MethodBase method) => this.method = method;
+
+			public object invoke(object obj = null)
+			{
+				Debug.assert(method != null);
+				return method?.Invoke(obj, null);
+			}
+
+			public class _RequireStruct<S> where S: struct {} // https://stackoverflow.com/questions/2974519/generic-constraints-where-t-struct-and-where-t-class
+
+			public C  invoke<C>(object obj = null) where C: class => invoke(obj) as C;
+			public S? invoke<S>(object obj = null, _RequireStruct<S> _ = null) where S: struct => invoke(obj) as S?; // :(
+
+			public object invoke(object obj, params object[] parameters)
+			{
+				Debug.assert(method != null);
+				return method?.Invoke(obj, parameters ?? new object[1]);
+			}
+
+			public C invoke<C>(object obj, params object[] parameters) where C: class => invoke(obj, parameters) as C;
+		}
+
+		public class PropertyWrapper
+		{
+			readonly MethodBase setter, getter;
+
+			public PropertyWrapper(PropertyInfo property)
+			{
+				Debug.assert(property != null);
+
+				setter = property?.GetSetMethod();
+				getter = property?.GetGetMethod();
+			}
+
+			public void set(object obj, object value)
+			{
+				Debug.assert(setter != null);
+				setter?.Invoke(obj, new object[] { value });
+			}
+
+			public object get(object obj = null)
+			{
+				Debug.assert(getter != null);
+				return getter?.Invoke(obj, null);
+			}
+
+			public C get<C>(object obj = null) where C: class => get(obj) as C;
+		}
+
 		// for use with publicized assemblies (can throw exception)
 		public class Event<T>
 		{
@@ -92,6 +146,15 @@ namespace Common
 		public static MethodInfo[] methods(this Type type) => type.GetMethods(ReflectionHelper.bfAll);
 		public static MethodInfo[] methods(this Type type, BindingFlags bf) => type.GetMethods(ReflectionHelper.bfAll | bf);
 		public static PropertyInfo[] properties(this Type type) => type.GetProperties(ReflectionHelper.bfAll);
+
+		public static ReflectionHelper.MethodWrapper methodWrap(this Type type, string name) =>
+			new ReflectionHelper.MethodWrapper(type.method(name));
+
+		public static ReflectionHelper.MethodWrapper methodWrap(this Type type, string name, params Type[] types) =>
+			new ReflectionHelper.MethodWrapper(type.method(name, types));
+
+		public static ReflectionHelper.PropertyWrapper propertyWrap(this Type type, string name) =>
+			new ReflectionHelper.PropertyWrapper(type.property(name));
 	}
 
 

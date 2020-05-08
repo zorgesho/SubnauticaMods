@@ -6,19 +6,20 @@ using System.Globalization;
 
 namespace Common
 {
+	using static ReflectionHelper;
+
 	static partial class Mod
 	{
 		const string tmpFileName = "run the game to generate configs"; // name is also in the post-build.bat
 
-		static readonly Type qmmServices = ReflectionHelper.safeGetType("QModInstaller", "QModManager.API.QModServices");
-		static readonly MethodInfo qmmServicesMain = qmmServices?.property("Main").GetGetMethod();
-		static readonly MethodInfo qmmAddMessage = qmmServices?.method("AddCriticalMessage");
+		static readonly Type qmmServices = safeGetType("QModInstaller", "QModManager.API.QModServices");
+		static readonly PropertyWrapper qmmServicesMain = qmmServices.propertyWrap("Main");
+		static readonly MethodWrapper qmmAddMessage = qmmServices.methodWrap("AddCriticalMessage");
 
-		static readonly MethodInfo qmmGetMyMod = qmmServices?.method("GetMyMod");
-		static readonly MethodInfo qmmQModDisplayName = ReflectionHelper.safeGetType("QModInstaller", "QModManager.API.IQMod")?.property("DisplayName")?.GetGetMethod();
+		static readonly PropertyWrapper qmmQModDisplayName = safeGetType("QModInstaller", "QModManager.API.IQMod").propertyWrap("DisplayName");
 
 		public static readonly string id = Assembly.GetExecutingAssembly().GetName().Name;
-		public static readonly string name = qmmQModDisplayName.Invoke(qmmGetMyMod.Invoke(qmmServicesMain.Invoke(null, null), new object[0]), new object[0]) as string;
+		public static readonly string name = qmmQModDisplayName.get<string>(qmmServices.methodWrap("GetMyMod").invoke(qmmServicesMain.get()));
 
 		// supposed to be called before any other mod's code
 		public static void init()
@@ -34,8 +35,8 @@ namespace Common
 
 		public static void addCriticalMessage(string msg, int size = MainMenuMessages.defaultSize, string color = MainMenuMessages.defaultColor)
 		{
-			if (qmmAddMessage != null)
-				qmmAddMessage.Invoke(qmmServicesMain.Invoke(null, null), new object[] { msg, size, color, true });
+			if (qmmAddMessage)
+				qmmAddMessage.invoke(qmmServicesMain.get(), msg, size, color, true);
 			else
 				MainMenuMessages.add(msg, size, color);
 		}

@@ -61,7 +61,7 @@ namespace DebrisRecycling
 					toRemove.Add(info.Value);
 			}
 
-			var onResourceRemoved = new ReflectionHelper.Event<ResourceTracker>("onResourceRemoved");
+			var onResourceRemoved = typeof(ResourceTracker).eventWrap("onResourceRemoved"); // don't make it static
 
 			foreach (var info in toRemove)
 			{

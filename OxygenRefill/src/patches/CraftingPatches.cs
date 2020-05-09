@@ -78,23 +78,23 @@ namespace OxygenRefill
 				if (!(container as IItemsContainer).AllowedToRemove(item, true))
 					return false;
 
-				if (predicate(item))
-				{
-					items.RemoveAt(i);
-					if (items.Count == 0)
-						container._items.Remove(techType);
+				if (!predicate(item))
+					continue;
 
-					inventoryItem.container = null;
+				items.RemoveAt(i);
+				if (items.Count == 0)
+					container._items.Remove(techType);
 
-					typeof(Pickupable).method("remove_onTechTypeChanged").Invoke(item, new object[] { (OnTechTypeChanged)container.UpdateItemTechType });
+				inventoryItem.container = null;
 
-					container.count--;
-					container.unsorted = true;
-					container.NotifyRemoveItem(inventoryItem);
+				typeof(Pickupable).eventWrap("onTechTypeChanged", item).remove<OnTechTypeChanged>(container.UpdateItemTechType);
 
-					Object.Destroy(item.gameObject);
-					return true;
-				}
+				container.count--;
+				container.unsorted = true;
+				container.NotifyRemoveItem(inventoryItem);
+
+				Object.Destroy(item.gameObject);
+				return true;
 			}
 
 			return false;

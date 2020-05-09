@@ -85,41 +85,77 @@ namespace Common
 
 		public class PropertyWrapper
 		{
-			readonly MethodBase setter, getter;
+			readonly PropertyInfo propertyInfo;
+			MethodBase setter, getter;
 
-			public PropertyWrapper(PropertyInfo property)
+			public PropertyWrapper(PropertyInfo propertyInfo)
 			{
-				Debug.assert(property != null);
-
-				setter = property?.GetSetMethod();
-				getter = property?.GetGetMethod();
+				Debug.assert(propertyInfo != null);
+				this.propertyInfo = propertyInfo;
 			}
 
+			public void set(object value) => set(null, value);
 			public void set(object obj, object value)
 			{
+				setter ??= propertyInfo?.GetSetMethod();
 				Debug.assert(setter != null);
+
 				setter?.Invoke(obj, new object[] { value });
 			}
 
 			public object get(object obj = null)
 			{
+				getter ??= propertyInfo?.GetGetMethod();
 				Debug.assert(getter != null);
+
 				return getter?.Invoke(obj, null);
 			}
 
 			public C get<C>(object obj = null) where C: class => get(obj) as C;
 		}
 
-		// for use with publicized assemblies (can throw exception)
-		public class Event<T>
+		// for use with publicized assemblies
+		public class EventWrapper
 		{
-			readonly MulticastDelegate eventDelegate;
+			readonly object obj;
+			readonly EventInfo eventInfo;
 
-			public Event(string name, object obj = null) =>
-				eventDelegate = typeof(T).field(name)?.GetValue(obj) as MulticastDelegate;
+			MulticastDelegate eventDelegate;
+			MethodInfo adder, remover;
 
-			public void raise(params object[] eventParams) =>
+			public EventWrapper(EventInfo eventInfo, object obj = null)
+			{
+				Debug.assert(eventInfo != null);
+
+				this.obj = obj;
+				this.eventInfo = eventInfo;
+			}
+
+			public void add<D>(D eventDelegate) => add(obj, eventDelegate);
+			public void add<D>(object obj, D eventDelegate)
+			{
+				adder ??= eventInfo?.GetAddMethod();
+				Debug.assert(adder != null);
+
+				adder?.Invoke(obj, new object[] { eventDelegate });
+			}
+
+			public void remove<D>(D eventDelegate) => remove(obj, eventDelegate);
+			public void remove<D>(object obj, D eventDelegate)
+			{
+				remover ??= eventInfo?.GetRemoveMethod();
+				Debug.assert(remover != null);
+
+				remover?.Invoke(obj, new object[] { eventDelegate });
+			}
+
+			public void raise(params object[] eventParams) // only for initial 'obj' for now
+			{
+				Debug.assert(eventInfo.IsMulticast);
+
+				eventDelegate ??= eventInfo.DeclaringType.field(eventInfo.Name)?.GetValue(obj) as MulticastDelegate;
 				eventDelegate?.GetInvocationList().forEach(dlg => dlg.Method.Invoke(dlg.Target, eventParams));
+			}
 		}
 	}
 
@@ -155,6 +191,9 @@ namespace Common
 
 		public static ReflectionHelper.PropertyWrapper propertyWrap(this Type type, string name) =>
 			new ReflectionHelper.PropertyWrapper(type.property(name));
+
+		public static ReflectionHelper.EventWrapper eventWrap(this Type type, string name, object obj = null) =>
+			new ReflectionHelper.EventWrapper(type.GetEvent(name, ReflectionHelper.bfAll), obj);
 	}
 
 

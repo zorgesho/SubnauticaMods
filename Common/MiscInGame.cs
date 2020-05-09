@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using System.Reflection;
 using System.Collections.Generic;
 
 using UnityEngine;
@@ -11,7 +10,7 @@ namespace Common
 	{
 		public static string onScreen(this string s)
 		{
-			if (!SaveLoadManager.main.isLoading && Time.timeScale != 0f)
+			if (!GameUtils.isLoadingState && Time.timeScale != 0f)
 				ErrorMessage.AddDebug(s);
 
 			return s;
@@ -56,6 +55,8 @@ namespace Common
 		public static Vehicle getVehicle(this Player player) => player.GetComponentInParent<Vehicle>();
 
 		public static TechType getHeldToolType() => Inventory.main?.GetHeldTool()?.pickupable.GetTechType() ?? TechType.None;
+
+		public static bool isLoadingState => uGUI.main?.loading.loadingBackground.state == true;
 	}
 
 	static class MiscInGameExtensions

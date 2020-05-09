@@ -24,7 +24,7 @@ namespace Common.Configuration
 			// don't serialize properties
 			protected override List<MemberInfo> GetSerializableMembers(Type objectType)
 			{
-				IEnumerable<MemberInfo> members = objectType.fields().Where(field => !field.IsStatic && !field.checkAttribute<NonSerializedAttribute>());
+				IEnumerable<MemberInfo> members = objectType.fields().Where(field => !field.IsStatic && !field.checkAttr<NonSerializedAttribute>());
 				return members.ToList();
 			}
 
@@ -34,7 +34,7 @@ namespace Common.Configuration
 				var property = base.CreateProperty(member, memberSerialization);
 
 				property.Writable = true;
-				property.Readable = !member.checkAttribute<Field.LoadOnlyAttribute>();
+				property.Readable = !member.checkAttr<Field.LoadOnlyAttribute>();
 
 				return property;
 			}

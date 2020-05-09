@@ -24,7 +24,7 @@ namespace Common.Configuration
 				Debug.assert(rootConfig != null, "rootConfig is null");
 				Debug.assert(path != null, "field path is null");
 
-				ActionAttribute[] actionAttrs = field.getAttributes<ActionAttribute>();
+				ActionAttribute[] actionAttrs = field.getAttrs<ActionAttribute>();
 				if (actionAttrs.Length > 0)
 				{
 					actions = new IAction[actionAttrs.Length];
@@ -48,7 +48,7 @@ namespace Common.Configuration
 			string _path = null;
 
 			public A getAttr<A>(bool includeDeclaringTypes = false) where A: Attribute =>
-				field.getAttribute<A>(includeDeclaringTypes);
+				field.getAttr<A>(includeDeclaringTypes);
 
 			public virtual object value
 			{

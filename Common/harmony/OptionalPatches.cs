@@ -23,7 +23,7 @@ namespace Common
 
 			public static void updatePatches()
 			{
-				optionalPatches ??= ReflectionHelper.definedTypes.Where(type => type.checkAttribute<OptionalPatchAttribute>()).ToList();
+				optionalPatches ??= ReflectionHelper.definedTypes.Where(type => type.checkAttr<OptionalPatchAttribute>()).ToList();
 
 				using (Debug.profiler("Update optional patches"))
 					optionalPatches.ForEach(type => updatePatch(type));
@@ -50,7 +50,7 @@ namespace Common
 
 			public static void setEnabled(bool val, Type patchType)
 			{																														$"OptionalPatches: setEnabled {patchType} => {val}".logDbg();
-				if (!(patchType.getAttribute<HarmonyPatch>() is HarmonyPatch patch))
+				if (!(patchType.getAttr<HarmonyPatch>() is HarmonyPatch patch))
 					return;
 
 				MethodBase method = patch.info.getTargetMethod();

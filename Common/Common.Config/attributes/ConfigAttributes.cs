@@ -24,7 +24,7 @@ namespace Common.Configuration
 		public class NoInnerFieldsAttrProcessing: Attribute {}
 
 		public static bool _isInnerFieldsProcessable(FieldInfo field) =>
-			field.FieldType.IsClass && !field.IsStatic && !field.checkAttribute<NoInnerFieldsAttrProcessing>();
+			field.FieldType.IsClass && !field.IsStatic && !field.checkAttr<NoInnerFieldsAttrProcessing>();
 
 
 		void processAttributes()

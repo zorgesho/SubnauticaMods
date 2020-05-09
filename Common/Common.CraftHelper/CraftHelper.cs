@@ -26,10 +26,10 @@ namespace Common.Crafting
 
 			foreach (var type in ReflectionHelper.definedTypes)
 			{
-				if (!typeof(CraftableObject).IsAssignableFrom(type) || type.checkAttribute<NoAutoPatchAttribute>())
+				if (!typeof(CraftableObject).IsAssignableFrom(type) || type.checkAttr<NoAutoPatchAttribute>())
 					continue;
 
-				if (type.checkAttribute<PatchFirstAttribute>())
+				if (type.checkAttr<PatchFirstAttribute>())
 					patchClass(type);
 				else
 					toPatch.Add(type);

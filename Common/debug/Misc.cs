@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using System.Reflection;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
@@ -9,9 +8,9 @@ namespace System.Runtime.CompilerServices // nice trick (for use in .NET 4.0)
 {
 	// https://thomaslevesque.com/2012/06/13/using-c-5-caller-info-attributes-when-targeting-earlier-versions-of-the-net-framework/
 
-	[AttributeUsage(AttributeTargets.Parameter)] public class CallerFilePathAttribute: Attribute {}
-	[AttributeUsage(AttributeTargets.Parameter)] public class CallerMemberNameAttribute: Attribute {}
-	[AttributeUsage(AttributeTargets.Parameter)] public class CallerLineNumberAttribute: Attribute {}
+	[AttributeUsage(AttributeTargets.Parameter)] class CallerFilePathAttribute: Attribute {}
+	[AttributeUsage(AttributeTargets.Parameter)] class CallerMemberNameAttribute: Attribute {}
+	[AttributeUsage(AttributeTargets.Parameter)] class CallerLineNumberAttribute: Attribute {}
 }
 
 namespace Common
@@ -20,9 +19,9 @@ namespace Common
 	{
 		public class Profiler: IDisposable
 		{
-			public static double lastResult { get; private set; } = 0d;
+			public static double lastResult { get; private set; }
 #if DEBUG
-			public static int profilersCount { get; private set; } = 0;
+			public static int profilersCount { get; private set; }
 
 			readonly string message = null;
 			readonly string filename = null;
@@ -40,12 +39,12 @@ namespace Common
 				return Paths.modRootPath + filename;
 			}
 
-			public Profiler(string _message, string _filename)
+			public Profiler(string message, string filename)
 			{
 				profilersCount++;
 
-				message = _message;
-				filename = formatFileName(_filename);
+				this.message = message;
+				this.filename = formatFileName(filename);
 
 				stopwatch = Stopwatch.StartNew();
 			}
@@ -74,7 +73,7 @@ namespace Common
 
 			public static void _logCompare(double prevResult, string filename = null)
 			{
-				string res = $"PROFILER: DIFF {(lastResult - prevResult) / prevResult * 100f:F2} %";
+				string res = $"PROFILER: DIFF {prevResult} ms -> {lastResult} ms, delta: {(lastResult - prevResult) / prevResult * 100f:F2} %";
 				res.log();
 
 				if (filename != null)
@@ -100,18 +99,13 @@ namespace Common
 		// based on code from http://www.csharp-examples.net/reflection-callstack/
 		public static void logStack(string msg = "")
 		{
-			StackTrace stackTrace = new StackTrace();
-			StackFrame[] stackFrames = stackTrace.GetFrames();
+			var stackFrames = new StackTrace().GetFrames();
+			var sb = new StringBuilder($"Callstack {msg}:{Environment.NewLine}");
 
-			StringBuilder output = new StringBuilder($"Callstack {msg}:{Environment.NewLine}");
+			for (int i = 1; i < stackFrames.Length; i++) // don't print first item, it is "logStack"
+				sb.AppendLine($"\t{stackFrames[i].GetMethod().fullName()}");
 
-			for (int i = 1; i < stackFrames.Length; i++) // dont print first item, it is "logStack"
-			{
-				MethodBase method = stackFrames[i].GetMethod();
-				output.AppendLine($"\t{method.DeclaringType.Name}.{method.Name}");
-			}
-
-			output.ToString().log();
+			sb.ToString().log();
 		}
 
 		[Conditional("DEBUG")]

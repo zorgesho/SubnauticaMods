@@ -18,11 +18,7 @@ namespace Common
 
 		public static void onScreen(this List<string> list, string msg = "", int maxCount = 30)
 		{
-			List<string> listToPrint = list.Count > maxCount? list.GetRange(0, maxCount): list;
-
-			if (list.Count > maxCount)
-				$"List is too large ({list.Count} entries), printing first {maxCount} entries".onScreen();
-
+			var listToPrint = list.Count > maxCount? list.GetRange(0, maxCount): list;
 			listToPrint.ForEach(s => ErrorMessage.AddDebug(msg + s));
 		}
 	}
@@ -57,6 +53,9 @@ namespace Common
 		public static TechType getHeldToolType() => Inventory.main?.GetHeldTool()?.pickupable.GetTechType() ?? TechType.None;
 
 		public static bool isLoadingState => uGUI.main?.loading.loadingBackground.state == true;
+
+		public static void clearScreenMessages() => // expire all messages except QMM main menu messages
+			ErrorMessage.main?.messages.Where(m => m.timeEnd - Time.time < 1e3f).forEach(m => m.timeEnd = Time.time - 1f);
 	}
 
 	static class MiscInGameExtensions

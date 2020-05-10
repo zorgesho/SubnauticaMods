@@ -37,6 +37,8 @@ namespace Common
 			}
 			catch (Exception e) { Log.msg(e); return false; }
 		}
+
+		public static object getFieldValue(this object obj, string fieldName) => obj.GetType().field(fieldName).GetValue(obj);
 	}
 
 
@@ -56,6 +58,12 @@ namespace Common
 			catch { return null; }
 		}
 
+		static T _safecast<T>(object obj)
+		{
+			Debug.assert(obj is T, $"cast: {obj}; {obj.GetType()} -> {typeof(T)}");
+			return (obj is T)? (T)obj: default;
+		}
+
 		public class MethodWrapper
 		{
 			readonly MethodBase method;
@@ -69,18 +77,14 @@ namespace Common
 				return method?.Invoke(obj, null);
 			}
 
-			public class _RequireStruct<S> where S: struct {} // https://stackoverflow.com/questions/2974519/generic-constraints-where-t-struct-and-where-t-class
-
-			public C  invoke<C>(object obj = null) where C: class => invoke(obj) as C;
-			public S? invoke<S>(object obj = null, _RequireStruct<S> _ = null) where S: struct => invoke(obj) as S?; // :(
-
 			public object invoke(object obj, params object[] parameters)
 			{
 				Debug.assert(method != null);
-				return method?.Invoke(obj, parameters ?? new object[1]);
+				return method?.Invoke(obj, parameters ?? new object[1]); // null check in case we need to pass one 'null' as a parameter
 			}
 
-			public C invoke<C>(object obj, params object[] parameters) where C: class => invoke(obj, parameters) as C;
+			public T invoke<T>(object obj = null) => _safecast<T>(invoke(obj));
+			public T invoke<T>(object obj, params object[] parameters) => _safecast<T>(invoke(obj, parameters));
 		}
 
 		public class PropertyWrapper
@@ -95,6 +99,7 @@ namespace Common
 			}
 
 			public void set(object value) => set(null, value);
+
 			public void set(object obj, object value)
 			{
 				setter ??= propertyInfo?.GetSetMethod();
@@ -111,7 +116,7 @@ namespace Common
 				return getter?.Invoke(obj, null);
 			}
 
-			public C get<C>(object obj = null) where C: class => get(obj) as C;
+			public T get<T>(object obj = null) => _safecast<T>(get(obj));
 		}
 
 		// for use with publicized assemblies
@@ -203,23 +208,36 @@ namespace Common
 
 		public static A getAttr<A>(this MemberInfo memberInfo, bool includeDeclaringTypes = false) where A: Attribute
 		{
-			A attr = Attribute.GetCustomAttribute(memberInfo, typeof(A)) as A;
+			A[] attrs = null;
+			memberInfo.getAttrs(ref attrs, includeDeclaringTypes, earlyExit: true);
+
+			return attrs.Length > 0? attrs[0]: null;
+		}
+
+		public static A[] getAttrs<A>(this MemberInfo memberInfo, bool includeDeclaringTypes = false) where A: Attribute
+		{
+			A[] attrs = null;
+			memberInfo.getAttrs(ref attrs, includeDeclaringTypes, earlyExit: false);
+
+			return attrs;
+		}
+
+		static void getAttrs<A>(this MemberInfo memberInfo, ref A[] attrs, bool includeDeclaringTypes, bool earlyExit) where A: Attribute
+		{
+			attrs = attrs.append(Attribute.GetCustomAttributes(memberInfo, typeof(A)) as A[]);
 
 			if (!includeDeclaringTypes)
-				return attr;
+				return;
 
 			Type declaringType = memberInfo.DeclaringType;
 
-			while (attr == null && declaringType != null)
+			while (declaringType != null && (!earlyExit || attrs.Length == 0))
 			{
-				attr = declaringType.getAttr<A>();
+				declaringType.getAttrs(ref attrs, false, false);
 				declaringType = declaringType.DeclaringType;
 			}
-
-			return attr;
 		}
 
-		public static A[]  getAttrs<A>(this MemberInfo memberInfo)  where A: Attribute => Attribute.GetCustomAttributes(memberInfo, typeof(A)) as A[];
 		public static bool checkAttr<A>(this MemberInfo memberInfo) where A: Attribute => Attribute.IsDefined(memberInfo, typeof(A));
 	}
 
@@ -244,10 +262,15 @@ namespace Common
 				action(enumerator.Current);
 		}
 
-		public static T[] init<T>(this T[] array) where T: new()
+		public static T createDelegate<T>(this DynamicMethod dm) where T: class => dm.CreateDelegate(typeof(T)) as T;
+	}
+
+
+	static class ArrayExtensions
+	{
+		public static T[] init<T>(this T[] array)
 		{
-			for (int i = 0; i < array.Length; i++)
-				array[i] = new T();
+			array.Initialize();
 			return array;
 		}
 
@@ -257,13 +280,27 @@ namespace Common
 		public static int findIndex<T>(this T[] array, Predicate<T> predicate) =>
 			Array.FindIndex(array, predicate);
 
-		public static T createDelegate<T>(this DynamicMethod dm) where T: class => dm.CreateDelegate(typeof(T)) as T;
+		public static T[] append<T>(this T[] array1, T[] array2)
+		{
+			if (array1 != null && (array2 == null || array2.Length == 0))
+				return array1;
+
+			if (array1 == null)
+				return array2 ?? new T[0];
+
+			T[] newArray = new T[array1.Length + array2.Length];
+
+			array1.CopyTo(newArray, 0);
+			array2.CopyTo(newArray, array1.Length);
+
+			return newArray;
+		}
 	}
 
 
 	static partial class StringExtensions
 	{
-		public static bool isNullOrEmpty(this string s) => (s == null || s == "");
+		public static bool isNullOrEmpty(this string s) => string.IsNullOrEmpty(s);
 
 		public static string clampLength(this string s, int length)
 		{

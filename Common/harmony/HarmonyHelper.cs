@@ -63,6 +63,8 @@ namespace Common
 			}
 		}
 
+		public static Patches getPatchInfo(MethodBase method) => harmonyInstance.GetPatchInfo(method);
+
 		static MethodBase getTargetMethod(this HarmonyMethod harmonyMethod)
 		{
 			if (harmonyMethod.methodName != null)

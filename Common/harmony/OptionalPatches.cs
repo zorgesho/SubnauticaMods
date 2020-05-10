@@ -50,7 +50,7 @@ namespace Common
 				if (!(patchType.getAttr<HarmonyPatch>() is HarmonyPatch patch))
 					return;
 
-				MethodBase method = patch.info.getTargetMethod();
+				var method = patch.info.getTargetMethod();
 
 				if (method == null && $"OptionalPatches: method is null!".logError())
 					return;
@@ -59,7 +59,7 @@ namespace Common
 				var postfix = patchType.method("Postfix");
 				var transpiler = patchType.method("Transpiler");
 
-				Patches patches = harmonyInstance.GetPatchInfo(method);
+				var patches = getPatchInfo(method);
 
 				static bool _contains(IEnumerable<Patch> _list, MethodInfo _method) => _list?.FirstOrDefault(p => p.patch == _method) != null;
 

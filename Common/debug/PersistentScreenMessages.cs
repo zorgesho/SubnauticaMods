@@ -18,7 +18,7 @@ namespace Common
 			static bool Prepare()
 			{
 #if TRACE
-				var patches = HarmonyHelper.harmonyInstance.GetPatchInfo(typeof(ErrorMessage).method("_AddMessage"));			"ErrorMessage.AddMessage is already patched, skipping".logDbg(patches != null);
+				var patches = HarmonyHelper.getPatchInfo(typeof(ErrorMessage).method("_AddMessage"));						"ErrorMessage.AddMessage is already patched, skipping".logDbg(patches != null);
 				return patches == null;
 #else
 				return false;

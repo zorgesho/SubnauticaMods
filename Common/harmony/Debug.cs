@@ -64,7 +64,7 @@ namespace Common
 
 				foreach (var method in patchedMethods)
 				{
-					var patchInfo = harmonyInstance.GetPatchInfo(method); // that's bottleneck
+					var patchInfo = getPatchInfo(method); // that's bottleneck
 
 					if (harmonyID != null && patchInfo.Owners.FirstOrDefault(id => id.ToLower().Contains(harmonyID)) == null)
 						continue;

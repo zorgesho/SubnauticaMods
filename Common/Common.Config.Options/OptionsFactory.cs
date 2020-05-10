@@ -165,7 +165,7 @@ namespace Common.Configuration
 			{
 				public void process(ModOption option)
 				{
-					if (option.cfgField.getAttr<HideableAttribute>() is HideableAttribute hideableAttr)
+					if (option.cfgField.getAttr<HideableAttribute>(true) is HideableAttribute hideableAttr)
 						option.addHandler(new Components.Hider.Add(hideableAttr.visChecker, hideableAttr.groupID));
 				}
 			}

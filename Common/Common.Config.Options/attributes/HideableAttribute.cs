@@ -5,7 +5,7 @@ namespace Common.Configuration
 	partial class Options
 	{
 		// option can be hided (either by option ID or by separate groupID for multiple options)
-		[AttributeUsage(AttributeTargets.Field)]
+		[AttributeUsage(AttributeTargets.Class | AttributeTargets.Field)]
 		public class HideableAttribute: Attribute
 		{
 			readonly Type visCheckerType;

@@ -16,6 +16,12 @@ namespace Common.Configuration
 			{
 				public interface IVisibilityChecker { bool visible { get; } }
 
+				// for use with class targeted Hideable attribute
+				public class Ignore: IVisibilityChecker
+				{
+					public bool visible => true;
+				}
+
 				public class Simple: Config.Field.IAction, IVisibilityChecker
 				{
 					readonly string groupID;
@@ -46,17 +52,19 @@ namespace Common.Configuration
 					}
 
 					public void handle(GameObject gameObject) =>
-						gameObject.AddComponent<Hider>().init(id, groupID, visChecker.visible);
+						gameObject.AddComponent<Hider>().init(id, groupID, visChecker);
 				}
 
 				string id, groupID;
-				bool visible;
+				IVisibilityChecker visChecker;
 
-				void init(string id, string groupID, bool visible)
+				bool visible = true;
+
+				void init(string id, string groupID, IVisibilityChecker visChecker)
 				{
 					this.id = id;
 					this.groupID = groupID;
-					this.visible = visible;
+					this.visChecker = visChecker;
 				}
 
 				static readonly List<Hider> hiders = new List<Hider>();
@@ -72,7 +80,11 @@ namespace Common.Configuration
 				void Awake() => register(this);
 				void OnDestroy() => unregister(this);
 
-				void OnEnable() { if (!visible) setVisible(false); }
+				void OnEnable()
+				{
+					if (!visible || !visChecker.visible)
+						setVisible(false);
+				}
 			}
 		}
 	}

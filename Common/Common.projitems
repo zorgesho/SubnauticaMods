@@ -12,6 +12,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)debug\ObjectDumper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)debug\Misc.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)debug\PersistentScreenMessages.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)debug\Profiler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)harmony\Debug.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)harmony\HarmonyHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)debug\Log.cs" />

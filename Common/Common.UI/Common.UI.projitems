@@ -9,7 +9,6 @@
     <Import_RootNamespace>Common.UI</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)PersistentScreenMessages.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UIExtensions.cs" />
   </ItemGroup>
 </Project>

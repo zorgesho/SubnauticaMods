@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Diagnostics;
 using System.Globalization;
 using System.Collections.Generic;
 
@@ -17,6 +18,10 @@ namespace Common
 
 			return s;
 		}
+
+		// messages with the same prefix will stay in the same message slot
+		[Conditional("TRACE")]
+		public static void onScreen(this string s, string prefix) => ErrorMessage.AddDebug($"[{prefix}] {s}");
 
 		public static void onScreen(this List<string> list, string msg = "", int maxCount = 30)
 		{

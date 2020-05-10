@@ -117,7 +117,6 @@
   <Import Project="..\Common\Common.AssetsHelper\Common.AssetsHelper.projitems" Label="Shared" />
   <Import Project="..\Common\Common.CraftHelper\Common.CraftHelper.projitems" Label="Shared" />
   <Import Project="..\Common\Common.Config\Common.Config.projitems" Label="Shared" />
-  <Import Project="..\Common\Common.UI\Common.UI.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>$(SolutionDir)post-build.bat $(ConfigurationName) $(ProjectName) $(ProjectDir) $(TargetPath) $(TargetDir)</PostBuildEvent>

@@ -129,18 +129,18 @@ namespace Common.Configuration
 				{
 					void OnConsoleCommand_setcfgvar(NotificationCenter.Notification n)
 					{
-						if (n.getArgsCount() == 2)
-						{																			$"setcfgvar raw: '{n.getArg(0)}' '{n.getArg(1)}'".logDbg();
-							setFieldValue(n.getArg(0) as string, n.getArg(1) as string);
+						if (n.getArgCount() == 2)
+						{																			$"setcfgvar: '{n.getArg(0)}' '{n.getArg(1)}'".logDbg();
+							setFieldValue(n.getArg(0), n.getArg(1));
 						}
 					}
 
 					void OnConsoleCommand_getcfgvar(NotificationCenter.Notification n)
 					{																				$"getcfgvar: '{n.getArg(0)}'".logDbg();
-						if (n.getArgsCount() != 1)
+						if (n.getArgCount() != 1)
 							return;
 
-						string fieldName = n.getArg(0) as string;
+						string fieldName = n.getArg(0);
 						object value = getFieldValue(fieldName);
 
 						if (value != null)

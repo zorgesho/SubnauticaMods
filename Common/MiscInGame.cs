@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Globalization;
 using System.Collections.Generic;
 
 using UnityEngine;
@@ -60,9 +62,26 @@ namespace Common
 
 	static class MiscInGameExtensions
 	{
-		public static int getArgsCount(this NotificationCenter.Notification n) => n?.data?.Count ?? 0;
-		public static object getArg(this NotificationCenter.Notification n, int index) => n.data[index]; // do not check for null at that point
-		public static object getArgSafe(this NotificationCenter.Notification n, int index) => n?.data?.Count > index? n.data[index]: null;
+		public static int getArgCount(this NotificationCenter.Notification n) => n?.data?.Count ?? 0;
+		public static string getArg(this NotificationCenter.Notification n, int index) => _getArg(n, index) as string;
+
+		public static T getArg<T>(this NotificationCenter.Notification n, int index)
+		{
+			T res = default;
+
+			try
+			{
+				object arg = _getArg(n, index);
+
+				if (arg != null)
+					res = (T)Convert.ChangeType(arg, typeof(T), CultureInfo.InvariantCulture);
+			}
+			catch (Exception e) { Log.msg(e); }
+
+			return res;
+		}
+
+		static object _getArg(this NotificationCenter.Notification n, int index) => n?.data?.Count > index? n.data[index]: null;
 	}
 
 

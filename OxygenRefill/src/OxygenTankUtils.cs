@@ -54,8 +54,8 @@ namespace OxygenRefill
 			{
 				float forcedCapacity = -1f;
 
-				if (n.getArgsCount() > 0)
-					forcedCapacity = n.getArg(0).toFloat();
+				if (n.getArgCount() > 0)
+					forcedCapacity = n.getArg<float>(0);
 
 				if (OxygenTankUtils.getTankInSlot()?.item.GetComponent<Oxygen>() is Oxygen oxygenInSlot)
 					oxygenInSlot.oxygenAvailable = forcedCapacity >= 0f? forcedCapacity: oxygenInSlot.oxygenCapacity;

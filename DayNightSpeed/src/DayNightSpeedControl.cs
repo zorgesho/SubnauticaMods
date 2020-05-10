@@ -70,7 +70,7 @@ namespace DayNightSpeed
 		{
 			void OnConsoleCommand_daynightspeed(NotificationCenter.Notification n)
 			{
-				if (n.getArgsCount() > 0)
+				if (n.getArgCount() > 0)
 					DevConsole.SendConsoleCommand($"setcfgvar dns.{nameof(Main.config.dayNightSpeed)} {n.getArg(0)}");
 
 				if (DayNightCycle.main != null)

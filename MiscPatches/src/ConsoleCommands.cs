@@ -21,14 +21,14 @@ namespace MiscPatches
 
 			void OnConsoleCommand_subtitles(NotificationCenter.Notification n)
 			{
-				if (n.getArgsCount() > 0)
-					Subtitles.main.Add(n.getArg(0) as string);
+				if (n.getArgCount() > 0)
+					Subtitles.main.Add(n.getArg(0));
 			}
 
 			void OnConsoleCommand_vehiclehealth(NotificationCenter.Notification n)
 			{
-				if (n.getArgsCount() > 0 && Player.main?.GetVehicle()?.GetComponent<LiveMixin>() is LiveMixin liveMixin)
-					liveMixin.health = liveMixin.maxHealth * (n.getArg(0).toFloat());
+				if (n.getArgCount() > 0 && Player.main?.GetVehicle()?.GetComponent<LiveMixin>() is LiveMixin liveMixin)
+					liveMixin.health = liveMixin.maxHealth * n.getArg<float>(0);
 			}
 
 			void OnConsoleCommand_lootreroll(NotificationCenter.Notification _)
@@ -38,10 +38,10 @@ namespace MiscPatches
 
 			void OnConsoleCommand_spawnresource(NotificationCenter.Notification n)
 			{
-				if (n.getArgsCount() == 0)
+				if (n.getArgCount() == 0)
 					return;
 
-				string prefabParam = n.getArg(0) as string;
+				string prefabParam = n.getArg(0);
 
 				// if parameter is prefabID
 				if (UWE.PrefabDatabase.TryGetPrefabFilename(prefabParam, out string prefabPath))

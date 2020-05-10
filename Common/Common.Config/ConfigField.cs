@@ -24,7 +24,7 @@ namespace Common.Configuration
 				Debug.assert(rootConfig != null, "rootConfig is null");
 				Debug.assert(path != null, "field path is null");
 
-				ActionAttribute[] actionAttrs = field.getAttrs<ActionAttribute>();
+				var actionAttrs = field.getAttrs<ActionAttribute>(true);
 				if (actionAttrs.Length > 0)
 				{
 					actions = new IAction[actionAttrs.Length];

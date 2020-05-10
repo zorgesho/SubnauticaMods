@@ -12,7 +12,7 @@ namespace Common.Configuration
 				void action();
 			}
 
-			[AttributeUsage(AttributeTargets.Field, AllowMultiple = true)]
+			[AttributeUsage(AttributeTargets.Class | AttributeTargets.Field, AllowMultiple = true)]
 			public class ActionAttribute: Attribute
 			{
 				readonly Type actionType;

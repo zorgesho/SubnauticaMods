@@ -10,7 +10,7 @@ namespace Common.Configuration
 		// action on event of changing field
 		// works similar to Field.Action, but in case that options menu is currently open action will be postponed until menu is closed
 		// for multiple actions of the same type only one will be activated
-		[AttributeUsage(AttributeTargets.Field, AllowMultiple = true)]
+		[AttributeUsage(AttributeTargets.Class | AttributeTargets.Field, AllowMultiple = true)]
 		public class FinalizeActionAttribute: Config.Field.ActionAttribute
 		{
 			readonly Type innerActionType;

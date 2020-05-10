@@ -2,7 +2,7 @@
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
-namespace Common.UI
+namespace Fatigue
 {
 	static class UIExtensions
 	{

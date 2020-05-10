@@ -114,6 +114,7 @@
     <Compile Include="src\EnergySurvival.cs" />
     <Compile Include="src\patches\BedPatches.cs" />
     <Compile Include="src\PlayerSleep.cs" />
+    <Compile Include="src\UIExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="mod.json" />
@@ -127,7 +128,6 @@
   </ItemGroup>
   <Import Project="..\Common\Common.projitems" Label="Shared" />
   <Import Project="..\Common\Common.Config\Common.Config.projitems" Label="Shared" />
-  <Import Project="..\Common\Common.UI\Common.UI.projitems" Label="Shared" />
   <Import Project="..\Common\Common.AssetsHelper\Common.AssetsHelper.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

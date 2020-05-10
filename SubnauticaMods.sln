@@ -23,8 +23,6 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Common.Config.Options", "Co
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleImproved", "ConsoleImproved\ConsoleImproved.csproj", "{3BD3AB93-7001-4322-A0D8-B9DE42ED38AA}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Common.UI", "Common\Common.UI\Common.UI.shproj", "{44795620-2850-4B72-B859-74C5D50E6708}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Tests", "Common.Tests\Common.Tests.csproj", "{A581DBE2-97A4-4995-8F23-223D9245C338}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RenameBeacons", "RenameBeacons\RenameBeacons.csproj", "{D90FC3B6-6EAA-492D-927F-C7068DA63BD9}"
@@ -103,7 +101,6 @@ Global
 		Common\Common.Config.Options\Common.Config.Options.projitems*{3bd3ab93-7001-4322-a0d8-b9de42ed38aa}*SharedItemsImports = 4
 		Common\Common.Config\Common.Config.projitems*{3bd3ab93-7001-4322-a0d8-b9de42ed38aa}*SharedItemsImports = 4
 		Common\Common.projitems*{3bd3ab93-7001-4322-a0d8-b9de42ed38aa}*SharedItemsImports = 4
-		Common\Common.UI\Common.UI.projitems*{44795620-2850-4b72-b859-74c5d50e6708}*SharedItemsImports = 13
 		Common\Common.Config\Common.Config.projitems*{4ef61a6d-0c6e-48a9-8625-58d196fd5386}*SharedItemsImports = 4
 		Common\Common.CraftHelper\Common.CraftHelper.projitems*{4ef61a6d-0c6e-48a9-8625-58d196fd5386}*SharedItemsImports = 4
 		Common\Common.GameSerialization\Common.GameSerialization.projitems*{4ef61a6d-0c6e-48a9-8625-58d196fd5386}*SharedItemsImports = 4
@@ -161,7 +158,6 @@ Global
 		Common\Common.AssetsHelper\Common.AssetsHelper.projitems*{ebfa5c5c-995c-4e6d-9f6e-c9c33f864ef6}*SharedItemsImports = 4
 		Common\Common.Config\Common.Config.projitems*{ebfa5c5c-995c-4e6d-9f6e-c9c33f864ef6}*SharedItemsImports = 4
 		Common\Common.projitems*{ebfa5c5c-995c-4e6d-9f6e-c9c33f864ef6}*SharedItemsImports = 4
-		Common\Common.UI\Common.UI.projitems*{ebfa5c5c-995c-4e6d-9f6e-c9c33f864ef6}*SharedItemsImports = 4
 		Common\Common.AssetsHelper\Common.AssetsHelper.projitems*{ec26571a-5a2b-4b0b-9431-93f9b6e639d4}*SharedItemsImports = 4
 		Common\Common.Config\Common.Config.projitems*{ec26571a-5a2b-4b0b-9431-93f9b6e639d4}*SharedItemsImports = 4
 		Common\Common.CraftHelper\Common.CraftHelper.projitems*{ec26571a-5a2b-4b0b-9431-93f9b6e639d4}*SharedItemsImports = 4
@@ -322,7 +318,6 @@ Global
 		{37C6E8C9-4864-415A-9561-161035212EBA} = {EE6D7B7D-F20A-439A-8C01-97B6A16F9B52}
 		{0610F2C1-4B75-45F9-B517-9D747E3EDD41} = {EE6D7B7D-F20A-439A-8C01-97B6A16F9B52}
 		{3BD3AB93-7001-4322-A0D8-B9DE42ED38AA} = {C49BC122-0A68-48A8-8EA3-737FB7553D8B}
-		{44795620-2850-4B72-B859-74C5D50E6708} = {EE6D7B7D-F20A-439A-8C01-97B6A16F9B52}
 		{A581DBE2-97A4-4995-8F23-223D9245C338} = {EE6D7B7D-F20A-439A-8C01-97B6A16F9B52}
 		{D90FC3B6-6EAA-492D-927F-C7068DA63BD9} = {C49BC122-0A68-48A8-8EA3-737FB7553D8B}
 		{2518EDF1-782E-4FAA-B93D-4F9991962144} = {C49BC122-0A68-48A8-8EA3-737FB7553D8B}

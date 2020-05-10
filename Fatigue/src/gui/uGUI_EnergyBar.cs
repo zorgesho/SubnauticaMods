@@ -2,7 +2,6 @@
 using UnityEngine.UI;
 
 using Common;
-using Common.UI;
 
 namespace Fatigue
 {

@@ -13,14 +13,18 @@ namespace Common.Configuration
 		{
 			public static class SliderValue
 			{
+				interface IConfigFieldInfo { void setConfigField(Config.Field cfgField); }
+
 				public class Add: ModOption.IOnGameObjectChangeHandler
 				{
 					readonly Type valueCmpType;
 					readonly string valueFormat;
+					ModOption parentOption;
 
 					public void init(ModOption option)
 					{
 						Debug.assert(option is SliderOption, "SliderValue.Add: option is not a slider");
+						parentOption = option;
 					}
 
 					public Add(Type valueCmpType, string valueFormat)
@@ -35,7 +39,10 @@ namespace Common.Configuration
 					public void handle(GameObject gameObject)
 					{
 						GameObject slider = gameObject.transform.Find("Slider").gameObject;
-						(slider.AddComponent(valueCmpType) as ModSliderOption.SliderValue).ValueFormat = valueFormat;
+
+						Component valueType = slider.AddComponent(valueCmpType);
+						(valueType as ModSliderOption.SliderValue).ValueFormat = valueFormat;
+						(valueType as IConfigFieldInfo)?.setConfigField(parentOption.cfgField);
 					}
 				}
 
@@ -46,6 +53,38 @@ namespace Common.Configuration
 					public override float ConvertToDisplayValue(float value) => string.Format(valueFormat, value).toFloat();
 				}
 
+				// displayed value is percent of the field's range (not slider's range)
+				// will not change saved value
+				// don't check for incorrect ranges
+				// uses reflection to avoid referencing 'UnityEngine.UI' in shared project
+				public class RangePercent: ModSliderOption.SliderValue, IConfigFieldInfo
+				{
+					float min, max;
+
+					public void setConfigField(Config.Field cfgField)
+					{
+						var range = cfgField.getAttr<Config.Field.RangeAttribute>();
+						Debug.assert(range != null);
+
+						min = range.min;
+						max = range.max;
+					}
+
+					static readonly ReflectionHelper.PropertyWrapper sliderValue = ReflectionHelper.safeGetType("UnityEngine.UI", "UnityEngine.UI.Slider").propertyWrap("value");
+					static readonly ReflectionHelper.PropertyWrapper text = ReflectionHelper.safeGetType("UnityEngine.UI", "UnityEngine.UI.Text").propertyWrap("text");
+					object _slider, _label;
+
+					protected override void UpdateLabel()
+					{
+						_slider ??= this.getFieldValue("slider");
+						_label  ??= this.getFieldValue("label");
+
+						float res = (sliderValue.get<float>(_slider) - min) / (max - min);
+						text.set(_label, string.Format("{0:P0}", res));
+					}
+
+					public override float ValueWidth => 95f;
+				}
 
 				// breaks slider to several linear intervals
 				public class Nonlinear: ModSliderOption.SliderValue

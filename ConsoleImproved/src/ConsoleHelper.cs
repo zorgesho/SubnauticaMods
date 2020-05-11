@@ -27,30 +27,35 @@ namespace ConsoleImproved
 			}
 		}
 
+		static void showMessages(List<string> msgs, string msg)
+		{
+			int maxCount = Main.config.msgsSettings.currMaxListSize;
+
+			if (msgs.Count > maxCount)
+				L10n.str("ids_listTooLarge").format(msgs.Count, maxCount).onScreen();
+
+			msgs.onScreen(msg, maxCount);
+		}
 
 		static void saveHistory()
 		{
 			try
 			{
-				File.Delete(historyPath);
+				var history = DevConsole.instance.history;
 
-				List<string> history = DevConsole.instance.history;
+				File.Delete(historyPath);
 
 				// save 'historySizeToSave' last history entries or all history if historySizeToSave == 0
 				int i = Main.config.historySizeToSave == 0? 0: Mathf.Max(0, history.Count - Main.config.historySizeToSave);
 
-				StringBuilder stringBuilder = new StringBuilder();
+				StringBuilder sb = new StringBuilder();
 				while (i < history.Count)
-					stringBuilder.AppendLine(history[i++]);
+					sb.AppendLine(history[i++]);
 
-				File.WriteAllText(historyPath, stringBuilder.ToString());
+				File.WriteAllText(historyPath, sb.ToString());
 			}
-			catch (UnauthorizedAccessException e)
-			{
-				Log.msg(e);
-			}
+			catch (UnauthorizedAccessException e) { Log.msg(e); }
 		}
-
 
 		static void loadHistory()
 		{
@@ -59,14 +64,9 @@ namespace ConsoleImproved
 
 			string loadedHistory = File.ReadAllText(historyPath);
 
-			if (!string.IsNullOrEmpty(loadedHistory))
-			{
-				string[] lines = loadedHistory.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries);
-
-				setHistory(new List<string>(lines));
-			}
+			if (!loadedHistory.isNullOrEmpty())
+				setHistory(new List<string>(loadedHistory.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries)));
 		}
-
 
 		static void setHistory(List<string> history)
 		{

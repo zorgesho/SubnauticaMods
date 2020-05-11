@@ -18,7 +18,7 @@ namespace ConsoleImproved
 
 				if (cmd == "setcfgvar" || cmd == "getcfgvar") // hack, todo more general
 					stringCache = cfgVarsCache;
-				
+
 				return cmd + " " + tryCompleteString(text.Substring(delimPos + 1), stringCache);
 			}
 			else
@@ -28,20 +28,20 @@ namespace ConsoleImproved
 		// used for last string from console text
 		static string tryCompleteString(string str, StringCache stringCache)
 		{
-			List<string> matched = stringCache.findByPrefix(str);
+			var matched = stringCache.findByPrefix(str);
 
 			if (matched.Count > 1)
-				matched.onScreen("Matched: ");
+				showMessages(matched, L10n.str("ids_matched"));
 
 			return getCommonPrefix(matched, str);
 		}
-		
+
 
 		static string getCommonPrefix(List<string> strings, string initialPrefix = "")
 		{
 			if (strings.Count == 0)
 				return "";
-			
+
 			if (strings.Count == 1)
 				return strings[0];
 

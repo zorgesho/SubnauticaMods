@@ -55,8 +55,8 @@ namespace ConsoleImproved
 
 				var matched = techtypeCache.find(n.getArg(0));
 
-				$"Finded {matched.Count} entries".onScreen();
-				matched.onScreen("TechType: ");
+				L10n.str("ids_findEntries").format(matched.Count).onScreen();
+				showMessages(matched, L10n.str("ids_techType"));
 			}
 
 

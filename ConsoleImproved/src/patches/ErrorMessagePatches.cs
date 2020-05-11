@@ -5,33 +5,66 @@ using System.Collections.Generic;
 
 using Harmony;
 using UnityEngine;
+using UnityEngine.UI;
 
 using Common;
 
 namespace ConsoleImproved
 {
 	using Debug = Common.Debug;
-#if VER_1_1_0
-	// change position for messages
-	[HarmonyPatch(typeof(ErrorMessage), "Awake")]
-	static class ErrorMessage_Awake_Patch
+
+	[HarmonyPatch(typeof(ErrorMessage), "Awake")] // TODO check conflicts with QMM
+	static class ErrorMessageSettings
 	{
-		static bool Prepare() => !Main.config.msgsSettings.useDefault;
+		static ModConfig.MessagesSettings defaultSettings;
+
+		public static void refresh(bool useDefault)
+		{
+			var em = ErrorMessage.main;
+			var settings = useDefault? defaultSettings: Main.config.msgsSettings;
+
+			em.offset = new Vector2(settings.offset, settings.offset);
+			em.ySpacing = settings.messageSpacing;
+			em.timeFlyIn = settings.timeFly;
+			em.timeDelay = settings.timeDelay;
+			em.timeFadeOut  = settings.timeFadeOut;
+			em.timeInvisible = settings.timeInvisible;
+
+			var texts = new List<Text>(em.pool);
+			em.messages.ForEach(message => texts.Add(message.entry));
+			texts.Add(em.prefabMessage);
+
+			foreach (var text in texts)
+			{
+				text.lineSpacing = settings.textLineSpacing;
+				text.rectTransform.sizeDelta = new Vector2(settings.textWidth, 0f);
+				text.fontSize = settings.fontSize;
+			}
+		}
 
 		static void Postfix(ErrorMessage __instance)
 		{
-			__instance.offset = new Vector2(Main.config.msgsSettings.offsetX, Main.config.msgsSettings.offsetY);
+			var em = __instance;
 
-			__instance.ySpacing = Main.config.msgsSettings.ySpacing;
-			__instance.timeFlyIn = Main.config.msgsSettings.timeFlyIn;
-			__instance.timeDelay = Main.config.msgsSettings.timeDelay;
-			__instance.timeFadeOut  = Main.config.msgsSettings.timeFadeOut;
-			__instance.timeInvisible = Main.config.msgsSettings.timeInvisible;
+			defaultSettings = new ModConfig.MessagesSettings()
+			{
+				offset = em.offset.x,
+				messageSpacing = em.ySpacing,
+				timeFly = em.timeFlyIn,
+				timeDelay = em.timeDelay,
+				timeFadeOut  = em.timeFadeOut,
+				timeInvisible = em.timeInvisible,
 
-			__instance.prefabMessage.lineSpacing = Main.config.msgsSettings.textLineSpacing;
+				fontSize = em.prefabMessage.fontSize,
+				textLineSpacing = em.prefabMessage.lineSpacing,
+				textWidth = em.prefabMessage.rectTransform.sizeDelta.x
+			};
+
+			if (Main.config.msgsSettings.customize)
+				refresh(false);
 		}
 	}
-#endif
+
 
 	// don't clear onscreen messages while console is open
 	[HarmonyHelper.OptionalPatch]

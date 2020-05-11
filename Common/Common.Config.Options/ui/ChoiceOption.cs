@@ -18,6 +18,9 @@ namespace Common.Configuration
 				// adds choice labels to LanguageHandler, changing array in the process
 				for (int i = 0; i < choices.Length; i++)
 					registerLabel($"{id}.{i}", ref choices[i]);
+
+				if (id.IndexOf('.') != -1)
+					ValidatorPatch.patch();
 			}
 
 			public override void addOption(Options options)
@@ -30,6 +33,27 @@ namespace Common.Configuration
 			{
 				int? index = (e as ChoiceChangedEventArgs)?.Index;
 				cfgField.value = values?[index ?? 0] ?? index;
+			}
+
+
+			// for some reason SMLHelper doesn't allow periods in ChoiceOption's id
+			// and we need them for nested classes
+			static class ValidatorPatch
+			{
+				static bool patched = false;
+
+				public static void patch()
+				{
+					if (patched || !(patched = true))
+						return;
+
+					var validateMethod = ReflectionHelper.safeGetType("SMLHelper", "SMLHelper.V2.Options.Utility.Validator")?.method("ValidateID", typeof(string));
+					Debug.assert(validateMethod != null);
+
+					HarmonyHelper.patch(validateMethod, typeof(ValidatorPatch).method(nameof(validatorPrefix)));						"SMLHelper validator patched".logDbg();
+				}
+
+				static bool validatorPrefix(string id) => id.IndexOf('.') == -1;
 			}
 		}
 	}

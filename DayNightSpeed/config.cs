@@ -119,12 +119,12 @@ namespace DayNightSpeed
 
 					if (duration == "")		  duration = str(ids_tooltipSecs);
 
-					return string.Format(duration, timeSpan.Days, timeSpan.Hours, timeSpan.Minutes, timeSpan.Seconds);
+					return duration.format(timeSpan.Days, timeSpan.Hours, timeSpan.Minutes, timeSpan.Seconds);
 				}
 
 				public static string toString(TimeSpan ingameTime, TimeSpan realTime)
 				{
-					return string.Format(str(ids_tooltipTimePair), toString(ingameTime), toString(realTime));
+					return str(ids_tooltipTimePair).format(toString(ingameTime), toString(realTime));
 				}
 			}
 
@@ -154,7 +154,7 @@ namespace DayNightSpeed
 						double speed = Math.Round(Main.config.dayNightSpeed, Main.config.dayNightSpeed < 1.0f? 4: 1);
 						TimeSpan timeSpan = TimeSpan.FromSeconds(dayNightSecs / speed);
 
-						return string.Format(L10n.str(L10n.ids_tooltipDayNightSpeed), L10n.toString(timeSpan));
+						return L10n.str(L10n.ids_tooltipDayNightSpeed).format(L10n.toString(timeSpan));
 					}
 				}
 			}
@@ -182,9 +182,9 @@ namespace DayNightSpeed
 				protected override bool needUpdate => isSpeedChanged(Main.config.speedHungerThrist);
 
 				public override string tooltip =>
-					string.Format(L10n.str(L10n.ids_tooltipFoodWater),
-						getDuration(foodTimeSecs, Main.config.speedHungerThrist),
-						getDuration(waterTimeSecs, Main.config.speedHungerThrist));
+					L10n.str(L10n.ids_tooltipFoodWater).
+						format(	getDuration(foodTimeSecs, Main.config.speedHungerThrist),
+								getDuration(waterTimeSecs, Main.config.speedHungerThrist));
 			}
 			#endregion
 
@@ -209,11 +209,11 @@ namespace DayNightSpeed
 				protected override bool needUpdate => isSpeedChanged(Main.config.speedPlantsGrow);
 
 				public override string tooltip =>
-					string.Format(L10n.str(L10n.ids_tooltipPlants),
-						getDuration(growMushrooms, Main.config.speedPlantsGrow),
-						getDuration(growMelon, Main.config.speedPlantsGrow),
-						getDuration(growCreepvine, Main.config.speedPlantsGrow),
-						getDuration(growBulboTree, Main.config.speedPlantsGrow));
+					L10n.str(L10n.ids_tooltipPlants).
+						format(	getDuration(growMushrooms, Main.config.speedPlantsGrow),
+								getDuration(growMelon, Main.config.speedPlantsGrow),
+								getDuration(growCreepvine, Main.config.speedPlantsGrow),
+								getDuration(growBulboTree, Main.config.speedPlantsGrow));
 			}
 			#endregion
 
@@ -234,9 +234,9 @@ namespace DayNightSpeed
 				protected override bool needUpdate => isSpeedChanged(Main.config.speedEggsHatching);
 
 				public override string tooltip =>
-					string.Format(L10n.str(L10n.ids_tooltipEggs),
-						getDuration(hatchDaysSmallCreatures * dayNightSecs, Main.config.speedEggsHatching),
-						getDuration(hatchDaysBigCreatures * dayNightSecs, Main.config.speedEggsHatching));
+					L10n.str(L10n.ids_tooltipEggs).
+						format(	getDuration(hatchDaysSmallCreatures * dayNightSecs, Main.config.speedEggsHatching),
+								getDuration(hatchDaysBigCreatures * dayNightSecs, Main.config.speedEggsHatching));
 			}
 			#endregion
 
@@ -257,9 +257,9 @@ namespace DayNightSpeed
 				protected override bool needUpdate => isSpeedChanged(Main.config.speedCreaturesGrow);
 
 				public override string tooltip =>
-					string.Format(L10n.str(L10n.ids_tooltipCreatures),
-						getDuration(growthDaysSmallCreatures * dayNightSecs, Main.config.speedCreaturesGrow),
-						getDuration(growthDaysBigCreatures * dayNightSecs, Main.config.speedCreaturesGrow));
+					L10n.str(L10n.ids_tooltipCreatures).
+						format(	getDuration(growthDaysSmallCreatures * dayNightSecs, Main.config.speedCreaturesGrow),
+								getDuration(growthDaysBigCreatures * dayNightSecs, Main.config.speedCreaturesGrow));
 			}
 			#endregion
 
@@ -278,9 +278,9 @@ namespace DayNightSpeed
 				protected override bool needUpdate => isSpeedChanged(Main.config.speedMedkitInterval);
 
 				public override string tooltip =>
-					string.Format(L10n.str(L10n.ids_tooltipMedkit),
-						getDuration(medkitSpawnIntervalSecs, Main.config.speedMedkitInterval)) +
-						(Options.mode == Options.Mode.IngameMenu? L10n.str(L10n.ids_restartWarning): "");
+					L10n.str(L10n.ids_tooltipMedkit).
+						format(	getDuration(medkitSpawnIntervalSecs, Main.config.speedMedkitInterval)) +
+									(Options.mode == Options.Mode.IngameMenu? L10n.str(L10n.ids_restartWarning): "");
 			}
 			#endregion
 
@@ -305,9 +305,9 @@ namespace DayNightSpeed
 								  TimeSpan.FromSeconds(timeSecs / Math.Max(Main.config.dayNightSpeed, 1f) / Main.config.speedPowerCharge));
 
 				public override string tooltip =>
-					string.Format(L10n.str(L10n.ids_tooltipPowerCharge),
-						_getDuration(gen100EnergyBReactorSecs),
-						_getDuration(gen100EnergyNReactorSecs));
+					L10n.str(L10n.ids_tooltipPowerCharge).
+						format(	_getDuration(gen100EnergyBReactorSecs),
+								_getDuration(gen100EnergyNReactorSecs));
 			}
 			#endregion
 		}

@@ -51,7 +51,7 @@ namespace WarningsDisabler
 					StringBuilder sb = new StringBuilder();
 
 					string title = L10n.str(msgList.messages.Count == 1? "ids_thisMessage": "ids_thisMessages");
-					title = string.Format(title, L10n.str(msgList.enabled? "ids_enabled": "ids_disabled"));
+					title = title.format(L10n.str(msgList.enabled? "ids_enabled": "ids_disabled"));
 
 					sb.AppendLine("<size=20><color=#ffffffff>" + title + "</color></size>");
 

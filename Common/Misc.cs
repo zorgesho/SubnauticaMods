@@ -169,12 +169,13 @@ namespace Common
 	{
 		static MethodInfo _method(this Type type, string name, Type[] types)
 		{
-			try { return types == null? type.GetMethod(name, ReflectionHelper.bfAll): type.GetMethod(name, types); }
+			try { return types == null? type.GetMethod(name, ReflectionHelper.bfAll): type.GetMethod(name, ReflectionHelper.bfAll, null, types, null); }
 			catch (AmbiguousMatchException)
 			{
 				$"Ambiguous method: {type.Name}.{name}".logError();
 				return null;
 			}
+			catch (Exception e) { Log.msg(e); return null; }
 		}
 
 		public static MethodInfo method(this Type type, string name) => _method(type, name, null);
@@ -301,6 +302,11 @@ namespace Common
 	static partial class StringExtensions
 	{
 		public static bool isNullOrEmpty(this string s) => string.IsNullOrEmpty(s);
+
+		public static string format(this string s, object arg0) => string.Format(s, arg0);
+		public static string format(this string s, object arg0, object arg1) => string.Format(s, arg0, arg1);
+		public static string format(this string s, object arg0, object arg1, object arg2) => string.Format(s, arg0, arg1, arg2);
+		public static string format(this string s, params object[] args) => string.Format(s, args);
 
 		public static string clampLength(this string s, int length)
 		{

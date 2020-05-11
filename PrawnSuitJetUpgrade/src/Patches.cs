@@ -42,7 +42,7 @@ namespace PrawnSuitJetUpgrade
 
 			__instance.thrustConsumption = initialThrustConsumption / efficiency;
 
-			string.Format(L10n.str(L10n.ids_thrustersEfficiency), efficiency).onScreen();
+			L10n.str(L10n.ids_thrustersEfficiency).format(efficiency).onScreen();
 		}
 	}
 }

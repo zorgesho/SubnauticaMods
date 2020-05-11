@@ -97,7 +97,7 @@ namespace DebrisRecycling
 			prefabsConfig.save();
 			refreshValidPrefabs(true);
 
-			string.Format(L10n.str(L10n.ids_customDebrisAdded), prefabName).onScreen();
+			L10n.str(L10n.ids_customDebrisAdded).format(prefabName).onScreen();
 		}
 
 

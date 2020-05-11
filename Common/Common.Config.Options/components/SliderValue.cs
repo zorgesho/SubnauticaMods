@@ -50,7 +50,7 @@ namespace Common.Configuration
 				// slider value will be saved exactly as formatted for display
 				public class ExactlyFormatted: ModSliderOption.SliderValue
 				{
-					public override float ConvertToDisplayValue(float value) => string.Format(valueFormat, value).toFloat();
+					public override float ConvertToDisplayValue(float value) => valueFormat.format(value).toFloat();
 				}
 
 				// displayed value is percent of the field's range (not slider's range)
@@ -80,7 +80,7 @@ namespace Common.Configuration
 						_label  ??= this.getFieldValue("label");
 
 						float res = (sliderValue.get<float>(_slider) - min) / (max - min);
-						text.set(_label, string.Format("{0:P0}", res));
+						text.set(_label, "{0:P0}".format(res));
 					}
 
 					public override float ValueWidth => 95f;

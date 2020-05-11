@@ -8,6 +8,19 @@ namespace Common.Configuration
 {
 	partial class Options
 	{
+		partial class Factory
+		{
+			class HideableModifier: IModifier
+			{
+				public void process(ModOption option)
+				{
+					if (option.cfgField.getAttr<HideableAttribute>(true) is HideableAttribute hideableAttr)
+						option.addHandler(new Components.Hider.Add(hideableAttr.visChecker, hideableAttr.groupID));
+				}
+			}
+		}
+
+
 		public static partial class Components
 		{
 			// component for hiding options elements

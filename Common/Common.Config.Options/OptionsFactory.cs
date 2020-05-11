@@ -6,7 +6,7 @@ namespace Common.Configuration
 {
 	partial class Options
 	{
-		static class Factory
+		static partial class Factory
 		{
 			interface ICreator
 			{
@@ -29,147 +29,27 @@ namespace Common.Configuration
 			public static ModOption create(Config.Field cfgField)
 			{
 				ModOption option = null;
+#if DEBUG
+				// trying to use all creators to check for ambiguity
+				foreach (var c in creators)
+				{
+					var optionTmp = c.create(cfgField);
 
+					Debug.assert(option == null || optionTmp == null,
+						$"Options.Factory: ambiguity for field '{cfgField.path}' (both {option?.GetType().Name} and {optionTmp?.GetType().Name})");
+
+					option ??= optionTmp;
+				}
+#else
 				foreach (var c in creators)
 					if ((option = c.create(cfgField)) != null)
 						break;
-
+#endif
 				if (option != null)
 					modifiers.ForEach(m => m.process(option));
 
 				return option;
 			}
-
-			#region creators
-			class ToggleOptionCreator: ICreator
-			{
-				public ModOption create(Config.Field cfgField)
-				{
-					if (cfgField.type != typeof(bool))
-						return null;
-
-					return new ToggleOption(cfgField, cfgField.getAttr<FieldAttribute>()?.label);
-				}
-			}
-
-			class KeyBindOptionCreator: ICreator
-			{
-				public ModOption create(Config.Field cfgField)
-				{
-					if (cfgField.type != typeof(UnityEngine.KeyCode))
-						return null;
-
-					return new KeyBindOption(cfgField, cfgField.getAttr<FieldAttribute>()?.label);
-				}
-			}
-
-			class ChoiceOptionCreator: ICreator
-			{
-				public ModOption create(Config.Field cfgField)
-				{
-					if (cfgField.type.IsEnum) // add choice option for enum
-					{
-						var values = new List<object>();
-						foreach (var val in Enum.GetValues(cfgField.type))
-							values.Add(val.toInt());
-
-						return new ChoiceOption(cfgField, cfgField.getAttr<FieldAttribute>()?.label, Enum.GetNames(cfgField.type), values.ToArray());
-					}
-
-					if (cfgField.type == typeof(float) || cfgField.type == typeof(int)) // creating ChoiceOption if we also have choice attribute
-					{
-						if (cfgField.getAttr<ChoiceAttribute>() is ChoiceAttribute choice && choice.choices.Length > 0)
-							return new ChoiceOption(cfgField, cfgField.getAttr<FieldAttribute>()?.label, choice.choices, choice.values);
-					}
-
-					return null;
-				}
-			}
-
-			class SliderOptionCreator: ICreator
-			{
-				public ModOption create(Config.Field cfgField)
-				{
-					// creating SliderOption if we have range for the field (from RangeAttribute or SliderAttribute)
-					if (cfgField.type != typeof(float) && cfgField.type != typeof(int))
-						return null;
-
-					var rangeAttr  = cfgField.getAttr<Config.Field.RangeAttribute>();
-					var sliderAttr = cfgField.getAttr<SliderAttribute>();
-
-					// slider range can't be wider than field range
-					float min = Math.Max(rangeAttr?.min ?? float.MinValue, sliderAttr?.minValue ?? float.MinValue);
-					float max = Math.Min(rangeAttr?.max ?? float.MaxValue, sliderAttr?.maxValue ?? float.MaxValue);
-
-					if (min == float.MinValue || max == float.MaxValue) // we need to have both bounds for creating slider
-						return null;
-
-					// in case of custom value type we add valueFormat in that component instead of SliderOption
-					string valueFormat = sliderAttr?.customValueType == null? sliderAttr?.valueFormat: null;
-
-					string label = cfgField.getAttr<FieldAttribute>()?.label;
-					ModOption option = new SliderOption(cfgField, label, min, max, sliderAttr?.defaultValue, valueFormat);
-
-					if (sliderAttr?.customValueType != null)
-						option.addHandler(new Components.SliderValue.Add(sliderAttr.customValueType, sliderAttr.valueFormat));
-
-					return option;
-				}
-			}
-
-			class ButtonOptionCreator: ICreator
-			{
-				public ModOption create(Config.Field cfgField)
-				{
-					if (cfgField.type != typeof(int) || cfgField.getAttr<ButtonAttribute>() == null) // it's good enough for now
-						return null;
-
-					return new ButtonOption(cfgField, cfgField.getAttr<FieldAttribute>()?.label);
-				}
-			}
-			#endregion
-
-			#region modifiers
-			class TooltipModifier: IModifier
-			{
-				public void process(ModOption option)
-				{
-					if (option.cfgField.getAttr<FieldAttribute>() is FieldAttribute fieldAttr)
-					{
-						if (fieldAttr.tooltipType != null || fieldAttr.tooltip != null)
-							option.addHandler(new Components.Tooltip.Add(fieldAttr.tooltipType, fieldAttr.tooltip));
-					}
-				}
-			}
-
-			class HeadingTooltipModifier: IModifier
-			{
-				static bool processed = false;
-
-				public void process(ModOption option)
-				{
-					if (processed || !(processed = true)) // process only the first added option
-						return;
-
-					Debug.assert(instance == null); // if this the first option, ModOptions shouldn't be created yet
-
-					if (option.cfgField.getAttr<NameAttribute>(true) is NameAttribute nameAttr)
-					{
-						if (nameAttr.tooltipType != null || nameAttr.tooltip != null)
-							option.addHandler(new Components.Tooltip.AddToHeading(nameAttr.tooltipType, nameAttr.tooltip));
-					}
-				}
-			}
-
-			class HideableModifier: IModifier
-			{
-				public void process(ModOption option)
-				{
-					if (option.cfgField.getAttr<HideableAttribute>(true) is HideableAttribute hideableAttr)
-						option.addHandler(new Components.Hider.Add(hideableAttr.visChecker, hideableAttr.groupID));
-				}
-			}
-			#endregion
 		}
 	}
 }

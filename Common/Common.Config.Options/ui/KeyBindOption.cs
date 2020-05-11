@@ -5,6 +5,21 @@ namespace Common.Configuration
 {
 	partial class Options
 	{
+		partial class Factory
+		{
+			class KeyBindOptionCreator: ICreator
+			{
+				public ModOption create(Config.Field cfgField)
+				{
+					if (cfgField.type != typeof(UnityEngine.KeyCode))
+						return null;
+
+					return new KeyBindOption(cfgField, cfgField.getAttr<FieldAttribute>()?.label);
+				}
+			}
+		}
+
+
 		public class KeyBindOption: ModOption
 		{
 			public KeyBindOption(Config.Field cfgField, string label): base(cfgField, label) {}

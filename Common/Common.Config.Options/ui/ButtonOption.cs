@@ -10,6 +10,21 @@ namespace Common.Configuration
 		[AttributeUsage(AttributeTargets.Field)]
 		public class ButtonAttribute: Config.Field.LoadOnlyAttribute {}
 
+		partial class Factory
+		{
+			class ButtonOptionCreator: ICreator
+			{
+				public ModOption create(Config.Field cfgField)
+				{
+					if (cfgField.type != typeof(int) || cfgField.getAttr<ButtonAttribute>() == null) // it's good enough for now
+						return null;
+
+					return new ButtonOption(cfgField, cfgField.getAttr<FieldAttribute>()?.label);
+				}
+			}
+		}
+
+
 		public class ButtonOption: ModOption
 		{
 			public ButtonOption(Config.Field cfgField, string label): base(cfgField, label) {}

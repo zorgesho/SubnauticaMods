@@ -1,19 +1,48 @@
 ﻿using System;
+using System.Collections.Generic;
+
 using SMLHelper.V2.Options;
 
 namespace Common.Configuration
 {
 	partial class Options
 	{
+		partial class Factory
+		{
+			class ChoiceOptionCreator: ICreator
+			{
+				public ModOption create(Config.Field cfgField)
+				{
+					if (cfgField.type.IsEnum && cfgField.type != typeof(UnityEngine.KeyCode)) // add choice option for enum
+					{
+						var values = new List<object>();
+						foreach (var val in Enum.GetValues(cfgField.type))
+							values.Add(val.toInt());
+
+						return new ChoiceOption(cfgField, cfgField.getAttr<FieldAttribute>()?.label, Enum.GetNames(cfgField.type), values.ToArray());
+					}
+
+					if (cfgField.type == typeof(float) || cfgField.type == typeof(int)) // creating ChoiceOption if we also have choice attribute
+					{
+						if (cfgField.getAttr<ChoiceAttribute>() is ChoiceAttribute choice && choice.choices.Length > 0)
+							return new ChoiceOption(cfgField, cfgField.getAttr<FieldAttribute>()?.label, choice.choices, choice.values);
+					}
+
+					return null;
+				}
+			}
+		}
+
+
 		public class ChoiceOption: ModOption
 		{
 			readonly string[] choices;
 			readonly object[] values;
 
-			public ChoiceOption(Config.Field cfgField, string label, string[] _choices, object[] _values = null): base(cfgField, label)
+			public ChoiceOption(Config.Field cfgField, string label, string[] choices, object[] values = null): base(cfgField, label)
 			{
-				choices = _choices;
-				values  = _values;
+				this.choices = choices;
+				this.values  = values;
 
 				// adds choice labels to LanguageHandler, changing array in the process
 				for (int i = 0; i < choices.Length; i++)

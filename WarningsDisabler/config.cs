@@ -30,7 +30,7 @@ namespace WarningsDisabler
 
 			protected virtual void Awake()
 			{
-				msgList = parentOption.cfgField.parentObject as Messages;
+				msgList = parentOption.cfgField.parent as Messages;
 				Debug.assert(msgList != null);
 			}
 

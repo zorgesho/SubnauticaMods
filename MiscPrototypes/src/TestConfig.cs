@@ -7,6 +7,7 @@
 
 //options stuff
 //#define TEST_CHOICES
+//#define TEST_CHOICEMASTERS
 //#define TEST_OPTIONS_ADJUST
 //#define TEST_TOOLTIPS
 //#define TEST_CUSTOM_FORMATS
@@ -410,6 +411,60 @@ namespace MiscPrototypes
 		[Options.Field]
 		[Options.Choice("Default", "Choice 2", "Choice 3")]
 		public readonly float choiceIncorrectInitial = -100f;
+#endif
+
+#if	TEST_CHOICEMASTERS
+		class FieldAction1: Field.IAction { public void action() => "field1".onScreen(); }
+		class FieldAction2: Field.IAction { public void action() => "field2".onScreen(); }
+		class FieldAction3: Field.IAction { public void action() => "field3".onScreen(); }
+
+		[Field.Action(typeof(FieldAction1))]
+		public readonly int depField1 = 0;
+
+		[Field.Action(typeof(FieldAction2))]
+		public readonly int depField2 = 0;
+
+		[Field.Action(typeof(FieldAction3))]
+		public readonly int depField3 = 0;
+
+		[Options.Field]
+		[Options.ChoiceMaster(0, nameof(depField1), 1,	 nameof(depField2), 2,   nameof(depField3), 3)]
+		[Options.ChoiceMaster(1, nameof(depField2), 20,	 nameof(depField3), 30,  nameof(depField1), 10)]
+		[Options.ChoiceMaster(2, nameof(depField3), 300, nameof(depField1), 100, nameof(depField2), 200)]
+		[Options.Choice("Choice 1", "Choice 2", "Choice 3")]
+		public readonly int masterIntChoice = 1;
+
+		public enum MstTest { Zero, One, Two, Three };
+
+		[Options.Field]
+		[Options.ChoiceMaster(MstTest.Zero,  nameof(depField1), 2,	  nameof(depField2), 4,	   nameof(depField3), 8)]
+		[Options.ChoiceMaster(MstTest.One,   nameof(depField1), 16,	  nameof(depField2), 32,   nameof(depField3), 64)]
+		[Options.ChoiceMaster(MstTest.Two,   nameof(depField1), 128,  nameof(depField2), 256,  nameof(depField3), 512)]
+		[Options.ChoiceMaster(MstTest.Three, nameof(depField1), 1024, nameof(depField2), 2048, nameof(depField3), 4096)]
+		public readonly MstTest masterEnumChoice = MstTest.Zero;
+
+		[Field.Action(typeof(CommonAction))]
+		public class NestedMasterChoice
+		{
+			class FieldAction1: Field.IAction { public void action() => "nested field1".onScreen(); }
+			class FieldAction2: Field.IAction { public void action() => "nested field2".onScreen(); }
+
+			class CommonAction: Field.IAction { public void action() => "common action".onScreen(); }
+
+			[Field.Action(typeof(FieldAction1))]
+			public readonly int depField1 = 0;
+
+			[Field.Action(typeof(FieldAction2))]
+			public readonly int depField2 = 0;
+
+			[Options.Field]
+			[Options.ChoiceMaster(MstTest.Zero,  nameof(depField1), 2,	  nameof(depField2), 4)]
+			[Options.ChoiceMaster(MstTest.One,   nameof(depField1), 16,	  nameof(depField2), 32)]
+			[Options.ChoiceMaster(MstTest.Two,   nameof(depField1), 128,  nameof(depField2), 256)]
+			[Options.ChoiceMaster(MstTest.Three, nameof(depField1), 1024, nameof(depField2), 2048)]
+			public readonly MstTest masterEnumChoice = MstTest.Zero;
+		}
+		public readonly NestedMasterChoice nestedMasterChoice = new NestedMasterChoice();
 #endif
 
 #if TEST_OPTIONS_ADJUST

@@ -7,9 +7,9 @@ namespace Common.Configuration
 	{
 		public partial class Field
 		{
-			protected readonly Config rootConfig;
+			public readonly Config rootConfig;
 
-			protected readonly object parent;
+			public readonly object parent;
 			protected readonly FieldInfo field;
 
 			protected readonly IAction[] actions;
@@ -21,10 +21,11 @@ namespace Common.Configuration
 				Debug.assert(parent != null && field != null);
 
 				rootConfig = _rootConfig ?? parent as Config ?? Config.main;
-				Debug.assert(rootConfig != null, "rootConfig is null");
-				Debug.assert(path != null, "field path is null");
+				Debug.assert(rootConfig != null, $"rootConfig is null (parent: '{parent?.GetType()}', field: '{field?.Name}')");
+				Debug.assert(path != null,
+					$"field path is null (rootConfig: {rootConfig.GetType()}, parent: '{parent?.GetType()}', field: '{field?.Name}')");
 
-				var actionAttrs = field.getAttrs<ActionAttribute>(true);
+				var actionAttrs = getAttrs<ActionAttribute>(true);
 				if (actionAttrs.Length > 0)
 				{
 					actions = new IAction[actionAttrs.Length];
@@ -42,6 +43,7 @@ namespace Common.Configuration
 
 			public Type type => field.FieldType;
 			public string name => field.Name;
+			[Obsolete]
 			public object parentObject => parent;
 
 			public string path => _path ??= rootConfig.getFieldPath(parent, field);
@@ -49,6 +51,11 @@ namespace Common.Configuration
 
 			public A getAttr<A>(bool includeDeclaringTypes = false) where A: Attribute =>
 				field.getAttr<A>(includeDeclaringTypes);
+
+			public A[] getAttrs<A>(bool includeDeclaringTypes = false) where A: Attribute =>
+				field.getAttrs<A>(includeDeclaringTypes);
+
+			public bool checkAttr<A>() where A: Attribute => field.checkAttr<A>();
 
 			public virtual object value
 			{

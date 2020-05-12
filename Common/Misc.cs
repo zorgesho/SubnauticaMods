@@ -38,7 +38,7 @@ namespace Common
 			catch (Exception e) { Log.msg(e); return false; }
 		}
 
-		public static object getFieldValue(this object obj, string fieldName) => obj.GetType().field(fieldName).GetValue(obj);
+		public static object getFieldValue(this object obj, string fieldName) => obj.GetType().field(fieldName)?.GetValue(obj);
 	}
 
 

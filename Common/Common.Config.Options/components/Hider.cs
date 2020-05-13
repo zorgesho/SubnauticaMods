@@ -15,7 +15,14 @@ namespace Common.Configuration
 				public void process(ModOption option)
 				{
 					if (option.cfgField.getAttr<HideableAttribute>(true) is HideableAttribute hideableAttr)
-						option.addHandler(new Components.Hider.Add(hideableAttr.visChecker, hideableAttr.groupID));
+					{
+						string groupID = hideableAttr.groupID;
+
+						if (groupID == null)
+							option.cfgField.getAttrs<HideableAttribute>(true).forEach(attr => groupID ??= attr.groupID);
+
+						option.addHandler(new Components.Hider.Add(hideableAttr.visChecker, groupID));
+					}
 				}
 			}
 		}

@@ -15,7 +15,7 @@ namespace PrawnSuitSettings
 
 			[Options.Field("Damage from collisions", "Damage for Prawn Suit from collisions with terrain and other objects")]
 			[Field.Action(typeof(Hider))]
-			[Options.Hideable(typeof(Options.Components.Hider.Ignore))]
+			[Options.Hideable(typeof(Options.Components.Hider.Ignore), "")]
 			[Options.FinalizeAction(typeof(HarmonyHelper.UpdateOptionalPatches))]
 			public readonly bool enabled = false;
 
@@ -41,7 +41,7 @@ namespace PrawnSuitSettings
 
 			[Options.Field("Arms additional energy usage", "Energy consuming for drill arm and grappling arm")]
 			[Field.Action(typeof(Hider))]
-			[Options.Hideable(typeof(Options.Components.Hider.Ignore))]
+			[Options.Hideable(typeof(Options.Components.Hider.Ignore), "")]
 			[Options.FinalizeAction(typeof(HarmonyHelper.UpdateOptionalPatches))]
 			public readonly bool enabled = false;
 

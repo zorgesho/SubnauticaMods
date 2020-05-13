@@ -57,25 +57,17 @@ namespace ConsoleImproved
 		// config fields exported to console
 		class CfgVarsCache: StringCache
 		{
-			const string exportCfgVarClassName = nameof(Common) + "." + nameof(Common.Configuration) + "." + nameof(Common.Configuration.ExportedCfgVarFields);
-			const string exportCfgVarGetFields = nameof(Common.Configuration.ExportedCfgVarFields.getFields);
-
-			// searching exported config fields in current assemblies
 			protected override void refresh()
 			{
 				if (strings.Count > 0)
 					return;
 
-				foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
-				{
-					if (assembly.GetType(exportCfgVarClassName, false)?.methodWrap(exportCfgVarGetFields).invoke() is List<string> fields)
-					{																															fields.logDbg("CfgVarsCache added field ");
-						for (int i = 0; i < fields.Count; i++)
-							fields[i] += " "; // adding space for convenience
+				CfgVarsHelper.getVarNames(out List<string> fields);										fields.logDbg("CfgVarsCache added field ");
 
-						strings.AddRange(fields);
-					}
-				}
+				for (int i = 0; i < fields.Count; i++)
+					fields[i] += " "; // adding space for convenience
+
+				strings.AddRange(fields);
 			}
 		}
 	}

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Collections.Generic;
 
@@ -75,6 +76,52 @@ namespace ConsoleImproved
 		{
 			DevConsole.instance.history = history;
 			DevConsole.instance.inputField.SetHistory(history);
+		}
+
+
+		static class CfgVarsHelper
+		{
+			const string exportCfgVarClassName = nameof(Common) + "." + nameof(Common.Configuration) + "." + nameof(Common.Configuration.ExportedCfgVarFields);
+			const string exportCfgVarGetFields = nameof(Common.Configuration.ExportedCfgVarFields.getFields);
+			const string getCfgVarValue = nameof(Common.Configuration.ExportedCfgVarFields.getFieldValue);
+
+			static List<string> cfgVarNames;
+			static List<ReflectionHelper.MethodWrapper> cfgVarGetters;
+
+			// searching exported config fields in current assemblies
+			static void init()
+			{
+				if (cfgVarNames != null)
+					return;
+
+				cfgVarNames = new List<string>();
+				cfgVarGetters = new List<ReflectionHelper.MethodWrapper>();
+
+				foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+				{
+					if (assembly.GetType(exportCfgVarClassName, false) is Type exportedCfgVars)
+					{
+						if (exportedCfgVars.methodWrap(exportCfgVarGetFields).invoke() is IList<string> list)
+							cfgVarNames.AddRange(list);
+
+						var getter = exportedCfgVars.methodWrap(getCfgVarValue);
+						if (getter)
+							cfgVarGetters.Add(getter);
+					}
+				}
+			}
+
+			public static void getVarNames(out List<string> fields)
+			{
+				init();
+				fields = new List<string>(cfgVarNames);
+			}
+
+			public static object getVarValue(string cfgVarName)
+			{
+				init();
+				return cfgVarGetters.Select(getter => getter.invoke(cfgVarName)).Where(result => result != null).FirstOrDefault();
+			}
 		}
 	}
 }

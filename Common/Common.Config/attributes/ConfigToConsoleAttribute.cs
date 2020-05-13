@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 using UnityEngine;
 
@@ -9,11 +10,18 @@ namespace Common.Configuration
 	// for use in other mods
 	public static class ExportedCfgVarFields
 	{
-		static readonly List<string> fields = new List<string>();
+		static readonly List<string> fieldNames = new List<string>();
+		static readonly Dictionary<string, Config.Field> fields = new Dictionary<string, Config.Field>();
 
-		public static List<string> getFields() => fields;
+		public static ReadOnlyCollection<string> getFields() => fieldNames.AsReadOnly();
 
-		internal static void addField(string fieldName) => fields.Add(fieldName);
+		public static object getFieldValue(string fieldName) => fields.TryGetValue(fieldName, out Config.Field field)? field.value: null;
+
+		internal static void addField(string fieldName, Config.Field field)
+		{
+			fieldNames.Add(fieldName);
+			fields[fieldName] = field;
+		}
 	}
 
 	partial class Config
@@ -27,14 +35,18 @@ namespace Common.Configuration
 			static readonly UniqueIDs uniqueIDs = new UniqueIDs();
 
 			readonly string cfgNamespace = ""; // optional namespace for use in console in case of duplicate names
+			readonly bool addPrivateFields, ignoreSkipAttr;
 
 			Config rootConfig;
 			public void setRootConfig(Config config) => rootConfig = config;
 
-			public AddToConsoleAttribute(string _cfgNamespace = null)
+			public AddToConsoleAttribute(string cfgNamespace = null, bool addPrivateFields = false, bool ignoreSkipAttr = false)
 			{
-				if (!_cfgNamespace.isNullOrEmpty())
-					cfgNamespace = _cfgNamespace + ".";
+				if (!cfgNamespace.isNullOrEmpty())
+					this.cfgNamespace = cfgNamespace + ".";
+
+				this.addPrivateFields = addPrivateFields;
+				this.ignoreSkipAttr = ignoreSkipAttr;
 			}
 
 			public void process(object config)
@@ -46,14 +58,14 @@ namespace Common.Configuration
 			{
 				ConfigVarsConsoleCommand.init();
 
-				if (field.FieldType.IsPrimitive && field.IsPublic && !field.checkAttr<SkipAttribute>())
+				if (field.FieldType.IsPrimitive && (addPrivateFields || field.IsPublic) && (ignoreSkipAttr || !field.checkAttr<SkipAttribute>()))
 				{
 					var cfgField = new ConfigVarsConsoleCommand.CfgField(config, field, rootConfig);
 					string nameForConsole = (cfgNamespace + cfgField.path).ToLower();
 					uniqueIDs.ensureUniqueID(ref nameForConsole);
 
 					if (ConfigVarsConsoleCommand.addConfigField(nameForConsole, cfgField))
-						ExportedCfgVarFields.addField(nameForConsole);
+						ExportedCfgVarFields.addField(nameForConsole, cfgField);
 				}
 
 				if (_isInnerFieldsProcessable(field))

@@ -71,10 +71,16 @@ namespace Common
 
 			public MethodWrapper(MethodBase method) => this.method = method;
 
-			public object invoke(object obj = null)
+			public object invoke()
+			{
+				Debug.assert(method != null && method.IsStatic);
+				return method?.Invoke(null, null);
+			}
+
+			public object invoke(object obj)
 			{
 				Debug.assert(method != null);
-				return method?.Invoke(obj, null);
+				return method.IsStatic? method?.Invoke(null, new object[] { obj }): method?.Invoke(obj, null);
 			}
 
 			public object invoke(object obj, params object[] parameters)
@@ -83,7 +89,8 @@ namespace Common
 				return method?.Invoke(obj, parameters ?? new object[1]); // null check in case we need to pass one 'null' as a parameter
 			}
 
-			public T invoke<T>(object obj = null) => _safecast<T>(invoke(obj));
+			public T invoke<T>() => _safecast<T>(invoke());
+			public T invoke<T>(object obj) => _safecast<T>(invoke(obj));
 			public T invoke<T>(object obj, params object[] parameters) => _safecast<T>(invoke(obj, parameters));
 		}
 

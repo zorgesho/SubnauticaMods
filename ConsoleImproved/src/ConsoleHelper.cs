@@ -29,12 +29,15 @@ namespace ConsoleImproved
 
 		static void showMessages(List<string> msgs, string msg)
 		{
-			int maxCount = Main.config.msgsSettings.currMaxListSize;
+			int maxCount = ErrorMessageSettings.getSlotCount(true);
+
+			if (Main.config.maxListSize > 0)
+				maxCount = Math.Min(maxCount, Main.config.maxListSize);
 
 			if (msgs.Count > maxCount)
-				L10n.str("ids_listTooLarge").format(msgs.Count, maxCount).onScreen();
+				L10n.str("ids_listTooLarge").format(msgs.Count, maxCount - 1).onScreen();
 
-			msgs.onScreen(msg, maxCount);
+			msgs.onScreen(msg, maxCount - 1);
 		}
 
 		static void saveHistory()

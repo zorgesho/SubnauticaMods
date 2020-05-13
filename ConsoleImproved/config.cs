@@ -32,6 +32,9 @@ namespace ConsoleImproved
 		public readonly bool fixVanillaCommandsFloatParse = false;
 		public readonly int  historySizeToSave = 100;
 
+		[Field.Range(min:0)]
+		public readonly int maxListSize = 0; // 0 for max available
+
 		[Field.Action(typeof(RefreshSettings))]
 		[Options.Hideable(typeof(Hider), "msgs")]
 		public class MessagesSettings
@@ -109,13 +112,6 @@ namespace ConsoleImproved
 			[Field.Range(0f, 2f)]
 			[Options.Slider(defaultValue: 1.2f, minValue: 0.5f, maxValue: 1.4f, valueFormat: "{0:F2}")]
 			public float textLineSpacing = 1.2f;
-
-			const int maxListSizeDefault = 30;
-			[Options.Field]
-			[Field.Range(min:1)]
-			[Options.Slider(defaultValue: maxListSizeDefault, minValue: 10, maxValue: 100)]
-			readonly int maxListSize = maxListSizeDefault;
-			public int currMaxListSize => customize? maxListSize: maxListSizeDefault;
 
 			[Options.Field]
 			[Field.Range(0.01f, 2f)]

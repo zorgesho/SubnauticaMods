@@ -1,8 +1,4 @@
-﻿using System.Collections;
-
-using UnityEngine;
-
-using Common;
+﻿using Common;
 using Common.Configuration;
 
 namespace ConsoleImproved
@@ -20,15 +16,15 @@ namespace ConsoleImproved
 	}
 
 #if DEBUG
-	[AddToConsole("console")]
+	[AddToConsole("console", true)]
 #endif
 	[Options.Name("Console & messages settings")]
 	class ModConfig: Config
 	{
 		public readonly bool consoleEnabled = true;
 
-		[Options.Field] // TODO
-		[Field.Action(typeof(HarmonyHelper.UpdateOptionalPatches))]
+		[Options.Field("Keep messages on the screen", "Keep messages on the screen while console is open")]
+		[Options.FinalizeAction(typeof(HarmonyHelper.UpdateOptionalPatches))]
 		public readonly bool keepMessagesOnScreen = true;
 
 		public readonly bool fixVanillaCommandsFloatParse = false;
@@ -37,40 +33,27 @@ namespace ConsoleImproved
 		[Field.Range(min:0)]
 		public readonly int maxListSize = 0; // 0 for max available
 
-		[Field.Action(typeof(RefreshSettings))]
+		[Field.Action(typeof(ErrorMessageSettings.RefreshSettings))]
 		[Options.Hideable(typeof(Hider), "msgs")]
 		public class MessagesSettings
 		{
 #pragma warning disable CS0414, CS0169, IDE0044 // field usage and readonly
-			class RefreshSettings: Field.IAction { public void action() => ErrorMessageSettings.refresh(!Main.config.msgsSettings.customize); }
-
 			class Hider: Options.Components.Hider.Simple { public Hider(): base("msgs", () => Main.config.msgsSettings.customize) {} }
 
 			class ClearMessages: Field.IAction
 			{
 				public void action()
 				{
-					if (Options.mode == Options.Mode.IngameMenu)
-						return;
-
-					GameUtils.clearScreenMessages();
-
-					if (!Main.config.msgsSettings.customize)
-						ErrorMessage.main.StartCoroutine(_addTestMessage());
-
-					static IEnumerator _addTestMessage()
-					{
-						yield return new WaitForSeconds(0.05f); // time to apply settings before adding message
-						SampleMessage.print();
-					}
+					if (Options.mode == Options.Mode.MainMenu)
+						GameUtils.clearScreenMessages();
 				}
 			}
 
-			[Options.Field] // TODO
+			[Options.Field("Customize messages settings")]
 			[Field.Action(typeof(Hider))]
 			[Field.Action(typeof(ClearMessages))]
 			[Options.Hideable(typeof(Options.Components.Hider.Ignore), "")]
-			public readonly bool customize = true;
+			public readonly bool customize = false;
 
 			readonly bool detailedSettings = false;
 
@@ -86,9 +69,7 @@ namespace ConsoleImproved
 			class SampleMessage: Field.IAction
 			{
 				static int index = 0;
-				public static void print() => L10n.str("ids_loremIpsum").format(index++).onScreen();
-
-				public void action() => print();
+				public void action() => L10n.str("ids_loremIpsum").format(index++).onScreen();
 			}
 
 			[Options.Button]
@@ -97,65 +78,68 @@ namespace ConsoleImproved
 			[Options.Hideable(typeof(ButtonHider), "msgs")]
 			int _;
 
-			[Options.Field] // TODO
+			[Options.Field("Font size")]
 			[Field.Range(1, 60)]
 			[Options.Slider(defaultValue: 18, minValue: 10, maxValue: 40)]
 			public int fontSize = 18;
 
-			[Options.Field] // TODO
+			[Options.Field("Offset", "Offset from the top left corner")]
 			[Field.Range(-10f, 500f)]
 			[Options.Slider(defaultValue: 140f, minValue: 5f, maxValue: 200f)]
 			public float offset = 140f;
 
-			[Options.Field] // TODO
+			[Options.Field("Message width", "Text width relative to the screen width")] 
 			[Field.Range(0f, 1920f)]
 			[Options.Slider(defaultValue: 500f, minValue: 200f, customValueType: typeof(Options.Components.SliderValue.RangePercent))]
 			public float textWidth = 500f;
 
-			[Options.Field] // TODO
+			class DelaySliderValue: Options.Components.SliderValue.Nonlinear
+			{ DelaySliderValue() => addValueInfo(0.5f, 10.0f, "{0:F1} s", "{0:F0} s"); }
+
+			[Options.Field("Message display time")]
 			[Field.Range(min: 0.05f)]
-			[Options.Slider(defaultValue: 5f, maxValue: 60f, valueFormat: "{0:F1}")]
+			[Field.Action(typeof(ErrorMessageSettings.RefreshTimeDelaySetting))]
+			[Options.Slider(defaultValue: 5f, maxValue: 60f, customValueType: typeof(DelaySliderValue))]
 			public float timeDelay = 5f;
 
-			[Options.Field("Line spacing")] // TODO tooltip
+			[Options.Field("Line spacing", "Spacing between messages and between lines in multiline messages")]
 			[Options.Hideable(typeof(SimpleSetting))]
-			[Options.ChoiceMaster(Spacing.Default, nameof(messageSpacing), 10f, nameof(textLineSpacing), 1.2f)]
-			[Options.ChoiceMaster(Spacing.Tight,   nameof(messageSpacing),  0f, nameof(textLineSpacing), 0.9f)]
-			[Options.ChoiceMaster(Spacing.Compact, nameof(messageSpacing), -5f, nameof(textLineSpacing), 0.75f)]
-			readonly Spacing spacing = Spacing.Default;
-			enum Spacing { Default, Tight, Compact };
+			[Options.ChoiceMaster(0, nameof(messageSpacing), 10f, nameof(textLineSpacing), 1.2f)]
+			[Options.ChoiceMaster(1, nameof(messageSpacing),  0f, nameof(textLineSpacing), 0.9f)]
+			[Options.ChoiceMaster(2, nameof(messageSpacing), -5f, nameof(textLineSpacing), 0.75f)]
+			[Options.Choice("Default", "Tight", "Compact")]
+			readonly int _spacing = 0;
 
-			[Options.Field("Animations")] // TODO tooltip
+			[Options.Field("Animations speed", "Speed of fade out and fly animations")]
 			[Options.Hideable(typeof(SimpleSetting))]
-			[Options.ChoiceMaster(AnimSpeed.Default, nameof(timeFly), 0.30f, nameof(timeFadeOut), 0.6f)]
-			[Options.ChoiceMaster(AnimSpeed.Fast,	 nameof(timeFly), 0.15f, nameof(timeFadeOut), 0.3f)]
-			[Options.ChoiceMaster(AnimSpeed.Instant, nameof(timeFly), 0.01f, nameof(timeFadeOut), 0.1f)]
-			readonly AnimSpeed animSpeed = AnimSpeed.Default;
-			enum AnimSpeed { Default, Fast, Instant };
+			[Options.ChoiceMaster(0, nameof(timeFly), 0.30f, nameof(timeFadeOut), 0.6f)]
+			[Options.ChoiceMaster(1, nameof(timeFly), 0.15f, nameof(timeFadeOut), 0.3f)]
+			[Options.ChoiceMaster(2, nameof(timeFly), 0.01f, nameof(timeFadeOut), 0.1f)]
+			[Options.Choice("Default", "Fast", "Instant")]
+			readonly int _animSpeed = 0;
 
-
-			[Options.Field] // TODO
+			[Options.Field("Spacing between messages")]
 			[Field.Range(-15f, 25f)]
 			[Options.Hideable(typeof(DetailedSetting))]
 			[Options.Slider(defaultValue: 10f, minValue: -5f, maxValue: 15f, valueFormat: "{0:F1}")]
 			public float messageSpacing = 10f;
 
-			[Options.Field] // TODO
+			[Options.Field("Spacing between lines", "Spacing between lines in multiline messages (a value of 1 will produce normal line spacing)")]
 			[Field.Range(0f, 2f)]
 			[Options.Hideable(typeof(DetailedSetting))]
 			[Options.Slider(defaultValue: 1.2f, minValue: 0.5f, maxValue: 1.5f, valueFormat: "{0:F2}")]
 			public float textLineSpacing = 1.2f;
 
-			[Options.Field] // TODO
+			[Options.Field("Fly animation duration")]
 			[Field.Range(0.01f, 2f)]
 			[Options.Hideable(typeof(DetailedSetting))]
-			[Options.Slider(defaultValue: 0.3f, valueFormat: "{0:F2}")]
+			[Options.Slider(defaultValue: 0.3f, valueFormat: "{0:F2} s")]
 			public float timeFly = 0.3f;
 
-			[Options.Field] // TODO
+			[Options.Field("Fade out animation duration")]
 			[Field.Range(0.1f, 5f)]
 			[Options.Hideable(typeof(DetailedSetting))]
-			[Options.Slider(defaultValue: 0.6f, valueFormat: "{0:F2}")]
+			[Options.Slider(defaultValue: 0.6f, valueFormat: "{0:F2} s")]
 			public float timeFadeOut = 0.15f;
 
 			[Field.Range(min: 0.1f)]

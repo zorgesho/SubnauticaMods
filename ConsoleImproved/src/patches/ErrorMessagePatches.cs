@@ -8,21 +8,32 @@ using UnityEngine;
 using UnityEngine.UI;
 
 using Common;
+using Common.Configuration;
 
 namespace ConsoleImproved
 {
 	using Debug = Common.Debug;
 
-	[HarmonyPatch(typeof(ErrorMessage), "Awake")] // TODO check conflicts with QMM
+	[HarmonyPatch(typeof(ErrorMessage), "Awake")]
 	static class ErrorMessageSettings
 	{
 		static ModConfig.MessagesSettings defaultSettings;
 
+		public class RefreshSettings: Config.Field.IAction
+		{ public void action() => refresh(); }
+
+		public class RefreshTimeDelaySetting: Config.Field.IAction
+		{
+			public void action() => ErrorMessage.main.messages.Where(m => m.timeEnd - Time.time < 1e3f).
+															   ForEach(msg => msg.timeEnd = Time.time + Main.config.msgsSettings.timeDelay);
+		}
+
+		[HarmonyPriority(Priority.High)]
 		static void Postfix(ErrorMessage __instance)
 		{
 			var em = __instance;
 
-			defaultSettings = new ModConfig.MessagesSettings()
+			defaultSettings ??= new ModConfig.MessagesSettings()
 			{
 				offset = em.offset.x,
 				messageSpacing = em.ySpacing,
@@ -37,13 +48,13 @@ namespace ConsoleImproved
 			};
 
 			if (Main.config.msgsSettings.customize)
-				refresh(false);
+				refresh();
 		}
 
-		public static void refresh(bool useDefault)
+		static void refresh()
 		{
 			var em = ErrorMessage.main;
-			var settings = useDefault? defaultSettings: Main.config.msgsSettings;
+			var settings = Main.config.msgsSettings.customize? Main.config.msgsSettings: defaultSettings;
 
 			em.offset = new Vector2(settings.offset, settings.offset);
 			em.ySpacing = settings.messageSpacing;
@@ -92,7 +103,8 @@ namespace ConsoleImproved
 			if (ErrorMessage.main == null)
 				return -1;
 
-			return (int)((ErrorMessage.main.messageCanvas.rect.height + (freeSlots? ErrorMessage.main.GetYPos(): 0f)) / messageSlotHeight);
+			float lastMsgPos = freeSlots? ErrorMessage.main.GetYPos(): 0f;
+			return (int)((ErrorMessage.main.messageCanvas.rect.height + lastMsgPos) / messageSlotHeight);
 		}
 	}
 

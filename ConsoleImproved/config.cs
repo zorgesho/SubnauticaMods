@@ -30,7 +30,7 @@ namespace ConsoleImproved
 		public readonly bool fixVanillaCommandsFloatParse = false;
 		public readonly int  historySizeToSave = 100;
 
-		[Field.Range(min:0)]
+		[Field.Range(min: 0)]
 		public readonly int maxListSize = 0; // 0 for max available
 
 		[Field.Action(typeof(ErrorMessageSettings.RefreshSettings))]
@@ -140,7 +140,7 @@ namespace ConsoleImproved
 			[Field.Range(0.1f, 5f)]
 			[Options.Hideable(typeof(DetailedSetting))]
 			[Options.Slider(defaultValue: 0.6f, valueFormat: "{0:F2} s")]
-			public float timeFadeOut = 0.15f;
+			public float timeFadeOut = 0.6f;
 
 			[Field.Range(min: 0.1f)]
 			public float timeInvisible = 0.1f;

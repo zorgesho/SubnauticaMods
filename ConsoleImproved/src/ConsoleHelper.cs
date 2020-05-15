@@ -120,7 +120,7 @@ namespace ConsoleImproved
 			public static object getVarValue(string cfgVarName)
 			{
 				init();
-				return cfgVarGetters.Select(getter => getter.invoke(cfgVarName)).Where(result => result != null).FirstOrDefault();
+				return cfgVarGetters.Select(getter => getter.invoke(cfgVarName)).FirstOrDefault(result => result != null);
 			}
 		}
 	}

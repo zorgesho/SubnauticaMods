@@ -49,14 +49,10 @@ namespace DebrisRecycling
 			public readonly int defaultResourceCount = 1;
 
 			class Hider: Options.Components.Hider.IVisibilityChecker
-			{
-				public bool visible => Main.config.customObjects.addToOptionsMenu;
-			}
+			{ public bool visible => Main.config.customObjects.addToOptionsMenu; }
 
 			class HotKeysHider: Options.Components.Hider.Simple
-			{
-				public HotKeysHider(): base("hotkeys", () => Main.config.customObjects.addToOptionsMenu && Main.config.customObjects.hotkeysEnabled) {}
-			}
+			{ public HotKeysHider(): base("hotkeys", () => Main.config.customObjects.addToOptionsMenu && Main.config.customObjects.hotkeysEnabled) {} }
 
 			[Options.Field("Allow to add custom debris",
 								"Allows to mark most of the objects as salvageab-\nle debris.\n" +
@@ -91,9 +87,7 @@ namespace DebrisRecycling
 		public class PrefabList
 		{
 			class RefreshPrefabs: Field.IAction
-			{
-				public void action() => DebrisPatcher.refreshValidPrefabs(Options.mode == Options.Mode.IngameMenu);
-			}
+			{ public void action() => DebrisPatcher.refreshValidPrefabs(Options.mode == Options.Mode.IngameMenu); }
 
 			[Options.FinalizeAction(typeof(RefreshPrefabs))]
 			public bool enabled = true;

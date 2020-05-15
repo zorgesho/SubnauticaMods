@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using System.Collections.Generic;
 
 using Harmony;
 
@@ -18,7 +19,7 @@ namespace Common
 		{
 			try
 			{
-				using (Debug.profiler($"HarmonyHelper.patchAll {Mod.id}"))
+				using (Debug.profiler($"HarmonyHelper.patchAll"))
 				{
 					harmonyInstance.PatchAll(Assembly.GetExecutingAssembly());
 
@@ -64,6 +65,27 @@ namespace Common
 		}
 
 		public static Patches getPatchInfo(MethodBase method) => harmonyInstance.GetPatchInfo(method);
+
+
+		// comparing patches by method's names (for use with shared projects)
+		public static bool isPatchedBy(MethodBase original, MethodBase patch)
+		{
+			Debug.assert(original != null);
+			Debug.assert(patch != null);
+
+			var patches = getPatchInfo(original);
+			if (patches == null)
+				return false;
+
+			string patchFullName = patch.fullName();
+			bool _contains(IList<Patch> list) => list.FirstOrDefault(p => p.patch?.fullName() == patchFullName) != null;
+
+			return _contains(patches.Prefixes) || _contains(patches.Postfixes) || _contains(patches.Transpilers);
+		}
+
+		public static bool isPatchedBy(MethodBase original, string patchName) =>
+			isPatchedBy(original, ReflectionHelper.getCallingType().method(patchName));
+
 
 		static MethodBase getTargetMethod(this HarmonyMethod harmonyMethod)
 		{

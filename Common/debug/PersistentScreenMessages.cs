@@ -7,25 +7,31 @@ namespace Common
 {
 	static partial class Debug
 	{
-		/// messages with the same prefix will stay in the same message slot (usage: <see cref="StringExtensions.onScreen(string, string)"/>)
-		[HarmonyPatch(typeof(ErrorMessage), "_AddMessage")]
+		/// messages with the same prefix will stay in the same message slot (also <see cref="StringExtensions.onScreen(string, string)"/>)
+		public static void addMessage(string message, string prefix)
+		{
+			PersistentScreenMessages.patch();
+			ErrorMessage.AddDebug($"[{prefix}] {message}");
+		}
+
 		static class PersistentScreenMessages
 		{
+			static bool patched = false;
 			static readonly FieldInfo messageEntry = typeof(ErrorMessage._Message).field("entry");
 			static readonly ReflectionHelper.PropertyWrapper text = ReflectionHelper.safeGetType("UnityEngine.UI", "UnityEngine.UI.Text").propertyWrap("text");
 
-			// patching this only once (don't check for actual patch method for now)
-			static bool Prepare()
+			public static void patch()
 			{
-#if TRACE
-				var patches = HarmonyHelper.getPatchInfo(typeof(ErrorMessage).method("_AddMessage"));						"ErrorMessage.AddMessage is already patched, skipping".logDbg(patches != null);
-				return patches == null;
-#else
-				return false;
-#endif
+				if (patched || !(patched = true))
+					return;
+
+				if (!HarmonyHelper.isPatchedBy(typeof(ErrorMessage).method("_AddMessage"), nameof(messagePatch))) // patching this only once
+					HarmonyHelper.patch();
 			}
 
-			static bool Prefix(ErrorMessage __instance, string messageText)
+			[HarmonyPrefix]
+			[HarmonyPatch(typeof(ErrorMessage), "_AddMessage")]
+			static bool messagePatch(ErrorMessage __instance, string messageText)
 			{
 				if (messageText.isNullOrEmpty() || messageText[0] != '[')
 					return true;

@@ -106,8 +106,8 @@ namespace DebrisRecycling
 
 			public string addPrefab(string prefabID, int resourceCount) // resourceCount: see above ^
 			{
-				if (!UWE.PrefabDatabase.TryGetPrefabFilename(prefabID, out string prefabPath))
-					return null;
+				UWE.PrefabDatabase.TryGetPrefabFilename(prefabID, out string prefabPath);
+				prefabPath ??= prefabs.FirstOrDefault(p => p.Key.Contains(prefabID)).Key?.Split('.')[0] ?? "undefined";
 
 				string prefabName = prefabPath.Substring(prefabPath.LastIndexOf("/") + 1);
 				prefabs[$"{prefabName}.{prefabID}"] = resourceCount;
@@ -117,7 +117,7 @@ namespace DebrisRecycling
 
 			public void copyPrefabsTo(Dictionary<string, int> validPrefabs)
 			{
-				prefabs.ForEach(prefabInfo => validPrefabs[prefabInfo.Key.Split('.')[1]] = prefabInfo.Value);
+				prefabs.ForEach(prefabInfo => validPrefabs[prefabInfo.Key.Split('.').ElementAtOrDefault(1) ?? prefabInfo.Key] = prefabInfo.Value);
 			}
 		}
 
@@ -312,8 +312,6 @@ namespace DebrisRecycling
 		{
 			if (__cfgVer >= 110)
 				return;
-
-			CraftData.PreparePrefabIDCache(); // so PrefabList.addPrefab will find prefab names
 
 			try
 			{

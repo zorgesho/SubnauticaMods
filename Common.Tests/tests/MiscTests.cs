@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Reflection;
 
-using NUnit.Framework;
-using UnityEngine;
 using Harmony;
+using UnityEngine;
+using NUnit.Framework;
 
 using Common;
 

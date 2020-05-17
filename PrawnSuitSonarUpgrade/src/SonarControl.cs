@@ -6,7 +6,7 @@ namespace PrawnSuitSonarUpgrade
 	{
 		const float pingInterval = 5f;	// default is 5f
 		const float energyCost = 1f;	// default is 1f
-		
+
 		Exosuit exosuit;
 
 		int activeSlotID = -1;
@@ -60,7 +60,7 @@ namespace PrawnSuitSonarUpgrade
 		public void setPlayerInside(bool value)
 		{
 			isPlayerInside = value;
-			
+
 			if (!isPlayerInside)
 				setActive(false);
 		}

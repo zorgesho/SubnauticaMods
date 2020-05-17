@@ -313,6 +313,8 @@ namespace DayNightSpeed
 		}
 
 		#region version updates
+		int __cfgVer = 0;
+
 		protected override void onLoad()
 		{
 			_updateTo110();
@@ -332,12 +334,15 @@ namespace DayNightSpeed
 		// variables are renamed (mult* -> speed*) and inverted (new = 1.0f/old)
 		void _updateTo110()
 		{
-			var varNames = new string[] { "HungerThrist", "PlantsGrow", "EggsHatching", "CreaturesGrow", "MedkitInterval" };
+			if (__cfgVer >= 110)
+				return;
+
+			__cfgVer = 110;
 
 			try
 			{
 				// using reflection to avoid copy/paste and keep new params readonly
-				foreach (var varName in varNames)
+				foreach (var varName in new string[] { "HungerThrist", "PlantsGrow", "EggsHatching", "CreaturesGrow", "MedkitInterval" })
 				{
 					float val = GetType().field("mult" + varName).GetValue(this).toFloat();
 
@@ -350,8 +355,6 @@ namespace DayNightSpeed
 		#endregion
 
 		#region v1.0.0/1.1.0 -> v1.2.0
-		int __cfgVer = 0;
-
 		// if we loading this config for the first time and some speed variable is not default then we enabling useAuxSpeeds
 		void _updateTo120()
 		{

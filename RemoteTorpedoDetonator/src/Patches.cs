@@ -30,17 +30,25 @@ namespace RemoteTorpedoDetonator
 		}
 	}
 
-	// patching in main.cs, one patch used in two places
+	[HarmonyHelper.PatchClass]
 	static class Vehicle_OnUpgradeModuleUse_Patch
 	{
-		static void Postfix(Vehicle __instance, TechType techType, int slotID)
+		static void postfix(Vehicle vehicle, TechType techType, int slotID)
 		{
 			if (techType == TorpedoDetonatorModule.TechType)
-				__instance.gameObject.GetComponent<TorpedoDetonatorControl>()?.detonateTorpedoes();
+				vehicle.gameObject.GetComponent<TorpedoDetonatorControl>()?.detonateTorpedoes();
 
-			if (techType == TechType.SeamothTorpedoModule && __instance.quickSlotCooldown[slotID] > Main.config.torpedoCooldown)
-				__instance.quickSlotCooldown[slotID] = Main.config.torpedoCooldown;
+			if (techType == TechType.SeamothTorpedoModule && vehicle.quickSlotCooldown[slotID] > Main.config.torpedoCooldown)
+				vehicle.quickSlotCooldown[slotID] = Main.config.torpedoCooldown;
 		}
+
+		[HarmonyPostfix]
+		[HarmonyPatch(typeof(Vehicle), "OnUpgradeModuleUse")]
+		static void vehiclePatch(Vehicle __instance, TechType techType, int slotID) => postfix(__instance, techType, slotID);
+
+		[HarmonyPostfix]
+		[HarmonyPatch(typeof(SeaMoth), "OnUpgradeModuleUse")]
+		static void seamothPatch(Vehicle __instance, TechType techType, int slotID) => postfix(__instance, techType, slotID);
 	}
 
 	// infinite torpedoes cheat

@@ -71,7 +71,7 @@ namespace FloatingCargoCrate
 		int containerSize = 0;
 
 		Rigidbody rigidbody;
-		StorageContainer storageContainer => _cachedSC ?? (_cachedSC = gameObject.GetComponentInChildren<StorageContainer>());
+		StorageContainer storageContainer => _cachedSC ??= gameObject.GetComponentInChildren<StorageContainer>();
 		StorageContainer _cachedSC;
 
 		string id;

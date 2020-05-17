@@ -53,8 +53,7 @@ namespace RemoteTorpedoDetonator
 			sound.Stop();
 			sound.Play();
 
-			foreach (var torpedo in FindObjectsOfType<SeamothTorpedo>())
-				torpedo.Explode();
+			FindObjectsOfType<SeamothTorpedo>().ForEach(torpedo => torpedo.Explode());
 		}
 	}
 }

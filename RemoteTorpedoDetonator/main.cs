@@ -10,14 +10,9 @@ namespace RemoteTorpedoDetonator
 
 		public static void patch()
 		{
-			HarmonyHelper.patchAll();
-
-			var patch = typeof(Vehicle_OnUpgradeModuleUse_Patch).method("Postfix");
-			HarmonyHelper.patch(typeof(Vehicle).method("OnUpgradeModuleUse"), postfix: patch);
-			HarmonyHelper.patch(typeof(SeaMoth).method("OnUpgradeModuleUse"), postfix: patch);
-
 			LanguageHelper.init();
 
+			HarmonyHelper.patchAll(true);
 			CraftHelper.patchAll();
 		}
 	}

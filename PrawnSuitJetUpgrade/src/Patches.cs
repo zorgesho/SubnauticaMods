@@ -10,19 +10,21 @@ namespace PrawnSuitJetUpgrade
 	{
 		static void Postfix(Exosuit __instance)
 		{
-			if (__instance.IsUnderwater() || !__instance.jumpJetsUpgraded || !__instance.jetsActive || __instance.thrustPower == 0f)
+			var ex = __instance;
+
+			if (ex.IsUnderwater() || !ex.jumpJetsUpgraded || !ex.jetsActive || ex.thrustPower == 0f)
 				return;
 
-			float d = 0.8f + __instance.thrustPower * 0.2f;
-			float d2 = Mathf.Clamp01(Mathf.Max(0f, -__instance.useRigidbody.velocity.y) / 6f) + 1f;
-			__instance.useRigidbody.AddForce(Vector3.up * Main.config.jetPowerAboveWater * d * d2, ForceMode.Acceleration);
+			float d = 0.8f + ex.thrustPower * 0.2f;
+			float d2 = Mathf.Clamp01(Mathf.Max(0f, -ex.useRigidbody.velocity.y) / 6f) + 1f;
+			ex.useRigidbody.AddForce(Vector3.up * Main.config.jetPowerAboveWater * d * d2, ForceMode.Acceleration);
 
 			// consume more thrust above water
-			float consumeMore = Time.fixedDeltaTime * __instance.thrustConsumption * Main.config.additionalThrustConsumptionAboveWater;
-			__instance.thrustPower = Mathf.Clamp01(__instance.thrustPower - consumeMore);
+			float consumeMore = Time.fixedDeltaTime * ex.thrustConsumption * Main.config.additionalThrustConsumptionAboveWater;
+			ex.thrustPower = Mathf.Clamp01(ex.thrustPower - consumeMore);
 
 			// consume more power above water
-			__instance.ConsumeEngineEnergy(Main.config.additionalPowerConsumptionAboveWater * Time.fixedDeltaTime);
+			ex.ConsumeEngineEnergy(Main.config.additionalPowerConsumptionAboveWater * Time.fixedDeltaTime);
 		}
 	}
 

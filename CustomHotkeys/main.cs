@@ -1,16 +1,15 @@
 ﻿using Common;
-using Common.Configuration;
+using Common.Harmony;
 
 namespace CustomHotkeys
 {
 	public static class Main
 	{
-		internal static ModConfig config = Config.tryLoad<ModConfig>();
+		internal static readonly ModConfig config = Mod.init<ModConfig>();
 
 		public static void patch()
 		{
 			HarmonyHelper.patchAll();
-
 			HotkeyHelper.init();
 		}
 	}

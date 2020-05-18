@@ -9,6 +9,7 @@ using UnityEngine;
 using UnityEngine.Events;
 
 using Common;
+using Common.Harmony;
 using Common.Reflection;
 
 namespace MiscPatches
@@ -133,8 +134,8 @@ namespace MiscPatches
 			MethodInfo maxSlotsCount = typeof(VehiclesLessQuickSlots).method(isSeamoth? nameof(_seamoth): nameof(_prawn));
 			var list = cins.ToList();
 
-			HarmonyHelper.ciRemove(list, 0, 5);
-			HarmonyHelper.ciInsert(list, 0, HarmonyHelper.toCIList(OpCodes.Ldarg_0, OpCodes.Call, maxSlotsCount, OpCodes.Stloc_0));
+			CIHelper.ciRemove(list, 0, 5);
+			CIHelper.ciInsert(list, 0, CIHelper.toCIList(OpCodes.Ldarg_0, OpCodes.Call, maxSlotsCount, OpCodes.Stloc_0));
 
 			return list;
 		}

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using Harmony;
 using UnityEngine;
 
-using Common;
+using Common.Harmony;
 using Common.Configuration;
 
 namespace GravTrapImproved
@@ -38,14 +38,14 @@ namespace GravTrapImproved
 		[HarmonyPatch(typeof(Gravsphere), "OnTriggerEnter")] // patching max count of attracted objects
 		static IEnumerable<CodeInstruction> patchObjectMaxCount(IEnumerable<CodeInstruction> cins, ILGenerator ilg)
 		{
-			return HarmonyHelper.constToCfgVar<sbyte, GravTrapMK2.Tag>(cins, 12, nameof(Main.config.mk2MaxObjects), ilg);
+			return CIHelper.constToCfgVar<sbyte, GravTrapMK2.Tag>(cins, 12, nameof(Main.config.mk2MaxObjects), ilg);
 		}
 
 		[HarmonyTranspiler]
 		[HarmonyPatch(typeof(Gravsphere), "ApplyGravitation")] // patching max force applied to attracted objects
 		static IEnumerable<CodeInstruction> patchMaxForce(IEnumerable<CodeInstruction> cins, ILGenerator ilg)
 		{
-			return HarmonyHelper.constToCfgVar<float, GravTrapMK2.Tag>(cins, 15f, nameof(Main.config.mk2MaxForce), ilg);
+			return CIHelper.constToCfgVar<float, GravTrapMK2.Tag>(cins, 15f, nameof(Main.config.mk2MaxForce), ilg);
 		}
 
 

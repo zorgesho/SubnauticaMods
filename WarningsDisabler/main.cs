@@ -1,4 +1,5 @@
 ﻿using Common;
+using Common.Harmony;
 
 namespace WarningsDisabler
 {
@@ -9,7 +10,6 @@ namespace WarningsDisabler
 		public static void patch()
 		{
 			HarmonyHelper.patchAll();
-
 			LanguageHelper.init();
 		}
 	}

@@ -1,9 +1,9 @@
 ﻿using Harmony;
-using Common;
+using Common.Harmony;
 
 namespace ModsOptionsAdjusted
 {
-	[HarmonyHelper.PatchClass]
+	[PatchClass]
 	static class OptionsPanelInfo
 	{
 		public static int modsTabIndex { get; private set; } = -1;

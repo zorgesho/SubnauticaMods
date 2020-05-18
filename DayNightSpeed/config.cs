@@ -2,6 +2,7 @@
 using System.Linq;
 
 using Common;
+using Common.Harmony;
 using Common.Reflection;
 using Common.Configuration;
 
@@ -20,7 +21,7 @@ namespace DayNightSpeed
 
 		[Options.Field("Use additional multipliers")]
 		[Field.Action(typeof(SpeedsHider))]
-		[Options.FinalizeAction(typeof(HarmonyHelper.UpdateOptionalPatches))]
+		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 		public readonly bool useAuxSpeeds = false;
 
 		[Options.Field("Hunger/thrist", tooltipType: typeof(Tooltips.HungerThrist))]
@@ -29,22 +30,22 @@ namespace DayNightSpeed
 		public float auxSpeedHungerThrist => useAuxSpeeds? speedHungerThrist: 1.0f;
 
 		[Options.Field("Plants growth", tooltipType: typeof(Tooltips.Plants))]
-		[Options.FinalizeAction(typeof(HarmonyHelper.UpdateOptionalPatches))]
+		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 		[Slider_0_100][Range_001_100][HideableSpeed]
 		public readonly float speedPlantsGrow = 1.0f;
 
 		[Options.Field("Eggs hatching", tooltipType: typeof(Tooltips.Eggs))]
-		[Options.FinalizeAction(typeof(HarmonyHelper.UpdateOptionalPatches))]
+		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 		[Slider_0_100][Range_001_100][HideableSpeed]
 		public readonly float speedEggsHatching = 1.0f;
 
 		[Options.Field("Creatures growth", tooltipType: typeof(Tooltips.Creatures))]
-		[Options.FinalizeAction(typeof(HarmonyHelper.UpdateOptionalPatches))]
+		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 		[Slider_0_100][Range_001_100][HideableSpeed]
 		public readonly float speedCreaturesGrow = 1.0f;
 
 		[Options.Field("Medkit fabrication", tooltipType: typeof(Tooltips.Medkit))]
-		[Options.FinalizeAction(typeof(HarmonyHelper.UpdateOptionalPatches))]
+		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 		[Slider_0_100][Range_001_100][HideableSpeed]
 		public readonly float speedMedkitInterval = 1.0f;
 

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Common;
+using Common.Harmony;
 
 namespace ConsoleImproved
 {
@@ -16,7 +17,7 @@ namespace ConsoleImproved
 		{
 			void OnConsoleCommand_logpatches(NotificationCenter.Notification n)
 			{
-				$"Current patches:\n{HarmonyHelper.getPatchesReport(n.getArg(0))}".log();
+				$"Current patches:\n{PatchesReport.get(n.getArg(0))}".log();
 			}
 
 			void OnConsoleCommand_pinpatches(NotificationCenter.Notification n)
@@ -33,7 +34,7 @@ namespace ConsoleImproved
 				{
 					while (true)
 					{
-						$"\n{HarmonyHelper.getPatchesReport(harmonyID, omitNames)}".onScreen($"patches ({harmonyID})");
+						$"\n{PatchesReport.get(harmonyID, omitNames)}".onScreen($"patches ({harmonyID})");
 						yield return new WaitForSeconds(refreshSecs);
 					}
 				}

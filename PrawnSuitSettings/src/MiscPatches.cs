@@ -1,10 +1,10 @@
 ﻿using Harmony;
-using Common;
+using Common.Harmony;
 
 namespace PrawnSuitSettings
 {
 	// don't play propulsion cannon arm 'ready' animation when pointed on pickable object
-	[HarmonyHelper.OptionalPatch]
+	[OptionalPatch]
 	[HarmonyPatch(typeof(PropulsionCannon), "UpdateActive")]
 	static class PropulsionCannon_UpdateActive_Patch
 	{

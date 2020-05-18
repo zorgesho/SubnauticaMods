@@ -1,11 +1,11 @@
-﻿using Common;
-//using Common.Configuration;
+﻿//using Common;
+using Common.Harmony;
 
 namespace VehicleCameraDrone
 {
 	public static class Main
 	{
-		//internal static ModConfig config = Config.tryLoad<ModConfig>();
+		//internal static readonly ModConfig config = Mod.init<ModConfig>();
 
 		public static void patch()
 		{

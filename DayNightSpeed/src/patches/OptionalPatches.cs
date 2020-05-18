@@ -5,12 +5,13 @@ using System.Collections.Generic;
 using Harmony;
 
 using Common;
+using Common.Harmony;
 using Common.Reflection;
 
 namespace DayNightSpeed
 {
 	using CIEnumerable = IEnumerable<CodeInstruction>;
-	using static Common.HarmonyHelper;
+	using static CIHelper;
 
 	// modifying egg hatching time
 	[OptionalPatch]

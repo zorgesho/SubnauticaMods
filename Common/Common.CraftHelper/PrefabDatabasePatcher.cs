@@ -7,6 +7,8 @@ using UnityEngine;
 
 namespace Common.Crafting
 {
+	using Harmony;
+
 	static class PrefabDatabasePatcher
 	{
 		static Dictionary<string, CraftableObject> prefabs = null;

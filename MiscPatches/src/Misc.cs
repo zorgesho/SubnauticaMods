@@ -9,6 +9,7 @@ using UnityEngine;
 using UnityEngine.Events;
 
 using Common;
+using Common.Harmony;
 using Common.Reflection;
 
 namespace MiscPatches
@@ -135,12 +136,12 @@ namespace MiscPatches
 			{
 				var list = cins.ToList();
 
-				int indexForInject = list.FindIndex(ci => ci.isOp(OpCodes.Brfalse)) + 5;													$"indexForInject: {indexForInject}".logDbg();
-				int indexForJump   = list.FindIndex(indexForInject, ci => ci.isOp(OpCodes.Brfalse));										$"indexForJump: {indexForJump}".logDbg();
+				int indexForInject = list.FindIndex(ci => ci.isOp(OpCodes.Brfalse)) + 5;
+				int indexForJump   = list.FindIndex(indexForInject, ci => ci.isOp(OpCodes.Brfalse));
 
 				Common.Debug.assert(indexForInject >= 5 && indexForJump != -1);
 
-				HarmonyHelper.ciInsert(list, indexForInject, new List<CodeInstruction>()
+				CIHelper.ciInsert(list, indexForInject, new List<CodeInstruction>()
 				{
 					new CodeInstruction(OpCodes.Ldloc_S, 11),
 					new CodeInstruction(OpCodes.Call, typeof(PropRepCannonImmunity).method(nameof(PropRepCannonImmunity.isObjectImmune))),
@@ -164,7 +165,7 @@ namespace MiscPatches
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins)
 			{
 				FieldInfo chargeSpeed = typeof(Charger).field("chargeSpeed");
-				return HarmonyHelper.ciRemove(cins, ci => ci.isOp(OpCodes.Ldfld, chargeSpeed), +2, 2); // remove "*capacity"
+				return CIHelper.ciRemove(cins, ci => ci.isOp(OpCodes.Ldfld, chargeSpeed), +2, 2); // remove "*capacity"
 			}
 		}
 

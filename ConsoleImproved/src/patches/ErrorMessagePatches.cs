@@ -7,7 +7,7 @@ using Harmony;
 using UnityEngine;
 using UnityEngine.UI;
 
-using Common;
+using Common.Harmony;
 using Common.Reflection;
 using Common.Configuration;
 
@@ -111,7 +111,7 @@ namespace ConsoleImproved
 
 
 	// don't clear onscreen messages while console is open
-	[HarmonyHelper.OptionalPatch]
+	[OptionalPatch]
 	[HarmonyPatch(typeof(ErrorMessage), "OnUpdate")]
 	static class ErrorMessage_OnUpdate_Patch
 	{
@@ -124,7 +124,7 @@ namespace ConsoleImproved
 			// is console visible
 			void _injectStateCheck(int indexToInject, object labelToJump)
 			{
-				HarmonyHelper.ciInsert(list, indexToInject, HarmonyHelper.toCIList
+				CIHelper.ciInsert(list, indexToInject, CIHelper.toCIList
 				(
 					OpCodes.Ldsfld, typeof(DevConsole).field(nameof(DevConsole.instance)),
 					OpCodes.Ldfld,  typeof(DevConsole).field(nameof(DevConsole.state)),

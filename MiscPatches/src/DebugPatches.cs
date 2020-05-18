@@ -8,13 +8,14 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 using Common;
+using Common.Harmony;
 using Common.Reflection;
 using Common.Configuration;
 
 namespace MiscPatches
 {
 	// for testing loot spawning (Main.config.loolSpawnRerollCount for control)
-	[HarmonyHelper.OptionalPatch]
+	[OptionalPatch]
 	[HarmonyPatch(typeof(CellManager), "GetPrefabForSlot")]
 	static class CellManager_GetPrefabForSlot_Patch
 	{
@@ -41,7 +42,7 @@ namespace MiscPatches
 	}
 
 	// ignore limits for propulsion cannon
-	[HarmonyHelper.OptionalPatch]
+	[OptionalPatch]
 	[HarmonyPatch(typeof(PropulsionCannon), "ValidateObject")]
 	static class PropulsionCannon_ValidateObject_Patch
 	{
@@ -76,7 +77,7 @@ namespace MiscPatches
 
 	static class ScannerRoomCheat
 	{
-		[HarmonyHelper.OptionalPatch]
+		[OptionalPatch]
 		[HarmonyPatch(typeof(MapRoomFunctionality), "GetScanRange")]
 		static class MapRoomFunctionality_GetScanRange_Patch
 		{
@@ -89,7 +90,7 @@ namespace MiscPatches
 			}
 		}
 
-		[HarmonyHelper.OptionalPatch]
+		[OptionalPatch]
 		[HarmonyPatch(typeof(MapRoomFunctionality), "GetScanInterval")]
 		static class MapRoomFunctionality_GetScanInterval_Patch
 		{
@@ -106,7 +107,7 @@ namespace MiscPatches
 
 	static class FastStart
 	{
-		[HarmonyHelper.OptionalPatch]
+		[OptionalPatch]
 		[HarmonyPatch(typeof(MainGameController), "Start")]
 		static class MainGameController_Start_Patch
 		{
@@ -140,7 +141,7 @@ namespace MiscPatches
 			}
 		}
 
-		[HarmonyHelper.OptionalPatch]
+		[OptionalPatch]
 		[HarmonyPatch(typeof(LightmappedPrefabs), "Awake")]
 		static class LightmappedPrefabs_Awake_Patch
 		{
@@ -160,7 +161,7 @@ namespace MiscPatches
 			}
 		}
 
-		[HarmonyHelper.OptionalPatch]
+		[OptionalPatch]
 		[HarmonyPatch(typeof(uGUI_OptionsPanel), "SyncTerrainChangeRequiresRestartText")]
 		static class ModOptionsPanelFix
 		{

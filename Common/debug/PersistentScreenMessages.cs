@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace Common
 {
+	using Harmony;
 	using Reflection;
 
 	static partial class Debug

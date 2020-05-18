@@ -1,4 +1,4 @@
-﻿using Common;
+﻿using Common.Harmony;
 using Common.Configuration;
 
 namespace PrawnSuitSettings
@@ -16,7 +16,7 @@ namespace PrawnSuitSettings
 			[Options.Field("Damage from collisions", "Damage for Prawn Suit from collisions with terrain and other objects")]
 			[Field.Action(typeof(Hider))]
 			[Options.Hideable(typeof(Options.Components.Hider.Ignore), "")]
-			[Options.FinalizeAction(typeof(HarmonyHelper.UpdateOptionalPatches))]
+			[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 			public readonly bool enabled = false;
 
 			[Options.Field("\tMinimum speed", "Prawn Suit minimum speed to get self damage from collision")]
@@ -42,7 +42,7 @@ namespace PrawnSuitSettings
 			[Options.Field("Arms additional energy usage", "Energy consuming for drill arm and grappling arm")]
 			[Field.Action(typeof(Hider))]
 			[Options.Hideable(typeof(Options.Components.Hider.Ignore), "")]
-			[Options.FinalizeAction(typeof(HarmonyHelper.UpdateOptionalPatches))]
+			[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 			public readonly bool enabled = false;
 
 			[Options.Field("\tDrill arm", "Using drill arm costs that much energy units per second")]
@@ -70,15 +70,15 @@ namespace PrawnSuitSettings
 		public readonly ArmsEnergyUsageSettings armsEnergyUsage = new ArmsEnergyUsageSettings();
 
 		[Options.Field("Propulsion arm 'ready' animation", "Whether propulsion arm should play animation when pointed to something pickupable")]
-		[Options.FinalizeAction(typeof(HarmonyHelper.UpdateOptionalPatches))]
+		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 		public readonly bool readyAnimationForPropulsionCannon = true;
 
 		[Options.Field("Toggleable drill arm", "Whether you need to hold mouse button while using drill arm")]
-		[Options.FinalizeAction(typeof(HarmonyHelper.UpdateOptionalPatches))]
+		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 		public readonly bool toggleableDrillArm = false;
 
 		[Options.Field("Auto pickup resources after drilling", "Drilled resources will be added to the Prawn Suit storage automatically")]
-		[Options.FinalizeAction(typeof(HarmonyHelper.UpdateOptionalPatches))]
+		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 		public readonly bool autoPickupDrillableResources = true;
 	}
 }

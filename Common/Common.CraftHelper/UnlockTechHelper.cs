@@ -7,6 +7,7 @@ using SMLHelper.V2.Handlers;
 
 namespace Common.Crafting
 {
+	using Harmony;
 	using Reflection;
 
 	static class UnlockTechHelper
@@ -73,7 +74,7 @@ namespace Common.Crafting
 		[HarmonyTranspiler]
 		[HarmonyPatch(typeof(PDAScanner), "Scan")]
 		static IEnumerable<CodeInstruction> scannerPatch(IEnumerable<CodeInstruction> cins) =>
-			HarmonyHelper.ciInsert(cins,
+			CIHelper.ciInsert(cins,
 				cin => cin.isOp(OpCodes.Stloc_0), +1, 1,
 					OpCodes.Ldloc_0,
 					new CodeInstruction(OpCodes.Call, typeof(UnlockTechHelper).method(nameof(UnlockTechHelper.substituteTechType))),

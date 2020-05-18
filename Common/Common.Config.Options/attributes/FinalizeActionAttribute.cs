@@ -5,6 +5,8 @@ using Harmony;
 
 namespace Common.Configuration
 {
+	using Harmony;
+
 	partial class Options
 	{
 		// action on event of changing field

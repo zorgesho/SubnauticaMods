@@ -5,15 +5,15 @@ using System.Collections.Generic;
 
 using Harmony;
 
-namespace Common
+namespace Common.Harmony
 {
 	using CIEnumerable = IEnumerable<CodeInstruction>;
 	using CIList = List<CodeInstruction>;
 	using CIPredicate = Predicate<CodeInstruction>;
 
-	static partial class HarmonyHelper
+	static partial class HarmonyExtensions
 	{
-		public static bool isLDC<T>(this CodeInstruction ci, T val) => ci.isOp(LdcOpCode.get<T>(), val);
+		public static bool isLDC<T>(this CodeInstruction ci, T val) => ci.isOp(CIHelper.LdcOpCode.get<T>(), val);
 
 		public static bool isOp(this CodeInstruction ci, OpCode opcode, object operand = null) =>
 			ci.opcode == opcode && (operand == null || Equals(ci.operand, operand));
@@ -21,9 +21,10 @@ namespace Common
 		// for local variables ops
 		public static bool isOpLoc(this CodeInstruction ci, OpCode opcode, int index) =>
 			ci.opcode == opcode && ((ci.operand as LocalBuilder)?.LocalIndex == index);
+	}
 
-#region CodeInstruction sequences manipulation methods
-
+	static partial class CIHelper // CodeInstruction sequences manipulation methods
+	{
 		#region CIList methods
 		// makes list with CodeInstructions from various objects (see 'switch' for object types)
 		public static CIList toCIList(params object[] cins)
@@ -70,11 +71,11 @@ namespace Common
 
 		#region ciInsert
 		// maxMatchCount = 0 for all predicate matches
-		// indexDelta - change actual index from matched for insertion
-		// if indexDelta is 0 than cinsToInsert will be inserted right before finded instruction
+		// indexOffset - change actual index from matched for insertion
+		// if indexOffset is 0 than cinsToInsert will be inserted right before finded instruction
 		// throws assert exception if there were no matches at all or if maxMatchCount > 0 and there were less predicate matches
-		public static CIList ciInsert(CIEnumerable cins, CIPredicate predicate, int indexDelta, int maxMatchCount, params object[] cinsToInsert) =>
-			ciInsert(cins.ToList(), predicate, indexDelta, maxMatchCount, cinsToInsert);
+		public static CIList ciInsert(CIEnumerable cins, CIPredicate predicate, int indexOffset, int maxMatchCount, params object[] cinsToInsert) =>
+			ciInsert(cins.ToList(), predicate, indexOffset, maxMatchCount, cinsToInsert);
 
 		// for just first predicate match (insert right after finded instruction)
 		public static CIList ciInsert(CIEnumerable cins, CIPredicate predicate, params object[] cinsToInsert) =>
@@ -84,18 +85,18 @@ namespace Common
 		public static CIList ciInsert(CIList list, CIPredicate predicate, params object[] cinsToInsert) =>
 			ciInsert(list, predicate, 1, 1, cinsToInsert);
 
-		public static CIList ciInsert(CIList list, CIPredicate predicate, int indexDelta, int maxMatchCount, params object[] cinsToInsert)
+		public static CIList ciInsert(CIList list, CIPredicate predicate, int indexOffset, int maxMatchCount, params object[] cinsToInsert)
 		{
 			bool anyInserts = false; // just for assert
 			int index, index0 = 0;
 
 			var listToInsert = toCIList(cinsToInsert);
-			int indexIncrement = listToInsert.Count + Math.Max(1, indexDelta);
+			int indexIncrement = listToInsert.Count + Math.Max(1, indexOffset);
 
 			while ((index = list.FindIndex(index0, predicate)) != -1 && (anyInserts = true))
 			{
-				ciInsert(list, index + indexDelta, listToInsert);
-				Debug.assert(indexDelta <= 1 || list.FindIndex(index + 1, indexDelta - 1, predicate) == -1); // just in case if indexDelta > 1
+				ciInsert(list, index + indexOffset, listToInsert);
+				Debug.assert(indexOffset <= 1 || list.FindIndex(index + 1, indexOffset - 1, predicate) == -1); // just in case if indexOffset > 1
 
 				index0 = index + indexIncrement; // next after finded or next after inserted
 
@@ -135,15 +136,15 @@ namespace Common
 		#endregion
 
 		#region ciRemove
-		// indexDelta - change actual index from matched for removing
+		// indexOffset - change actual index from matched for removing
 		// countToRemove - instructions count to be removed
-		public static CIList ciRemove(CIEnumerable cins, CIPredicate predicate, int indexDelta, int countToRemove) =>
-			ciRemove(cins.ToList(), predicate, indexDelta, countToRemove);
+		public static CIList ciRemove(CIEnumerable cins, CIPredicate predicate, int indexOffset, int countToRemove) =>
+			ciRemove(cins.ToList(), predicate, indexOffset, countToRemove);
 
-		public static CIList ciRemove(CIList list, CIPredicate predicate, int indexDelta, int countToRemove)
+		public static CIList ciRemove(CIList list, CIPredicate predicate, int indexOffset, int countToRemove)
 		{
 			int index = list.FindIndex(predicate);
-			return ciRemove(list, (index == -1? -1: index + indexDelta), countToRemove);
+			return ciRemove(list, (index == -1? -1: index + indexOffset), countToRemove);
 		}
 
 		public static CIList ciRemove(CIEnumerable cins, int index, int countToRemove) =>
@@ -182,12 +183,11 @@ namespace Common
 			return list;
 		}
 		#endregion
-#endregion
 
-#region LdcOpCode
+		#region LdcOpCode
 		// helper class for getting LDC opcode based on number type
 		// https://stackoverflow.com/questions/600978/how-to-do-template-specialization-in-c-sharp
-		static class LdcOpCode
+		public static class LdcOpCode
 		{
 			interface IGetOpCode<T> { OpCode get(); }
 
@@ -209,6 +209,6 @@ namespace Common
 
 			public static OpCode get<T>() => GetOpCode<T>.S.get();
 		}
-#endregion
+		#endregion
 	}
 }

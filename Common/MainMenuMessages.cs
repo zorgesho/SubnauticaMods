@@ -8,6 +8,7 @@ using UnityEngine.SceneManagement;
 
 namespace Common
 {
+	using Harmony;
 	using Reflection;
 
 	static class MainMenuMessages
@@ -83,8 +84,8 @@ namespace Common
 
 			public static void unpatch()
 			{
-				HarmonyHelper.harmonyInstance.Unpatch(typeof(ErrorMessage).method("Awake"), typeof(Patches).method(nameof(addMessages)));
-				HarmonyHelper.harmonyInstance.Unpatch(typeof(ErrorMessage).method("OnUpdate"), typeof(Patches).method(nameof(updateMessages)));
+				HarmonyHelper.unpatch(typeof(ErrorMessage).method("Awake"), typeof(Patches).method(nameof(addMessages)));
+				HarmonyHelper.unpatch(typeof(ErrorMessage).method("OnUpdate"), typeof(Patches).method(nameof(updateMessages)));
 			}
 
 			[HarmonyPostfix]
@@ -103,7 +104,7 @@ namespace Common
 			[HarmonyPatch(typeof(ErrorMessage), "OnUpdate")]
 			static IEnumerable<CodeInstruction> updateMessages(IEnumerable<CodeInstruction> cins)
 			{
-				return HarmonyHelper.ciInsert(cins, cin => cin.isOpLoc(OpCodes.Stloc_S, 11), +0, 1,
+				return CIHelper.ciInsert(cins, cin => cin.isOpLoc(OpCodes.Stloc_S, 11), +0, 1,
 						OpCodes.Ldloc_S, 6,
 						OpCodes.Call, typeof(Patches).method(nameof(_getVal)));
 			}

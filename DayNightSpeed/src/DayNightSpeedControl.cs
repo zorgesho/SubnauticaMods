@@ -6,12 +6,13 @@ using Harmony;
 using UnityEngine;
 
 using Common;
+using Common.Harmony;
 using Common.Reflection;
 using Common.Configuration;
 
 namespace DayNightSpeed
 {
-	[HarmonyHelper.PatchClass]
+	[PatchClass]
 	static partial class DayNightSpeedControl
 	{
 		static GameObject gameObject;

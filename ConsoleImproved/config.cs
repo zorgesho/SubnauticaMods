@@ -1,4 +1,5 @@
 ﻿using Common;
+using Common.Harmony;
 using Common.Configuration;
 
 namespace ConsoleImproved
@@ -24,7 +25,7 @@ namespace ConsoleImproved
 		public readonly bool consoleEnabled = true;
 
 		[Options.Field("Keep messages on the screen", "Keep messages on the screen while console is open")]
-		[Options.FinalizeAction(typeof(HarmonyHelper.UpdateOptionalPatches))]
+		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 		public readonly bool keepMessagesOnScreen = true;
 
 		public readonly bool fixVanillaCommandsFloatParse = false;

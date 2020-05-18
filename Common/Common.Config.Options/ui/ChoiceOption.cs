@@ -6,6 +6,7 @@ using SMLHelper.V2.Options;
 
 namespace Common.Configuration
 {
+	using Harmony;
 	using Reflection;
 
 	partial class Options

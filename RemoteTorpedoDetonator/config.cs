@@ -1,4 +1,5 @@
 ﻿using Common;
+using Common.Harmony;
 using Common.Configuration;
 
 namespace RemoteTorpedoDetonator
@@ -7,19 +8,19 @@ namespace RemoteTorpedoDetonator
 	class ModConfig: Config
 	{
 		[Field.Range(min: 1f)]
-		[Field.Action(typeof(HarmonyHelper.UpdateOptionalPatches))]
+		[Field.Action(typeof(UpdateOptionalPatches))]
 		public readonly float torpedoSpeed = 10f;
 
 		[Field.Range(min: 0f)]
 		public readonly float torpedoCooldown = 5f;
 
-		[Field.Action(typeof(HarmonyHelper.UpdateOptionalPatches))]
+		[Field.Action(typeof(UpdateOptionalPatches))]
 		public readonly bool homingTorpedoes = true;
 
 		public readonly bool showHotkeyMessage = true;
 		public readonly GameInput.Button hotkey = GameInput.Button.Reload;
 
-		[Field.Action(typeof(HarmonyHelper.UpdateOptionalPatches))]
+		[Field.Action(typeof(UpdateOptionalPatches))]
 		public readonly bool cheatInfiniteTorpedoes = false;
 	}
 

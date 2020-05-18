@@ -3,6 +3,7 @@ using UnityEngine;
 using SMLHelper.V2.Handlers;
 
 using Common;
+using Common.Harmony;
 using Common.Configuration;
 
 namespace PrawnSuitSettings
@@ -35,7 +36,7 @@ namespace PrawnSuitSettings
 		}
 
 		// Energy usage for drill arm
-		[HarmonyHelper.OptionalPatch]
+		[OptionalPatch]
 		[HarmonyPatch(typeof(ExosuitDrillArm), "IExosuitArm.Update")]
 		static class ExosuitDrillArm_Update_Patch
 		{
@@ -52,7 +53,7 @@ namespace PrawnSuitSettings
 		}
 
 		// Energy usage for grappling arm
-		[HarmonyHelper.OptionalPatch]
+		[OptionalPatch]
 		[HarmonyPatch(typeof(ExosuitGrapplingArm), "FixedUpdate")]
 		static class ExosuitGrapplingArm_FixedUpdate_Patch
 		{

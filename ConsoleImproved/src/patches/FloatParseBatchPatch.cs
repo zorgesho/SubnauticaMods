@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Harmony;
 
 using Common;
+using Common.Harmony;
 using Common.Reflection;
 
 namespace ConsoleImproved
@@ -19,8 +20,8 @@ namespace ConsoleImproved
 			MethodInfo floatParseCulture = typeof(float).method("Parse", typeof(string), typeof(IFormatProvider));
 			MethodInfo getInvariantCulture = typeof(System.Globalization.CultureInfo).method("get_InvariantCulture");
 
-			var list = HarmonyHelper.ciReplace(cins, ci => ci.isOp(OpCodes.Call, floatParse),
-												new CodeInstruction(OpCodes.Call, getInvariantCulture), new CodeInstruction(OpCodes.Call, floatParseCulture));
+			var list = CIHelper.ciReplace(cins, ci => ci.isOp(OpCodes.Call, floatParse),
+											new CodeInstruction(OpCodes.Call, getInvariantCulture), new CodeInstruction(OpCodes.Call, floatParseCulture));
 
 			Debug.assert(list.FindIndex(ci => ci.isOp(OpCodes.Call, floatParse)) == -1);
 

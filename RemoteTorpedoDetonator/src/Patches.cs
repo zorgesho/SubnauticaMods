@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using Harmony;
 
 using Common;
+using Common.Harmony;
 
 namespace RemoteTorpedoDetonator
 {
-	[HarmonyHelper.OptionalPatch]
+	[OptionalPatch]
 	[HarmonyPatch(typeof(SeamothTorpedo), "Awake")]
 	static class SeamothTorpedo_Awake_Patch
 	{
@@ -30,7 +31,7 @@ namespace RemoteTorpedoDetonator
 		}
 	}
 
-	[HarmonyHelper.PatchClass]
+	[PatchClass]
 	static class Vehicle_OnUpgradeModuleUse_Patch
 	{
 		static void postfix(Vehicle vehicle, TechType techType, int slotID)
@@ -52,13 +53,13 @@ namespace RemoteTorpedoDetonator
 	}
 
 	// infinite torpedoes cheat
-	[HarmonyHelper.OptionalPatch]
+	[OptionalPatch]
 	[HarmonyPatch(typeof(Vehicle), "TorpedoShot")]
 	static class Vehicle_TorpedoShot_Patch
 	{
 		static bool Prepare() => Main.config.cheatInfiniteTorpedoes;
 
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins) =>
-			HarmonyHelper.ciRemove(cins, ci => ci.isOp(OpCodes.Ldarg_0), +0, 5); // removing "container.DestroyItem(torpedoType.techType)" check
+			CIHelper.ciRemove(cins, ci => ci.isOp(OpCodes.Ldarg_0), +0, 5); // removing "container.DestroyItem(torpedoType.techType)" check
 	}
 }

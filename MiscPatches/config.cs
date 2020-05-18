@@ -1,4 +1,4 @@
-﻿using Common;
+﻿using Common.Harmony;
 using Common.Configuration;
 
 namespace MiscPatches
@@ -39,18 +39,18 @@ namespace MiscPatches
 
 			[Options.Field("Loot reroll")]
 			[Options.Choice("None", 0, "x10", 10, "x100", 100)]
-			[Options.FinalizeAction(typeof(HarmonyHelper.UpdateOptionalPatches))]
+			[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 			public readonly int lootSpawnRerollCount = 0;
 
-			[Field.Action(typeof(HarmonyHelper.UpdateOptionalPatches))]
+			[Field.Action(typeof(UpdateOptionalPatches))]
 			public readonly bool propulsionCannonIgnoreLimits = false;
 
 			[Field.Action(typeof(VFXController_SpawnFX_Patch.Purge))]
-			[Field.Action(typeof(HarmonyHelper.UpdateOptionalPatches))]
+			[Field.Action(typeof(UpdateOptionalPatches))]
 			public readonly bool keepParticleSystemsAlive = false;
 
 			[Options.Field("Scanner room cheat")]
-			[Options.FinalizeAction(typeof(HarmonyHelper.UpdateOptionalPatches))]
+			[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 			public readonly bool scannerRoomCheat = false;
 
 			public class FastStart
@@ -60,7 +60,7 @@ namespace MiscPatches
 
 				[Options.Field("Fast start")]
 				[Field.Action(typeof(Hider))]
-				[Options.FinalizeAction(typeof(HarmonyHelper.UpdateOptionalPatches))]
+				[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 				public readonly bool enabled = false;
 
 				[Options.Field("\tLoad essentials")]

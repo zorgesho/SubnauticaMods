@@ -1,4 +1,5 @@
 ﻿using Common;
+using Common.Harmony;
 using Common.Crafting;
 
 namespace PrawnSuitGrapplingArmUpgrade

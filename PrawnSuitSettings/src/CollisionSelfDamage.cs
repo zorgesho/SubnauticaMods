@@ -2,6 +2,7 @@
 using UnityEngine;
 
 using Common;
+using Common.Harmony;
 using Common.Configuration;
 
 namespace PrawnSuitSettings
@@ -33,7 +34,7 @@ namespace PrawnSuitSettings
 		}
 
 
-		[HarmonyHelper.OptionalPatch]
+		[OptionalPatch]
 		[HarmonyPatch(typeof(Exosuit), "Start")]
 		static class Exosuit_Start_Patch
 		{
@@ -43,7 +44,7 @@ namespace PrawnSuitSettings
 		}
 
 
-		[HarmonyHelper.OptionalPatch]
+		[OptionalPatch]
 		[HarmonyPatch(typeof(Exosuit), "OnUpgradeModuleChange")]
 		static class Exosuit_OnUpgradeModuleChange_Patch
 		{

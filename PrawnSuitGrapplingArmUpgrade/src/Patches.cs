@@ -5,9 +5,11 @@ using System.Collections.Generic;
 using Harmony;
 using UnityEngine;
 
+using Common.Harmony;
+
 namespace PrawnSuitGrapplingArmUpgrade
 {
-	using static Common.HarmonyHelper;
+	using static CIHelper;
 	using CIEnumerable = IEnumerable<CodeInstruction>;
 
 	[HarmonyPatch(typeof(Exosuit), "OnUpgradeModuleChange")]

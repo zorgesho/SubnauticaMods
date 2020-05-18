@@ -1,4 +1,4 @@
-﻿using Common;
+﻿using Common.Harmony;
 using Common.Crafting;
 
 namespace PrawnSuitSonarUpgrade
@@ -8,7 +8,6 @@ namespace PrawnSuitSonarUpgrade
 		public static void patch()
 		{
 			HarmonyHelper.patchAll();
-
 			CraftHelper.patchAll();
 		}
 	}

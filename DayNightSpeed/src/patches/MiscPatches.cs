@@ -5,11 +5,12 @@ using System.Collections.Generic;
 using Harmony;
 
 using Common;
+using Common.Harmony;
 
 namespace DayNightSpeed
 {
 	using CIEnumerable = IEnumerable<CodeInstruction>;
-	using static Common.HarmonyHelper;
+	using static CIHelper;
 
 	// fixing hunger/thrist timers
 	[HarmonyPatch(typeof(Survival), "UpdateStats")]

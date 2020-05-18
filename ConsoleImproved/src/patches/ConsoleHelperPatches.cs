@@ -3,7 +3,7 @@
 using Harmony;
 using UnityEngine;
 
-using Common;
+using Common.Harmony;
 
 namespace ConsoleImproved
 {
@@ -14,7 +14,7 @@ namespace ConsoleImproved
 		static class ConsoleInput_Validate_Patch
 		{
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins) =>
-				HarmonyHelper.ciRemove(cins, 0, 5); // remove first line "this.historyIndex = this.history.Count;"
+				CIHelper.ciRemove(cins, 0, 5); // remove first line "this.historyIndex = this.history.Count;"
 		}
 
 		[HarmonyPatch(typeof(DevConsole), "Awake")]

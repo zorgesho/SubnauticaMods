@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Harmony;
 
 using Common;
+using Common.Harmony;
 using Common.Reflection;
 using Common.Configuration;
 
@@ -58,7 +59,7 @@ namespace TrfHabitatBuilder
 	{
 		public void action()
 		{
-			HarmonyHelper.updateOptionalPatches();
+			OptionalPatches.update();
 
 			if (!Main.config.limitBlueprints)
 				uGUIBuilderMenu_Show_Patch.enableAllTabs();
@@ -68,7 +69,7 @@ namespace TrfHabitatBuilder
 	}
 
 	// patch for locking tabs in the builder menu based on helded builder
-	[HarmonyHelper.OptionalPatch]
+	[OptionalPatch]
 	[HarmonyPatch(typeof(uGUI_BuilderMenu), "Show")]
 	static class uGUIBuilderMenu_Show_Patch
 	{
@@ -118,7 +119,7 @@ namespace TrfHabitatBuilder
 
 
 	// patch for locking blueprints based on helded builder
-	[HarmonyHelper.OptionalPatch]
+	[OptionalPatch]
 	[HarmonyPatch(typeof(uGUI_BuilderMenu), "UpdateItems")]
 	static class uGUIBuilderMenu_UpdateItems_Patch
 	{
@@ -148,13 +149,13 @@ namespace TrfHabitatBuilder
 			list.Insert(0, new CodeInstruction(OpCodes.Call, typeof(uGUIBuilderMenu_UpdateItems_Patch).method(nameof(init))));
 
 			// insert after "TechUnlockState techUnlockState = KnownTech.GetTechUnlockState(techType);"
-			HarmonyHelper.ciInsert(list, cin => cin.isOpLoc(OpCodes.Stloc_S, 4), +1, 1,
+			CIHelper.ciInsert(list, cin => cin.isOpLoc(OpCodes.Stloc_S, 4), +1, 1,
 				OpCodes.Ldloc_3,
 				OpCodes.Ldloca_S, 4,
 				OpCodes.Call, typeof(uGUIBuilderMenu_UpdateItems_Patch).method(nameof(updateUnlockState)));
 
 			// insert after "this.iconGrid.AddItem"
-			HarmonyHelper.ciInsert(list, cin => cin.isOp(OpCodes.Ceq), +4, 1,
+			CIHelper.ciInsert(list, cin => cin.isOp(OpCodes.Ceq), +4, 1,
 				OpCodes.Ldloc_S, 4,
 				OpCodes.Ldloc_S, 5,
 				OpCodes.Call, typeof(uGUIBuilderMenu_UpdateItems_Patch).method(nameof(lockIcon)));

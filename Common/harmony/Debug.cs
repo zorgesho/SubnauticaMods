@@ -7,14 +7,12 @@ using System.Collections.Generic;
 
 using Harmony;
 
-namespace Common
+namespace Common.Harmony
 {
 	using Reflection;
 
-	static partial class HarmonyHelper
+	static partial class HarmonyExtensions
 	{
-#region CodeInstruction debug extensions
-
 		public static void log(this CodeInstruction ci) => $"{ci.opcode} {ci.operand}".log();
 
 		public static void log(this IEnumerable<CodeInstruction> cins, bool searchFirstOps = false)
@@ -47,72 +45,67 @@ namespace Common
 				$"{i}{isFirstOp}: {ci.opcode} {operandInfo} {_labelsInfo(ci)}".log();
 			}
 		}
-#endregion
+	}
 
-		// produces a list of all methods patched by all Harmony instances and their respective patches
-		public static string getPatchesReport(string harmonyID = null, bool omitNames = false) => PatchesReport.get(harmonyID, omitNames);
-
-		static class PatchesReport
+	// produces a list of all methods patched by all Harmony instances and their respective patches
+	static class PatchesReport
+	{
+		public static string get(string harmonyID = null, bool omitNames = false)
 		{
-			public static string get(string harmonyID, bool omitNames)
+			var patchedMethods = HarmonyHelper.harmonyInstance.GetPatchedMethods().ToList();
+			patchedMethods.Sort((m1, m2) => string.Compare(m1.fullName(), m2.fullName(), StringComparison.Ordinal));
+
+			var sb = new StringBuilder();
+			harmonyID = harmonyID?.ToLower();
+
+			foreach (var method in patchedMethods)
 			{
-				Debug.assert(harmonyInstance != null, "Harmony is not initialized");
+				var patchInfo = HarmonyHelper.getPatchInfo(method); // that's bottleneck
 
-				var patchedMethods = harmonyInstance.GetPatchedMethods().ToList();
-				patchedMethods.Sort((m1, m2) => string.Compare(m1.fullName(), m2.fullName(), StringComparison.Ordinal));
+				if (harmonyID != null && patchInfo.Owners.FirstOrDefault(id => id.ToLower().Contains(harmonyID)) == null)
+					continue;
 
-				var sb = new StringBuilder();
-				harmonyID = harmonyID?.ToLower();
-
-				foreach (var method in patchedMethods)
-				{
-					var patchInfo = getPatchInfo(method); // that's bottleneck
-
-					if (harmonyID != null && patchInfo.Owners.FirstOrDefault(id => id.ToLower().Contains(harmonyID)) == null)
-						continue;
-
-					appendMethodInfo(method, patchInfo, sb, omitNames);
-				}
-
-				return sb.ToString();
+				appendMethodInfo(method, patchInfo, sb, omitNames);
 			}
 
+			return sb.ToString();
+		}
 
-			static void appendMethodInfo(MethodBase method, Patches patchInfo, StringBuilder sb, bool omitNames)
+
+		static void appendMethodInfo(MethodBase method, Patches patchInfo, StringBuilder sb, bool omitNames)
+		{
+			int patchCount = patchInfo.Prefixes.Count + patchInfo.Postfixes.Count + patchInfo.Transpilers.Count;
+
+			if (patchCount == 0) // it can be zero if we first patch and then unpatch method
+				return;
+
+			sb.Append($"{method.fullName()}:");
+			if (patchCount > 1)
+				sb.AppendLine();
+
+			_appendPatches("PREFIX", patchInfo.Prefixes);
+			_appendPatches("POSTFIX", patchInfo.Postfixes);
+			_appendPatches("TRANSPILER", patchInfo.Transpilers);
+
+			void _appendPatches(string patchType, IList<Patch> patches)
 			{
-				int patchCount = patchInfo.Prefixes.Count + patchInfo.Postfixes.Count + patchInfo.Transpilers.Count;
-
-				if (patchCount == 0) // it can be zero if we first patch and then unpatch method
+				if (patches.Count == 0)
 					return;
 
-				sb.Append($"{method.fullName()}:");
-				if (patchCount > 1)
-					sb.AppendLine();
+				var sortedPatches = patches.ToList();
+				sortedPatches.Sort(); // sort patches in the same order they execute
 
-				_appendPatches("PREFIX", patchInfo.Prefixes);
-				_appendPatches("POSTFIX", patchInfo.Postfixes);
-				_appendPatches("TRANSPILER", patchInfo.Transpilers);
-
-				void _appendPatches(string patchType, IList<Patch> patches)
+				foreach (var patch in sortedPatches)
 				{
-					if (patches.Count == 0)
-						return;
+					sb.Append($"{(patchCount > 1?"\t":" ")}{patchType}: ({patch.owner}) ");
 
-					var sortedPatches = patches.ToList();
-					sortedPatches.Sort(); // sort patches in the same order they execute
+					if (patch.priority != Priority.Normal)
+						sb.Append($"[{patch.priority}] ");
 
-					foreach (var patch in sortedPatches)
-					{
-						sb.Append($"{(patchCount > 1?"\t":" ")}{patchType}: ({patch.owner}) ");
+					if (!omitNames)
+						sb.Append(patch.patch.fullName());
 
-						if (patch.priority != Priority.Normal)
-							sb.Append($"[{patch.priority}] ");
-
-						if (!omitNames)
-							sb.Append(patch.patch.fullName());
-
-						sb.AppendLine();
-					}
+					sb.AppendLine();
 				}
 			}
 		}

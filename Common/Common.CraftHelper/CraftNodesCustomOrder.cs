@@ -3,6 +3,7 @@ using SMLHelper.V2.Handlers;
 
 namespace Common.Crafting
 {
+	using Harmony;
 	using Reflection;
 
 	static class TreeNodeExtension

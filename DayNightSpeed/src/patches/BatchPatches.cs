@@ -6,12 +6,13 @@ using System.Collections.Generic;
 using Harmony;
 
 using Common;
+using Common.Harmony;
 using Common.Reflection;
 
 namespace DayNightSpeed
 {
 	using CIEnumerable = IEnumerable<CodeInstruction>;
-	using static Common.HarmonyHelper;
+	using static CIHelper;
 
 	static class DayNightCyclePatches
 	{
@@ -64,7 +65,7 @@ namespace DayNightSpeed
 		public static void init()
 		{
 			if (!inited && (inited = true))
-				patches.forEach(p => patch(p.Item2, transpiler: p.Item1));
+				patches.forEach(p => HarmonyHelper.patch(p.Item2, transpiler: p.Item1));
 		}
 	}
 }

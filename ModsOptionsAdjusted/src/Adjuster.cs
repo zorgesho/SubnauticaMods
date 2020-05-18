@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 using Common;
+using Common.Harmony;
 using Common.Reflection;
 
 namespace ModsOptionsAdjusted
@@ -13,7 +14,7 @@ namespace ModsOptionsAdjusted
 	// Adjusting mod options ui elements so they don't overlap with their text labels.
 	// We add corresponding 'adjuster' components to each ui element in mod options tab.
 	// Reason for using components is to skip one frame before manually adjust ui elements to make sure that Unity UI Layout components is updated
-	[HarmonyHelper.PatchClass]
+	[PatchClass]
 	static class ModOptionsAdjuster
 	{
 		static readonly Tuple<string, Type>[] optionTypes = new Tuple<string, Type>[]

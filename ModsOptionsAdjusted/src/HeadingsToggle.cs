@@ -7,13 +7,14 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
 using Common;
+using Common.Harmony;
 using Common.Configuration;
 
 namespace ModsOptionsAdjusted
 {
 	// Class for collapsing/expanding options in 'Mods' tab
 	// Options can be collapsed/expanded by clicking on mod's title or arrow button
-	[HarmonyHelper.PatchClass]
+	[PatchClass]
 	static class ModOptionsHeadingsToggle
 	{
 		enum HeadingState { Collapsed, Expanded };

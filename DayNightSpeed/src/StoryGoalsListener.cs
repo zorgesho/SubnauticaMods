@@ -6,13 +6,14 @@ using UnityEngine;
 using Story;
 
 using Common;
+using Common.Harmony;
 using Common.GameSerialization;
 
 namespace DayNightSpeed
 {
 	static partial class DayNightSpeedControl
 	{
-		[HarmonyHelper.PatchClass]
+		[PatchClass]
 		class StoryGoalsListener: MonoBehaviour
 		{
 			const float shortGoalDelay = 60f;

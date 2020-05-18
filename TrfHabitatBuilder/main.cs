@@ -1,4 +1,5 @@
 ﻿using Common;
+using Common.Harmony;
 using Common.Crafting;
 
 namespace TrfHabitatBuilder
@@ -10,7 +11,6 @@ namespace TrfHabitatBuilder
 		public static void patch()
 		{
 			HarmonyHelper.patchAll();
-
 			CraftHelper.patchAll();
 		}
 	}

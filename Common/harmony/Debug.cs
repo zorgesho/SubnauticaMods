@@ -9,6 +9,8 @@ using Harmony;
 
 namespace Common
 {
+	using Reflection;
+
 	static partial class HarmonyHelper
 	{
 #region CodeInstruction debug extensions

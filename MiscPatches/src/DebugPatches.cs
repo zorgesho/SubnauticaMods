@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 using Common;
+using Common.Reflection;
 using Common.Configuration;
 
 namespace MiscPatches

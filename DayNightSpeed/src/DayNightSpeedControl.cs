@@ -6,6 +6,7 @@ using Harmony;
 using UnityEngine;
 
 using Common;
+using Common.Reflection;
 using Common.Configuration;
 
 namespace DayNightSpeed

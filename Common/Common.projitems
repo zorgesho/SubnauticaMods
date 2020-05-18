@@ -24,6 +24,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)MiscInGame.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mod.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PathHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)reflection\Extensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)reflection\ReflectionHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)reflection\Wrappers.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UnityExtensions.cs" />
   </ItemGroup>
 </Project>

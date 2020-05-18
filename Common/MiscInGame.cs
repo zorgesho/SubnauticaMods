@@ -8,6 +8,8 @@ using UnityEngine.SceneManagement;
 
 namespace Common
 {
+	using Reflection;
+
 	static partial class StringExtensions
 	{
 		public static string onScreen(this string s)

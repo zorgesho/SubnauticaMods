@@ -7,6 +7,8 @@ using UnityEngine;
 
 namespace Common.Configuration
 {
+	using Reflection;
+
 	// for use in other mods
 	public static class ExportedCfgVarFields
 	{

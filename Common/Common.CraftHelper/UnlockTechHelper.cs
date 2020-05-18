@@ -7,6 +7,8 @@ using SMLHelper.V2.Handlers;
 
 namespace Common.Crafting
 {
+	using Reflection;
+
 	static class UnlockTechHelper
 	{
 		// key - original fragment tech type, value - substitute fragment tech type

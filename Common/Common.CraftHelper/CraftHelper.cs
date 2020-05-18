@@ -3,6 +3,8 @@ using System.Collections.Generic;
 
 namespace Common.Crafting
 {
+	using Reflection;
+
 	static partial class CraftHelper
 	{
 		// classes with this attribute will not be patched by patchAll

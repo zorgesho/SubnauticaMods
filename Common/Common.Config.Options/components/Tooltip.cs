@@ -5,6 +5,8 @@ using UnityEngine;
 
 namespace Common.Configuration
 {
+	using Reflection;
+
 	partial class Options
 	{
 		partial class Factory

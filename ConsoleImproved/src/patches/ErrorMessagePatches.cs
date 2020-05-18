@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 using Common;
+using Common.Reflection;
 using Common.Configuration;
 
 namespace ConsoleImproved

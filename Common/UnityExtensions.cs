@@ -9,6 +9,7 @@ using UnityEngine.Events;
 
 namespace Common
 {
+	using Reflection;
 	using Object = UnityEngine.Object;
 
 	static class ObjectAndComponentExtensions

@@ -8,6 +8,8 @@ using UnityEngine.SceneManagement;
 
 namespace Common
 {
+	using Reflection;
+
 	static class MainMenuMessages
 	{
 		public const int defaultSize = 25;

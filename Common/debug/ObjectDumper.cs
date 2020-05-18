@@ -7,6 +7,8 @@ using UnityEngine;
 
 namespace Common
 {
+	using Reflection;
+
 	static partial class Debug
 	{
 #if DEBUG

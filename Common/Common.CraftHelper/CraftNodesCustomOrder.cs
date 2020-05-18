@@ -3,6 +3,8 @@ using SMLHelper.V2.Handlers;
 
 namespace Common.Crafting
 {
+	using Reflection;
+
 	static class TreeNodeExtension
 	{
 		public static TreeNode insertNode(this TreeNode parent, string idAfter, TreeNode child)

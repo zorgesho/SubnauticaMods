@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Harmony;
 
 using Common;
+using Common.Reflection;
 
 namespace DayNightSpeed
 {

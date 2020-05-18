@@ -5,6 +5,8 @@ using UnityEngine.Events;
 
 namespace Common.Configuration
 {
+	using Reflection;
+
 	partial class Options
 	{
 		[AttributeUsage(AttributeTargets.Field)]
@@ -54,8 +56,8 @@ namespace Common.Configuration
 
 			// using reflection to avoid including UnityEngine.UI in all projects
 			static readonly Type eventSystem = ReflectionHelper.safeGetType("UnityEngine.UI", "UnityEngine.EventSystems.EventSystem");
-			static readonly ReflectionHelper.PropertyWrapper currentEventSystem = eventSystem.propertyWrap("current");
-			static readonly ReflectionHelper.MethodWrapper setSelectedGameObject = eventSystem.methodWrap("SetSelectedGameObject", typeof(GameObject));
+			static readonly PropertyWrapper currentEventSystem = eventSystem.propertyWrap("current");
+			static readonly MethodWrapper setSelectedGameObject = eventSystem.methodWrap("SetSelectedGameObject", typeof(GameObject));
 
 			void onClick()
 			{

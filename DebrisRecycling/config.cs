@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Common;
+using Common.Reflection;
 using Common.Configuration;
 
 namespace DebrisRecycling

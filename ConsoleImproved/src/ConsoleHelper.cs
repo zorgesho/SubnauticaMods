@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Common;
+using Common.Reflection;
 
 namespace ConsoleImproved
 {
@@ -86,7 +87,7 @@ namespace ConsoleImproved
 			const string getCfgVarValue = nameof(Common.Configuration.ExportedCfgVarFields.getFieldValue);
 
 			static List<string> cfgVarNames;
-			static List<ReflectionHelper.MethodWrapper> cfgVarGetters;
+			static List<MethodWrapper> cfgVarGetters;
 
 			// searching exported config fields in current assemblies
 			static void init()
@@ -95,7 +96,7 @@ namespace ConsoleImproved
 					return;
 
 				cfgVarNames = new List<string>();
-				cfgVarGetters = new List<ReflectionHelper.MethodWrapper>();
+				cfgVarGetters = new List<MethodWrapper>();
 
 				foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
 				{

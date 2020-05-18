@@ -8,6 +8,8 @@ using Harmony;
 
 namespace Common
 {
+	using Reflection;
+
 	// for allowing to use SMLHelper language override files
 	class LanguageHelper
 	{

@@ -7,10 +7,11 @@ using System.Collections.Generic;
 using Harmony;
 using UnityEngine;
 
-using Common.Configuration;
-
 namespace Common
 {
+	using Reflection;
+	using Configuration;
+
 	using CIEnumerable = IEnumerable<CodeInstruction>;
 	using CIList = List<CodeInstruction>;
 

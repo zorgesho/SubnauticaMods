@@ -3,6 +3,8 @@ using System.Reflection;
 
 namespace Common.Configuration
 {
+	using Reflection;
+
 	partial class Options
 	{
 		// Attribute for creating options UI elements

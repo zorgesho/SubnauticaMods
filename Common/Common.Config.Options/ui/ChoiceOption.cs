@@ -6,6 +6,8 @@ using SMLHelper.V2.Options;
 
 namespace Common.Configuration
 {
+	using Reflection;
+
 	partial class Options
 	{
 		partial class Factory

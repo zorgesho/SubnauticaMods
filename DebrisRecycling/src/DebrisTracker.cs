@@ -4,6 +4,7 @@ using Harmony;
 using UnityEngine;
 
 using Common;
+using Common.Reflection;
 
 namespace DebrisRecycling
 {

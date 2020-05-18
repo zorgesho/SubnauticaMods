@@ -7,6 +7,8 @@ using Harmony;
 
 namespace Common
 {
+	using Reflection;
+
 	static partial class HarmonyHelper
 	{
 		[AttributeUsage(AttributeTargets.Class)]

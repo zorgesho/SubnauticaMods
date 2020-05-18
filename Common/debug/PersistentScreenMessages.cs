@@ -5,6 +5,8 @@ using UnityEngine;
 
 namespace Common
 {
+	using Reflection;
+
 	static partial class Debug
 	{
 		/// messages with the same prefix will stay in the same message slot (also <see cref="StringExtensions.onScreen(string, string)"/>)
@@ -18,7 +20,7 @@ namespace Common
 		{
 			static bool patched = false;
 			static readonly FieldInfo messageEntry = typeof(ErrorMessage._Message).field("entry");
-			static readonly ReflectionHelper.PropertyWrapper text = ReflectionHelper.safeGetType("UnityEngine.UI", "UnityEngine.UI.Text").propertyWrap("text");
+			static readonly PropertyWrapper text = ReflectionHelper.safeGetType("UnityEngine.UI", "UnityEngine.UI.Text").propertyWrap("text");
 
 			public static void patch()
 			{

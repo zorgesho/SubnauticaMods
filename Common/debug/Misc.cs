@@ -14,6 +14,8 @@ namespace System.Runtime.CompilerServices // nice trick (for use in .NET 4.0)
 
 namespace Common
 {
+	using Reflection;
+
 	static partial class Debug
 	{
 		public static void logStack(string msg = "")

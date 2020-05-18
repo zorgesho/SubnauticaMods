@@ -7,6 +7,8 @@ using SMLHelper.V2.Options;
 
 namespace Common.Configuration
 {
+	using Reflection;
+
 	partial class Options
 	{
 		public static partial class Components
@@ -70,8 +72,8 @@ namespace Common.Configuration
 						max = range.max;
 					}
 
-					static readonly ReflectionHelper.PropertyWrapper sliderValue = ReflectionHelper.safeGetType("UnityEngine.UI", "UnityEngine.UI.Slider").propertyWrap("value");
-					static readonly ReflectionHelper.PropertyWrapper text = ReflectionHelper.safeGetType("UnityEngine.UI", "UnityEngine.UI.Text").propertyWrap("text");
+					static readonly PropertyWrapper sliderValue = ReflectionHelper.safeGetType("UnityEngine.UI", "UnityEngine.UI.Slider").propertyWrap("value");
+					static readonly PropertyWrapper text = ReflectionHelper.safeGetType("UnityEngine.UI", "UnityEngine.UI.Text").propertyWrap("text");
 					object _slider, _label;
 
 					protected override void UpdateLabel()

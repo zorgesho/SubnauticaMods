@@ -3,6 +3,8 @@ using System.Reflection;
 
 namespace Common.Configuration
 {
+	using Reflection;
+
 	partial class Config
 	{
 		// for use with class attributes

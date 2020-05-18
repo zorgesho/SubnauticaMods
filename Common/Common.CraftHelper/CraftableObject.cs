@@ -6,6 +6,8 @@ using SMLHelper.V2.Handlers;
 
 namespace Common.Crafting
 {
+	using Reflection;
+
 	abstract class CraftableObject: ModPrefab
 	{
 		protected CraftableObject(): this(ReflectionHelper.getCallingType().Name) {}

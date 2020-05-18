@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 namespace Common.Configuration
 {
+	using Reflection;
+
 	partial class Options
 	{
 		static partial class Factory

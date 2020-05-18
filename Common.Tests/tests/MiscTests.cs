@@ -5,7 +5,7 @@ using Harmony;
 using UnityEngine;
 using NUnit.Framework;
 
-using Common;
+using Common.Reflection;
 
 namespace CommonTests
 {

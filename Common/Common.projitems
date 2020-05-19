@@ -17,7 +17,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)harmony\HarmonyHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)debug\Log.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)harmony\OptionalPatches.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)harmony\CIHelpers.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)harmony\CIHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LanguageHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MainMenuMessages.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Misc.cs" />
@@ -26,7 +26,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)PathHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)reflection\Extensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)reflection\ReflectionHelper.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)reflection\Wrappers.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)reflection\wrappers\MethodWrapper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)reflection\wrappers\PropertyWrapper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)reflection\wrappers\EventWrapper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UnityExtensions.cs" />
   </ItemGroup>
 </Project>

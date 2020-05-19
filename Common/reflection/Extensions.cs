@@ -39,14 +39,6 @@ namespace Common.Reflection
 			catch (Exception e) { Log.msg(e); return null; }
 		}
 
-
-		[Obsolete]
-		public static int   toInt(this object obj)   => Convert.ToInt32(obj, CultureInfo.InvariantCulture);
-		[Obsolete]
-		public static bool  toBool(this object obj)  => Convert.ToBoolean(obj, CultureInfo.InvariantCulture);
-		[Obsolete]
-		public static float toFloat(this object obj) => Convert.ToSingle(obj, CultureInfo.InvariantCulture);
-
 		// assigns value to field with types conversion
 		// returns `false` if field have equal value after conversion (or in case of exception)
 		// returns 'true' in case of successful assignment

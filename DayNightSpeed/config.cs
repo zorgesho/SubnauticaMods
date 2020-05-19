@@ -346,7 +346,7 @@ namespace DayNightSpeed
 				// using reflection to avoid copy/paste and keep new params readonly
 				foreach (var varName in new string[] { "HungerThrist", "PlantsGrow", "EggsHatching", "CreaturesGrow", "MedkitInterval" })
 				{
-					float val = GetType().field("mult" + varName).GetValue(this).toFloat();
+					float val = GetType().field("mult" + varName).GetValue(this).convert<float>();
 
 					if (val != 1.0f)
 						GetType().field("speed" + varName).SetValue(this, 1.0f / val);

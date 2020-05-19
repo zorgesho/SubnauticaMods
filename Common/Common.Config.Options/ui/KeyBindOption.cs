@@ -28,7 +28,7 @@ namespace Common.Configuration
 
 			public override void addOption(Options options)
 			{
-				options.AddKeybindOption(id, label, GameInput.Device.Keyboard, (UnityEngine.KeyCode)cfgField.value.toInt());
+				options.AddKeybindOption(id, label, GameInput.Device.Keyboard, cfgField.value.convert<UnityEngine.KeyCode>());
 			}
 
 			public override void onValueChange(EventArgs e)

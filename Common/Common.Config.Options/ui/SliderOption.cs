@@ -59,7 +59,7 @@ namespace Common.Configuration
 
 			public override void addOption(Options options)
 			{
-				float value = cfgField.value.toFloat();
+				float value = cfgField.value.convert<float>();
 				options.AddSliderOption(id, label, Math.Min(min, value), Math.Max(max, value), value, defaultValue, valueFormat);
 			}
 

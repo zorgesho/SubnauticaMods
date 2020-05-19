@@ -52,7 +52,7 @@ namespace Common.Configuration
 				// slider value will be saved exactly as formatted for display
 				public class ExactlyFormatted: ModSliderOption.SliderValue
 				{
-					public override float ConvertToDisplayValue(float value) => valueFormat.format(value).toFloat();
+					public override float ConvertToDisplayValue(float value) => valueFormat.format(value).convert<float>();
 				}
 
 				// displayed value is percent of the field's range (not slider's range)

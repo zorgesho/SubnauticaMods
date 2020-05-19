@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Reflection;
-using System.Reflection.Emit;
 using System.Collections.Generic;
 
 using Harmony;
@@ -40,9 +38,18 @@ namespace Common
 		// add string to LanguageHandler, use getFullID if you need to get ids with prefix (e.g. for UI labels)
 		public static string add(string ids, string str, bool getFullID = false)
 		{																							$"LanguageHelper: adding string '{ids}': '{str}'".logDbg();
+			if (!addString)
+				return str;
+
 			string fullID = prefix + ids;
-			return addString(fullID, str)? (getFullID? fullID: ids): str;
+			addString.invoke(fullID, str);
+
+			return getFullID? fullID: ids;
 		}
+
+		// using this to avoid including SMLHelper as a reference to Common project
+		static readonly MethodWrapper<Action<string, string>> addString =
+			ReflectionHelper.safeGetType("SMLHelper", "SMLHelper.V2.Handlers.LanguageHandler")?.method("SetLanguageLine")?.wrap<Action<string, string>>();
 
 
 		static Dictionary<string, string> substitutedStrings = null; // 'key' string using value of 'value' string
@@ -64,35 +71,5 @@ namespace Common
 		[HarmonyPriority(Priority.Low)]
 		static void substituteStrings(Language __instance) =>
 			substitutedStrings.forEach(subst => __instance.strings[subst.Key] = __instance.strings[subst.Value]);
-
-
-		// wrap method for SMLHelper.LanguageHandler.SetLanguageLine
-		static readonly Func<string, string, bool> addString = _initDynamicMethod();
-
-		// using this to avoid including SMLHelper as a reference to Common project
-		// can't use just reflection here (MethodInfo.Invoke), in that case SMLHelper can't identify calling mod (it uses StackTrace for that)
-		static Func<string, string, bool> _initDynamicMethod()
-		{
-			MethodInfo SetLanguageLine = ReflectionHelper.safeGetType("SMLHelper", "SMLHelper.V2.Handlers.LanguageHandler")?.method("SetLanguageLine");
-			Debug.assert(SetLanguageLine != null);
-
-			DynamicMethod dm = new DynamicMethod("_addString", typeof(bool), new Type[] { typeof(string), typeof(string)}, typeof(LanguageHelper));
-
-			ILGenerator ilg = dm.GetILGenerator();
-			if (SetLanguageLine != null)
-			{
-				ilg.Emit(OpCodes.Ldarg_0);
-				ilg.Emit(OpCodes.Ldarg_1);
-				ilg.Emit(OpCodes.Call, SetLanguageLine);
-				ilg.Emit(OpCodes.Ldc_I4_1);
-			}
-			else
-			{
-				ilg.Emit(OpCodes.Ldc_I4_0);
-			}
-			ilg.Emit(OpCodes.Ret);
-
-			return dm.createDelegate<Func<string, string, bool>>();
-		}
 	}
 }

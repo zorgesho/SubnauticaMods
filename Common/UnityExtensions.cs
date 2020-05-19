@@ -107,36 +107,10 @@ namespace Common
 
 	static class InputHelper
 	{
-		public static readonly Func<float> getMouseWheelValue = _initDynamicMethod();
+		public static float getMouseWheelValue() => getAxis? getAxis.invoke("Mouse ScrollWheel"): 0f;
 
-		public static void resetCursorToCenter()
-		{
-			Cursor.lockState = CursorLockMode.Locked; // warning: don't set lockState separately, use UWE utils for this if needed
-			Cursor.lockState = CursorLockMode.None;
-		}
-
-		// making dynamic method to avoid including InputLegacyModule in all references
-		static Func<float> _initDynamicMethod()
-		{
-			MethodInfo GetAxis = ReflectionHelper.safeGetType("UnityEngine.InputLegacyModule", "UnityEngine.Input")?.method("GetAxis");
-			Debug.assert(GetAxis != null);
-
-			DynamicMethod dm = new DynamicMethod("getMouseWheelValue", typeof(float), null, typeof(InputHelper));
-
-			ILGenerator ilg = dm.GetILGenerator();
-			if (GetAxis != null)
-			{
-				ilg.Emit(OpCodes.Ldstr, "Mouse ScrollWheel");
-				ilg.Emit(OpCodes.Call, GetAxis);
-			}
-			else
-			{
-				ilg.Emit(OpCodes.Ldc_R4, 0f);
-			}
-			ilg.Emit(OpCodes.Ret);
-
-			return dm.createDelegate<Func<float>>();
-		}
+		static readonly MethodWrapper<Func<string, float>> getAxis =
+			ReflectionHelper.safeGetType("UnityEngine.InputLegacyModule", "UnityEngine.Input")?.method("GetAxis")?.wrap<Func<string, float>>();
 	}
 
 

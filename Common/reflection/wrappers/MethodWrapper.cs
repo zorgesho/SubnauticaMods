@@ -1,13 +1,20 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 
 namespace Common.Reflection
 {
-	class MethodWrapper
+	abstract class _MethodWrapper
 	{
-		readonly MethodInfo method;
-		public static implicit operator bool(MethodWrapper mw) => mw.method != null;
+		protected readonly MethodInfo method;
+		protected _MethodWrapper(MethodInfo method) => this.method = method;
 
-		public MethodWrapper(MethodInfo method) => this.method = method;
+		public static implicit operator bool(_MethodWrapper mw) => mw?.method != null;
+	}
+
+	// slow wrapper that uses reflection
+	class MethodWrapper: _MethodWrapper
+	{
+		public MethodWrapper(MethodInfo method): base(method) {}
 
 		public object invoke()
 		{
@@ -30,5 +37,24 @@ namespace Common.Reflection
 		public T invoke<T>() => invoke().cast<T>();
 		public T invoke<T>(object obj) => invoke(obj).cast<T>();
 		public T invoke<T>(object obj, params object[] parameters) => invoke(obj, parameters).cast<T>();
+	}
+
+
+	// fast wrapper that uses delegate
+	class MethodWrapper<D>: _MethodWrapper where D: Delegate
+	{
+		readonly object obj;
+		public MethodWrapper(MethodInfo method, object obj = null): base(method) => this.obj = obj;
+
+		public static implicit operator bool(MethodWrapper<D> mw) => mw?.invoke != null;
+
+		public D invoke => _delegate ??= init();
+		D _delegate;
+
+		D init()
+		{
+			try { return (D)Delegate.CreateDelegate(typeof(D), obj, method); }
+			catch (Exception e) { Log.msg(e); return null; }
+		}
 	}
 }

@@ -87,7 +87,7 @@ namespace ConsoleImproved
 			const string getCfgVarValue = nameof(Common.Configuration.ExportedCfgVarFields.getFieldValue);
 
 			static List<string> cfgVarNames;
-			static List<MethodWrapper> cfgVarGetters;
+			static List<MethodWrapper<Func<string, object>>> cfgVarGetters;
 
 			// searching exported config fields in current assemblies
 			static void init()
@@ -96,7 +96,7 @@ namespace ConsoleImproved
 					return;
 
 				cfgVarNames = new List<string>();
-				cfgVarGetters = new List<MethodWrapper>();
+				cfgVarGetters = new List<MethodWrapper<Func<string, object>>>();
 
 				foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
 				{
@@ -105,7 +105,7 @@ namespace ConsoleImproved
 						if (exportedCfgVars.method(exportCfgVarGetFields).wrap().invoke() is IList<string> list)
 							cfgVarNames.AddRange(list);
 
-						var getter = exportedCfgVars.method(getCfgVarValue).wrap();
+						var getter = exportedCfgVars.method(getCfgVarValue).wrap<Func<string, object>>();
 						if (getter)
 							cfgVarGetters.Add(getter);
 					}

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Reflection.Emit;
 using System.Collections.Generic;
 
 namespace Common
@@ -24,8 +23,6 @@ namespace Common
 			while (enumerator.MoveNext())
 				action(enumerator.Current);
 		}
-
-		public static T createDelegate<T>(this DynamicMethod dm) where T: class => dm.CreateDelegate(typeof(T)) as T;
 	}
 
 

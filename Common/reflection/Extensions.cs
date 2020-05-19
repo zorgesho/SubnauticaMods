@@ -99,6 +99,7 @@ namespace Common.Reflection
 
 		public static EventWrapper wrap(this EventInfo evnt, object obj = null) => new EventWrapper(evnt, obj);
 		public static MethodWrapper wrap(this MethodInfo method) => new MethodWrapper(method);
+		public static MethodWrapper<D> wrap<D>(this MethodInfo method, object obj = null) where D: Delegate => new MethodWrapper<D>(method, obj);
 		public static PropertyWrapper wrap(this PropertyInfo property) => new PropertyWrapper(property);
 
 

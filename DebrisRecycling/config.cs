@@ -318,8 +318,8 @@ namespace DebrisRecycling
 			{
 				foreach (var name in new string[] {"CargoOpened", "MiscMovable", "Lockers", "Tech", "CargoClosed", "Furniture"})
 				{
-					var oldList = GetType().field("debris" + name).GetValue(this) as Dictionary<string, int>;
-					var newList = GetType().field("dbs" + name).GetValue(this) as PrefabList;
+					var oldList = this.getFieldValue<Dictionary<string, int>>("debris" + name);
+					var newList = this.getFieldValue<PrefabList>("dbs" + name);
 
 					oldList.ForEach(debrisInfo => newList.addPrefab(debrisInfo.Key, debrisInfo.Value));
 				}

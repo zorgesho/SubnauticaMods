@@ -58,7 +58,10 @@ namespace Common.Reflection
 			catch (Exception e) { Log.msg(e); return false; }
 		}
 
+		public static void setFieldValue(this object obj, string fieldName, object value) => obj.GetType().field(fieldName)?.SetValue(obj, value);
+
 		public static object getFieldValue(this object obj, string fieldName) => obj.GetType().field(fieldName)?.GetValue(obj);
+		public static T getFieldValue<T>(this object obj, string fieldName) => obj.getFieldValue(fieldName).cast<T>();
 	}
 
 

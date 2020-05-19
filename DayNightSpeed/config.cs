@@ -346,10 +346,10 @@ namespace DayNightSpeed
 				// using reflection to avoid copy/paste and keep new params readonly
 				foreach (var varName in new string[] { "HungerThrist", "PlantsGrow", "EggsHatching", "CreaturesGrow", "MedkitInterval" })
 				{
-					float val = GetType().field("mult" + varName).GetValue(this).convert<float>();
+					float val = this.getFieldValue<float>("mult" + varName);
 
 					if (val != 1.0f)
-						GetType().field("speed" + varName).SetValue(this, 1.0f / val);
+						this.setFieldValue("speed" + varName, 1.0f / val);
 				}
 			}
 			catch (Exception e) { Log.msg(e); }
@@ -368,7 +368,7 @@ namespace DayNightSpeed
 			try
 			{
 				if (GetType().fields().Where(field => field.Name.StartsWith("speed") && !field.GetValue(this).Equals(1.0f)).Count() > 0)
-					GetType().field(nameof(useAuxSpeeds)).SetValue(this, true);
+					this.setFieldValue(nameof(useAuxSpeeds) , true);
 			}
 			catch (Exception e) { Log.msg(e); }
 		}

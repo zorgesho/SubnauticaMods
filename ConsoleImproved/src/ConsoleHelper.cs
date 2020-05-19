@@ -102,10 +102,10 @@ namespace ConsoleImproved
 				{
 					if (assembly.GetType(exportCfgVarClassName, false) is Type exportedCfgVars)
 					{
-						if (exportedCfgVars.methodWrap(exportCfgVarGetFields).invoke() is IList<string> list)
+						if (exportedCfgVars.method(exportCfgVarGetFields).wrap().invoke() is IList<string> list)
 							cfgVarNames.AddRange(list);
 
-						var getter = exportedCfgVars.methodWrap(getCfgVarValue);
+						var getter = exportedCfgVars.method(getCfgVarValue).wrap();
 						if (getter)
 							cfgVarGetters.Add(getter);
 					}

@@ -29,7 +29,7 @@ namespace Common.Harmony
 		{
 			using (Debug.profiler($"Update optional patch: {patchType}", allowNested: false))
 			{
-				var prepare = patchType.methodWrap("Prepare");
+				var prepare = patchType.method("Prepare").wrap();
 				Debug.assert(prepare);
 
 				if (!prepare)

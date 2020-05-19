@@ -56,8 +56,8 @@ namespace Common.Configuration
 
 			// using reflection to avoid including UnityEngine.UI in all projects
 			static readonly Type eventSystem = ReflectionHelper.safeGetType("UnityEngine.UI", "UnityEngine.EventSystems.EventSystem");
-			static readonly PropertyWrapper currentEventSystem = eventSystem.propertyWrap("current");
-			static readonly MethodWrapper setSelectedGameObject = eventSystem.methodWrap("SetSelectedGameObject", typeof(GameObject));
+			static readonly PropertyWrapper currentEventSystem = eventSystem.property("current").wrap();
+			static readonly MethodWrapper setSelectedGameObject = eventSystem.method("SetSelectedGameObject", typeof(GameObject)).wrap();
 
 			void onClick()
 			{

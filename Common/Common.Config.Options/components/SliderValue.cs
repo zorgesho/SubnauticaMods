@@ -72,8 +72,8 @@ namespace Common.Configuration
 						max = range.max;
 					}
 
-					static readonly PropertyWrapper sliderValue = ReflectionHelper.safeGetType("UnityEngine.UI", "UnityEngine.UI.Slider").propertyWrap("value");
-					static readonly PropertyWrapper text = ReflectionHelper.safeGetType("UnityEngine.UI", "UnityEngine.UI.Text").propertyWrap("text");
+					static readonly PropertyWrapper sliderValue = ReflectionHelper.safeGetType("UnityEngine.UI", "UnityEngine.UI.Slider").property("value").wrap();
+					static readonly PropertyWrapper text = ReflectionHelper.safeGetType("UnityEngine.UI", "UnityEngine.UI.Text").property("text").wrap();
 					object _slider, _label;
 
 					protected override void UpdateLabel()

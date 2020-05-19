@@ -13,13 +13,13 @@ namespace Common
 		const string tmpFileName = "run the game to generate configs"; // name is also in the post-build.bat
 
 		static readonly Type qmmServices = ReflectionHelper.safeGetType("QModInstaller", "QModManager.API.QModServices");
-		static readonly PropertyWrapper qmmServicesMain = qmmServices.propertyWrap("Main");
-		static readonly MethodWrapper qmmAddMessage = qmmServices.methodWrap("AddCriticalMessage");
+		static readonly PropertyWrapper qmmServicesMain = qmmServices.property("Main").wrap();
+		static readonly MethodWrapper qmmAddMessage = qmmServices.method("AddCriticalMessage").wrap();
 
-		static readonly PropertyWrapper qmmQModDisplayName = ReflectionHelper.safeGetType("QModInstaller", "QModManager.API.IQMod").propertyWrap("DisplayName");
+		static readonly PropertyWrapper qmmQModDisplayName = ReflectionHelper.safeGetType("QModInstaller", "QModManager.API.IQMod").property("DisplayName").wrap();
 
 		public static readonly string id = Assembly.GetExecutingAssembly().GetName().Name;
-		public static readonly string name = qmmQModDisplayName.get<string>(qmmServices.methodWrap("GetMyMod").invoke(qmmServicesMain.get()));
+		public static readonly string name = qmmQModDisplayName.get<string>(qmmServices.method("GetMyMod").wrap().invoke(qmmServicesMain.get()));
 
 		// supposed to be called before any other mod's code
 		public static void init()

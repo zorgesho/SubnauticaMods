@@ -82,6 +82,7 @@ namespace Common.Reflection
 		public static MethodInfo method(this Type type, string name) => _method(type, name, null);
 		public static MethodInfo method(this Type type, string name, params Type[] types) => _method(type, name, types);
 
+		public static EventInfo evnt(this Type type, string name) => type.GetEvent(name, ReflectionHelper.bfAll);
 		public static FieldInfo field(this Type type, string name) => type.GetField(name, ReflectionHelper.bfAll);
 		public static PropertyInfo property(this Type type, string name) => type.GetProperty(name, ReflectionHelper.bfAll);
 
@@ -89,24 +90,17 @@ namespace Common.Reflection
 		public static MethodInfo[] methods(this Type type) => type.GetMethods(ReflectionHelper.bfAll);
 		public static MethodInfo[] methods(this Type type, BindingFlags bf) => type.GetMethods(ReflectionHelper.bfAll | bf);
 		public static PropertyInfo[] properties(this Type type) => type.GetProperties(ReflectionHelper.bfAll);
-
-		public static MethodWrapper methodWrap(this Type type, string name) =>
-			new MethodWrapper(type.method(name));
-
-		public static MethodWrapper methodWrap(this Type type, string name, params Type[] types) =>
-			new MethodWrapper(type.method(name, types));
-
-		public static PropertyWrapper propertyWrap(this Type type, string name) =>
-			new PropertyWrapper(type.property(name));
-
-		public static EventWrapper eventWrap(this Type type, string name, object obj = null) =>
-			new EventWrapper(type.GetEvent(name, ReflectionHelper.bfAll), obj);
 	}
 
 
 	static class MemberInfoExtensions
 	{
 		public static string fullName(this MemberInfo memberInfo) => (memberInfo == null)? "[null]": memberInfo.DeclaringType.FullName + "." + memberInfo.Name;
+
+		public static EventWrapper wrap(this EventInfo evnt, object obj = null) => new EventWrapper(evnt, obj);
+		public static MethodWrapper wrap(this MethodInfo method) => new MethodWrapper(method);
+		public static PropertyWrapper wrap(this PropertyInfo property) => new PropertyWrapper(property);
+
 
 		public static A getAttr<A>(this MemberInfo memberInfo, bool includeDeclaringTypes = false) where A: Attribute
 		{

@@ -56,6 +56,8 @@ namespace OxygenRefill
 
 	static class ItemsContainerExtensions
 	{
+		static readonly EventWrapper eventTechTypeChanged = typeof(Pickupable).evnt("onTechTypeChanged").wrap();
+
 		public static int getItemsCount(this ItemsContainer container, TechType techType, Predicate<Pickupable> predicate)
 		{
 			if (container._items.TryGetValue(techType, out ItemsContainer.ItemGroup itemGroup))
@@ -87,7 +89,7 @@ namespace OxygenRefill
 
 				inventoryItem.container = null;
 
-				typeof(Pickupable).eventWrap("onTechTypeChanged", item).remove<OnTechTypeChanged>(container.UpdateItemTechType);
+				eventTechTypeChanged.remove<OnTechTypeChanged>(item, container.UpdateItemTechType);
 
 				container.count--;
 				container.unsorted = true;

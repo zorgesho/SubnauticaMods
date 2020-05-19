@@ -21,7 +21,7 @@ namespace Common
 		{
 			static bool patched = false;
 			static readonly FieldInfo messageEntry = typeof(ErrorMessage._Message).field("entry");
-			static readonly PropertyWrapper text = ReflectionHelper.safeGetType("UnityEngine.UI", "UnityEngine.UI.Text").propertyWrap("text");
+			static readonly PropertyWrapper text = ReflectionHelper.safeGetType("UnityEngine.UI", "UnityEngine.UI.Text").property("text").wrap();
 
 			public static void patch()
 			{

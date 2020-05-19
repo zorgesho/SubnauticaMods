@@ -6,8 +6,45 @@ namespace Common.Reflection
 {
 	static class ObjectExtensions
 	{
+		public static T cast<T>(this object obj)
+		{
+			try
+			{																				$"cast<{typeof(T)}>(): object is null !".logDbg(obj == null);
+				return obj == null? default: (T)obj;
+			}
+			catch
+			{
+				string msg = $"cast error: {obj}; {obj.GetType()} -> {typeof(T)}";
+				Debug.assert(false, msg);
+				msg.logError();
+
+				return default;
+			}
+		}
+
+		public static T convert<T>(this object obj) => obj.convert(typeof(T)).cast<T>();
+
+		public static object convert(this object obj, Type targetType)
+		{
+			if (obj == null)
+				return null;
+
+			try
+			{
+				if (targetType.IsEnum)
+					targetType = Enum.GetUnderlyingType(targetType);
+
+				return Convert.ChangeType(obj, targetType, CultureInfo.InvariantCulture);
+			}
+			catch (Exception e) { Log.msg(e); return null; }
+		}
+
+
+		[Obsolete]
 		public static int   toInt(this object obj)   => Convert.ToInt32(obj, CultureInfo.InvariantCulture);
+		[Obsolete]
 		public static bool  toBool(this object obj)  => Convert.ToBoolean(obj, CultureInfo.InvariantCulture);
+		[Obsolete]
 		public static float toFloat(this object obj) => Convert.ToSingle(obj, CultureInfo.InvariantCulture);
 
 		// assigns value to field with types conversion
@@ -17,12 +54,7 @@ namespace Common.Reflection
 		{
 			try
 			{
-				object newValue;
-
-				if (field.FieldType.IsEnum)
-					newValue = Convert.ChangeType(value, Enum.GetUnderlyingType(field.FieldType), CultureInfo.InvariantCulture);
-				else
-					newValue = Convert.ChangeType(value, field.FieldType, CultureInfo.InvariantCulture);
+				object newValue = value.convert(field.FieldType);
 
 				if (Equals(field.GetValue(obj), newValue))
 					return false;

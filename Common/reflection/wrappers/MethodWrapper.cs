@@ -27,8 +27,8 @@ namespace Common.Reflection
 			return method?.Invoke(obj, parameters ?? new object[1]); // null check in case we need to pass one 'null' as a parameter
 		}
 
-		public T invoke<T>() => ReflectionHelper.safeCast<T>(invoke());
-		public T invoke<T>(object obj) => ReflectionHelper.safeCast<T>(invoke(obj));
-		public T invoke<T>(object obj, params object[] parameters) => ReflectionHelper.safeCast<T>(invoke(obj, parameters));
+		public T invoke<T>() => invoke().cast<T>();
+		public T invoke<T>(object obj) => invoke(obj).cast<T>();
+		public T invoke<T>(object obj, params object[] parameters) => invoke(obj, parameters).cast<T>();
 	}
 }

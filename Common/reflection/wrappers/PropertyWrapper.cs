@@ -31,6 +31,6 @@ namespace Common.Reflection
 			return getter?.Invoke(obj, null);
 		}
 
-		public T get<T>(object obj = null) => ReflectionHelper.safeCast<T>(get(obj));
+		public T get<T>(object obj = null) => get(obj).cast<T>();
 	}
 }

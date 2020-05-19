@@ -20,11 +20,5 @@ namespace Common.Reflection
 			try   { return Assembly.Load(assemblyName)?.GetType(typeName, false); }
 			catch { return null; }
 		}
-
-		public static T safeCast<T>(object obj)
-		{
-			Debug.assert(obj is T, $"cast: {obj}; {obj.GetType()} -> {typeof(T)}");
-			return (obj is T)? (T)obj: default;
-		}
 	}
 }

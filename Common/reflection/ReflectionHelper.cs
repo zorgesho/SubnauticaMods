@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Common.Reflection
 {
-	static partial class ReflectionHelper
+	static class ReflectionHelper
 	{
 		public static BindingFlags bfAll = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
 

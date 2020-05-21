@@ -10,7 +10,9 @@ namespace CustomHotkeys
 		public static void patch()
 		{
 			HarmonyHelper.patchAll();
-			HotkeyHelper.init();
+
+			HotkeyListener.init();
+			PersistentConsoleCommands.createGameObject<ConsoleCommands>();
 		}
 	}
 }

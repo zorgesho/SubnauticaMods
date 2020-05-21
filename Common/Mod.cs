@@ -10,6 +10,12 @@ namespace Common
 
 	static partial class Mod
 	{
+		public const bool isDevBuild =
+#if DEBUG
+			true;
+#else
+			false;
+#endif
 		const string tmpFileName = "run the game to generate configs"; // name is also in the post-build.bat
 
 		static readonly Type qmmServices = ReflectionHelper.safeGetType("QModInstaller", "QModManager.API.QModServices");

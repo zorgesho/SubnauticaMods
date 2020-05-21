@@ -41,12 +41,8 @@ namespace DebrisRecycling
 
 		public class CustomObjects
 		{
-			public readonly bool addToOptionsMenu =
-#if DEBUG
-				true;
-#else
-				false;
-#endif
+			public readonly bool addToOptionsMenu = Mod.isDevBuild;
+
 			public readonly int defaultResourceCount = 1;
 
 			class Hider: Options.Components.Hider.IVisibilityChecker
@@ -177,11 +173,7 @@ namespace DebrisRecycling
 			_updateTo110();
 		}
 
-#if DEBUG
-		[AddPrefabList("<color=#a0a0a0ff>debrisCargoOpened</color>")]
-#else
-		[AddPrefabList]
-#endif
+		[AddPrefabList(Mod.isDevBuild? "<color=#a0a0a0ff>debrisCargoOpened</color>": null)]
 		public readonly PrefabList dbsCargoOpened = new PrefabList(true, new Dictionary<string, int>()
 		{
 			{"Starship_cargo_opened.c390fcfc-3bf4-470a-93bf-39dafb8b2267", 2},
@@ -192,11 +184,7 @@ namespace DebrisRecycling
 			{"Starship_cargo_damaged_opened_large_02.fb2886c4-7e03-4a47-a122-dc7242e7de5b", 10},
 		});
 
-#if DEBUG
-		[AddPrefabList("<color=#a0a0a0ff>debrisMiscMovable</color>")]
-#else
-		[AddPrefabList]
-#endif
+		[AddPrefabList(Mod.isDevBuild? "<color=#a0a0a0ff>debrisMiscMovable</color>": null)]
 		public readonly PrefabList dbsMiscMovable = new PrefabList(true, new Dictionary<string, int>()
 		{
 			{"Starship_exploded_debris_01.5cd34124-935f-4628-b694-a266bc2f5517", 11},
@@ -246,11 +234,7 @@ namespace DebrisRecycling
 			{"Bench_deco.2e9b9389-cfa3-45b1-aee8-ea66b90e841d", 10},
 		});
 
-#if DEBUG
-		[AddPrefabList("<color=#a0a0a0ff>debrisTech</color>")]
-#else
-		[AddPrefabList]
-#endif
+		[AddPrefabList(Mod.isDevBuild? "<color=#a0a0a0ff>debrisTech</color>": null)]
 		public readonly PrefabList dbsTech = new PrefabList(false, new Dictionary<string, int>()
 		{
 			{"tech_light_deco.8ce870ba-b559-45d7-9c10-a5477967db24", 2},				// special processing

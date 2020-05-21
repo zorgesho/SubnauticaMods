@@ -14,7 +14,7 @@ namespace CustomHotkeys
 	[OptionalPatch, HarmonyPatch(typeof(MainGameController), "Update")]
 	static class MainGameController_Update_Patch
 	{
-		static bool Prepare() => Main.config.disableDevTools;
+		static bool Prepare() => !Main.config.enableDevToolsHotkeys;
 
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins)
 		{
@@ -29,23 +29,18 @@ namespace CustomHotkeys
 		}
 	}
 
-	/// disable F6
-	//[HarmonyPatch(typeof(GUIController), "Update")]
-	//class GUIController_Update_Patch
-	//{
-	//	static bool Prefix()
-	//	{
-	//		return !Main.config.disableDevTools;
-	//	}
-	//}
+	// disable F6 (hide gui tool)
+	[OptionalPatch, HarmonyPatch(typeof(GUIController), "Update")]
+	static class GUIController_Update_Patch
+	{
+		static bool Prepare() => !Main.config.enableDevToolsHotkeys;
+		static bool Prefix() => false;
+	}
 
-	/// disable F8
-	//[HarmonyPatch(typeof(uGUI_FeedbackCollector), "Awake")]
-	//class uGUI_FeedbackCollector_Update_Patch
-	//{
-	//	static void Postfix(uGUI_FeedbackCollector __instance)
-	//	{
-	//		__instance.enabled = false;
-	//	}
-	//}
+	// disable F8 (feedback collector)
+	[HarmonyPatch(typeof(uGUI_FeedbackCollector), "Awake")]
+	static class uGUIFeedbackCollector_Awake_Patch
+	{
+		static void Postfix(uGUI_FeedbackCollector __instance) => __instance.enabled = Main.config.enableFeedback;
+	}
 }

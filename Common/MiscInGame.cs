@@ -59,7 +59,7 @@ namespace Common
 
 		public static TechType getHeldToolType() => Inventory.main?.GetHeldTool()?.pickupable.GetTechType() ?? TechType.None;
 
-		public static bool isLoadingState => uGUI.main?.loading.loadingBackground.state == true;
+		public static bool isLoadingState => uGUI._main?.loading.loadingBackground.state == true;
 
 		public static void clearScreenMessages() => // expire all messages except QMM main menu messages
 			ErrorMessage.main?.messages.Where(m => m.timeEnd - Time.time < 1e3f).forEach(m => m.timeEnd = Time.time - 1f);
@@ -93,9 +93,15 @@ namespace Common
 	// base class for console commands which are exists between scenes
 	abstract class PersistentConsoleCommands: MonoBehaviour
 	{
+		public class CommandDataAttribute: Attribute
+		{
+			public bool caseSensitive = false;
+			public bool combineArgs = false;
+		}
+
 		const string cmdPrefix = "OnConsoleCommand_";
 
-		readonly List<string> cmdNames = new List<string>();
+		List<Tuple<string, CommandDataAttribute>> commands;
 
 		public static GameObject createGameObject<T>(string name = "ConsoleCommands") where T: PersistentConsoleCommands
 		{
@@ -103,17 +109,22 @@ namespace Common
 		}
 
 		void init()
-		{																													"PersistentConsoleCommands.init cmdNames already inited!".logDbgError(cmdNames.Count > 0);
+		{
 			// searching for console commands methods in derived class
-			GetType().methods().Where(m => m.Name.StartsWith(cmdPrefix)).forEach(m => cmdNames.Add(m.Name.Replace(cmdPrefix, "")));
+			commands ??= GetType().methods().Where(m => m.Name.StartsWith(cmdPrefix)).
+											 Select(m => Tuple.Create(m.Name.Replace(cmdPrefix, ""), m.getAttr<CommandDataAttribute>())).
+											 ToList();
 		}
 
 		void registerCommands()
 		{
-			foreach (var cmdName in cmdNames)
+			foreach (var command in commands)
 			{
+				bool caseSensitive = command.Item2?.caseSensitive ?? false;
+				bool combineArgs = command.Item2?.combineArgs ?? false;
+
 				// double registration is checked inside DevConsole
-				DevConsole.RegisterConsoleCommand(this, cmdName);															$"PersistentConsoleCommands: {cmdName} is registered".logDbg();
+				DevConsole.RegisterConsoleCommand(this, command.Item1, caseSensitive, combineArgs);						$"PersistentConsoleCommands: {command.Item1} is registered".logDbg();
 			}
 		}
 

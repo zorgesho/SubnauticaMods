@@ -35,9 +35,9 @@ namespace Common
 			if (condition)
 				return;
 
-			string msg = "Assertion failed" + (message != null? $": {message}": "") + $" ({__filename}:{__line})";
+			string msg = $"Assertion failed{(message != null? ": " + message: "")} ({__filename}:{__line})";
 
-			$"{msg}".logError();
+			$"{msg}".onScreen().logError();
 			throw new Exception(msg);
 		}
 	}

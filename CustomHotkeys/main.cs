@@ -11,7 +11,7 @@ namespace CustomHotkeys
 		{
 			HarmonyHelper.patchAll();
 
-			HotkeyListener.init();
+			HotkeyHelper.init();
 			PersistentConsoleCommands.createGameObject<ConsoleCommands>();
 		}
 	}

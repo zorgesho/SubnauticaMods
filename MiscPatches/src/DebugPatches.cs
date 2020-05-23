@@ -15,8 +15,7 @@ using Common.Configuration;
 namespace MiscPatches
 {
 	// for testing loot spawning (Main.config.loolSpawnRerollCount for control)
-	[OptionalPatch]
-	[HarmonyPatch(typeof(CellManager), "GetPrefabForSlot")]
+	[OptionalPatch, HarmonyPatch(typeof(CellManager), "GetPrefabForSlot")]
 	static class CellManager_GetPrefabForSlot_Patch
 	{
 		static bool Prepare() => Main.config.dbg.lootSpawnRerollCount > 0;
@@ -42,8 +41,7 @@ namespace MiscPatches
 	}
 
 	// ignore limits for propulsion cannon
-	[OptionalPatch]
-	[HarmonyPatch(typeof(PropulsionCannon), "ValidateObject")]
+	[OptionalPatch, HarmonyPatch(typeof(PropulsionCannon), "ValidateObject")]
 	static class PropulsionCannon_ValidateObject_Patch
 	{
 		static bool Prepare() => Main.config.dbg.propulsionCannonIgnoreLimits;
@@ -77,8 +75,7 @@ namespace MiscPatches
 
 	static class ScannerRoomCheat
 	{
-		[OptionalPatch]
-		[HarmonyPatch(typeof(MapRoomFunctionality), "GetScanRange")]
+		[OptionalPatch, HarmonyPatch(typeof(MapRoomFunctionality), "GetScanRange")]
 		static class MapRoomFunctionality_GetScanRange_Patch
 		{
 			static bool Prepare() => Main.config.dbg.scannerRoomCheat;
@@ -90,8 +87,7 @@ namespace MiscPatches
 			}
 		}
 
-		[OptionalPatch]
-		[HarmonyPatch(typeof(MapRoomFunctionality), "GetScanInterval")]
+		[OptionalPatch, HarmonyPatch(typeof(MapRoomFunctionality), "GetScanInterval")]
 		static class MapRoomFunctionality_GetScanInterval_Patch
 		{
 			static bool Prepare() => Main.config.dbg.scannerRoomCheat;
@@ -107,8 +103,7 @@ namespace MiscPatches
 
 	static class FastStart
 	{
-		[OptionalPatch]
-		[HarmonyPatch(typeof(MainGameController), "Start")]
+		[OptionalPatch, HarmonyPatch(typeof(MainGameController), "Start")]
 		static class MainGameController_Start_Patch
 		{
 			static bool Prepare() => Main.config.dbg.fastStart.enabled;
@@ -116,7 +111,7 @@ namespace MiscPatches
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins)
 			{
 				var list = cins.ToList();
-				list[list.FindIndex(cin => cin.opcode == OpCodes.Call)].operand = typeof(MainGameController_Start_Patch).method(nameof(StartGame));
+				list[list.FindIndex(ci => ci.isOp(OpCodes.Call))].operand = typeof(MainGameController_Start_Patch).method(nameof(StartGame));
 
 				return list;
 			}
@@ -125,24 +120,16 @@ namespace MiscPatches
 			{																												"Fast start".logDbg();
 				Physics.autoSyncTransforms = Physics2D.autoSimulation = false;
 
-				if (Main.config.dbg.fastStart.loadEssentials)
-					yield return SceneManager.LoadSceneAsync("Essentials", LoadSceneMode.Additive);
+				yield return SceneManager.LoadSceneAsync("Essentials", LoadSceneMode.Additive);
 
 				Application.backgroundLoadingPriority = ThreadPriority.Normal;
-
-				if (!Main.config.dbg.fastStart.loadEssentials)
-					new GameObject("ConsoleCommands", typeof(InventoryConsoleCommands), typeof(SpawnConsoleCommand));
-
-				if (Main.config.dbg.fastStart.initPrefabCache)
-					CraftData.PreparePrefabIDCache();
 
 				foreach (var cmd in Main.config.dbg.fastStart.commandsAfterLoad)
 					DevConsole.SendConsoleCommand(cmd);
 			}
 		}
 
-		[OptionalPatch]
-		[HarmonyPatch(typeof(LightmappedPrefabs), "Awake")]
+		[OptionalPatch, HarmonyPatch(typeof(LightmappedPrefabs), "Awake")]
 		static class LightmappedPrefabs_Awake_Patch
 		{
 			static bool Prepare() => Main.config.dbg.fastStart.enabled;
@@ -161,8 +148,7 @@ namespace MiscPatches
 			}
 		}
 
-		[OptionalPatch]
-		[HarmonyPatch(typeof(uGUI_OptionsPanel), "SyncTerrainChangeRequiresRestartText")]
+		[OptionalPatch, HarmonyPatch(typeof(uGUI_OptionsPanel), "SyncTerrainChangeRequiresRestartText")]
 		static class ModOptionsPanelFix
 		{
 			static bool Prepare() => Main.config.dbg.fastStart.enabled;

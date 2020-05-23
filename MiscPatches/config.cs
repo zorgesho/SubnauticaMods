@@ -63,17 +63,9 @@ namespace MiscPatches
 				[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 				public readonly bool enabled = false;
 
-				[Options.Field("\tLoad essentials")]
-				[Options.Hideable(typeof(Hider), "fast")]
-				public readonly bool loadEssentials = true;
-
 				[Options.Field("\tLoad escape pod")]
 				[Options.Hideable(typeof(Hider), "fast")]
 				public readonly bool loadEscapePod = false;
-
-				[Options.Field("\tInit prefab cache")]
-				[Options.Hideable(typeof(Hider), "fast")]
-				public readonly bool initPrefabCache = false;
 
 				public readonly string[] commandsAfterLoad = new string[]
 				{

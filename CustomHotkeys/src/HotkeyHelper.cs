@@ -49,7 +49,7 @@ namespace CustomHotkeys
 			{
 				foreach (var hotkey in Main.config.hotkeys)
 				{
-					if (KeyCodeUtils.GetKeyDown(hotkey.key))
+					if (KeyCodeUtils.GetKeyDown(hotkey.key.key) && (hotkey.key.modifier == KeyCode.None || KeyCodeUtils.GetKeyHeld(hotkey.key.modifier)))
 						CommandRunner.runCommand(hotkey.command);
 				}
 			}

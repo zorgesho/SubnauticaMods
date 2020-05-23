@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using System.Collections.Generic;
 
 using UnityEngine;
@@ -28,6 +29,25 @@ namespace CustomHotkeys
 		[Options.FinalizeAction(typeof(FeedbackEnabler))]
 		public readonly bool enableFeedback = !Mod.isDevBuild;
 
+		class AddHotkeysAttribute: Attribute, IFieldAttribute
+		{
+			public void process(object config, FieldInfo field)
+			{
+				var hotkeys = field.GetValue(config) as List<Hotkey>;
+				Common.Debug.assert(hotkeys != null);
+
+				foreach (var hotkey in hotkeys)
+				{
+					if (hotkey.hide)
+						continue;
+
+					var cfgField = new Field(hotkey, nameof(Hotkey.key));
+					var option = new Options.KeyWModBindOption(cfgField, hotkey.label ?? hotkey.command); // TODO clamp command and add tooltip if command too long
+
+					Options.add(option);
+				}
+			}
+		}
 
 		public class Switch
 		{
@@ -49,16 +69,19 @@ namespace CustomHotkeys
 
 		public class Hotkey
 		{
-			public string command;
-			public string description;
-			public KeyCode key;
+			public InputHelper.KeyWithModifier key;
+
+			public bool hide = false;
+			public string command, label;
 		}
 
+		[AddHotkeys]
 		public List<Hotkey> hotkeys = new List<Hotkey>()
 		{
-			new Hotkey { command = "toggle_res", description = "Toggle fullscreen", key = KeyCode.F1 },
-			new Hotkey { command = "switch_cfgvars", description = "Toggle cfgvars", key = KeyCode.F2 },
-			new Hotkey { command = "togglecfgvar misc.dbg.faststart.enabled", description = "Toggle Fast Start", key = KeyCode.F12 }
+			new Hotkey { command = "toggle_res", label = "Toggle fullscreen", key = KeyCode.F1 },
+			new Hotkey { command = "switch_cfgvars", label = "Toggle cfgvars", key = KeyCode.F2 },
+			new Hotkey { command = "togglemod autoload", label = "Toggle AutoLoad", key = KeyCode.F11 },
+			new Hotkey { command = "togglecfgvar misc.dbg.faststart.enabled", label = null /*"Toggle Fast Start"*/, key = KeyCode.F12 }
 		};
 	}
 }

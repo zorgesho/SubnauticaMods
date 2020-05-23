@@ -63,7 +63,7 @@ namespace Common.Configuration
 				if (field.FieldType.IsPrimitive && (addPrivateFields || field.IsPublic) && (ignoreSkipAttr || !field.checkAttr<SkipAttribute>()))
 				{
 					var cfgField = new ConfigVarsConsoleCommand.CfgField(config, field, rootConfig);
-					string nameForConsole = (cfgNamespace + cfgField.path).ToLower();
+					string nameForConsole = (cfgNamespace + cfgField.id).ToLower();
 					uniqueIDs.ensureUniqueID(ref nameForConsole);
 
 					if (ConfigVarsConsoleCommand.addConfigField(nameForConsole, cfgField))

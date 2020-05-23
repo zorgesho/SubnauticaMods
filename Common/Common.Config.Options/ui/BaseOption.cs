@@ -35,7 +35,7 @@ namespace Common.Configuration
 			{
 				cfgField = _cfgField;
 
-				id = cfgField.path;
+				id = cfgField.id;
 				uniqueIDs.ensureUniqueID(ref id);
 
 				label = _label ?? id.clampLength(40);

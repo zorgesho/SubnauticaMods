@@ -24,8 +24,6 @@ namespace Common.Configuration
 
 				rootConfig = _rootConfig ?? parent as Config ?? Config.main;
 				Debug.assert(rootConfig != null, $"rootConfig is null (parent: '{parent?.GetType()}', field: '{field?.Name}')");
-				Debug.assert(path != null,
-					$"field path is null (rootConfig: {rootConfig.GetType()}, parent: '{parent?.GetType()}', field: '{field?.Name}')");
 
 				var actionAttrs = getAttrs<ActionAttribute>(true);
 				if (actionAttrs.Length > 0)
@@ -46,8 +44,10 @@ namespace Common.Configuration
 			public Type type => field.FieldType;
 			public string name => field.Name;
 
-			public string path => _path ??= rootConfig.getFieldPath(parent, field);
+			public string path => _path ??= rootConfig.getFieldPath(parent, field); // can be null
 			string _path = null;
+
+			public string id => path ?? name;
 
 			public A getAttr<A>(bool includeDeclaringTypes = false) where A: Attribute =>
 				field.getAttr<A>(includeDeclaringTypes);

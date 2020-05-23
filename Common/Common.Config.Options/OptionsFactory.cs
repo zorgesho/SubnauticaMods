@@ -38,7 +38,7 @@ namespace Common.Configuration
 					var optionTmp = c.create(cfgField);
 
 					Debug.assert(option == null || optionTmp == null,
-						$"Options.Factory: ambiguity for field '{cfgField.path}' (both {option?.GetType().Name} and {optionTmp?.GetType().Name})");
+						$"Options.Factory: ambiguity for field '{cfgField.id}' (both {option?.GetType().Name} and {optionTmp?.GetType().Name})");
 
 					option ??= optionTmp;
 				}

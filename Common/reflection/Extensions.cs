@@ -32,7 +32,12 @@ namespace Common.Reflection
 			try
 			{
 				if (targetType.IsEnum)
+				{
+					if (obj.GetType() == typeof(string))
+						return Enum.Parse(targetType, (string)obj);
+
 					targetType = Enum.GetUnderlyingType(targetType);
+				}
 
 				return Convert.ChangeType(obj, targetType, CultureInfo.InvariantCulture);
 			}

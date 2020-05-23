@@ -147,6 +147,30 @@ namespace Common
 			};
 
 			public static bool isModifier(KeyCode keyCode) => modifiers.Contains(keyCode);
+
+
+			public static implicit operator KeyWithModifier(KeyCode keyCode) => new KeyWithModifier(keyCode);
+
+			public static bool operator ==(KeyWithModifier key1, KeyWithModifier key2) => key1.key == key2.key && key1.modifier == key2.modifier;
+			public static bool operator !=(KeyWithModifier key1, KeyWithModifier key2) => !(key1 == key2);
+
+			public override int  GetHashCode() => Tuple.Create(key, modifier).GetHashCode();
+			public override bool Equals(object obj) => obj.GetType() != typeof(KeyWithModifier)? false: this == (KeyWithModifier)obj;
+
+			public override string ToString() => this == default? "": (modifier == KeyCode.None? $"{key}": $"{modifier}+{key}");
+
+			public static explicit operator KeyWithModifier(string str)
+			{
+				if (str.isNullOrEmpty())
+					return default;
+
+				try
+				{
+					var keys = str.Split('+');
+					return new KeyWithModifier(keys[0].convert<KeyCode>(), keys.Length == 2? keys[1].convert<KeyCode>(): KeyCode.None);
+				}
+				catch (Exception e) { Log.msg(e); return default; }
+			}
 		}
 
 

@@ -45,12 +45,28 @@ namespace Common.Configuration
 		{
 			ContractResolver = new ConfigContractResolver(),
 			ObjectCreationHandling = ObjectCreationHandling.Replace,
-			Converters = new List<JsonConverter> { new StringEnumConverter() }
+			Converters = new List<JsonConverter> { new StringEnumConverter(), new JsonConverters.KeyWithModifier() }
 		};
 
 
 		string serialize() => JsonConvert.SerializeObject(this, Formatting.Indented, serializerSettings);
 
 		static C deserialize<C>(string text) => JsonConvert.DeserializeObject<C>(text, serializerSettings);
+
+
+		class JsonConverters
+		{
+			public class KeyWithModifier: JsonConverter
+			{
+				public override bool CanConvert(Type objectType) =>
+					objectType == typeof(InputHelper.KeyWithModifier);
+
+				public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer) =>
+					writer.WriteValue(value.ToString());
+
+				public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer) =>
+					(InputHelper.KeyWithModifier)(reader.Value as string);
+			}
+		}
 	}
 }

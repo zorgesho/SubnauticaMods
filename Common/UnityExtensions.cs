@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
-using System.Reflection.Emit;
 using System.Collections;
+using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEngine.Events;
@@ -107,6 +107,49 @@ namespace Common
 
 	static class InputHelper
 	{
+		public struct KeyWithModifier
+		{
+			public readonly KeyCode modifier, key;
+
+			public KeyWithModifier(KeyCode key1, KeyCode key2 = KeyCode.None)
+			{
+				if (key1 == KeyCode.None || key2 == KeyCode.None) // if only one key defined treat it like a normal key
+				{
+					key = key1 == KeyCode.None? key2: key1;
+					modifier = KeyCode.None;
+					return;
+				}
+
+				bool isKey1Mod = isModifier(key1), isKey2Mod = isModifier(key2);
+
+				if (isKey1Mod && !isKey2Mod)
+				{
+					modifier = key1;
+					key = key2;
+				}
+				else if (!isKey1Mod && isKey2Mod)
+				{
+					modifier = key2;
+					key = key1;
+				}
+				else // if both keys are modifiers or non-modifiers then use only first key
+				{
+					key = key1;
+					modifier = KeyCode.None;
+				}
+			}
+
+			static readonly HashSet<KeyCode> modifiers = new HashSet<KeyCode>()
+			{
+				KeyCode.LeftControl, KeyCode.RightControl,
+				KeyCode.LeftShift, KeyCode.RightShift,
+				KeyCode.LeftAlt, KeyCode.RightAlt, KeyCode.AltGr
+			};
+
+			public static bool isModifier(KeyCode keyCode) => modifiers.Contains(keyCode);
+		}
+
+
 		public static float getMouseWheelValue() => getAxis? getAxis.invoke("Mouse ScrollWheel"): 0f;
 
 		static readonly MethodWrapper<Func<string, float>> getAxis =

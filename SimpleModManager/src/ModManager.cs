@@ -7,13 +7,33 @@ using Oculus.Newtonsoft.Json;
 using Oculus.Newtonsoft.Json.Linq;
 
 using Common;
+using Common.Reflection;
 using Common.Configuration;
 
 namespace SimpleModManager
 {
 	static class ModManager
 	{
-		static readonly List<ModToggle> modToggles = new List<ModToggle>();
+		static readonly List<Tuple<string, Config.Field>> modToggleFields = new List<Tuple<string, Config.Field>>();
+
+		class ConsoleCommands: PersistentConsoleCommands
+		{
+			void OnConsoleCommand_togglemod(NotificationCenter.Notification n)
+			{
+				if (n.getArgCount() == 0)
+					return;
+
+				string modName = n.getArg(0);
+				var mod = modToggleFields.Find(mod => mod.Item1.Contains(modName));
+
+				if (mod == null)
+					return;
+
+				bool enable = !mod.Item2.value.cast<bool>();
+				mod.Item2.value = enable;
+				$"{(enable? "<color=lime>enabled</color>": "<color=red>disabled</color>")}".onScreen(mod.Item1);
+			}
+		}
 
 		class ModToggle: Config
 		{
@@ -51,8 +71,9 @@ namespace SimpleModManager
 
 					var cfgField = new Field(this, nameof(enabled));
 					var option = new Options.ToggleOption(cfgField, modJson.Property("DisplayName").Value.ToString());
-
 					Options.add(option);
+
+					modToggleFields.Add(Tuple.Create(modJson.Property("Id").Value.ToString().ToLower(), cfgField));
 
 					return true;
 				}
@@ -63,17 +84,15 @@ namespace SimpleModManager
 
 		public static void init()
 		{
-			string modsRootPath = Path.Combine(Paths.modRootPath, "..");
+			PersistentConsoleCommands.createGameObject<ConsoleCommands>("ModManager");
 
-			foreach (var modPath in Directory.EnumerateDirectories(modsRootPath))
+			foreach (var modPath in Directory.EnumerateDirectories(Path.Combine(Paths.modRootPath, "..")))
 			{
 				if (Main.config.blacklist.FirstOrDefault(str => modPath.EndsWith(str)) != null)
 					continue;
 
 				var cfg = Config.tryLoad<ModToggle>(null, Config.LoadOptions.ProcessAttributes);
-
-				if (cfg.init(Path.Combine(modPath, "mod.json")))
-					modToggles.Add(cfg);
+				cfg.init(Path.Combine(modPath, "mod.json"));
 			}
 		}
 	}

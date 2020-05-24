@@ -48,6 +48,11 @@ namespace CustomHotkeys
 			n.getArg(0)?.onScreen();
 		}
 
+		void OnConsoleCommand_wait(NotificationCenter.Notification n)
+		{
+			HotkeyHelper.setWaitTime(n.getArg<float>(0));
+		}
+
 		#region windows API functions
 		[DllImport("user32.dll", EntryPoint = "SetWindowPos")]
 		static extern bool SetWindowPos(IntPtr hwnd, int hWndInsertAfter, int x, int y, int cx, int cy, int wFlags);

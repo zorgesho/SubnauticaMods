@@ -33,19 +33,26 @@ namespace Common.Configuration
 		protected virtual void onLoad() {} // called immediately after config loading/creating
 
 		// try to load config from mod folder. If file not found, create default config and save it to that path
-		public static C tryLoad<C>(string localPath = defaultName, LoadOptions loadOptions = LoadOptions.Default) where C: Config, new()
+		public static C tryLoad<C>(string loadPath = defaultName, LoadOptions loadOptions = LoadOptions.Default) where C: Config
 		{
-			C config;
-			string configPath = localPath.isNullOrEmpty()? null: Paths.modRootPath + localPath;
+			return tryLoad(typeof(C), loadPath, loadOptions) as C;
+		}
+
+		static Config tryLoad(Type configType, string loadPath, LoadOptions loadOptions)
+		{
+			Debug.assert(typeof(Config).IsAssignableFrom(configType), $"{configType}");
+
+			Config config;
+			string configPath = loadPath.isNullOrEmpty()? null: (Path.IsPathRooted(loadPath)? loadPath: Paths.modRootPath + loadPath);
 
 			try
 			{
 				bool createDefault = (ignoreExistingFile && !loadOptions.HasFlag(LoadOptions.ForcedLoad)) || !File.Exists(configPath);
 
-				if (createDefault)
-					$"Creating default '{localPath}'".log();
+				if (createDefault && configPath != null)
+					$"Creating default config ({loadPath})".log();
 
-				config = createDefault? new C(): deserialize<C>(File.ReadAllText(configPath));
+				config = createDefault? Activator.CreateInstance(configType) as Config: deserialize(File.ReadAllText(configPath), configType);
 				config.onLoad();
 
 				// saving config even if we just loaded it to update it in case of added or removed fields
@@ -65,7 +72,7 @@ namespace Common.Configuration
 			}
 			catch (Exception e)
 			{
-				Log.msg(e, $"Exception while loading '{localPath}'");
+				Log.msg(e, $"Exception while loading '{loadPath}'");
 				lastError = e.Message;
 
 				config = null;
@@ -74,9 +81,9 @@ namespace Common.Configuration
 			return config;
 		}
 
-		public void save(string configPath = null)
+		public void save(string savePath = null)
 		{
-			string path = configPath ?? this.configPath;
+			string path = savePath ?? configPath;
 			if (path == null)
 				return;
 

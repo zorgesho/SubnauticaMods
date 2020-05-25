@@ -51,7 +51,7 @@ namespace Common.Configuration
 
 		string serialize() => JsonConvert.SerializeObject(this, Formatting.Indented, serializerSettings);
 
-		static C deserialize<C>(string text) => JsonConvert.DeserializeObject<C>(text, serializerSettings);
+		static Config deserialize(string text, Type configType) => JsonConvert.DeserializeObject(text, configType, serializerSettings) as Config;
 
 
 		class JsonConverters

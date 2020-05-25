@@ -102,5 +102,25 @@ namespace Common.Configuration
 				return null;
 			}
 		}
+
+		object getFieldValueByPath(string path)
+		{
+			Debug.assert(path != null);
+			string[] fieldNames = path.Split('.');
+
+			object parent = this;
+			FieldInfo field = null;
+
+			foreach (var fieldName in fieldNames)
+			{
+				if (field != null)
+					parent = field.GetValue(parent);
+
+				field = parent.GetType().field(fieldName);
+			}
+
+			Debug.assert(field != null);
+			return field?.GetValue(parent);
+		}
 	}
 }

@@ -16,14 +16,14 @@ namespace Common.Configuration
 
 			protected readonly IAction[] actions;
 
-			public Field(object _parent, FieldInfo _field, Config _rootConfig = null)
+			public Field(object parent, FieldInfo field, Config rootConfig = null, string forcedId = null)
 			{
-				parent = _parent;
-				field  = _field;
+				this.parent = parent;
+				this.field  = field;
 				Debug.assert(parent != null && field != null);
 
-				rootConfig = _rootConfig ?? parent as Config ?? Config.main;
-				Debug.assert(rootConfig != null, $"rootConfig is null (parent: '{parent?.GetType()}', field: '{field?.Name}')");
+				this.rootConfig = rootConfig ?? parent as Config ?? Config.main;
+				Debug.assert(this.rootConfig != null, $"rootConfig is null (parent: '{parent?.GetType()}', field: '{field?.Name}')");
 
 				var actionAttrs = getAttrs<ActionAttribute>(true);
 				if (actionAttrs.Length > 0)
@@ -33,13 +33,15 @@ namespace Common.Configuration
 					for (int i = 0; i < actions.Length; i++)
 					{
 						actions[i] = actionAttrs[i].action;
-						(actions[i] as IRootConfigInfo)?.setRootConfig(rootConfig);
+						(actions[i] as IRootConfigInfo)?.setRootConfig(this.rootConfig);
 					}
 				}
+
+				this.forcedId = forcedId;
 			}
 
-			public Field(object parent, string fieldName, Config rootConfig = null):
-				this(parent, parent?.GetType().field(fieldName), rootConfig) {}
+			public Field(object parent, string fieldName, Config rootConfig = null, string forcedId = null):
+				this(parent, parent?.GetType().field(fieldName), rootConfig, forcedId) {}
 
 			public Type type => field.FieldType;
 			public string name => field.Name;
@@ -47,7 +49,8 @@ namespace Common.Configuration
 			public string path => _path ??= rootConfig.getFieldPath(parent, field); // can be null
 			string _path = null;
 
-			public string id => path ?? name;
+			public string id => forcedId ?? path ?? name;
+			readonly string forcedId = null;
 
 			public A getAttr<A>(bool includeDeclaringTypes = false) where A: Attribute =>
 				field.getAttr<A>(includeDeclaringTypes);

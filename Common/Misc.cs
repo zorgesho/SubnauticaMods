@@ -124,5 +124,7 @@ namespace Common
 
 			return false;
 		}
+
+		public bool freeID(string id) => allIDs.Remove(id); // non-unique IDs can't be freed (? for now)
 	}
 }

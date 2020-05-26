@@ -31,15 +31,15 @@ namespace Common.Configuration
 			public GameObject gameObject { get; protected set; }
 			public readonly Config.Field cfgField;
 
-			public ModOption(Config.Field _cfgField, string _label)
+			public ModOption(Config.Field cfgField, string label)
 			{
-				cfgField = _cfgField;
+				this.cfgField = cfgField;
 
 				id = cfgField.id;
 				uniqueIDs.ensureUniqueID(ref id);
 
-				label = _label ?? id.clampLength(40);
-				registerLabel(id, ref label);
+				this.label = label ?? id.clampLength(40);
+				registerLabel(id, ref this.label);
 			}
 
 			public abstract void addOption(Options options);
@@ -50,6 +50,11 @@ namespace Common.Configuration
 				gameObject = go;
 				handlers.ForEach(h => h.handle(gameObject));
 			}
+
+			public void onRemove() => uniqueIDs.freeID(id);
+#if DEBUG
+			~ModOption() => $"ModOption '{id}' is gc'ed".logDbg();
+#endif
 		}
 	}
 }

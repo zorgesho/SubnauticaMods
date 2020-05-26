@@ -7,6 +7,8 @@ using SMLHelper.V2.Handlers;
 
 namespace Common.Configuration
 {
+	using Reflection;
+
 	partial class Options: ModOptions
 	{
 		static Options instance = null;
@@ -28,6 +30,14 @@ namespace Common.Configuration
 			}
 
 			instance.modOptions.Add(option);
+		}
+
+		public static void remove(ModOption option)
+		{
+			Debug.assert(instance != null);
+
+			option.onRemove();
+			instance.modOptions.Remove(option);
 		}
 
 		Options(): base(optionsName)
@@ -64,7 +74,7 @@ namespace Common.Configuration
 
 		void updateCurrentMode()
 		{
-			if (optionsPanelGameObject != null) // panel gameobject created once per mode
+			if (optionsPanelGameObject) // panel gameobject created once per mode
 				return;
 
 			optionsPanelGameObject = UnityEngine.Object.FindObjectOfType<uGUI_OptionsPanel>().gameObject;
@@ -76,6 +86,35 @@ namespace Common.Configuration
 				mode = Mode.IngameMenu;
 			else
 				mode = Mode.Undefined;
+		}
+
+		static readonly Type scrollRectType = ReflectionHelper.safeGetType("UnityEngine.UI", "UnityEngine.UI.ScrollRect");
+		static readonly PropertyWrapper propScrollPos = scrollRectType.property("verticalNormalizedPosition").wrap();
+
+		// recreates all ui controls in the options panel
+		// keeps selected tab and scroll position
+		public static void resetPanel()
+		{
+			if (!optionsPanelGameObject)
+				return;
+
+			var optionsPanel = optionsPanelGameObject.GetComponent<uGUI_OptionsPanel>();
+
+			if (!optionsPanel || !optionsPanel.enabled || optionsPanel.tabs.Count == 0)
+				return;
+
+			int currentTab = optionsPanel.currentTab;
+			Debug.assert(currentTab < optionsPanel.tabs.Count);
+
+			var scroll = optionsPanel.tabs[currentTab].pane.GetComponent(scrollRectType);
+			float scrollPos = propScrollPos.get<float>(scroll);
+
+			optionsPanel.enabled = false; // all work is done by OnDisable() and OnEnable()
+			optionsPanel.enabled = true;
+			optionsPanel.SetVisibleTab(currentTab);
+
+			scroll = optionsPanel.tabs[currentTab].pane.GetComponent(scrollRectType); // new objects and components
+			propScrollPos.set(scroll, scrollPos);
 		}
 
 		static void registerLabel(string id, ref string label, bool uiInternal = true) => // uiInternal - for UI labels

@@ -29,39 +29,66 @@ namespace CustomHotkeys
 		[Options.FinalizeAction(typeof(FeedbackEnabler))]
 		public readonly bool enableFeedback = !Mod.isDevBuild;
 
-		class AddHotkeysAttribute: Attribute, IFieldAttribute
-		{
-			public void process(object config, FieldInfo field)
-			{
-				var hotkeys = field.GetValue(config) as List<Hotkey>;
-				Common.Debug.assert(hotkeys != null);
 
+		[NonSerialized, NoInnerFieldsAttrProcessing]
+		static readonly List<Options.ModOption> bindOptions = new List<Options.ModOption>();
+
+		static void addBindOptions(List<Hotkey> hotkeys)
+		{
+			Common.Debug.assert(hotkeys != null);
+
+			bindOptions.ForEach(option => Options.remove(option));
+			bindOptions.Clear();
+
+			try
+			{
+				int id = 0;
 				foreach (var hotkey in hotkeys)
 				{
 					if (hotkey.hide)
 						continue;
 
-					var cfgField = new Field(hotkey, nameof(Hotkey.key));
+					var cfgField = new Field(hotkey, nameof(Hotkey.key), Main.config, $"hotkey.{id++:D2}");
 					var option = new Options.KeyWModBindOption(cfgField, hotkey.label ?? hotkey.command); // TODO clamp command and add tooltip with command
 
+					bindOptions.Add(option);
 					Options.add(option);
 				}
 			}
+			catch (Exception e) { Log.msg(e); }
+
+			HotkeyHelper.setKeys(hotkeys);
 		}
 
 		public class Hotkey
 		{
-			class UpdateKeys: Field.IAction
-			{ public void action() => HotkeyHelper.updateKeys(); }
+			class UpdateBinds: Field.IAction
+			{ public void action() => HotkeyHelper.updateBinds(); }
 
-			[Field.Action(typeof(UpdateKeys))]
+			[Field.Action(typeof(UpdateBinds))]
 			public InputHelper.KeyWithModifier key;
 
 			public bool hide = false;
 			public string command, label;
 		}
 
-		[AddHotkeys]
+		class HotkeyListChanged: Field.IAction
+		{
+			public void action()
+			{
+				addBindOptions(Main.config.hotkeys);
+				Options.resetPanel();
+			}
+		}
+
+		class AddHotkeysAttribute: Attribute, IFieldAttribute
+		{
+			public void process(object config, FieldInfo field) =>
+				addBindOptions(field.GetValue(config) as List<Hotkey>);
+		}
+
+		[Field.Action(typeof(HotkeyListChanged))]
+		[AddHotkeys, Field.Reloadable, NoInnerFieldsAttrProcessing]
 		public List<Hotkey> hotkeys = new List<Hotkey>()
 		{
 			new Hotkey { command = "setresolution 1280 720 true; setwindowpos 10 360 | setresolution 2560 1440", key = KeyCode.F1, label = "Toggle fullscreen" },

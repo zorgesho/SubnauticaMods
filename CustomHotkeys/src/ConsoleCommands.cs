@@ -36,10 +36,8 @@ namespace CustomHotkeys
 
 		void OnConsoleCommand_setresolution(NotificationCenter.Notification n)
 		{
-			if (n.getArgCount() < 2)
-				return;
-
-			DisplayManager.SetResolution(n.getArg<int>(0), n.getArg<int>(1), !n.getArg<bool>(2));
+			if (n.getArgCount() > 1)
+				DisplayManager.SetResolution(n.getArg<int>(0), n.getArg<int>(1), !n.getArg<bool>(2));
 		}
 
 		[CommandData(caseSensitive = true, combineArgs = true)]
@@ -50,7 +48,7 @@ namespace CustomHotkeys
 
 		void OnConsoleCommand_wait(NotificationCenter.Notification n)
 		{
-			HotkeyHelper.setWaitTime(n.getArg<float>(0));
+			HotkeyHelper.wait(n.getArg<float>(0));
 		}
 
 		#region windows API functions

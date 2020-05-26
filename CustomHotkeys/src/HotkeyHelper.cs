@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -22,67 +23,54 @@ namespace CustomHotkeys
 
 			public void update()
 			{
-				if (checkHotkey())
-					activate();
+				if (getKeyState())
+					runCmd();
 			}
 
-			bool checkHotkey() // TODO hold mode && check for unpressed modifiers
+			bool getKeyState() // TODO hold mode && check for unpressed modifiers
 			{
 				return KeyCodeUtils.GetKeyDown(key.key) && (key.modifier == KeyCode.None || KeyCodeUtils.GetKeyHeld(key.modifier));
 			}
 
-			protected abstract void activate();
+			protected abstract void runCmd();
 		}
 
 		class HotkeyCommand: Hotkey
 		{
 			readonly string[] commands;
-
 			public HotkeyCommand(InputHelper.KeyWithModifier key, string[] commands): base(key) => this.commands = commands;
 
-			protected override void activate()
-			{
-				CommandRunner.run(commands);
-			}
+			protected override void runCmd() => CommandRunner.run(commands);
 		}
 
 		class HotkeySwitch: Hotkey
 		{
 			int index;
 			readonly string[][] commands;
-
 			public HotkeySwitch(InputHelper.KeyWithModifier key, string[][] commands): base(key) => this.commands = commands;
 
-			protected override void activate()
-			{
-				CommandRunner.run(commands[index++ % commands.Length]);
-			}
+			protected override void runCmd() => CommandRunner.run(commands[index++ % commands.Length]);
 		}
 
-		static List<Hotkey> hotkeys;
 
-		public static void updateKeys() => ConfigParser.updateKeys();
-
-		static float waitTime = 0f; // for use in console commands
-		public static void setWaitTime(float t) => waitTime = t;
-
-
-		static class ConfigParser
+		static class HotkeyInitializer
 		{
 			const char switchSeparator = '|';
 			const char commandSeparator = ';';
 
-			public static Dictionary<ModConfig.Hotkey, Hotkey> configKeys = new Dictionary<ModConfig.Hotkey, Hotkey>();
+			static List<Tuple<Hotkey, ModConfig.Hotkey>> keysInfo;
 
-			public static void updateKeys()
+			public static void updateBinds() => keysInfo.ForEach(info => info.Item1.key = info.Item2.key);
+
+			public static List<Hotkey> create(List<ModConfig.Hotkey> keys)
 			{
-				foreach (var link in configKeys)
-					link.Value.key = link.Key.key;
+				keysInfo = keys.Select(hk => Tuple.Create(create(hk), hk)).ToList();
+				return keysInfo.Select(hk => hk.Item1).ToList();
 			}
 
-			public static Hotkey create(ModConfig.Hotkey hotkey)
+			static Hotkey create(ModConfig.Hotkey hotkey)
 			{
-				Hotkey res;
+				Hotkey newHotkey;
 
 				if (hotkey.command.Contains(switchSeparator))
 				{
@@ -92,29 +80,37 @@ namespace CustomHotkeys
 					for (int i = 0; i < switches.Length; i++)
 						commands[i] = switches[i].Split(commandSeparator);
 
-					res = new HotkeySwitch(hotkey.key, commands);
+					newHotkey = new HotkeySwitch(hotkey.key, commands);
 				}
 				else
 				{
 					string[] commands = hotkey.command.Split(commandSeparator);
-					res = new HotkeyCommand(hotkey.key, commands);
+					newHotkey = new HotkeyCommand(hotkey.key, commands);
 				}
 
-				configKeys[hotkey] = res;
-				return res;
+				return newHotkey;
 			}
 		}
 
 
 		static class CommandRunner
 		{
-			class MultipleCommands: MonoBehaviour {} // for coroutines
-
+			class  MultipleCommands: MonoBehaviour {} // for coroutines
 			static MultipleCommands multCmdRunner;
 
-			public static void init()
+			public static float waitTime = 0f; // for pause between consecutive commands
+
+			public static void run(string[] commands)
 			{
-				multCmdRunner = hotkeyHelperGO.ensureComponent<MultipleCommands>();
+				if (commands.Length == 1)
+				{
+					run(commands[0]);
+				}
+				else
+				{
+					multCmdRunner ??= helperGameObject.ensureComponent<MultipleCommands>();
+					multCmdRunner.StartCoroutine(_run(commands));
+				}
 			}
 
 			static IEnumerator _run(string[] commands)
@@ -123,41 +119,32 @@ namespace CustomHotkeys
 				{
 					run(cmd);
 
-					yield return waitTime > 0? new WaitForSeconds(waitTime): null;
+					yield return waitTime > 0f? new WaitForSeconds(waitTime): null;
 					waitTime = 0f;
 				}
 			}
 
-			public static void run(string command)
-			{
-				DevConsole.SendConsoleCommand(command);
-			}
-
-			public static void run(string[] commands)
-			{
-				if (commands.Length == 1)
-					run(commands[0]);
-				else
-					multCmdRunner.StartCoroutine(_run(commands));
-			}
+			static void run(string command) => DevConsole.SendConsoleCommand(command);
 		}
 
-		class HotkeyListener: MonoBehaviour
+
+		static List<Hotkey> hotkeys;
+		static GameObject helperGameObject;
+
+		class HotkeyUpdateLoop: MonoBehaviour
 		{
-			void Update() => hotkeys.ForEach(hotkey => hotkey.update());
+			void Update() => hotkeys.ForEach(hk => hk.update());
 		}
 
-		static GameObject hotkeyHelperGO;
+		public static void updateBinds() => HotkeyInitializer.updateBinds();
 
-		public static void init(List<ModConfig.Hotkey> hotkeys)
+		public static void wait(float secs) => CommandRunner.waitTime = secs;
+
+		public static void setKeys(List<ModConfig.Hotkey> keys)
 		{
-			if (hotkeyHelperGO)
-				return;
+			helperGameObject ??= UnityHelper.createPersistentGameObject<HotkeyUpdateLoop>("HotkeyHelper");
 
-			hotkeyHelperGO = UnityHelper.createPersistentGameObject<HotkeyListener>("HotkeyHelper");
-			CommandRunner.init();
-
-			HotkeyHelper.hotkeys = hotkeys.Select(hk => ConfigParser.create(hk)).ToList();
+			hotkeys = HotkeyInitializer.create(keys);
 		}
 	}
 }

@@ -31,6 +31,7 @@ namespace CustomHotkeys
 		[Options.FinalizeAction(typeof(FeedbackEnabler))]
 		public readonly bool enableFeedback = !Mod.isDevBuild;
 
+		public readonly bool easyBindRemove = true;
 
 		class OpenConfig: Field.IAction
 		{

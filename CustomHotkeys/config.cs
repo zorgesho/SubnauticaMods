@@ -2,7 +2,9 @@
 using System.Reflection;
 using System.Collections.Generic;
 
+#if DEBUG
 using UnityEngine;
+#endif
 
 using Common;
 using Common.Harmony;
@@ -28,6 +30,23 @@ namespace CustomHotkeys
 		[Options.Field] // TODO label & tooltip
 		[Options.FinalizeAction(typeof(FeedbackEnabler))]
 		public readonly bool enableFeedback = !Mod.isDevBuild;
+
+
+		class OpenConfig: Field.IAction
+		{
+			public void action()
+			{
+				string executable = WinApi.getExecutableByExtension(".json") ?? WinApi.getExecutableByExtension(".txt");
+				string configPath = Paths.modRootPath + "config.json";
+				WinApi.startProcess(executable ?? configPath, configPath);
+			}
+		}
+
+		[Field.Action(typeof(OpenConfig))]
+		[Options.Button, Options.Field("Open <b>config.json</b>")]
+#pragma warning disable CS0169, IDE0044
+		int _;
+#pragma warning restore
 
 
 		[NonSerialized, NoInnerFieldsAttrProcessing]

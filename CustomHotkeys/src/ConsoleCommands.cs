@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Runtime.InteropServices;
-
 using Common;
 
 namespace CustomHotkeys
@@ -31,13 +29,13 @@ namespace CustomHotkeys
 
 		void OnConsoleCommand_setwindowpos(NotificationCenter.Notification n)
 		{
-			SetWindowPos(FindWindow(null, "Subnautica"), 0, n.getArg<int>(0), n.getArg<int>(1), 0, 0, 0x0001);
+			WinApi.setWindowPos("Subnautica", n.getArg<int>(0), n.getArg<int>(1));
 		}
 
 		void OnConsoleCommand_setresolution(NotificationCenter.Notification n)
 		{
 			if (n.getArgCount() > 1)
-				DisplayManager.SetResolution(n.getArg<int>(0), n.getArg<int>(1), !n.getArg<bool>(2));
+				DisplayManager.SetResolution(Math.Max(640, n.getArg<int>(0)), Math.Max(480, n.getArg<int>(1)), !n.getArg<bool>(2));
 		}
 
 		[CommandData(caseSensitive = true, combineArgs = true)]
@@ -51,12 +49,12 @@ namespace CustomHotkeys
 			HotkeyHelper.wait(n.getArg<float>(0));
 		}
 
-		#region windows API functions
-		[DllImport("user32.dll", EntryPoint = "SetWindowPos")]
-		static extern bool SetWindowPos(IntPtr hwnd, int hWndInsertAfter, int x, int y, int cx, int cy, int wFlags);
-
-		[DllImport("user32.dll", EntryPoint = "FindWindow")]
-		static extern IntPtr FindWindow(string className, string windowName);
-		#endregion
+#if DEBUG
+		void OnConsoleCommand_logassoc(NotificationCenter.Notification n)
+		{
+			if (n.getArgCount() == 1)
+				WinApi.logAccos(n.getArg(0));
+		}
+#endif
 	}
 }

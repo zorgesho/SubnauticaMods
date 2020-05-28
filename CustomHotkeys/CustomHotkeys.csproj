@@ -90,6 +90,7 @@
     <Compile Include="src\ConsoleCommands.cs" />
     <Compile Include="src\HotkeyHelper.cs" />
     <Compile Include="src\Patches.cs" />
+    <Compile Include="src\WinApi.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="mod.json" />

@@ -62,14 +62,19 @@ namespace CustomHotkeys
 
 		public class Hotkey
 		{
+#pragma warning disable CS0649 // field is never assigned to
 			class UpdateBinds: Field.IAction
 			{ public void action() => HotkeyHelper.updateBinds(); }
 
 			[Field.Action(typeof(UpdateBinds))]
 			public InputHelper.KeyWithModifier key;
 
-			public bool hide = false;
-			public string command, label;
+			public bool up, held;
+			public string command;
+
+			public bool hide;
+			public string label;
+#pragma warning restore
 		}
 
 		class HotkeyListChanged: Field.IAction
@@ -91,11 +96,13 @@ namespace CustomHotkeys
 		[AddHotkeys, Field.Reloadable, NoInnerFieldsAttrProcessing]
 		public List<Hotkey> hotkeys = new List<Hotkey>()
 		{
+#if DEBUG
 			new Hotkey { command = "setresolution 1280 720 true; setwindowpos 10 360 | setresolution 2560 1440", key = KeyCode.F1, label = "Toggle fullscreen" },
 			new Hotkey { command = "pincfgvars all | pincfgvars", label = "Toggle cfgvars", key = KeyCode.F2 },
-			new Hotkey { command = "warpforward 1", key = KeyCode.F4 },
+			new Hotkey { command = "warpforward 1", key = KeyCode.F4, held = true },
 			new Hotkey { command = "togglemod autoload", label = "Toggle AutoLoad", key = KeyCode.F11 },
 			new Hotkey { command = "togglecfgvar misc.dbg.faststart.enabled", label = null /*"Toggle Fast Start"*/, key = KeyCode.F12 }
+#endif
 		};
 	}
 }

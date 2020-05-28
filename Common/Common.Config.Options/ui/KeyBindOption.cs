@@ -61,7 +61,20 @@ namespace Common.Configuration
 
 			void onValueChange()
 			{
-				cfgField.value = new InputHelper.KeyWithModifier(StringToKeyCode(bind1.value), StringToKeyCode(bind2.value));
+				static KeyCode _getKeyCode(uGUI_Binding bind)
+				{
+					var keyCode = StringToKeyCode(bind.value);
+
+					if (keyCode == KeyCode.AltGr)
+					{
+						keyCode = KeyCode.RightAlt;
+						bind.value = keyCode.ToString(); // will resend event (field action will run once anyway)
+					}
+
+					return keyCode;
+				}
+
+				cfgField.value = new InputHelper.KeyWithModifier(_getKeyCode(bind1), _getKeyCode(bind2));
 			}
 
 			// uGUI_Binding derived from UnityEngine.UI.Selectable

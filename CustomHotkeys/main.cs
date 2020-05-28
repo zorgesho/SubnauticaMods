@@ -9,7 +9,7 @@ namespace CustomHotkeys
 
 		public static void patch()
 		{
-			HarmonyHelper.patchAll();
+			HarmonyHelper.patchAll(true);
 
 			PersistentConsoleCommands.createGameObject<ConsoleCommands>();
 		}

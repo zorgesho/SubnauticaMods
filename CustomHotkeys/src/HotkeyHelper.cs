@@ -3,22 +3,102 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 
+using Harmony;
 using UnityEngine;
-using SMLHelper.V2.Utility;
 
 using Common;
+using Common.Harmony;
 
 namespace CustomHotkeys
 {
+	using Debug = Common.Debug;
+
+	[PatchClass]
 	static class HotkeyHelper
 	{
 		abstract class Hotkey
 		{
-			public InputHelper.KeyWithModifier key;
-
-			protected Hotkey(InputHelper.KeyWithModifier key)
+			protected Hotkey(InputHelper.KeyWithModifier key, bool up, bool held)
 			{
 				this.key = key;
+
+				if (up)   targetState |= GameInput.InputStateFlags.Up;
+				if (held) targetState |= GameInput.InputStateFlags.Held;
+			}
+
+			readonly GameInput.InputStateFlags targetState = GameInput.InputStateFlags.Down;
+
+			public InputHelper.KeyWithModifier key
+			{
+				get => _key;
+				set
+				{
+					_key = value;
+
+					keyInputIndex = getInputIndex(_key.key);
+					modInputIndex = getInputIndex(_key.modifier);
+
+					modIndexes ??= initModIndexes();
+
+					if (modIndexes != null)
+						isJustModifier = modIndexes.Contains(keyInputIndex);
+				}
+			}
+			InputHelper.KeyWithModifier _key;
+
+			int keyInputIndex, modInputIndex;
+			bool isJustModifier = false; // is hotkey is just one modifier
+
+			static int getInputIndex(KeyCode keyCode)
+			{
+				if (keyCode == KeyCode.None || GameInput.inputs.Count == 0)
+					return -1;
+
+				return GameInput.inputs.FindIndex(input => input.keyCode == keyCode);
+			}
+
+			static int[] modIndexes;
+			static int[] initModIndexes()
+			{
+				if (GameInput.inputs.Count == 0)
+					return null;
+
+				return InputHelper.KeyWithModifier.modifiers.Select(keyCode => getInputIndex(keyCode)).ToArray();
+			}
+
+			bool getModState() // check that only necessary modifier is held down
+			{
+				Debug.assert(modIndexes != null);
+
+				int heldIndex = isJustModifier? keyInputIndex: modInputIndex;
+
+				foreach (var index in modIndexes)
+				{
+					if (index != heldIndex)
+					{
+						if (getKeyState(index) != 0u) // checking other modifiers
+							return false;
+					}
+					else if (!isJustModifier && (getKeyState(index) & GameInput.InputStateFlags.Held) == 0u)
+					{
+						return false;
+					}
+				}
+
+				return true;
+			}
+
+			static GameInput.InputStateFlags getKeyState(int index)
+			{
+				return index == -1? 0u: GameInput.inputStates[index].flags;
+			}
+
+			bool getKeyState()
+			{
+				 if (key.key == KeyCode.None || GameInput.clearInput || GameInput.scanningInput || FPSInputModule.current.lockMovement)
+					return false;
+
+				return (getKeyState(keyInputIndex) & targetState) != 0u && getModState();
 			}
 
 			public void update()
@@ -27,18 +107,16 @@ namespace CustomHotkeys
 					runCmd();
 			}
 
-			bool getKeyState() // TODO hold mode && check for unpressed modifiers
-			{
-				return KeyCodeUtils.GetKeyDown(key.key) && (key.modifier == KeyCode.None || KeyCodeUtils.GetKeyHeld(key.modifier));
-			}
-
 			protected abstract void runCmd();
 		}
+
 
 		class HotkeyCommand: Hotkey
 		{
 			readonly string[] commands;
-			public HotkeyCommand(InputHelper.KeyWithModifier key, string[] commands): base(key) => this.commands = commands;
+
+			public HotkeyCommand(InputHelper.KeyWithModifier key, bool up, bool held, string[] commands):
+				base(key, up, held) => this.commands = commands;
 
 			protected override void runCmd() => CommandRunner.run(commands);
 		}
@@ -47,7 +125,9 @@ namespace CustomHotkeys
 		{
 			int index;
 			readonly string[][] commands;
-			public HotkeySwitch(InputHelper.KeyWithModifier key, string[][] commands): base(key) => this.commands = commands;
+
+			public HotkeySwitch(InputHelper.KeyWithModifier key, bool up, bool held, string[][] commands):
+				base(key, up, held) => this.commands = commands;
 
 			protected override void runCmd() => CommandRunner.run(commands[index++ % commands.Length]);
 		}
@@ -80,12 +160,12 @@ namespace CustomHotkeys
 					for (int i = 0; i < switches.Length; i++)
 						commands[i] = switches[i].Split(commandSeparator);
 
-					newHotkey = new HotkeySwitch(hotkey.key, commands);
+					newHotkey = new HotkeySwitch(hotkey.key, hotkey.up, hotkey.held, commands);
 				}
 				else
 				{
 					string[] commands = hotkey.command.Split(commandSeparator);
-					newHotkey = new HotkeyCommand(hotkey.key, commands);
+					newHotkey = new HotkeyCommand(hotkey.key, hotkey.up, hotkey.held, commands);
 				}
 
 				return newHotkey;
@@ -102,6 +182,8 @@ namespace CustomHotkeys
 
 			public static void run(string[] commands)
 			{
+				Debug.assert(commands != null);
+
 				if (commands.Length == 1)
 				{
 					run(commands[0]);
@@ -127,6 +209,9 @@ namespace CustomHotkeys
 			static void run(string command) => DevConsole.SendConsoleCommand(command);
 		}
 
+
+		[HarmonyPostfix, HarmonyPatch(typeof(GameInput), "Initialize")]
+		static void setInputIndexes() => hotkeys.ForEach(hk => hk.key = hk.key); // reassign keys to update input indexes
 
 		static List<Hotkey> hotkeys;
 		static GameObject helperGameObject;

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 using UnityEngine;
 using UnityEngine.Events;
@@ -139,14 +140,16 @@ namespace Common
 				}
 			}
 
-			static readonly HashSet<KeyCode> modifiers = new HashSet<KeyCode>()
+			public static ReadOnlyCollection<KeyCode> modifiers => _modifiers.ToList().AsReadOnly();
+
+			static readonly HashSet<KeyCode> _modifiers = new HashSet<KeyCode>()
 			{
-				KeyCode.LeftControl, KeyCode.RightControl,
+				KeyCode.LeftAlt, KeyCode.RightAlt,
 				KeyCode.LeftShift, KeyCode.RightShift,
-				KeyCode.LeftAlt, KeyCode.RightAlt, KeyCode.AltGr
+				KeyCode.LeftControl, KeyCode.RightControl
 			};
 
-			public static bool isModifier(KeyCode keyCode) => modifiers.Contains(keyCode);
+			public static bool isModifier(KeyCode keyCode) => _modifiers.Contains(keyCode);
 
 
 			public static implicit operator KeyWithModifier(KeyCode keyCode) => new KeyWithModifier(keyCode);

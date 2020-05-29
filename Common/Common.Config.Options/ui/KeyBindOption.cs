@@ -70,6 +70,10 @@ namespace Common.Configuration
 						keyCode = KeyCode.RightAlt;
 						bind.value = keyCode.ToString(); // will resend event (field action will run once anyway)
 					}
+					else if (keyCode == KeyCode.None)
+					{
+						bind.value = ""; // in case of unsupported binds (e.g. mouse wheel)
+					}
 
 					return keyCode;
 				}

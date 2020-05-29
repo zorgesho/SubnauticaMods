@@ -20,6 +20,12 @@ namespace Common.Configuration
 			public class LoadOnlyAttribute: Attribute {}
 		}
 
+		public class SerializerSettingsAttribute: Attribute
+		{
+			public bool ignoreNullValues = false;
+			public bool ignoreDefaultValues = false;
+		}
+
 		class ConfigContractResolver: DefaultContractResolver
 		{
 			// serialize only fields (including private and readonly, except static and with NonSerialized attribute)
@@ -41,17 +47,32 @@ namespace Common.Configuration
 				return property;
 			}
 		}
-		static readonly JsonSerializerSettings serializerSettings = new JsonSerializerSettings()
+
+
+		static JsonSerializerSettings _initSerializer(Type configType)
 		{
-			ContractResolver = new ConfigContractResolver(),
-			ObjectCreationHandling = ObjectCreationHandling.Replace,
-			Converters = new List<JsonConverter> { new StringEnumConverter(), new JsonConverters.KeyWithModifier() }
-		};
+			var settings = new JsonSerializerSettings()
+			{
+				Formatting = Formatting.Indented,
+				ContractResolver = new ConfigContractResolver(),
+				ObjectCreationHandling = ObjectCreationHandling.Replace,
+				Converters = new List<JsonConverter> { new StringEnumConverter(), new JsonConverters.KeyWithModifier() }
+			};
 
+			if (configType.getAttr<SerializerSettingsAttribute>() is SerializerSettingsAttribute settingsAttr)
+			{
+				if (settingsAttr.ignoreNullValues)	  settings.NullValueHandling = NullValueHandling.Ignore;
+				if (settingsAttr.ignoreDefaultValues) settings.DefaultValueHandling = DefaultValueHandling.Ignore;
+			}
 
-		string serialize() => JsonConvert.SerializeObject(this, Formatting.Indented, serializerSettings);
+			return settings;
+		}
 
-		static Config deserialize(string text, Type configType) => JsonConvert.DeserializeObject(text, configType, serializerSettings) as Config;
+		JsonSerializerSettings srzSettings;
+
+		string serialize() => JsonConvert.SerializeObject(this, srzSettings ??= _initSerializer(GetType()));
+
+		static Config deserialize(string text, Type configType) => JsonConvert.DeserializeObject(text, configType, _initSerializer(configType)) as Config;
 
 
 		class JsonConverters

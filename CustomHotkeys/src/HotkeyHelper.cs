@@ -138,17 +138,17 @@ namespace CustomHotkeys
 			const char switchSeparator = '|';
 			const char commandSeparator = ';';
 
-			static List<Tuple<Hotkey, ModConfig.Hotkey>> keysInfo;
+			static List<Tuple<Hotkey, HKConfig.Hotkey>> keysInfo;
 
 			public static void updateBinds() => keysInfo.ForEach(info => info.Item1.key = info.Item2.key);
 
-			public static List<Hotkey> create(List<ModConfig.Hotkey> keys)
+			public static List<Hotkey> create(List<HKConfig.Hotkey> keys)
 			{
 				keysInfo = keys.Select(hk => Tuple.Create(create(hk), hk)).ToList();
 				return keysInfo.Select(hk => hk.Item1).ToList();
 			}
 
-			static Hotkey create(ModConfig.Hotkey hotkey)
+			static Hotkey create(HKConfig.Hotkey hotkey)
 			{
 				Hotkey newHotkey;
 
@@ -160,12 +160,12 @@ namespace CustomHotkeys
 					for (int i = 0; i < switches.Length; i++)
 						commands[i] = switches[i].Split(commandSeparator);
 
-					newHotkey = new HotkeySwitch(hotkey.key, hotkey.up, hotkey.held, commands);
+					newHotkey = new HotkeySwitch(hotkey.key, hotkey.up == true, hotkey.held == true, commands);
 				}
 				else
 				{
 					string[] commands = hotkey.command.Split(commandSeparator);
-					newHotkey = new HotkeyCommand(hotkey.key, hotkey.up, hotkey.held, commands);
+					newHotkey = new HotkeyCommand(hotkey.key, hotkey.up == true, hotkey.held == true, commands);
 				}
 
 				return newHotkey;
@@ -211,7 +211,7 @@ namespace CustomHotkeys
 
 
 		[HarmonyPostfix, HarmonyPatch(typeof(GameInput), "Initialize")]
-		static void setInputIndexes() => hotkeys.ForEach(hk => hk.key = hk.key); // reassign keys to update input indexes
+		static void setInputIndexes() => hotkeys?.ForEach(hk => hk.key = hk.key); // reassign keys to update input indexes
 
 		static List<Hotkey> hotkeys;
 		static GameObject helperGameObject;
@@ -225,7 +225,7 @@ namespace CustomHotkeys
 
 		public static void wait(float secs) => CommandRunner.waitTime = secs;
 
-		public static void setKeys(List<ModConfig.Hotkey> keys)
+		public static void setKeys(List<HKConfig.Hotkey> keys)
 		{
 			helperGameObject ??= UnityHelper.createPersistentGameObject<HotkeyUpdateLoop>("HotkeyHelper");
 

@@ -38,22 +38,26 @@ namespace CustomHotkeys
 			public void action()
 			{
 				string executable = WinApi.getExecutableByExtension(".json") ?? WinApi.getExecutableByExtension(".txt");
-				string configPath = Paths.modRootPath + "config.json";
+				string configPath = Paths.modRootPath + Main.hotkeyConfigName;
 				WinApi.startProcess(executable ?? configPath, configPath);
 			}
 		}
 
 		[Field.Action(typeof(OpenConfig))]
-		[Options.Button, Options.Field("Open <b>config.json</b>")]
+		[Options.Button, Options.Field("Open <b>" + Main.hotkeyConfigName + "</b>")]
 #pragma warning disable CS0169, IDE0044
 		int _;
 #pragma warning restore
+	}
 
 
+	[SerializerSettings(ignoreNullValues = true)]
+	class HKConfig: Config
+	{
 		[NonSerialized, NoInnerFieldsAttrProcessing]
-		static readonly List<Options.ModOption> bindOptions = new List<Options.ModOption>();
+		readonly List<Options.ModOption> bindOptions = new List<Options.ModOption>();
 
-		static void addBindOptions(List<Hotkey> hotkeys)
+		void addBindOptions()
 		{
 			Common.Debug.assert(hotkeys != null);
 
@@ -65,10 +69,10 @@ namespace CustomHotkeys
 				int id = 0;
 				foreach (var hotkey in hotkeys)
 				{
-					if (hotkey.hide)
+					if (hotkey.hide == true)
 						continue;
 
-					var cfgField = new Field(hotkey, nameof(Hotkey.key), Main.config, $"hotkey.{id++:D2}");
+					var cfgField = new Field(hotkey, nameof(Hotkey.key), this, $"hotkey.{id++:D2}");
 					var option = new Options.KeyWModBindOption(cfgField, hotkey.label ?? hotkey.command); // TODO clamp command and add tooltip with command
 
 					bindOptions.Add(option);
@@ -89,28 +93,28 @@ namespace CustomHotkeys
 			[Field.Action(typeof(UpdateBinds))]
 			public InputHelper.KeyWithModifier key;
 
-			public bool up, held;
 			public string command;
+			public bool? up, held; // nullables so they can be ignored by serializer
 
-			public bool hide;
 			public string label;
+			public bool? hide; // ^
 #pragma warning restore
 		}
 
-		class HotkeyListChanged: Field.IAction
+		class HotkeyListChanged: Field.IAction, IRootConfigInfo
 		{
+			HKConfig hkConfig;
+			public void setRootConfig(Config config) => hkConfig = config as HKConfig;
+
 			public void action()
 			{
-				addBindOptions(Main.config.hotkeys);
+				hkConfig.addBindOptions();
 				Options.resetPanel();
 			}
 		}
 
-		class AddHotkeysAttribute: Attribute, IFieldAttribute
-		{
-			public void process(object config, FieldInfo field) =>
-				addBindOptions(field.GetValue(config) as List<Hotkey>);
-		}
+		class AddHotkeysAttribute: Attribute, IRootConfigInfo
+		{ public void setRootConfig(Config config) => (config as HKConfig).addBindOptions(); }
 
 		[Field.Action(typeof(HotkeyListChanged))]
 		[AddHotkeys, Field.Reloadable, NoInnerFieldsAttrProcessing]

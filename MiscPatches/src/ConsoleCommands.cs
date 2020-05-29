@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using Common;
 
 namespace MiscPatches
@@ -34,6 +35,11 @@ namespace MiscPatches
 			void OnConsoleCommand_lootreroll(NotificationCenter.Notification _)
 			{
 				LargeWorldStreamer.main?.ForceUnloadAll();
+			}
+
+			void OnConsoleCommand_gc(NotificationCenter.Notification _)
+			{
+				GC.Collect();
 			}
 
 			void OnConsoleCommand_spawnresource(NotificationCenter.Notification n)

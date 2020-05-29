@@ -51,7 +51,7 @@ namespace CustomHotkeys
 	}
 
 
-	[SerializerSettings(ignoreNullValues = true)]
+	[SerializerSettings(ignoreNullValues = true, verboseErrors = true)]
 	class HKConfig: Config
 	{
 		[NonSerialized, NoInnerFieldsAttrProcessing]

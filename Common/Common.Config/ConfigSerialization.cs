@@ -22,6 +22,7 @@ namespace Common.Configuration
 
 		public class SerializerSettingsAttribute: Attribute
 		{
+			public bool verboseErrors = false;
 			public bool ignoreNullValues = false;
 			public bool ignoreDefaultValues = false;
 		}
@@ -63,6 +64,9 @@ namespace Common.Configuration
 			{
 				if (settingsAttr.ignoreNullValues)	  settings.NullValueHandling = NullValueHandling.Ignore;
 				if (settingsAttr.ignoreDefaultValues) settings.DefaultValueHandling = DefaultValueHandling.Ignore;
+
+				if (settingsAttr.verboseErrors)
+					settings.Error = (_, args) => $"<color=red>{args.ErrorContext.Error.Message}</color>".onScreen(); // TODO make more general
 			}
 
 			return settings;

@@ -98,6 +98,8 @@
   <ItemGroup>
     <None Include="src\AssetsHelper.cs" />
     <None Include="src\TestConfig.cs" />
+    <None Include="src\BasePower.cs" />
+    <None Include="src\ConsoleCommands.cs" />
     <None Include="src\ui\UIDebugStuff.cs" />
     <None Include="src\EmergencyPowerStation.cs" />
     <None Include="src\ui\BulkCrafting.cs" />

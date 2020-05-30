@@ -3,7 +3,7 @@ using Common.Configuration;
 
 namespace PrawnSuitSettings
 {
-	[AddToConsole("pss")]
+	[Field.BindConsole("pss")]
 	class ModConfig: Config
 	{
 		[Options.Hideable(typeof(Hider), "collision")]

@@ -13,7 +13,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)attributes\FieldReloadable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ConfigField.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ConfigSerialization.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)attributes\ConfigToConsoleAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)attributes\FieldBindConsoleAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)attributes\FieldRangeAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)attributes\ConfigAttributes.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Config.cs" />

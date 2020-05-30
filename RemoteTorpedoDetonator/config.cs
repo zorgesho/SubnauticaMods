@@ -4,7 +4,7 @@ using Common.Configuration;
 
 namespace RemoteTorpedoDetonator
 {
-	[AddToConsole("rtd")]
+	[Field.BindConsole("rtd")]
 	class ModConfig: Config
 	{
 		[Field.Range(min: 1f)]

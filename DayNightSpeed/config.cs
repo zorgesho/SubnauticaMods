@@ -8,7 +8,7 @@ using Common.Configuration;
 
 namespace DayNightSpeed
 {
-	[AddToConsole("dns")] // warning: "dns" is used in daynightspeed command
+	[Field.BindConsole("dns")] // warning: "dns" is used in daynightspeed command
 	class ModConfig: Config
 	{
 		const float dayNightSecs = 1200f;

@@ -31,7 +31,7 @@ namespace MiscPatches
 		public readonly float batteryChargerSpeed   = 0.0015f; // 0.0015f
 		public readonly float powerCellChargerSpeed = 0.0025f; // 0.0025f
 
-		[AddToConsole("misc")]
+		[Field.BindConsole("misc")]
 		public class Debug
 		{
 			public readonly bool buildAnywhere = true;

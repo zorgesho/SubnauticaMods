@@ -18,19 +18,19 @@ namespace GravTrapImproved
 #if !DEBUG
 		[Field.Range(12, 1000)]
 #endif
-		[AddToConsole("gt_mk2")]
+		[Field.BindConsole("gt_mk2")]
 		public readonly int mk2MaxObjects = 20; // default: 12
 
 #if !DEBUG
 		[Field.Range(15, 1000)]
 #endif
-		[AddToConsole("gt_mk2")]
+		[Field.BindConsole("gt_mk2")]
 		public readonly float mk2MaxForce = 20f; // default: 15f
 
 #if !DEBUG
 		[Field.Range(17, 1000)]
 #endif
-		[AddToConsole("gt_mk2")]
+		[Field.BindConsole("gt_mk2")]
 		[Field.Action(typeof(GravTrapMK2Patches.UpdateRanges))]
 		public readonly float mk2Range = 30f; // default: 17f
 

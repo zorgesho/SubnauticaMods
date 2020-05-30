@@ -2,7 +2,7 @@
 
 namespace HabitatPlatform
 {
-	[AddToConsole]
+	[Field.BindConsole]
 	class ModConfig: Config
 	{
 		public readonly float step = 1f;
@@ -10,6 +10,5 @@ namespace HabitatPlatform
 
 		public readonly int xxx = 4;
 		public readonly int zzz = 3;
-
 	}
 }

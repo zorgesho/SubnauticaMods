@@ -17,7 +17,7 @@ namespace ConsoleImproved
 	}
 
 #if DEBUG
-	[AddToConsole("console", true)]
+	[Field.BindConsole("console", true)]
 #endif
 	[Options.Name("Console & messages settings")]
 	class ModConfig: Config

@@ -5,7 +5,6 @@
 
 //#define CONFIG_FORCE_LOAD
 
-//options stuff
 //#define TEST_CHOICES
 //#define TEST_CHOICEMASTERS
 //#define TEST_OPTIONS_ADJUST
@@ -48,7 +47,7 @@ namespace MiscPrototypes
 	}
 
 	[Options.Field]
-	[AddToConsole("test_all_2")]
+	[Field.BindConsole("test_all_2")]
 	class TestConfig2: Config
 	{
 		public readonly bool field1_config2 = true;
@@ -87,12 +86,12 @@ namespace MiscPrototypes
 
 #if TEST_NESTED_CLASSES || TEST_MULTIPLE_CONFIGS
 	[Options.Field]
-	[AddToConsole("test_all")]
+	[Field.BindConsole("test_all")]
 #endif
 	class TestConfig: Config
 	{
 #if TEST_ACTIONS
-		[AddToConsole]
+		[Field.BindConsole]
 		public class ActionsTest
 		{
 			class SimpleAction1: Field.IAction
@@ -223,7 +222,7 @@ namespace MiscPrototypes
 #endif
 
 #if TEST_SLIDERS_RANGE
-		[AddToConsole("range_test")]
+		[Field.BindConsole("range_test")]
 		public class RangeTest
 		{
 			[Options.Field("1. Range [-10, 10]")]
@@ -345,7 +344,7 @@ namespace MiscPrototypes
 		public class TestDuplicates
 		{
 			[TestNested]
-			[AddToConsole("dup")]
+			[Field.BindConsole("dup")]
 			public readonly bool duplicate = true;
 
 			public readonly float floatDuplicate = 0f;
@@ -377,7 +376,7 @@ namespace MiscPrototypes
 			}
 			public readonly NestedClass1 nestedClass1 = new NestedClass1();
 		}
-		[AddToConsole("deep")]
+		[Field.BindConsole("deep")]
 		public readonly DeepNestClass deepNestClass = new DeepNestClass();
 #endif
 

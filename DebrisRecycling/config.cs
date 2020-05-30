@@ -22,7 +22,7 @@ namespace DebrisRecycling
 	}
 
 #if DEBUG
-	[AddToConsole("dr")]
+	[Field.BindConsole("dr")]
 #endif
 	class ModConfig: Config
 	{

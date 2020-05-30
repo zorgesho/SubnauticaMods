@@ -11,7 +11,7 @@ namespace TrfHabitatBuilder
 
 		public readonly float powerConsumption = 0.5f;
 
-		[AddToConsole("trf_hb")]
+		[Field.BindConsole("trf_hb")]
 		[Field.Action(typeof(UpdateBuilderPanel))]
 		public readonly bool limitBlueprints = false;
 
@@ -41,7 +41,7 @@ namespace TrfHabitatBuilder
 		public LockedBlueprints lockedBlueprints = new LockedBlueprints();
 
 #if DEBUG
-		[AddToConsole]
+		[Field.BindConsole]
 		public readonly float forcedBuildTime = 1.0f;
 #endif
 	}

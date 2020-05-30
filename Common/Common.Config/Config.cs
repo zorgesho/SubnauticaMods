@@ -28,7 +28,7 @@ namespace Common.Configuration
 #endif
 		public static string lastError { get; private set; }
 
-		string configPath;
+		public string configPath { get; private set; }
 
 		protected virtual void onLoad() {} // called immediately after config loading/creating
 
@@ -38,7 +38,7 @@ namespace Common.Configuration
 			return tryLoad(typeof(C), loadPath, loadOptions) as C;
 		}
 
-		static Config tryLoad(Type configType, string loadPath, LoadOptions loadOptions)
+		public static Config tryLoad(Type configType, string loadPath = defaultName, LoadOptions loadOptions = LoadOptions.Default)
 		{
 			Debug.assert(typeof(Config).IsAssignableFrom(configType), $"{configType}");
 

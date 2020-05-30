@@ -10,7 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)attributes\FieldActionAttribute.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)attributes\FieldReloadable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)attributes\FieldReloadableAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ConfigField.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ConfigSerialization.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)attributes\FieldBindConsoleAttribute.cs" />
@@ -20,6 +20,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)HarmonyHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mod.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)utils\CfgVarBinder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)utils\ConfigReloader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)utils\FieldRanged.cs" />
   </ItemGroup>
 </Project>

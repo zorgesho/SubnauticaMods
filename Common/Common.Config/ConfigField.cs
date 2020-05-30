@@ -106,7 +106,7 @@ namespace Common.Configuration
 			}
 		}
 
-		object getFieldValueByPath(string path)
+		public object getFieldValueByPath(string path)
 		{
 			Debug.assert(path != null);
 			string[] fieldNames = path.Split('.');

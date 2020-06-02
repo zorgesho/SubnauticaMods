@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 using SMLHelper.V2.Options;
@@ -92,6 +93,7 @@ namespace Common.Configuration
 
 		static readonly Type typeScrollRect = ReflectionHelper.safeGetType("UnityEngine.UI", "UnityEngine.UI.ScrollRect");
 		static readonly PropertyWrapper propScrollPos = typeScrollRect.property("verticalNormalizedPosition").wrap();
+		static readonly MethodWrapper mtdSelectableSelect = ReflectionHelper.safeGetType("UnityEngine.UI", "UnityEngine.UI.Selectable").method("Select").wrap();
 
 		// recreates all ui controls in the options panel
 		// keeps selected tab and scroll position
@@ -112,6 +114,39 @@ namespace Common.Configuration
 
 			scroll = optionsPanel.tabs[currentTab].pane.GetComponent(typeScrollRect); // new objects and components
 			propScrollPos.set(scroll, scrollPos);
+		}
+
+		// open options menu and switch to the 'Mods' tab
+		public static void open()
+		{
+			if (uGUI_MainMenu.main)
+			{
+				uGUI_MainMenu.main.OnButtonOptions();
+			}
+			else if (IngameMenu.main)
+			{
+				IngameMenu.main.Open();
+				IngameMenu.main.ChangeSubscreen("Options");
+			}
+
+			optionsPanel.StartCoroutine(_selectModsTab());
+
+			static IEnumerator _selectModsTab()
+			{
+				yield return null;
+				mtdSelectableSelect.invoke(optionsPanel.tabs[modsTabIndex].getFieldValue("tabButton"));
+			}
+		}
+
+		// scroll panel to show option at specified index
+		// if index < 0 it uses for counting from the end of the list (e.g. '-1' is the last item)
+		public static void scrollToShowOption(int index)
+		{
+			if (instance.modOptions.Count == 0)
+				return;
+
+			index = (index >= 0)? Math.Min(index, instance.modOptions.Count): Math.Max(0, instance.modOptions.Count + index);
+			UIUtils.ScrollToShowItemInCenter(instance.modOptions[index].gameObject.transform);
 		}
 
 		static void registerLabel(string id, ref string label, bool uiInternal = true) => // uiInternal - for UI labels

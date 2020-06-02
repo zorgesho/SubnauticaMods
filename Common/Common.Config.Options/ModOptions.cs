@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using UnityEngine;
 using SMLHelper.V2.Options;
 using SMLHelper.V2.Handlers;
 
@@ -16,8 +15,17 @@ namespace Common.Configuration
 
 		public enum Mode { Undefined, MainMenu, IngameMenu };
 
-		public static Mode mode { get; private set; } = Mode.Undefined;
-		static GameObject optionsPanelGameObject;
+		public static Mode mode
+		{
+			get
+			{
+				if (uGUI_MainMenu.main) return Mode.MainMenu;
+				if (IngameMenu.main)	return Mode.IngameMenu;
+				return Mode.Undefined;
+			}
+		}
+		static int modsTabIndex = -1;
+		static uGUI_OptionsPanel optionsPanel;
 
 		readonly List<ModOption> modOptions = new List<ModOption>();
 
@@ -68,52 +76,41 @@ namespace Common.Configuration
 		public override void BuildModOptions()
 		{
 			modOptions.ForEach(o => o.addOption(this));
-
-			updateCurrentMode();
+			updatePanelInfo();
 		}
 
-		void updateCurrentMode()
+		void updatePanelInfo()
 		{
-			if (optionsPanelGameObject) // panel gameobject created once per mode
-				return;
+			if (!optionsPanel)
+			{
+				optionsPanel = UnityEngine.Object.FindObjectOfType<uGUI_OptionsPanel>();
+				modsTabIndex = optionsPanel.tabs.FindIndex(tab => tab.tab.GetComponentInChildren<TranslationLiveUpdate>().translationKey == "Mods");
+			}
 
-			optionsPanelGameObject = UnityEngine.Object.FindObjectOfType<uGUI_OptionsPanel>().gameObject;
-
-			if (optionsPanelGameObject.GetComponent<MainMenuOptions>())
-				mode = Mode.MainMenu;
-			else
-			if (optionsPanelGameObject.GetComponent<IngameMenuPanel>())
-				mode = Mode.IngameMenu;
-			else
-				mode = Mode.Undefined;
+			Debug.assert(optionsPanel && modsTabIndex != -1);
 		}
 
-		static readonly Type scrollRectType = ReflectionHelper.safeGetType("UnityEngine.UI", "UnityEngine.UI.ScrollRect");
-		static readonly PropertyWrapper propScrollPos = scrollRectType.property("verticalNormalizedPosition").wrap();
+		static readonly Type typeScrollRect = ReflectionHelper.safeGetType("UnityEngine.UI", "UnityEngine.UI.ScrollRect");
+		static readonly PropertyWrapper propScrollPos = typeScrollRect.property("verticalNormalizedPosition").wrap();
 
 		// recreates all ui controls in the options panel
 		// keeps selected tab and scroll position
 		public static void resetPanel()
 		{
-			if (!optionsPanelGameObject)
-				return;
-
-			var optionsPanel = optionsPanelGameObject.GetComponent<uGUI_OptionsPanel>();
-
 			if (!optionsPanel || !optionsPanel.enabled || optionsPanel.tabs.Count == 0)
 				return;
 
 			int currentTab = optionsPanel.currentTab;
 			Debug.assert(currentTab < optionsPanel.tabs.Count);
 
-			var scroll = optionsPanel.tabs[currentTab].pane.GetComponent(scrollRectType);
+			var scroll = optionsPanel.tabs[currentTab].pane.GetComponent(typeScrollRect);
 			float scrollPos = propScrollPos.get<float>(scroll);
 
 			optionsPanel.enabled = false; // all work is done by OnDisable() and OnEnable()
 			optionsPanel.enabled = true;
 			optionsPanel.SetVisibleTab(currentTab);
 
-			scroll = optionsPanel.tabs[currentTab].pane.GetComponent(scrollRectType); // new objects and components
+			scroll = optionsPanel.tabs[currentTab].pane.GetComponent(typeScrollRect); // new objects and components
 			propScrollPos.set(scroll, scrollPos);
 		}
 

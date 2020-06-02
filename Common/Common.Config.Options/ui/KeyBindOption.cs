@@ -63,6 +63,9 @@ namespace Common.Configuration
 			{
 				static KeyCode _getKeyCode(uGUI_Binding bind)
 				{
+					if (bind.value.isNullOrEmpty())
+						return default;
+
 					var keyCode = StringToKeyCode(bind.value);
 
 					if (keyCode == KeyCode.AltGr)
@@ -89,6 +92,7 @@ namespace Common.Configuration
 			{
 				uGUI_Bindings bindings = go.GetComponentInChildren<uGUI_Bindings>();
 				bind1 = bindings.bindings[0];
+				bind1.onValueChanged.RemoveAllListeners();
 
 				GameObject bind1GO = Component_gameObject.get<GameObject>(bind1);
 				GameObject bind2GO = Object.Instantiate(bind1GO);
@@ -107,11 +111,11 @@ namespace Common.Configuration
 					bind1.value = keyValue.key != KeyCode.None? KeyCodeToString(keyValue.key): "";
 				}
 
-				bind1.onValueChanged.RemoveAllListeners();
-
 				var callback = new UnityAction<string>(_ => onValueChange());
 				bind1.onValueChanged.AddListener(callback);
 				bind2.onValueChanged.AddListener(callback);
+
+				base.onGameObjectChange(go);
 			}
  		}
 	}

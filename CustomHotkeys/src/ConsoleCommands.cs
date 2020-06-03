@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Collections;
 
 using UnityEngine;
 
@@ -71,6 +72,24 @@ namespace CustomHotkeys
 		void OnConsoleCommand_wait(NotificationCenter.Notification n)
 		{
 			HotkeyHelper.wait(n.getArg<float>(0));
+		}
+
+		[CommandData(combineArgs = true)]
+		void OnConsoleCommand_addhotkey(NotificationCenter.Notification n)
+		{
+			if (n.getArgCount() == 0)
+				return;
+
+			Main.hkConfig.addHotkey(n.getArg(0));
+
+			Options.open();
+			StartCoroutine(_scroll());
+
+			static IEnumerator _scroll()
+			{
+				yield return null;
+				Options.scrollToShowOption(-1);
+			}
 		}
 
 		void OnConsoleCommand_lastcommand(NotificationCenter.Notification n)

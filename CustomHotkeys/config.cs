@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection;
 using System.Collections.Generic;
 
 #if DEBUG
@@ -57,6 +56,22 @@ namespace CustomHotkeys
 		[NonSerialized, NoInnerFieldsAttrProcessing]
 		readonly List<Options.ModOption> bindOptions = new List<Options.ModOption>();
 
+		public void addHotkey(string command)
+		{
+			hotkeys.Add(new Hotkey() { command = command });
+			save();
+
+			refreshHotkeyList();
+		}
+
+		void refreshHotkeyList(bool resetOptionsPanel = true)
+		{
+			addBindOptions();
+
+			if (resetOptionsPanel)
+				Options.resetPanel();
+		}
+
 		void addBindOptions()
 		{
 			Common.Debug.assert(hotkeys != null);
@@ -106,19 +121,15 @@ namespace CustomHotkeys
 			HKConfig hkConfig;
 			public void setRootConfig(Config config) => hkConfig = config as HKConfig;
 
-			public void action()
-			{
-				hkConfig.addBindOptions();
-				Options.resetPanel();
-			}
+			public void action() => hkConfig.refreshHotkeyList();
 		}
 
 		class AddHotkeysAttribute: Attribute, IRootConfigInfo
-		{ public void setRootConfig(Config config) => (config as HKConfig).addBindOptions(); }
+		{ public void setRootConfig(Config config) => (config as HKConfig).refreshHotkeyList(false); }
 
 		[Field.Action(typeof(HotkeyListChanged))]
 		[AddHotkeys, Field.Reloadable, NoInnerFieldsAttrProcessing]
-		public List<Hotkey> hotkeys = new List<Hotkey>()
+		readonly List<Hotkey> hotkeys = new List<Hotkey>()
 		{
 #if DEBUG
 			new Hotkey { command = "setresolution 1280 720 true; setwindowpos 10 360 | setresolution 2560 1440", key = KeyCode.F1, label = "Toggle fullscreen" },

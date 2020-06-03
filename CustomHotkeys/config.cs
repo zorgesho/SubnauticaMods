@@ -26,11 +26,17 @@ namespace CustomHotkeys
 			}
 		}
 
+		class OnlyInMainMenu: Options.Components.Hider.IVisibilityChecker
+		{ public bool visible => Options.mode == Options.Mode.MainMenu; }
+
 		[Options.Field] // TODO label & tooltip
+		[Options.Hideable(typeof(OnlyInMainMenu))]
 		[Options.FinalizeAction(typeof(FeedbackEnabler))]
+		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 		public readonly bool enableFeedback = !Mod.isDevBuild;
 
 		public readonly bool easyBindRemove = true;
+		public readonly bool addConsoleCommands = true;
 
 		class OpenConfig: Field.IAction
 		{

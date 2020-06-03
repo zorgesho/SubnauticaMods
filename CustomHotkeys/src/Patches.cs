@@ -13,6 +13,7 @@ using Common.Reflection;
 namespace CustomHotkeys
 {
 	using Debug = Common.Debug;
+	using CIEnumerable = IEnumerable<CodeInstruction>;
 
 	// disabling F1 and F3 hotkeys for dev tools
 	[OptionalPatch, HarmonyPatch(typeof(MainGameController), "Update")]
@@ -20,7 +21,7 @@ namespace CustomHotkeys
 	{
 		static bool Prepare() => !Main.config.enableDevToolsHotkeys;
 
-		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins)
+		static CIEnumerable Transpiler(CIEnumerable cins)
 		{
 			var list = cins.ToList();
 			var isShipping = typeof(PlatformUtils).method("get_isShippingRelease");
@@ -46,6 +47,14 @@ namespace CustomHotkeys
 	static class uGUIFeedbackCollector_Awake_Patch
 	{
 		static void Postfix(uGUI_FeedbackCollector __instance) => __instance.enabled = Main.config.enableFeedback;
+	}
+
+	[OptionalPatch, HarmonyPatch(typeof(IngameMenu), "Start")]
+	static class IngameMenu_Start_Patch
+	{
+		static bool Prepare() => !Main.config.enableFeedback;
+
+		static CIEnumerable Transpiler(CIEnumerable cins) => CIHelper.ciRemove(cins, 0, 3);
 	}
 
 	// patches for removing bindings and blocking 'Up' event after binding
@@ -78,7 +87,7 @@ namespace CustomHotkeys
 		{
 			static void saveLastBind() => lastBindedIndex = GameInput.lastInputPressed[0]; // for keyboard
 
-			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins)
+			static CIEnumerable Transpiler(CIEnumerable cins)
 			{
 				var list = cins.ToList();
 
@@ -102,23 +111,36 @@ namespace CustomHotkeys
 			}
 		}
 
-		// if we press key while binding in options menu, ignore its 'Up' event too
+		// if we press key while binding in options menu, ignore its 'Up' & 'Held' events
 		[HarmonyPatch(typeof(GameInput), "UpdateKeyInputs")]
 		static class GameInput_UpdateKeyInputs_Patch
 		{
-			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins, ILGenerator ilg)
+			static CIEnumerable Transpiler(CIEnumerable cins, ILGenerator ilg)
 			{
 				var list = cins.ToList();
 
+				var Input_GetKey = typeof(Input).method("GetKey", typeof(KeyCode));
 				var Input_GetKeyUp = typeof(Input).method("GetKeyUp", typeof(KeyCode));
-				int index = list.FindIndex(ci => ci.isOp(OpCodes.Call, Input_GetKeyUp));
+				var field_lastBindedIndex = typeof(BindingPatches).field(nameof(lastBindedIndex));
+
+				int index = list.FindIndex(ci => ci.isOp(OpCodes.Call, Input_GetKey));
+				Debug.assert(index != -1);
+
+				Label lb0 = list[index + 1].operand.cast<Label>();
+
+				list.InsertRange(index + 2, CIHelper.toCIList
+				(
+					OpCodes.Ldloc_S, 4,						//	if (i == BindingPatches.lastBindedIndex)
+					OpCodes.Ldsfld, field_lastBindedIndex,
+					OpCodes.Beq_S, lb0
+				));
+
+				index = list.FindIndex(ci => ci.isOp(OpCodes.Call, Input_GetKeyUp));
 				Debug.assert(index != -1);
 
 				Label lb1 = list[index + 1].operand.cast<Label>();
 				Label lb2 = ilg.DefineLabel();
 				list[index + 2].labels.Add(lb2); // label for 'inputState.flags |= GameInput.InputStateFlags.Up'
-
-				var field_lastBindedIndex = typeof(BindingPatches).field(nameof(lastBindedIndex));
 
 				list.InsertRange(index + 2, CIHelper.toCIList
 				(

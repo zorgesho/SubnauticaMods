@@ -28,8 +28,7 @@ namespace Common.Harmony
 					return "";
 
 				string res = $"=> labels({ci.labels.Count}): ";
-				foreach (var l in ci.labels)
-					res += "Label" + l.GetHashCode() + " ";
+				ci.labels.ForEach(l => res += "Label" + l.GetHashCode() + " ");
 
 				return res;
 			}
@@ -38,7 +37,7 @@ namespace Common.Harmony
 			{
 				var ci = list[i];
 
-				int labelIndex = (ci.operand?.GetType() == typeof(Label))? _findLabel(ci.operand): -1;
+				int labelIndex = (ci.operand is Label)? _findLabel(ci.operand): -1;
 				string operandInfo = labelIndex != -1? "jump to " + labelIndex: ci.operand?.ToString();
 				string isFirstOp = (searchFirstOps && list.FindIndex(_ci => _ci.opcode == ci.opcode) == i)? " 1ST":""; // is such an opcode is first encountered in this instruction
 

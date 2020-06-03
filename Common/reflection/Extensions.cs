@@ -33,7 +33,7 @@ namespace Common.Reflection
 			{
 				if (targetType.IsEnum)
 				{
-					if (obj.GetType() == typeof(string))
+					if (obj is string)
 						return Enum.Parse(targetType, (string)obj, true);
 
 					targetType = Enum.GetUnderlyingType(targetType);

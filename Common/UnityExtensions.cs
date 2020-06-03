@@ -157,8 +157,8 @@ namespace Common
 			public static bool operator ==(KeyWithModifier key1, KeyWithModifier key2) => key1.key == key2.key && key1.modifier == key2.modifier;
 			public static bool operator !=(KeyWithModifier key1, KeyWithModifier key2) => !(key1 == key2);
 
-			public override int  GetHashCode() => Tuple.Create(key, modifier).GetHashCode();
-			public override bool Equals(object obj) => obj.GetType() != typeof(KeyWithModifier)? false: this == (KeyWithModifier)obj;
+			public override int  GetHashCode() => ((int)modifier & 0xFFF) << 12 | ((int)key & 0xFFF);
+			public override bool Equals(object obj) => obj is KeyWithModifier? this == (KeyWithModifier)obj: false;
 
 			public override string ToString() => this == default? "": (modifier == KeyCode.None? $"{key}": $"{modifier}+{key}");
 

@@ -86,6 +86,14 @@ namespace CustomHotkeys
 		#endregion
 
 		#region gameplay commands
+		void OnConsoleCommand_autoforward(NotificationCenter.Notification n)
+		{
+			if (n.getArgCount() == 0)
+				GameInput_AutoForward_Patch.toggleAutoForward();
+			else
+				GameInput_AutoForward_Patch.setAutoForward(n.getArg<bool>(0));
+		}
+
 		void OnConsoleCommand_bindslot(NotificationCenter.Notification n)
 		{
 			if (!Inventory.main || n.getArgCount() == 0)

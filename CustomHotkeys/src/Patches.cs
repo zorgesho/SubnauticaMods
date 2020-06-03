@@ -134,4 +134,27 @@ namespace CustomHotkeys
 			}
 		}
 	}
+
+	static class GameInput_AutoForward_Patch
+	{
+		static bool patched = false;
+		static bool autoforward = false;
+
+		public static void setAutoForward(bool val)
+		{
+			if (!patched && (patched = true))
+				HarmonyHelper.patch();
+
+			autoforward = val;
+		}
+
+		public static void toggleAutoForward() => setAutoForward(!autoforward);
+
+		[HarmonyPostfix, HarmonyPatch(typeof(GameInput), "GetMoveDirection")]
+		static void patchAutoForward(ref Vector3 __result)
+		{
+			if (autoforward)
+				__result.z = 1f;
+		}
+	}
 }

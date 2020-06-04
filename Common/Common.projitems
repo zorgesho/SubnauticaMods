@@ -19,7 +19,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)harmony\OptionalPatches.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)harmony\CIHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LanguageHelper.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)MainMenuMessages.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)utils\MainMenuMessages.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Misc.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MiscInGame.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mod.cs" />

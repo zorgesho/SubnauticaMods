@@ -30,5 +30,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)reflection\wrappers\PropertyWrapper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)reflection\wrappers\EventWrapper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UnityExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)utils\SimpleJSON.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)utils\VersionChecker.cs" />
   </ItemGroup>
 </Project>

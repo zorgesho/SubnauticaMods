@@ -17,6 +17,7 @@ namespace Common
 			false;
 #endif
 		const string tmpFileName = "run the game to generate configs"; // name is also in the post-build.bat
+		const string updateMessage = "An update is available! (current version is v<color=orange>{0}</color>, new version is v<color=orange>{1}</color>)";
 
 		public static string id   { get { init(); return _id; } }
 		public static string name { get { init(); return _name; } }
@@ -47,7 +48,7 @@ namespace Common
 				var latestVersion = VersionChecker.getLatestVersion(manifest["VersionURL"]);							$"Latest version is {latestVersion}".logDbg();
 
 				if (latestVersion > currentVersion)
-					addCriticalMessage($"UPDATE: current: {currentVersion} latest: {latestVersion}", color: "yellow"); // TODO message
+					addCriticalMessage(updateMessage.format(currentVersion, latestVersion), color: "yellow");
 			}
 
 			"Mod inited".logDbg();

@@ -26,5 +26,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)ui\ButtonOption.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ui\ToggleOption.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ui\BaseOption.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)utils\OptionsWatcher.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)utils\InterleavedParams.cs" />
   </ItemGroup>
 </Project>

@@ -2,7 +2,7 @@
 
 namespace PrawnSuitGrapplingArmUpgrade
 {
-	[AddToConsole("ps_ga")]
+	[Field.BindConsole("ps_ga")]
 	class ModConfig: Config
 	{
 		[Field.Range(0f, 5f)]	  public readonly float armCooldown = 0.5f;		// default: 2.0f

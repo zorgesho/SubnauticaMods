@@ -23,7 +23,7 @@ namespace Common.Configuration
 		// for use with non-primitive types, inner fields will not be searched for attributes
 		// (other attributes of the field will still be processed)
 		[AttributeUsage(AttributeTargets.Field)]
-		public class NoInnerFieldsAttrProcessing: Attribute {}
+		protected class NoInnerFieldsAttrProcessing: Attribute {}
 
 		public static bool _isInnerFieldsProcessable(FieldInfo field) =>
 			field.FieldType.IsClass && !field.IsStatic && !field.checkAttr<NoInnerFieldsAttrProcessing>();

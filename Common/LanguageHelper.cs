@@ -33,16 +33,25 @@ namespace Common
 
 		// get string by id from Language.main
 		public static string str(string ids) =>
-			(ids == null || Language.main == null)? ids: (Language.main.TryGet(prefix + ids, out string result)? result: ids);
+			(ids == null || !Language.main)? ids: (Language.main.TryGet(prefix + ids, out string result)? result: ids);
 
 		// add string to LanguageHandler, use getFullID if you need to get ids with prefix (e.g. for UI labels)
 		public static string add(string ids, string str, bool getFullID = false)
-		{																							$"LanguageHelper: adding string '{ids}': '{str}'".logDbg();
+		{																							$"LanguageHelper: adding string '{ids}': \"{str}\"".logDbg();
 			if (!addString)
 				return str;
 
 			string fullID = prefix + ids;
 			addString.invoke(fullID, str);
+
+			if (Language.main)
+			{
+#if DEBUG
+				if (Language.main.strings.TryGetValue(fullID, out string currStr) && currStr != str)
+					$"LanguageHelper: changing string '{fullID}' (\"{currStr}\" -> \"{str}\")".logDbg();
+#endif
+				Language.main.strings[fullID] = str;
+			}
 
 			return getFullID? fullID: ids;
 		}

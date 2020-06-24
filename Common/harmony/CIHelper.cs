@@ -26,6 +26,10 @@ namespace Common.Harmony
 	static partial class CIHelper // CodeInstruction sequences manipulation methods
 	{
 		#region CIList methods
+
+		// makes new list with cloned CodeInstructions
+		public static CIList copyCIList(CIList list) => list.Select(ci => ci.Clone()).ToList();
+
 		// makes list with CodeInstructions from various objects (see 'switch' for object types)
 		public static CIList toCIList(params object[] cins)
 		{
@@ -56,16 +60,6 @@ namespace Common.Harmony
 			}
 
 			return list;
-		}
-
-		// makes new list with cloned CodeInstructions
-		public static CIList copyCIList(CIList list)
-		{
-			var newList = new CIList();
-
-			list.ForEach(ci => newList.Add(ci.Clone()));
-
-			return newList;
 		}
 		#endregion
 
@@ -116,18 +110,11 @@ namespace Common.Harmony
 		{
 			if (index >= 0 && index <= list.Count)
 			{
-				List<Label> labels = null;
-
-				if (index != list.Count && (list[index].labels?.Count ?? 0) > 0) // copy labels from instruction where we insert
-				{
-					labels = new List<Label>(list[index].labels);
-					list[index].labels.Clear();
-				}
+				LabelClipboard.copyFrom(list, index); // copy labels from instruction where we insert
 
 				list.InsertRange(index, listToInsert);
 
-				if (labels != null)
-					list[index].labels.AddRange(labels); // add copied labels to a new instruction at 'index'
+				LabelClipboard.pasteTo(list, index); // add copied labels to a new instruction at 'index'
 			}
 			else Debug.assert(false, $"ciInsert: CodeInstruction index is invalid ({index})");
 
@@ -154,7 +141,11 @@ namespace Common.Harmony
 		{
 			if (index >= 0 && index + countToRemove <= list.Count)
 			{
+				LabelClipboard.copyFrom(list, index);
+
 				list.RemoveRange(index, countToRemove);
+
+				LabelClipboard.pasteTo(list, index);
 			}
 			else Debug.assert(false, "ciRemove: CodeInstruction index is invalid");
 
@@ -181,6 +172,32 @@ namespace Common.Harmony
 			else Debug.assert(false, "ciReplace: CodeInstruction index is invalid");
 
 			return list;
+		}
+		#endregion
+
+		#region label clipboard
+		static class LabelClipboard
+		{
+			static List<Label> labels;
+
+			public static void copyFrom(CIList list, int index)
+			{
+				Debug.assert(labels == null);
+
+				if (index != list.Count && list[index].labels.Count > 0)
+				{
+					labels = new List<Label>(list[index].labels);
+					list[index].labels.Clear();
+				}
+			}
+
+			public static void pasteTo(CIList list, int index)
+			{
+				if (labels != null)
+					list[index].labels.AddRange(labels);
+
+				labels = null;
+			}
 		}
 		#endregion
 

@@ -34,6 +34,8 @@ namespace Common
 			return array;
 		}
 
+		public static bool contains<T>(this T[] array, T val) => Array.IndexOf(array, val) != -1;
+
 		public static int findIndex<T>(this T[] array, int beginIndex, int endIndex, Predicate<T> predicate) =>
 			Array.FindIndex(array, beginIndex, endIndex - beginIndex, predicate);
 
@@ -124,5 +126,7 @@ namespace Common
 
 			return false;
 		}
+
+		public bool freeID(string id) => allIDs.Remove(id); // non-unique IDs can't be freed (? for now)
 	}
 }

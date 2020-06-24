@@ -82,14 +82,12 @@ namespace ConsoleImproved
 
 		static class CfgVarsHelper
 		{
-			const string exportCfgVarClassName = nameof(Common) + "." + nameof(Common.Configuration) + "." + nameof(Common.Configuration.ExportedCfgVarFields);
-			const string exportCfgVarGetFields = nameof(Common.Configuration.ExportedCfgVarFields.getFields);
-			const string getCfgVarValue = nameof(Common.Configuration.ExportedCfgVarFields.getFieldValue);
+			const string name_CfgVarBinder = "Common.Configuration.Utils." + nameof(Common.Configuration.Utils.CfgVarBinder);
 
 			static List<string> cfgVarNames;
 			static List<MethodWrapper<Func<string, object>>> cfgVarGetters;
 
-			// searching exported config fields in current assemblies
+			// search current assemblies for config vars binded to console
 			static void init()
 			{
 				if (cfgVarNames != null)
@@ -100,14 +98,15 @@ namespace ConsoleImproved
 
 				foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
 				{
-					if (assembly.GetType(exportCfgVarClassName, false) is Type exportedCfgVars)
+					if (assembly.GetType(name_CfgVarBinder, false) is Type type_CfgVarBinder)
 					{
-						if (exportedCfgVars.method(exportCfgVarGetFields).wrap().invoke() is IList<string> list)
-							cfgVarNames.AddRange(list);
+						var names = type_CfgVarBinder.method("getVarNames").wrap().invoke<string[]>();
+						Common.Debug.assert(names != null);
+						cfgVarNames.AddRange(names);
 
-						var getter = exportedCfgVars.method(getCfgVarValue).wrap<Func<string, object>>();
-						if (getter)
-							cfgVarGetters.Add(getter);
+						var getter = type_CfgVarBinder.method("getVarValue").wrap<Func<string, object>>();
+						Common.Debug.assert(getter);
+						cfgVarGetters.Add(getter);
 					}
 				}
 			}

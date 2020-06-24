@@ -1,0 +1,71 @@
+{
+  "hotkeys": [
+    {
+      "key": "LeftAlt",
+      "command": "autoforward",
+      "label": "Autoforward"
+    },
+    {
+      "key": "H",
+      "command": "useitem firstaidkit",
+      "label": "Use medkit"
+    },
+    {
+      "key": "E",
+      "command": "vehicle_enter",
+      "label": "Enter nearby vehicle"
+    },
+    {
+      "key": "RightAlt+O",
+      "command": "showmodoptions",
+      "label": "Open mod options"
+    },
+    {
+      "key": "F2",
+      "command": "setresolution 1280 720 false; setwindowpos 10 10 | setresolution 2560 1440",
+      "label": "Toggle fullscreen"
+    },
+    {
+      "key": "",
+      "command": "bindslot 0 flashlight; equipslot 0",
+      "label": "Equip flashlight"
+    },
+    {
+      "key": "",
+      "command": "bindslot 1 propulsioncannon; equipslot 1 | bindslot 1 repulsioncannon; equipslot 1",
+      "label": "Switch cannons"
+    },
+    {
+      "key": "LeftControl",
+      "command": "bindslot 0 seaglide; equipslot 0; autoforward true | bindslot 0 flashlight; equipslot 0; autoforward false",
+      "label": "Toggle seaglide"
+    },
+    {
+      "key": "",
+      "command": "useitem filteredwater disinfectedwater bigfilteredwater stillsuitwater",
+      "label": "Drink water"
+    },
+    {
+      "key": "L",
+      "command": "lastcommand",
+      "label": "Run last console command"
+    },
+    {
+      "key": "UpArrow",
+      "command": "warpforward 1",
+      "mode": "Hold",
+      "label": "Warp forward"
+    },
+    {
+      "key": "",
+      "command": "spawn seamoth; warpforward 10; speed 10; vehicle_enter; wait 2; speed 1; clearmessages",
+      "label": "Spawn seamoth"
+    },
+    {
+      "key": "V",
+      "command": "devtools_hidegui mask; fov 5 | fov 60; devtools_hidegui none",
+      "mode": "PressRelease",
+      "label": "Zoom in"
+    }
+  ]
+}

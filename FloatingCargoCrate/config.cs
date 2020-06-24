@@ -3,7 +3,7 @@ using Common.Configuration;
 
 namespace FloatingCargoCrate
 {
-	[AddToConsole("fcc")]
+	[Field.BindConsole("fcc")]
 	class ModConfig: Config
 	{
 		[Field.Range(1, 2)] public readonly int cargoModelType = 1;
@@ -13,8 +13,8 @@ namespace FloatingCargoCrate
 
 		[Field.Range(min: 100f)] public readonly float crateMass = 600.0f;
 
-		[AddToConsoleAttribute.Skip] public readonly bool cheapBlueprint = true;
-		[AddToConsoleAttribute.Skip] public readonly bool experimentalFeaturesOn = true;
+		[Field.BindConsole.Skip] public readonly bool cheapBlueprint = true;
+		[Field.BindConsole.Skip] public readonly bool experimentalFeaturesOn = true;
 
 		[Field.Range(min: 100f)] public readonly float crateMassEmpty = 400.0f;
 		[Field.Range(min: 100f)] public readonly float crateMassFull = 1200.0f;

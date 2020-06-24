@@ -18,7 +18,7 @@ namespace Common.Configuration
 			{
 				public ModOption create(Config.Field cfgField)
 				{
-					if (cfgField.type != typeof(int) || cfgField.getAttr<ButtonAttribute>() == null) // it's good enough for now
+					if (cfgField.type != typeof(int) || !cfgField.checkAttr<ButtonAttribute>()) // it's good enough for now
 						return null;
 
 					return new ButtonOption(cfgField, cfgField.getAttr<FieldAttribute>()?.label);
@@ -41,15 +41,10 @@ namespace Common.Configuration
 
 			public override void onGameObjectChange(GameObject go)
 			{
-				var panel = optionsPanelGameObject.GetComponentInChildren<uGUI_TabbedControlsPanel>();
-				int modsTabIndex = panel.tabs.FindIndex(tab => tab.container == go.transform.parent);
-				Debug.assert(modsTabIndex != -1);
-
 				UnityEngine.Object.DestroyImmediate(go);
+				optionsPanel.AddButton(modsTabIndex, label, new UnityAction(onClick));
 
-				panel.AddButton(modsTabIndex, label, new UnityAction(onClick));
-
-				var transform = panel.tabs[modsTabIndex].container.transform;
+				var transform = optionsPanel.tabs[modsTabIndex].container.transform;
 				var newGO = transform.GetChild(transform.childCount - 1).gameObject;
 				base.onGameObjectChange(newGO);
 			}

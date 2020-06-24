@@ -3,7 +3,7 @@ using Common.Configuration;
 
 namespace PrawnSuitJetUpgrade
 {
-	[AddToConsole("ps_ju")]
+	[Field.BindConsole("ps_ju")]
 	class ModConfig: Config
 	{
 		[Field.Range(min: 1f)] public readonly float increasedThrustReserve = 2.0f;

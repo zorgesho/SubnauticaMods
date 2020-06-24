@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Globalization;
 using System.Collections.Generic;
 
 using UnityEngine;
@@ -59,7 +58,7 @@ namespace Common
 
 		public static TechType getHeldToolType() => Inventory.main?.GetHeldTool()?.pickupable.GetTechType() ?? TechType.None;
 
-		public static bool isLoadingState => uGUI.main?.loading.loadingBackground.state == true;
+		public static bool isLoadingState => uGUI._main?.loading.loadingBackground.state == true;
 
 		public static void clearScreenMessages() => // expire all messages except QMM main menu messages
 			ErrorMessage.main?.messages.Where(m => m.timeEnd - Time.time < 1e3f).forEach(m => m.timeEnd = Time.time - 1f);
@@ -68,23 +67,9 @@ namespace Common
 	static class MiscInGameExtensions
 	{
 		public static int getArgCount(this NotificationCenter.Notification n) => n?.data?.Count ?? 0;
+
+		public static T getArg<T>(this NotificationCenter.Notification n, int index) => _getArg(n, index).convert<T>();
 		public static string getArg(this NotificationCenter.Notification n, int index) => _getArg(n, index) as string;
-
-		public static T getArg<T>(this NotificationCenter.Notification n, int index)
-		{
-			T res = default;
-
-			try
-			{
-				object arg = _getArg(n, index);
-
-				if (arg != null)
-					res = (T)Convert.ChangeType(arg, typeof(T), CultureInfo.InvariantCulture);
-			}
-			catch (Exception e) { Log.msg(e); }
-
-			return res;
-		}
 
 		static object _getArg(this NotificationCenter.Notification n, int index) => n?.data?.Count > index? n.data[index]: null;
 	}
@@ -93,35 +78,41 @@ namespace Common
 	// base class for console commands which are exists between scenes
 	abstract class PersistentConsoleCommands: MonoBehaviour
 	{
+		protected class CommandDataAttribute: Attribute
+		{
+			public bool caseSensitive = false;
+			public bool combineArgs = false;
+		}
+
 		const string cmdPrefix = "OnConsoleCommand_";
 
-		readonly List<string> cmdNames = new List<string>();
+		List<Tuple<string, CommandDataAttribute>> commands;
 
 		public static GameObject createGameObject<T>(string name = "ConsoleCommands") where T: PersistentConsoleCommands
 		{
 			return UnityHelper.createPersistentGameObject<T>(name);
 		}
 
-		void init()
-		{																													"PersistentConsoleCommands.init cmdNames already inited!".logDbgError(cmdNames.Count > 0);
-			// searching for console commands methods in derived class
-			GetType().methods().Where(m => m.Name.StartsWith(cmdPrefix)).forEach(m => cmdNames.Add(m.Name.Replace(cmdPrefix, "")));
-		}
-
 		void registerCommands()
 		{
-			foreach (var cmdName in cmdNames)
+			// searching for console commands methods in derived class
+			commands ??= GetType().methods().Where(m => m.Name.StartsWith(cmdPrefix)).
+											 Select(m => Tuple.Create(m.Name.Replace(cmdPrefix, ""), m.getAttr<CommandDataAttribute>())).
+											 ToList();
+
+			foreach (var command in commands)
 			{
+				bool caseSensitive = command.Item2?.caseSensitive ?? false;
+				bool combineArgs = command.Item2?.combineArgs ?? false;
+
 				// double registration is checked inside DevConsole
-				DevConsole.RegisterConsoleCommand(this, cmdName);															$"PersistentConsoleCommands: {cmdName} is registered".logDbg();
+				DevConsole.RegisterConsoleCommand(this, command.Item1, caseSensitive, combineArgs);						$"PersistentConsoleCommands: {command.Item1} is registered".logDbg();
 			}
 		}
 
 		void Awake()
 		{
-			init();
 			SceneManager.sceneUnloaded += onSceneUnloaded;
-
 			registerCommands();
 		}
 

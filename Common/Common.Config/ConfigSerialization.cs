@@ -20,6 +20,13 @@ namespace Common.Configuration
 			public class LoadOnlyAttribute: Attribute {}
 		}
 
+		public class SerializerSettingsAttribute: Attribute
+		{
+			public bool verboseErrors = false;
+			public bool ignoreNullValues = false;
+			public bool ignoreDefaultValues = false;
+		}
+
 		class ConfigContractResolver: DefaultContractResolver
 		{
 			// serialize only fields (including private and readonly, except static and with NonSerialized attribute)
@@ -41,16 +48,50 @@ namespace Common.Configuration
 				return property;
 			}
 		}
-		static readonly JsonSerializerSettings serializerSettings = new JsonSerializerSettings()
+
+
+		static JsonSerializerSettings _initSerializer(Type configType)
 		{
-			ContractResolver = new ConfigContractResolver(),
-			ObjectCreationHandling = ObjectCreationHandling.Replace,
-			Converters = new List<JsonConverter> { new StringEnumConverter() }
-		};
+			var settings = new JsonSerializerSettings()
+			{
+				Formatting = Formatting.Indented,
+				ContractResolver = new ConfigContractResolver(),
+				ObjectCreationHandling = ObjectCreationHandling.Replace,
+				Converters = new List<JsonConverter> { new StringEnumConverter(), new JsonConverters.KeyWithModifier() }
+			};
+
+			if (configType.getAttr<SerializerSettingsAttribute>() is SerializerSettingsAttribute settingsAttr)
+			{
+				if (settingsAttr.ignoreNullValues)	  settings.NullValueHandling = NullValueHandling.Ignore;
+				if (settingsAttr.ignoreDefaultValues) settings.DefaultValueHandling = DefaultValueHandling.Ignore;
+
+				if (settingsAttr.verboseErrors)
+					settings.Error = (_, args) => $"<color=red>{args.ErrorContext.Error.Message}</color>".onScreen(); // TODO make more general
+			}
+
+			return settings;
+		}
+
+		JsonSerializerSettings srzSettings;
+
+		string serialize() => JsonConvert.SerializeObject(this, srzSettings ??= _initSerializer(GetType()));
+
+		static Config deserialize(string text, Type configType) => JsonConvert.DeserializeObject(text, configType, _initSerializer(configType)) as Config;
 
 
-		string serialize() => JsonConvert.SerializeObject(this, Formatting.Indented, serializerSettings);
+		class JsonConverters
+		{
+			public class KeyWithModifier: JsonConverter
+			{
+				public override bool CanConvert(Type objectType) =>
+					objectType == typeof(InputHelper.KeyWithModifier);
 
-		static C deserialize<C>(string text) => JsonConvert.DeserializeObject<C>(text, serializerSettings);
+				public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer) =>
+					writer.WriteValue(value.ToString());
+
+				public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer) =>
+					(InputHelper.KeyWithModifier)(reader.Value as string);
+			}
+		}
 	}
 }

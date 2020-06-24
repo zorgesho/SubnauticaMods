@@ -27,16 +27,13 @@ namespace Common.Harmony
 		// calls setEnabled with result of 'Prepare' method
 		public static void update(Type patchType)
 		{
-			using (Debug.profiler($"Update optional patch: {patchType}", allowNested: false))
-			{
-				var prepare = patchType.method("Prepare").wrap();
-				Debug.assert(prepare);
+			using var _ = Debug.profiler($"Update optional patch: {patchType}", allowNested: false);
 
-				if (!prepare)
-					return;
+			var prepare = patchType.method("Prepare").wrap();
+			Debug.assert(prepare);
 
+			if (prepare)
 				setEnabled(patchType, prepare.invoke<bool>());
-			}
 		}
 
 		public static void setEnabled(Type patchType, bool val)

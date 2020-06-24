@@ -8,6 +8,7 @@ using UnityEngine;
 
 using Common;
 using Common.Harmony;
+using Common.Reflection;
 
 namespace ConsoleImproved
 {
@@ -148,6 +149,17 @@ namespace ConsoleImproved
 				}
 			}
 
+			void OnConsoleCommand_togglecfgvar(NotificationCenter.Notification n)
+			{
+				if (n.getArgCount() == 0)
+					return;
+
+				string varName = n.getArg(0);
+				bool varValue = CfgVarsHelper.getVarValue(varName).convert<bool>();
+
+				DevConsole.SendConsoleCommand($"setcfgvar {varName} {!varValue}");
+				CfgVarsHelper.getVarValue(varName).ToString().onScreen(varName);
+			}
 
 			void OnConsoleCommand_printcfgvars(NotificationCenter.Notification n)
 			{

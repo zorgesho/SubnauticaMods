@@ -9,7 +9,7 @@ namespace Common.Reflection
 		public static T cast<T>(this object obj)
 		{
 			try
-			{																				$"cast<{typeof(T)}>(): object is null !".logDbg(obj == null);
+			{																				$"cast<{typeof(T)}>(): object is null, default value is used".logDbg(obj == null);
 				return obj == null? default: (T)obj;
 			}
 			catch
@@ -32,7 +32,12 @@ namespace Common.Reflection
 			try
 			{
 				if (targetType.IsEnum)
+				{
+					if (obj is string)
+						return Enum.Parse(targetType, (string)obj, true);
+
 					targetType = Enum.GetUnderlyingType(targetType);
+				}
 
 				return Convert.ChangeType(obj, targetType, CultureInfo.InvariantCulture);
 			}

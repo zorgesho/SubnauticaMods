@@ -326,27 +326,13 @@ namespace Common.Utils
 				{
 					switch (c)
 					{
-						case '\\':
-							sb.Append("\\\\");
-							break;
-						case '\"':
-							sb.Append("\\\"");
-							break;
-						case '\n':
-							sb.Append("\\n");
-							break;
-						case '\r':
-							sb.Append("\\r");
-							break;
-						case '\t':
-							sb.Append("\\t");
-							break;
-						case '\b':
-							sb.Append("\\b");
-							break;
-						case '\f':
-							sb.Append("\\f");
-							break;
+						case '\\': sb.Append("\\\\"); break;
+						case '\"': sb.Append("\\\""); break;
+						case '\n': sb.Append("\\n");  break;
+						case '\r': sb.Append("\\r");  break;
+						case '\t': sb.Append("\\t");  break;
+						case '\b': sb.Append("\\b");  break;
+						case '\f': sb.Append("\\f");  break;
 						default:
 							if (c < ' ' || (forceASCII && c > 127))
 								sb.Append("\\u").Append(((ushort)c).ToString("X4"));
@@ -491,31 +477,17 @@ namespace Common.Utils
 								char C = aJSON[i];
 								switch (C)
 								{
-									case 't':
-										Token.Append('\t');
-										break;
-									case 'r':
-										Token.Append('\r');
-										break;
-									case 'n':
-										Token.Append('\n');
-										break;
-									case 'b':
-										Token.Append('\b');
-										break;
-									case 'f':
-										Token.Append('\f');
-										break;
+									case 't': Token.Append('\t'); break;
+									case 'r': Token.Append('\r'); break;
+									case 'n': Token.Append('\n'); break;
+									case 'b': Token.Append('\b'); break;
+									case 'f': Token.Append('\f'); break;
 									case 'u':
-										{
-											string s = aJSON.Substring(i + 1, 4);
-											Token.Append((char)int.Parse(s, NumberStyles.AllowHexSpecifier));
-											i += 4;
-											break;
-										}
-									default:
-										Token.Append(C);
+										string s = aJSON.Substring(i + 1, 4);
+										Token.Append((char)int.Parse(s, NumberStyles.AllowHexSpecifier));
+										i += 4;
 										break;
+									default: Token.Append(C); break;
 								}
 							}
 							break;
@@ -602,9 +574,7 @@ namespace Common.Utils
 			{
 				var node = new Array();
 				node.mList.Capacity = mList.Capacity;
-
-				foreach (var n in mList)
-					node.Add(n?.Clone());
+				mList.ForEach(n => node.Add(n?.Clone()));
 
 				return node;
 			}
@@ -661,16 +631,8 @@ namespace Common.Utils
 
 			public override Node this[string aKey]
 			{
-				get => mDict.ContainsKey(aKey)? mDict[aKey]: new LazyCreator(this, aKey);
-				set
-				{
-					value ??= Null.CreateOrGet();
-
-					if (mDict.ContainsKey(aKey))
-						mDict[aKey] = value;
-					else
-						mDict.Add(aKey, value);
-				}
+				get => mDict.TryGetValue(aKey, out Node node)? node: new LazyCreator(this, aKey);
+				set => mDict[aKey] = value ?? Null.CreateOrGet();
 			}
 
 			public override Node this[int aIndex]
@@ -690,12 +652,7 @@ namespace Common.Utils
 				aItem ??= Null.CreateOrGet();
 
 				if (aKey != null)
-				{
-					if (mDict.ContainsKey(aKey))
-						mDict[aKey] = aItem;
-					else
-						mDict.Add(aKey, aItem);
-				}
+					mDict[aKey] = aItem;
 				else
 					mDict.Add(Guid.NewGuid().ToString(), aItem);
 			}
@@ -734,8 +691,7 @@ namespace Common.Utils
 			public override Node Clone()
 			{
 				var node = new Object();
-				foreach (var n in mDict)
-					node.Add(n.Key, n.Value.Clone());
+				mDict.forEach(n => node.Add(n.Key, n.Value.Clone()));
 
 				return node;
 			}

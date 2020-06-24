@@ -93,16 +93,13 @@ namespace Common
 			return UnityHelper.createPersistentGameObject<T>(name);
 		}
 
-		void init()
+		void registerCommands()
 		{
 			// searching for console commands methods in derived class
 			commands ??= GetType().methods().Where(m => m.Name.StartsWith(cmdPrefix)).
 											 Select(m => Tuple.Create(m.Name.Replace(cmdPrefix, ""), m.getAttr<CommandDataAttribute>())).
 											 ToList();
-		}
 
-		void registerCommands()
-		{
 			foreach (var command in commands)
 			{
 				bool caseSensitive = command.Item2?.caseSensitive ?? false;
@@ -115,9 +112,7 @@ namespace Common
 
 		void Awake()
 		{
-			init();
 			SceneManager.sceneUnloaded += onSceneUnloaded;
-
 			registerCommands();
 		}
 

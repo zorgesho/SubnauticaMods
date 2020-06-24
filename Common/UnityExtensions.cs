@@ -116,12 +116,13 @@ namespace Common
 			{
 				if (key1 == KeyCode.None || key2 == KeyCode.None) // if only one key defined treat it like a normal key
 				{
-					key = key1 == KeyCode.None? key2: key1;
 					modifier = KeyCode.None;
+					key = key1 == KeyCode.None? key2: key1;
 					return;
 				}
 
-				bool isKey1Mod = isModifier(key1), isKey2Mod = isModifier(key2);
+				bool isKey1Mod = isModifier(key1);
+				bool isKey2Mod = isModifier(key2);
 
 				if (isKey1Mod && !isKey2Mod)
 				{
@@ -135,12 +136,10 @@ namespace Common
 				}
 				else // if both keys are modifiers or non-modifiers then use only first key
 				{
-					key = key1;
 					modifier = KeyCode.None;
+					key = key1;
 				}
 			}
-
-			public static ReadOnlyCollection<KeyCode> modifiers => _modifiers.ToList().AsReadOnly();
 
 			static readonly HashSet<KeyCode> _modifiers = new HashSet<KeyCode>()
 			{
@@ -150,7 +149,7 @@ namespace Common
 			};
 
 			public static bool isModifier(KeyCode keyCode) => _modifiers.Contains(keyCode);
-
+			public static ReadOnlyCollection<KeyCode> modifiers => _modifiers.ToList().AsReadOnly();
 
 			public static implicit operator KeyWithModifier(KeyCode keyCode) => new KeyWithModifier(keyCode);
 
@@ -189,10 +188,10 @@ namespace Common
 		float delay;
 		UnityAction action;
 
-		public void init(float _delay, UnityAction _action)
+		public void init(float delay, UnityAction action)
 		{
-			action = _action;
-			delay = _delay;
+			this.delay = delay;
+			this.action = action;
 		}
 
 		IEnumerator Start()

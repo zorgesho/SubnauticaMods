@@ -41,7 +41,7 @@ namespace CustomHotkeys
 					modIndexes ??= initModIndexes();
 
 					if (modIndexes != null)
-						isJustModifier = modIndexes.Contains(keyInputIndex);
+						isJustModifier = modIndexes.contains(keyInputIndex);
 				}
 			}
 			InputHelper.KeyWithModifier _key;
@@ -152,6 +152,9 @@ namespace CustomHotkeys
 			{
 				Hotkey newHotkey;
 
+				bool up = hotkey.mode == HKConfig.Hotkey.Mode.PressRelease;
+				bool hold = hotkey.mode == HKConfig.Hotkey.Mode.Hold;
+
 				if (hotkey.command.Contains(switchSeparator))
 				{
 					string[]   switches = hotkey.command.Split(switchSeparator);
@@ -160,12 +163,12 @@ namespace CustomHotkeys
 					for (int i = 0; i < switches.Length; i++)
 						commands[i] = switches[i].Split(commandSeparator);
 
-					newHotkey = new HotkeySwitch(hotkey.key, hotkey.up == true, hotkey.held == true, commands);
+					newHotkey = new HotkeySwitch(hotkey.key, up, hold, commands);
 				}
 				else
 				{
 					string[] commands = hotkey.command.Split(commandSeparator);
-					newHotkey = new HotkeyCommand(hotkey.key, hotkey.up == true, hotkey.held == true, commands);
+					newHotkey = new HotkeyCommand(hotkey.key, up, hold, commands);
 				}
 
 				return newHotkey;

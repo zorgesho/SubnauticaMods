@@ -26,9 +26,9 @@ namespace CustomHotkeys
 			return (app == "shell32")? null: assocQueryString(AssocStr.Executable, ext);
 		}
 
-		public static void setWindowPos(string windowName, int x, int y)
+		public static void setWindowPos(int x, int y)
 		{
-			SetWindowPos(FindWindow(null, windowName), 0, x, y, 0, 0, 0x0001);
+			SetWindowPos(GetActiveWindow(), 0, x, y, 0, 0, 0x0001);
 		}
 
 #if DEBUG
@@ -61,8 +61,7 @@ namespace CustomHotkeys
 		static extern bool SetWindowPos(IntPtr hwnd, int hWndInsertAfter, int x, int y, int cx, int cy, int wFlags);
 
 		[DllImport("user32.dll")]
-		static extern IntPtr FindWindow(string className, string windowName);
-
+		static extern IntPtr GetActiveWindow();
 
 		//https://stackoverflow.com/questions/162331/finding-the-default-application-for-opening-a-particular-file-type-on-windows
 		[DllImport("shlwapi.dll", CharSet = CharSet.Unicode)]

@@ -1,0 +1,206 @@
+﻿[b][size=3][u]Contents:[/u][list=1]
+[*]TL;DR
+[*]Mod options menu
+[*]hotkeys.json
+[*]Fields description
+[*]Command separators
+[*]New commands
+6.1. Gameplay commands
+6.2. General commands
+6.3. Developer tools
+[*]Commands examples
+[/list][/size][/b]
+[heading][color=#f1c232][b]1. TL;DR[/b][/color][/heading][size=3]This mod can be useful for both players and modders. You can add/edit hotkeys by editing the [b]hotkeys.json[/b] (changes will be applied [b]immediately[/b]). Key bindings can be changed in the mod options menu (key + key modifier).
+
+[b]Some features:[/b][list]
+[*]you can execute [b]multiple[/b] console commands with a single keypress
+[*]you can use a hotkey as a [b]switch[/b] between multiple states (execute different commands on each keypress)
+[*]you can repeat a command [b]continuously[/b] while a hotkey is pressed
+[*]you can use an optional [b]key modifier[/b] for a hotkey
+[*]a lot of new console commands are added (e.g. for [b]using/equipping items[/b] and for toggling [b]autoforward mode[/b])
+[/list][/size]
+[heading][color=#f1c232][b]2. MOD OPTIONS MENU[/b][/color][/heading][img=right]https://staticdelivery.nexusmods.com/mods/1155/images/316/316-1592952822-1099639940.jpeg[/img][size=3]All the hotkeys are added to the mod options menu by default. There are two bind buttons for each hotkey, but unlike the vanilla bindings, they are not for primary/secondary keys, but for key and optional key modifier.
+Both buttons can be used for binding key as well as for binding modifier.
+
+You can use [i]Control[/i], [i]Alt[/i] and [i]Shift[/i] keys as modifiers (left and right keys are treated as different keys). You can also use these keys alone, in that case they'll work just as ordinary keys.
+
+If you bind two modifier keys or two non-modifier keys simultaneously, then only first of them will be used.
+
+You can [b]clear binding[/b] by pressing [i]Delete[/i] button while hovering mouse pointer over a bind button (no need to click on a button).
+[/size]
+[heading][color=#f1c232][b]3. HOTKEYS.JSON[/b][/color][/heading][size=3]All the hotkeys are specified in the [b]hotkeys.json[/b] in the mod folder. You can open this file right from within the game (button in the mod options menu).
+[b]Changes[/b] in the hotkeys.json are [b]applied immediately[/b] (the moment you switch back to the game), you don't need to reload the game in order to add or edit hotkeys.
+
+Sample [b]hotkeys.json[/b] with three hotkeys:[/size]
+[quote][b][code]{
+  "hotkeys": [
+    {
+      "key": "A",
+      "command": "some_console_command"
+    },
+    {
+      "key": "B",
+      "command": "some_console_command1; some_console_command2",
+      "label": "Two commands"
+    },
+    {
+      "key": "LeftAlt+C",
+      "command": "some_console_command value1 | some_console_command value2",
+      "mode": "PressRelease",
+      "label": "Switch with modifier key",
+      "hidden": true
+    }
+  ]
+}[/code][/b][/quote]
+[heading][color=#f1c232][b]4. FIELDS DESCRIPTION[/b][/color][/heading][size=3]Each hotkey is described in the following format:[/size]
+[quote][b][code]{
+  "key": "A",
+  "command": "some_console_command",
+  "mode": "Press",
+  "label": "Some label",
+  "hidden": false
+}
+[/code][/b][/quote][size=3]Fields [b][code]key[/code][/b] and [b][code]command[/code][/b] are required, other fields are optional.[/size]
+
+[list][size=3]
+[*][b][code]"key"[/code][/b] (required): Can be an empty string ([code]""[/code]), can be a single key (e.g. [code]"A"[/code] or [code]"LeftAlt"[/code]) or key with one modifier (e.g. [code]"LeftShift+F1"[/code]).
+
+[*][b][code]"command"[/code][/b] (required): Console command(s) that are associated with this hotkey. You can use any valid console command here and two kinds of separators - semicolon ([code];[/code]) and vertical bar ([code]|[/code]). See section [b]5[/b] for more info.
+
+[*][b][code]"mode"[/code][/b] (optional, default: [code]"Press"[/code]): Hotkey mode. Hotkeys can work in three different modes:[list]
+[*][b]press[/b] mode ([code]0[/code] or [code]"Press"[/code]): command will be executed once when the key is pressed
+[*][b]press/release[/b] mode: ([code]1[/code] or [code]"PressRelease"[/code]): command will be executed once when the key is pressed and will be executed again when the key is released
+[*][b]hold[/b] mode ([code]2[/code] or [code]"Hold"[/code]): command will be executed on each frame while the key is held down
+[/list]
+[*][b][code]"label"[/code][/b] (optional, default: [code]""[/code]): A label for the option in the mod options menu. If this field is omitted or empty, then the command itself will be used as a label.
+
+[/size][*][size=3][b][code]"hidden"[/code][/b] (optional, default: [code]false[/code]): If true, the option will be hidden from the mod options menu, but hotkey will still be active.[/size]
+[/list]
+[heading][color=#f1c232][b]5. COMMAND SEPARATORS[/b][/color][/heading][size=3]You can use two kinds of separators in the [code]"command"[/code] field - the semicolon ([code];[/code]) and the vertical bar ([code]|[/code]).
+
+If you need to execute more than one command with a single keypress, you can separate them by the [b]semicolon[/b], e.g. [code]"command": "item titanium 5; item silver 10; item gold 15"[/code].
+All these commands will be executed as a single action (each command on its own frame). Also you can use [code]wait[/code] command to add a delay between commands (see section [b]6.2[/b] for more info).
+
+For more complex behaviour you can use the [b]vertical bar[/b] as a separator. The vertical bar splits the command string into the list of separate commands. Each command from the list will be executed subsequently on the separate hotkey activation.
+
+E.g. let you have this command string: [b][code]"command": "speed 10 | speed 1"[/code][/b] and use default [code]"Press"[/code] mode for the hotkey. Then, when you press the hotkey for the first time, the command [code]"speed 10"[/code] will be executed.
+On the next press of the hotkey the command [code]"speed 1"[/code] will be executed. The third press will execute [code]"speed 10"[/code] again and so on.
+
+With the same command string and [code]"PressRelease"[/code] mode the second command [code]"speed 1"[/code] will be executed when you [b]release[/b] the hotkey.
+With [code]"Hold"[/code] mode the first and the second command will be executed alternately on the each frame while the hotkey is held down.
+
+You can use both separators in the same command string, e.g. [code]"daynightspeed 10; speed 10 | daynightspeed 5; speed 5 | daynightspeed 1; speed 1"[/code]. The vertical bar have higher precedence than the semicolon.
+[/size]
+[size=3][heading][b][color=#f1c232]6. NEW COMMANDS[/color][/b][/heading]This section describes new console commands added by this mod.
+
+Required parameters are enclosed in angle brackets (e.g. [code]<width>[/code]), optional parameters are enclosed in square brackets (e.g. [code][itemtype][/code]).[/size]
+
+[size=4][b]6.1. Gameplay commands[/b][/size][list][size=3]
+[*][color=#f1c232][b][code]autoforward [{true|false}][/code][/b][/color]
+Enables/disables the autoforward mode (toggles it if the parameter is omitted). The autoforward mode emulates holding down the "Move forward" key.
+Example: [code]autoforward true[/code]
+
+[*][color=#f1c232][b][code]bindslot <slotID> [itemtype][/code][/b][/color]
+Assigns certain item from the inventory to the quickslot [code]slotID[/code] ([code]slotID[/code] is zero-based index). If [code]itemtype[/code] is omitted then slot will be cleared of the previous binding.
+Example (bind flashlight to the first quickslot): [code]bindslot 0 flashlight[/code]
+
+[*][color=#f1c232][b][code]equipslot [slotID][/code][/b][/color]
+Equips an item in the quickslot [code]slotID[/code] ([code]slotID[/code] is zero-based index). If [code]slotID[/code] is omitted then the currently equipped item will be holstered.
+Example (equip item in the first slot): [code]equipslot 0[/code]
+
+[*][color=#f1c232][b][code]useitem <itemtype> [itemtype2] .. [itemtypeN][/code][/b][/color]
+Uses consumable item or equips equippable item from the inventory. If more than one itemtype is specified, first found item in the list will be used.
+Example (drink one bottle of water): [code]useitem filteredwater disinfectedwater bigfilteredwater[/code]
+
+[*][color=#f1c232][b][code]vehicle_enter[/code][/b][/color]
+Command for entering nearby Seamoth or Prawn Suit.
+
+[*][color=#f1c232][b][code]vehicle_upgrades[/code][/b][/color]
+Command for opening upgrade interface for nearby Seamoth or Prawn Suit.[/size][/list]
+[size=4][b]6.2. General commands[/b][/size][list][size=3]
+[*][color=#f1c232][b][code]addhotkey <command>[/code][/b][/color]
+Adds a hotkey with specified command and opens options menu. Use it from the console to quickly add a template for a hotkey to the hotkeys.json.
+Example: [code]addhotkey item titanium 10[/code]
+
+[*][color=#f1c232][b][code]setresolution <width> <height> [fullscreen:{true|false}][/code][/b][/color]
+Sets Subnautica window resolution. Third parameter is true by default.
+Example: [code]setresolution 1280 720 false[/code]
+
+[*][color=#f1c232][b][code]setwindowpos <x> <y>[/code][/b][/color]
+Sets Subnautica window position.
+Example: [code]setwindowpos 10 10[/code]
+
+[*][color=#f1c232][b][code]fov <value>[/code][/b][/color]
+Changes field of view. The diver mask can block the vision with low values, use [code]devtools_hidegui[/code] command to hide it (section [b]6.3[/b]).
+Example: [code]fov 60[/code]
+
+[*][color=#f1c232][b][code]showmessage <message>[/code][/b][/color]
+Shows message at the top left corner of the screen.
+Example: [code]showmessage Hello, world![/code]
+
+[*][color=#f1c232][b][code]clearmessages[/code][/b][/color]
+Clears all messages currently displayed at the top left corner of the screen.
+
+[*][color=#f1c232][b][code]showmodoptions[/code][/b][/color]
+Opens options menu and switches to the "Mods" tab.
+
+[*][color=#f1c232][b][code]lastcommand [index][/code][/b][/color]
+Executes last entered console command. Parameter is zero-based index of command from the end of the console history (default is 0).
+Example (execute second-to-last command): [code]lastcommand 1[/code]
+
+[*][color=#f1c232][b][code]wait <seconds>[/code][/b][/color]
+Adds a delay between commands separated by semicolon (see section [b]5[/b] for more info).
+Example (add a half-second delay between two commands): [code]command1; wait 0.5; command2[/code][/size][/list]
+[size=4][b]6.3. Developer tools[/b][/size][list][size=3]
+[*][color=#f1c232][b][code]devtools_toggleterrain[/code][/b][/color]
+Toggles debug information menu (F1 in vanilla).
+
+[*][color=#f1c232][b][code]devtools_togglegraphics[/code][/b][/color]
+Toggles debug graphics menu (F3 in vanilla).
+
+[*][color=#f1c232][b][code]devtools_toggleframegraph[/code][/b][/color]
+Toggles perfomance graph.
+
+[*][color=#f1c232][b][code]devtools_hidegui [state:{none|mask|hud|maskhud|all}][/code][/b][/color]
+Hides/shows interface (F6 in vanilla). There are five possible states:[list]
+[*][code]0[/code] or [code]none[/code] - don't hide anything
+[*][code]1[/code] or [code]mask[/code] - hide diver mask
+[*][code]2[/code] or [code]hud[/code]  - hide HUD
+[*][code]3[/code] or [code]maskhud[/code] - hide mask and HUD
+[*][code]4[/code] or [code]all[/code] - hide mask, HUD and player model
+[/list]Command will loop through all the states in case the [code]state[/code] parameter is omitted.
+Example: [code]devtools_hidegui mask[/code][/size][/list]
+[heading][color=#f1c232][b]7. COMMANDS EXAMPLES[/b][/color][/heading][size=3]This section shows various usage examples of commands for playing the game and for mod developing. You can use them as a starting point for your own commands. These and other sample commands can be found in the [b]hotkeys.sample.json[/b] in the mod folder (you can copy some of the commands or just rename it to [b]hotkeys.json[/b]).[/size]
+
+[list][size=3]
+[*][color=#f1c232][b][code]"bindslot 0 flashlight; equipslot 0"[/code][/b][/color]
+Simple command for equipping flashlight (flashlight must be in the inventory).
+
+[*][color=#f1c232][b][code]"bindslot 1 propulsioncannon; equipslot 1 | bindslot 1 repulsioncannon; equipslot 1"[/code][/b][/color]
+Command for switching between propulsion and repulsion cannons (both cannons must be in the inventory)
+
+[*][color=#f1c232][b][code]"bindslot 0 seaglide; equipslot 0; autoforward true | bindslot 0 flashlight; equipslot 0; autoforward false"[/code][/b][/color]
+Command for switching between seaglide and flashlight (also toggling autoforward)
+
+[*][color=#f1c232][b][code]"devtools_hidegui mask; fov 5 | fov 60; devtools_hidegui none"[/code][/b][/color]
+Command for zooming in (useful in various situations). The dive mask don't work well with low FoV values, so it's necessary to hide it. You may want to use it with [code]PressRelease[/code] hotkey mode.
+
+[*][color=#f1c232][b][code]"setresolution 1280 720 false; setwindowpos 10 10 | setresolution 2560 1440"[/code][/b][/color]
+Command for toggling fullscreen mode (useful mainly while mod developing). Also moves the game window to the corner.
+
+[*][color=#f1c232][b][code]"spawn seamoth; warpforward 10; speed 10; vehicle_enter; wait 2; speed 1; clearmessages"[/code][/b][/color]
+Command for spawning Seamoth and entering inside (supposed to use while mod developing). Uses [code]speed[/code] and [code]wait[/code] commands to speed up animations for spawning and entering ([code]wait[/code] command is affected by [code]speed[/code] command, so it actually waits 0.2s).[/size][/list][line]
+[b][size=3]Requirements:[/size][/b]
+[list]
+[*][url=https://www.nexusmods.com/subnautica/mods/201]QModManager[/url]
+[*][url=https://www.nexusmods.com/subnautica/mods/113]SMLHelper[/url]
+[/list]
+[b][size=3]Installation:[/size][/b]
+Extract the archive into your QMods folder
+
+[b][size=3]Update check:[/size][/b]
+This mod checks for updates from time to time via the internet.
+You can disable it in the [b]mod.json[/b] (set [code]"UpdateCheck"[/code] to [code]false[/code]).
+
+[b][size=3]Source code:[/size][/b]
+[url=https://github.com/zorgesho/SubnauticaMods/tree/master/CustomHotkeys]https://github.com/zorgesho/SubnauticaMods/tree/master/CustomHotkeys[/url]

@@ -4,9 +4,11 @@
   "Author": "zorgesho",
   "Version": "1.0.0",
   "Dependencies": ["SMLHelper"],
-  "VersionDependencies": { "SMLHelper": "2.6.5" },
+  "VersionDependencies": { "SMLHelper": "2.6.0" },
   "Enable": true,
   "Game": "Subnautica",
   "AssemblyName": "CustomHotkeys.dll",
-  "EntryMethod": "CustomHotkeys.Main.patch"
+  "EntryMethod": "CustomHotkeys.Main.patch",
+  "UpdateCheck": true,
+  "VersionURL": "https://raw.githubusercontent.com/zorgesho/SubnauticaMods/master/CustomHotkeys/mod.json"
 }

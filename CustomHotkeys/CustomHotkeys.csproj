@@ -56,6 +56,10 @@
       <HintPath>..\..\..\..\games\subnautica\Subnautica_Data\Managed\0Harmony-1.2.0.1.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>..\..\..\..\games\subnautica\Subnautica_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Assembly-CSharp_publicized">
       <HintPath>..\..\..\..\games\subnautica\Subnautica_Data\Managed\Assembly-CSharp_publicized.dll</HintPath>
       <Private>False</Private>
@@ -97,9 +101,16 @@
     <Compile Include="src\WinApi.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="mod.json" />
+    <None Include="hotkeys.sample.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="mod.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="nexus-info.txt" />
+  </ItemGroup>
   <Import Project="..\Common\Common.projitems" Label="Shared" />
   <Import Project="..\Common\Common.Config\Common.Config.projitems" Label="Shared" />
   <Import Project="..\Common\Common.Config.Options\Common.Config.Options.projitems" Label="Shared" />

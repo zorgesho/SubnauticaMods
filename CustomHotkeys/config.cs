@@ -1,9 +1,9 @@
-﻿using System;
+﻿//#define GENERATE_SAMPLE_CONFIG
+
+using System;
 using System.Collections.Generic;
 
-#if DEBUG
 using UnityEngine;
-#endif
 
 using Common;
 using Common.Harmony;
@@ -13,7 +13,7 @@ namespace CustomHotkeys
 {
 	class ModConfig: Config
 	{
-		[Options.Field] // TODO label & tooltip
+		[Options.Field("Enable developer tools hotkeys", "Use <b>F1</b>, <b>F3</b> and <b>F6</b> for vanilla developer tools (you can reassign those tools to the other hotkeys)")]
 		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 		public readonly bool enableDevToolsHotkeys = !Mod.isDevBuild;
 
@@ -29,7 +29,7 @@ namespace CustomHotkeys
 		class OnlyInMainMenu: Options.Components.Hider.IVisibilityChecker
 		{ public bool visible => Options.mode == Options.Mode.MainMenu; }
 
-		[Options.Field] // TODO label & tooltip
+		[Options.Field("Enable feedback collector", "Use <b>F8</b> to show feedback collector")]
 		[Options.Hideable(typeof(OnlyInMainMenu))]
 		[Options.FinalizeAction(typeof(FeedbackEnabler))]
 		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
@@ -62,9 +62,9 @@ namespace CustomHotkeys
 		[NonSerialized, NoInnerFieldsAttrProcessing]
 		readonly List<Options.ModOption> bindOptions = new List<Options.ModOption>();
 
-		public void addHotkey(string command)
+		public void addHotkey(Hotkey hotkey)
 		{
-			hotkeys.Add(new Hotkey() { command = command });
+			hotkeys.Add(hotkey);
 			save();
 
 			refreshHotkeyList();
@@ -90,11 +90,16 @@ namespace CustomHotkeys
 				int id = 0;
 				foreach (var hotkey in hotkeys)
 				{
-					if (hotkey.hide == true)
+					if (hotkey.hidden == true)
 						continue;
 
 					var cfgField = new Field(hotkey, nameof(Hotkey.key), this, $"hotkey.{id++:D2}");
-					var option = new Options.KeyWModBindOption(cfgField, hotkey.label ?? hotkey.command); // TODO clamp command and add tooltip with command
+					var label = !string.IsNullOrWhiteSpace(hotkey.label)? hotkey.label: hotkey.command.clampLength(30).Replace("...", "<color=silver>...</color>");
+					var option = new Options.KeyWModBindOption(cfgField, label);
+
+					var tooltip = "<color=white><b>Command: </b></color>";
+					tooltip += hotkey.command.Replace(";", "<color=orange><b>;</b></color>").Replace("|", "<color=yellow><b>|</b></color>");
+					option.addHandler(new Options.Components.Tooltip.Add(tooltip));
 
 					bindOptions.Add(option);
 					Options.add(option);
@@ -108,6 +113,8 @@ namespace CustomHotkeys
 		public class Hotkey
 		{
 #pragma warning disable CS0649 // field is never assigned to
+			public enum Mode { Press = 0, PressRelease = 1, Hold = 2 }
+
 			class UpdateBinds: Field.IAction
 			{ public void action() => HotkeyHelper.updateBinds(); }
 
@@ -115,10 +122,10 @@ namespace CustomHotkeys
 			public InputHelper.KeyWithModifier key;
 
 			public string command;
-			public bool? up, held; // nullables so they can be ignored by serializer
+			public Mode? mode; // nullable so it can be ignored by serializer
 
 			public string label;
-			public bool? hide; // ^
+			public bool? hidden; // ^
 #pragma warning restore
 		}
 
@@ -137,12 +144,34 @@ namespace CustomHotkeys
 		[AddHotkeys, Field.Reloadable, NoInnerFieldsAttrProcessing]
 		readonly List<Hotkey> hotkeys = new List<Hotkey>()
 		{
-#if DEBUG
-			new Hotkey { command = "setresolution 1280 720 true; setwindowpos 10 360 | setresolution 2560 1440", key = KeyCode.F1, label = "Toggle fullscreen" },
+#if DEBUG && !GENERATE_SAMPLE_CONFIG
+			new Hotkey { command = "autoforward", label = "Autoforward", key = KeyCode.LeftAlt },
+			new Hotkey { command = "setresolution 1280 720 false; setwindowpos 10 10 | setresolution 2560 1440", key = KeyCode.F1, label = "Toggle fullscreen" },
+			new Hotkey { command = "spawn seamoth; warpforward 10; speed 10; vehicle_enter; wait 2; speed 1; clearmessages", key = KeyCode.F5, label = "Spawn seamoth" },
+			new Hotkey { command = "showmodoptions", label = "Open mod options", key = KeyCode.F3 },
 			new Hotkey { command = "pincfgvars all | pincfgvars", label = "Toggle cfgvars", key = KeyCode.F2 },
-			new Hotkey { command = "warpforward 1", key = KeyCode.F4, held = true },
-			new Hotkey { command = "togglemod autoload", label = "Toggle AutoLoad", key = KeyCode.F11 },
-			new Hotkey { command = "togglecfgvar misc.dbg.faststart.enabled", label = null /*"Toggle Fast Start"*/, key = KeyCode.F12 }
+
+			new Hotkey { command = "togglemod autoload", label = "Toggle AutoLoad", key = new InputHelper.KeyWithModifier(KeyCode.F12, KeyCode.LeftControl) },
+			new Hotkey { command = "togglecfgvar misc.dbg.faststart.enabled", label = "Toggle Fast Start", key = new InputHelper.KeyWithModifier(KeyCode.F12, KeyCode.LeftAlt) },
+			new Hotkey { command = "devtools_hidegui mask; fov 5 | fov 60; devtools_hidegui none", label = "Zoom in", key = KeyCode.V, mode = Hotkey.Mode.PressRelease },
+			new Hotkey { command = "warpforward 1", key = KeyCode.UpArrow, mode = Hotkey.Mode.Hold, label = "Warp forward" },
+#else
+			new Hotkey { command = "autoforward", label = "Autoforward", key = KeyCode.LeftAlt },
+			new Hotkey { command = "useitem firstaidkit", label = "Use medkit", key = KeyCode.H },
+			new Hotkey { command = "vehicle_enter", label = "Enter nearby vehicle", key = KeyCode.E },
+			new Hotkey { command = "showmodoptions", label = "Open mod options", key = new InputHelper.KeyWithModifier(KeyCode.O, KeyCode.RightAlt) },
+#endif
+
+#if GENERATE_SAMPLE_CONFIG
+			new Hotkey { command = "setresolution 1280 720 false; setwindowpos 10 10 | setresolution 2560 1440", key = KeyCode.F2, label = "Toggle fullscreen" },
+			new Hotkey { command = "bindslot 0 flashlight; equipslot 0", key = KeyCode.None, label = "Equip flashlight" },
+			new Hotkey { command = "bindslot 1 propulsioncannon; equipslot 1 | bindslot 1 repulsioncannon; equipslot 1", key = KeyCode.None, label = "Switch cannons" },
+			new Hotkey { command = "bindslot 0 seaglide; equipslot 0; autoforward true | bindslot 0 flashlight; equipslot 0; autoforward false", key = KeyCode.LeftControl, label = "Toggle seaglide" },
+			new Hotkey { command = "useitem filteredwater disinfectedwater bigfilteredwater stillsuitwater", key = KeyCode.None, label = "Drink water" },
+			new Hotkey { command = "lastcommand", key = KeyCode.L, label = "Run last console command" },
+			new Hotkey { command = "warpforward 1", key = KeyCode.UpArrow, mode = Hotkey.Mode.Hold, label = "Warp forward" },
+			new Hotkey { command = "spawn seamoth; warpforward 10; speed 10; vehicle_enter; wait 2; speed 1; clearmessages", key = KeyCode.None, label = "Spawn seamoth" },
+			new Hotkey { command = "devtools_hidegui mask; fov 5 | fov 60; devtools_hidegui none", key = KeyCode.V, mode = Hotkey.Mode.PressRelease, label = "Zoom in" },
 #endif
 		};
 	}

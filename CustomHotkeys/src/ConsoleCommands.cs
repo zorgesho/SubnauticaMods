@@ -5,6 +5,7 @@ using System.Collections;
 using UnityEngine;
 
 using Common;
+using Common.Reflection;
 using Common.Configuration;
 
 namespace CustomHotkeys
@@ -12,23 +13,21 @@ namespace CustomHotkeys
 	class ConsoleCommands: PersistentConsoleCommands
 	{
 		#region dev tools & debug commands
-		void OnConsoleCommand_debuggui_toggleterrain(NotificationCenter.Notification _)
-		{
-			FindObjectsOfType<TerrainDebugGUI>().forEach(gui => gui.enabled = !gui.enabled);
-		}
 
-		void OnConsoleCommand_debuggui_togglegraphics(NotificationCenter.Notification _)
-		{
-			FindObjectsOfType<GraphicsDebugGUI>().forEach(gui => gui.enabled = !gui.enabled);
-		}
+		static void toggleComponent<T>() where T: MonoBehaviour => FindObjectsOfType<T>().ForEach(cmp => cmp.enabled = !cmp.enabled);
 
-		void OnConsoleCommand_debuggui_hidephase(NotificationCenter.Notification n)
+		void OnConsoleCommand_devtools_toggleterrain(NotificationCenter.Notification _)	   => toggleComponent<TerrainDebugGUI>();
+		void OnConsoleCommand_devtools_togglegraphics(NotificationCenter.Notification _)   => toggleComponent<GraphicsDebugGUI>();
+		void OnConsoleCommand_devtools_toggleframegraph(NotificationCenter.Notification _) => toggleComponent<UWE.FrameTimeOverlay>();
+
+		void OnConsoleCommand_devtools_hidegui(NotificationCenter.Notification n)
 		{
 			if (!GUIController.main)
 				return;
 
-			int phase = n.getArgCount() > 0? n.getArg<int>(0): (int)GUIController.main.hidePhase + 1;
+			int phase = n.getArgCount() > 0? n.getArg<GUIController.HidePhase>(0).cast<int>(): (int)GUIController.main.hidePhase + 1;
 			phase %= (int)GUIController.HidePhase.All + 1;
+
 			GUIController.SetHidePhase(GUIController.main.hidePhase = (GUIController.HidePhase)phase);
 		}
 #if DEBUG
@@ -43,13 +42,17 @@ namespace CustomHotkeys
 		#region misc commands
 		void OnConsoleCommand_setwindowpos(NotificationCenter.Notification n)
 		{
-			WinApi.setWindowPos("Subnautica", n.getArg<int>(0), n.getArg<int>(1));
+			WinApi.setWindowPos(n.getArg<int>(0), n.getArg<int>(1));
 		}
 
 		void OnConsoleCommand_setresolution(NotificationCenter.Notification n)
 		{
 			if (n.getArgCount() > 1)
-				DisplayManager.SetResolution(Math.Max(640, n.getArg<int>(0)), Math.Max(480, n.getArg<int>(1)), !n.getArg<bool>(2));
+			{
+				DisplayManager.SetResolution(Math.Max(640, n.getArg<int>(0)),
+											 Math.Max(480, n.getArg<int>(1)),
+											 n.getArgCount() == 3? n.getArg<bool>(2): true);
+			}
 		}
 
 		void OnConsoleCommand_fov(NotificationCenter.Notification n)
@@ -64,7 +67,12 @@ namespace CustomHotkeys
 			n.getArg(0)?.onScreen();
 		}
 
-		void OnConsoleCommand_showmodsoptions(NotificationCenter.Notification _)
+		void OnConsoleCommand_clearmessages(NotificationCenter.Notification _)
+		{
+			GameUtils.clearScreenMessages();
+		}
+
+		void OnConsoleCommand_showmodoptions(NotificationCenter.Notification _)
 		{
 			Options.open();
 		}
@@ -80,7 +88,7 @@ namespace CustomHotkeys
 			if (n.getArgCount() == 0)
 				return;
 
-			Main.hkConfig.addHotkey(n.getArg(0));
+			Main.hkConfig.addHotkey(new HKConfig.Hotkey() { command = n.getArg(0), label = "", mode = HKConfig.Hotkey.Mode.Press });
 
 			Options.open();
 			StartCoroutine(_scroll());
@@ -139,11 +147,8 @@ namespace CustomHotkeys
 		{
 			if (n.getArgCount() == 1)
 				Inventory.main?.quickSlots.SlotKeyDown(n.getArg<int>(0));
-		}
-
-		void OnConsoleCommand_holsteritem(NotificationCenter.Notification _)
-		{
-			Inventory.main?.quickSlots.Deselect();
+			else
+				Inventory.main?.quickSlots.Deselect();
 		}
 
 		void OnConsoleCommand_useitem(NotificationCenter.Notification n)
@@ -201,11 +206,9 @@ namespace CustomHotkeys
 			Vector3 playerPos = Player.main.transform.position;
 
 			var vehicles = FindObjectsOfType<Vehicle>().Where(v => (v.transform.position - playerPos).sqrMagnitude < maxDistance).ToList();
-			if (vehicles.Count == 0)
-				return null;
-
 			vehicles.Sort((x, y) => Math.Sign((x.transform.position - playerPos).sqrMagnitude - (y.transform.position - playerPos).sqrMagnitude));
-			return vehicles[0];
+
+			return vehicles.Count > 0? vehicles[0]: null;
 		}
 		#endregion
 	}

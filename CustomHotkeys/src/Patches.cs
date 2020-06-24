@@ -39,6 +39,7 @@ namespace CustomHotkeys
 	static class GUIController_Update_Patch
 	{
 		static bool Prepare() => !Main.config.enableDevToolsHotkeys;
+
 		static bool Prefix() => false;
 	}
 
@@ -49,6 +50,7 @@ namespace CustomHotkeys
 		static void Postfix(uGUI_FeedbackCollector __instance) => __instance.enabled = Main.config.enableFeedback;
 	}
 
+	// remove "Give Feedback" from the ingame menu
 	[OptionalPatch, HarmonyPatch(typeof(IngameMenu), "Start")]
 	static class IngameMenu_Start_Patch
 	{

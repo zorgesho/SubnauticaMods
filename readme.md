@@ -6,6 +6,7 @@ My mods for Subnautica
 Mod | Nexus description | Nexus link
 -|-|-
 | [**ConsoleImproved**](https://github.com/zorgesho/SubnauticaMods/tree/master/ConsoleImproved) | Console autocomplete for commands and techtypes + full history (saved between sessions) | [341](https://www.nexusmods.com/subnautica/mods/341)|
+| [**CustomHotkeys**](https://github.com/zorgesho/SubnauticaMods/tree/master/CustomHotkeys) | This mod allows you to bind console commands to hotkeys and also adds a lot of new console commands. See the description for details. | [502](https://www.nexusmods.com/subnautica/mods/502)|
 | [**DayNightSpeed**](https://github.com/zorgesho/SubnauticaMods/tree/master/DayNightSpeed) | Mod for changing speed of day/night cycle. It's like daynightspeed console command, only better. See the description for details. | [361](https://www.nexusmods.com/subnautica/mods/361)|
 | [**DebrisRecycling**](https://github.com/zorgesho/SubnauticaMods/tree/master/DebrisRecycling) | This mod allows you to deconstruct small Aurora debris (including cargo crates) with Habitat Builder to metal salvage | [324](https://www.nexusmods.com/subnautica/mods/324)|
 | [**FloatingCargoCrate**](https://github.com/zorgesho/SubnauticaMods/tree/master/FloatingCargoCrate) | Big floating storage. You can build it with Habitat Builder and move it with Propulsion Cannon. | [303](https://www.nexusmods.com/subnautica/mods/303)|

@@ -104,13 +104,21 @@
     <Compile Include="src\craftables\LuggageBag.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="mod.json" />
+    <None Include="mod.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <Content Include="assets\cargobox.png" />
-    <Content Include="assets\metallocker.png" />
-    <Content Include="assets\nutrientblockcraftable.png" />
+    <Content Include="assets\cargobox.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\metallocker.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\nutrientblockcraftable.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="..\Common\Common.projitems" Label="Shared" />
   <Import Project="..\Common\Common.AssetsHelper\Common.AssetsHelper.projitems" Label="Shared" />

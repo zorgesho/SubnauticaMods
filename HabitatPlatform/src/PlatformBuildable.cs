@@ -1,13 +1,14 @@
 ﻿using UnityEngine;
 using SMLHelper.V2.Crafting;
 
-using Common;
 using Common.Crafting;
 
 namespace HabitatPlatform
 {
 	class HabitatPlatform: CraftableObject
 	{
+		public class Tag: MonoBehaviour {}
+
 		public static new TechType TechType { get; private set; } = 0;
 
 		protected override TechData getTechData() => new TechData(new Ingredient(TechType.Titanium, 1));
@@ -27,16 +28,9 @@ namespace HabitatPlatform
 			GameObject prefab = CraftHelper.Utils.prefabCopy(TechType.RocketBase);
 
 			prefab.AddComponent<PlatformInitializer>();
-			prefab.AddComponent<PlatformMove>();
+			prefab.AddComponent<Tag>();
 
 			//prefab.getChild("Base/RocketConstructorPlatform").SetActive(true);
-
-			//GameObject foundation =  Object.Instantiate(CraftData.GetPrefabForTechType(TechType.BaseRoom));
-
-			//foundation.transform.parent = prefab.getChild("Base").transform;
-			//foundation.transform.localPosition = Vector3.zero;
-
-			//prefab.dump("!!platform");
 
 			return prefab;
 		}

@@ -12,6 +12,8 @@ namespace HabitatPlatform
 		{
 			HarmonyHelper.patchAll();
 			CraftHelper.patchAll();
+
+			PersistentConsoleCommands.createGameObject<ConsoleCommands>();
 		}
 	}
 }

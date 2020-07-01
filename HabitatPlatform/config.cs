@@ -2,13 +2,12 @@
 
 namespace HabitatPlatform
 {
-	[Field.BindConsole]
+	[Field.BindConsole("hb_p")]
 	class ModConfig: Config
 	{
-		public readonly float step = 1f;
-		public readonly float stepAngle = 0.5f;
+		public readonly bool dbgVisibleFoundations = false;
 
-		public readonly int xxx = 4;
-		public readonly int zzz = 3;
+		public readonly float stepMove = 1f;
+		public readonly float stepRotate = 0.5f;
 	}
 }

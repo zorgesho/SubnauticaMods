@@ -647,22 +647,14 @@ namespace Common.Utils
 
 			public override int Count => mDict.Count;
 
-			public override void Add(string aKey, Node aItem)
-			{
-				aItem ??= Null.CreateOrGet();
-
-				if (aKey != null)
-					mDict[aKey] = aItem;
-				else
-					mDict.Add(Guid.NewGuid().ToString(), aItem);
-			}
+			public override void Add(string aKey, Node aItem) =>
+				mDict[aKey ?? Guid.NewGuid().ToString()] = aItem ?? Null.CreateOrGet();
 
 			public override Node Remove(string aKey)
 			{
-				if (!mDict.ContainsKey(aKey))
+				if (!mDict.TryGetValue(aKey, out Node tmp))
 					return null;
 
-				var tmp = mDict[aKey];
 				mDict.Remove(aKey);
 				return tmp;
 			}
@@ -894,7 +886,7 @@ namespace Common.Utils
 				aSB.Append("null");
 
 			public override bool Equals(object obj) => ReferenceEquals(this, obj)? true: obj is Null;
-		
+
 			public override int GetHashCode() => 0;
 		} // End of Null
 

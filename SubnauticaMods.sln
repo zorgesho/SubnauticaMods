@@ -71,15 +71,25 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fatigue", "Fatigue\Fatigue.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "misc", "misc", "{7B8B7765-2191-43CD-ABE0-89BBEF79CFC2}"
 	ProjectSection(SolutionItems) = preProject
-		.editorconfig = .editorconfig
-		.gitignore = .gitignore
-		mods_cleanup.bat = mods_cleanup.bat
-		mods_cleanup.txt = mods_cleanup.txt
-		post-build.bat = post-build.bat
 		readme.md = readme.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleModManager", "SimpleModManager\SimpleModManager.csproj", "{C3985FBE-6652-4230-934F-0C931F448DC2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{A9265C46-2A40-4E3D-A4FB-7F3DCDA6AFD9}"
+	ProjectSection(SolutionItems) = preProject
+		mods_cleanup.bat = mods_cleanup.bat
+		post-build.bat = post-build.bat
+		reinstall_qmm.bat = reinstall_qmm.bat
+		switch_branches.bat = switch_branches.bat
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "configs", "configs", "{1832033A-214B-48C2-89BA-EEA25FC69B19}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitignore = .gitignore
+		mods_cleanup.txt = mods_cleanup.txt
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -341,6 +351,8 @@ Global
 		{5322339C-9933-4FB2-A04A-495718A3F66B} = {51F4A336-ADD0-4AD9-BBCF-336DAAB8EF4D}
 		{B3E130A4-0598-40A5-8D01-543D18743A6F} = {51F4A336-ADD0-4AD9-BBCF-336DAAB8EF4D}
 		{EBFA5C5C-995C-4E6D-9F6E-C9C33F864EF6} = {51F4A336-ADD0-4AD9-BBCF-336DAAB8EF4D}
+		{A9265C46-2A40-4E3D-A4FB-7F3DCDA6AFD9} = {7B8B7765-2191-43CD-ABE0-89BBEF79CFC2}
+		{1832033A-214B-48C2-89BA-EEA25FC69B19} = {7B8B7765-2191-43CD-ABE0-89BBEF79CFC2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0A745472-1C11-4AB7-B6C4-79A169E0FB35}

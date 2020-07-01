@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Collections;
 
 using UnityEngine;
@@ -199,16 +198,10 @@ namespace CustomHotkeys
 
 		static Vehicle findNearestVehicle(float maxDistance)
 		{
-			if (!Player.main)
-				return null;
+			if (UnityHelper.findNearestToPlayer<Vehicle>(out float distSq) is Vehicle vehicle)
+				return distSq < maxDistance * maxDistance? vehicle: null;
 
-			maxDistance *= maxDistance;
-			Vector3 playerPos = Player.main.transform.position;
-
-			var vehicles = FindObjectsOfType<Vehicle>().Where(v => (v.transform.position - playerPos).sqrMagnitude < maxDistance).ToList();
-			vehicles.Sort((x, y) => Math.Sign((x.transform.position - playerPos).sqrMagnitude - (y.transform.position - playerPos).sqrMagnitude));
-
-			return vehicles.Count > 0? vehicles[0]: null;
+			return null;
 		}
 		#endregion
 	}

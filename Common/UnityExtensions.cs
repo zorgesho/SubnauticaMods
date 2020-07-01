@@ -103,6 +103,35 @@ namespace Common
 
 			return obj;
 		}
+
+		public static C findNearestToCam<C>() where C: Component =>
+			findNearest<C>(LargeWorldStreamer.main.cachedCameraPosition, out _);
+
+		public static C findNearestToPlayer<C>() where C: Component =>
+			findNearest<C>(Player.main.transform.position, out _);
+
+		public static C findNearestToPlayer<C>(out float distSq) where C: Component =>
+			findNearest<C>(Player.main.transform.position, out distSq);
+
+		// for use in non-performance critical code
+		public static C findNearest<C>(Vector3 pos, out float distSq) where C: Component
+		{
+			C result = null;
+			distSq = float.MaxValue;
+
+			foreach (var c in Object.FindObjectsOfType<C>())
+			{
+				float tmpDistSq = (c.transform.position - pos).sqrMagnitude;
+
+				if (tmpDistSq < distSq)
+				{
+					distSq = tmpDistSq;
+					result = c;
+				}
+			}
+
+			return result;
+		}
 	}
 
 

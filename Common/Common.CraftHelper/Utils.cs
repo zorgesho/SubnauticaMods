@@ -6,9 +6,14 @@ namespace Common.Crafting
 	{
 		public static class Utils
 		{
-			public static GameObject prefabCopy(TechType techType) => Object.Instantiate(CraftData.GetPrefabForTechType(techType));
-			public static GameObject prefabCopy(string resourcePath) => Object.Instantiate(Resources.Load<GameObject>(resourcePath));
+			public static GameObject prefabCopy(TechType techType) =>
+				Object.Instantiate(CraftData.GetPrefabForTechType(techType));
 
+			public static GameObject prefabCopy(string resourcePath) =>
+				Object.Instantiate(Resources.Load<GameObject>(resourcePath));
+
+			public static GameObject prefabCopy(string resourcePath, Vector3 position, Quaternion rotation) =>
+				Object.Instantiate(Resources.Load<GameObject>(resourcePath), position, rotation);
 
 			public static Constructable initConstructable(GameObject prefab, GameObject model)
 			{

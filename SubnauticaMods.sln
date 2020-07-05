@@ -157,6 +157,7 @@ Global
 		Common\Common.Config.Options\Common.Config.Options.projitems*{c3985fbe-6652-4230-934f-0c931f448dc2}*SharedItemsImports = 4
 		Common\Common.Config\Common.Config.projitems*{c3985fbe-6652-4230-934f-0c931f448dc2}*SharedItemsImports = 4
 		Common\Common.projitems*{c3985fbe-6652-4230-934f-0c931f448dc2}*SharedItemsImports = 4
+		Common\Common.AssetsHelper\Common.AssetsHelper.projitems*{c504563a-b554-4a91-ae30-14cfcd626007}*SharedItemsImports = 4
 		Common\Common.Config\Common.Config.projitems*{c504563a-b554-4a91-ae30-14cfcd626007}*SharedItemsImports = 4
 		Common\Common.CraftHelper\Common.CraftHelper.projitems*{c504563a-b554-4a91-ae30-14cfcd626007}*SharedItemsImports = 4
 		Common\Common.projitems*{c504563a-b554-4a91-ae30-14cfcd626007}*SharedItemsImports = 4

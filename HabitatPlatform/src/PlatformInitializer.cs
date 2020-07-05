@@ -9,10 +9,13 @@ namespace HabitatPlatform
 {
 	class PlatformInitializer: MonoBehaviour
 	{
+		static readonly Vector3 initialFoundationPos = new Vector3(11.7f, 1.4f, 7.5f);
+
 		Base platformBase = null;
 
 		IEnumerator Start()
 		{
+			// foundations added only once per platform
 			if (gameObject.GetComponentInChildren<VFXConstructing>() is var vfx)
 			{
 				yield return null; // wait for one frame while VFXConstructing is initialized
@@ -20,6 +23,8 @@ namespace HabitatPlatform
 				if (vfx.constructed < 1)
 					_addAllFoundations();
 			}
+
+			addFloor(); // TODO: call this correctly for newly constructed platform
 
 			Destroy(this);
 		}
@@ -74,9 +79,7 @@ namespace HabitatPlatform
 			// parenting to platform
 			baseGhost.targetBase.transform.parent = gameObject.transform;
 
-			//baseGo.transform.localPosition = new Vector3(11.7f, 1.4f, 7.5f);
-			//baseGhost.targetBase.transform.localPosition = new Vector3(11.7f, 1.4f, 7.5f);
-			baseGhost.targetBase.transform.localPosition = new Vector3(11.7f, 1.4f + Random.value * 3, 7.5f);
+			baseGhost.targetBase.transform.localPosition = initialFoundationPos;
 			baseGhost.targetBase.transform.localEulerAngles = Vector3.zero;
 
 			Destroy(newFoundation);
@@ -118,6 +121,41 @@ namespace HabitatPlatform
 			//baseGhost.targetBase.transform.localEulerAngles = Vector3.zero;
 
 			Destroy(newFoundation);
+		}
+
+		void addFloor()
+		{
+			GameObject prefab = CraftData.GetPrefabForTechType(TechType.RocketBase);
+			GameObject platformBase = prefab.getChild("Base/rocketship_platform/Rocket_Geo/Rocketship_platform/Rocketship_platform_base-1/Rocketship_platform_base_MeshPart0");
+			Material floorMaterialToCopy = platformBase.GetComponent<Renderer>().materials[6];
+
+			var floor = Instantiate(AssetsHelper.loadPrefab("floor.prefab"));
+
+			Material floorMaterial = floor.GetComponent<Renderer>().material;
+
+			Vector2 texScale = floorMaterial.mainTextureScale;
+			Texture texMain = floorMaterial.GetTexture("_MainTex");
+			Texture texBump = floorMaterial.GetTexture("_BumpMap");
+
+			floorMaterial.shader = Shader.Find("MarmosetUBER");
+			floorMaterial.CopyPropertiesFromMaterial(floorMaterialToCopy); // TODO: get rid of this
+			floorMaterial.DisableKeyword("UWE_LIGHTMAP");
+
+			floorMaterial.SetTexture("_MainTex", texMain);
+			floorMaterial.SetTexture("_SpecTex", texMain);
+			floorMaterial.SetTexture("_BumpMap", texBump);
+
+			floorMaterial.SetTextureScale("_MainTex", texScale);
+			floorMaterial.SetTextureScale("_BumpMap", texScale);
+			floorMaterial.SetTextureScale("_SpecTex", texScale);
+
+			var skyApplier = floor.AddComponent<SkyApplier>();
+			skyApplier.renderers = floor.GetComponents<Renderer>();
+			skyApplier.anchorSky = Skies.Auto;
+
+			floor.transform.parent = gameObject.transform;
+			floor.transform.localPosition = new Vector3(0.05f, 2.863f, 0.065f); // ??? 0.1930002 2.8629 0.065
+			floor.transform.localScale = new Vector3(42.44f, 0.1f, 34.51f);
 		}
 	}
 }

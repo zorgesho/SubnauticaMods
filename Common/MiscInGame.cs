@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -26,6 +27,13 @@ namespace Common
 		{
 			var listToPrint = list.Count > maxCount? list.GetRange(0, maxCount): list;
 			listToPrint.ForEach(s => ErrorMessage.AddDebug(msg + s));
+		}
+
+		public static void onScreen(this List<string> list, string prefix)
+		{
+			var sb = new StringBuilder();
+			list.ForEach(line => sb.AppendLine(line));
+			sb.ToString().onScreen(prefix);
 		}
 	}
 
@@ -68,8 +76,11 @@ namespace Common
 	{
 		public static int getArgCount(this NotificationCenter.Notification n) => n?.data?.Count ?? 0;
 
-		public static T getArg<T>(this NotificationCenter.Notification n, int index) => _getArg(n, index).convert<T>();
 		public static string getArg(this NotificationCenter.Notification n, int index) => _getArg(n, index) as string;
+
+		public static T getArg<T>(this NotificationCenter.Notification n, int index) => _getArg(n, index).convert<T>();
+		public static T getArg<T>(this NotificationCenter.Notification n, int index, T defaultValue) =>
+			index < n.getArgCount()? n.getArg<T>(index): defaultValue;
 
 		static object _getArg(this NotificationCenter.Notification n, int index) => n?.data?.Count > index? n.data[index]: null;
 	}

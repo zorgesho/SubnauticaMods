@@ -8,7 +8,7 @@ namespace Common
 	{
 		public static void addRange<T>(this ICollection<T> target, IEnumerable<T> source) => source.forEach(e => target.Add(e));
 
-		public static void add<T>(this List<T> target, T item, int count)
+		public static void add<T>(this List<T> target, T item, int count) where T: struct
 		{
 			for (int i = 0; i < count; i++)
 				target.Add(item);

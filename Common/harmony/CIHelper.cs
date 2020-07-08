@@ -21,6 +21,17 @@ namespace Common.Harmony
 		// for local variables ops
 		public static bool isOpLoc(this CodeInstruction ci, OpCode opcode, int index) =>
 			ci.opcode == opcode && ((ci.operand as LocalBuilder)?.LocalIndex == index);
+
+		public static int findIndexForLast(this CIList list, params CIPredicate[] predicates)
+		{
+			int index = 0;
+
+			foreach (var p in predicates)
+				if ((index = list.FindIndex(index, p)) == -1)
+					return -1;
+
+			return index;
+		}
 	}
 
 	static partial class CIHelper // CodeInstruction sequences manipulation methods
@@ -213,12 +224,13 @@ namespace Common.Harmony
 
 			class GetOpCode<T>: IGetOpCode<T>
 			{
-				class GetOpSpec: IGetOpCode<float>, IGetOpCode<double>, IGetOpCode<sbyte> // will add more when needed
+				class GetOpSpec: IGetOpCode<float>, IGetOpCode<double>, IGetOpCode<int>, IGetOpCode<sbyte>
 				{
 					public static readonly GetOpSpec S = new GetOpSpec();
 
 					OpCode IGetOpCode<float>.get()  => OpCodes.Ldc_R4;
 					OpCode IGetOpCode<double>.get() => OpCodes.Ldc_R8;
+					OpCode IGetOpCode<int>.get()    => OpCodes.Ldc_I4;
 					OpCode IGetOpCode<sbyte>.get()  => OpCodes.Ldc_I4_S;
 				}
 

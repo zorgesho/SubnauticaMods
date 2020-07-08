@@ -6,14 +6,29 @@ namespace Common.Crafting
 	{
 		public static class Utils
 		{
-			public static GameObject prefabCopy(TechType techType) =>
-				Object.Instantiate(CraftData.GetPrefabForTechType(techType));
+			public static GameObject prefabCopy(TechType techType, bool active = true)
+			{
+				GameObject prefab = CraftData.GetPrefabForTechType(techType); 
+				if (!prefab)
+					return null;
+
+				bool prefabActive = prefab.activeSelf;
+
+				if (prefabActive != active)
+				{																		$"CraftHelper.prefabCopy: changing active status for prefab {prefab.name} to {active}".logDbg();
+					prefab.SetActive(active);
+				}
+
+				GameObject newObject = Object.Instantiate(prefab);
+
+				if (prefabActive != active)
+					prefab.SetActive(prefabActive);
+
+				return newObject;
+			}
 
 			public static GameObject prefabCopy(string resourcePath) =>
 				Object.Instantiate(Resources.Load<GameObject>(resourcePath));
-
-			public static GameObject prefabCopy(string resourcePath, Vector3 position, Quaternion rotation) =>
-				Object.Instantiate(Resources.Load<GameObject>(resourcePath), position, rotation);
 
 			public static Constructable initConstructable(GameObject prefab, GameObject model)
 			{
@@ -50,11 +65,11 @@ namespace Common.Crafting
 				if (!vfxFab && $"VFXFabricating for {prefab?.name} not found".logError())
 					return;
 
-				if (posOffset != null)		vfxFab.posOffset	= (Vector3)posOffset;
-				if (eulerOffset != null)	vfxFab.eulerOffset	= (Vector3)eulerOffset;
-				if (localMinY != null)		vfxFab.localMinY	= (float)localMinY;
-				if (localMaxY != null)		vfxFab.localMaxY	= (float)localMaxY;
-				if (scaleFactor != null)	vfxFab.scaleFactor	= (float)scaleFactor;
+				if (posOffset != null)	 vfxFab.posOffset	= (Vector3)posOffset;
+				if (eulerOffset != null) vfxFab.eulerOffset	= (Vector3)eulerOffset;
+				if (localMinY != null)	 vfxFab.localMinY	= (float)localMinY;
+				if (localMaxY != null)	 vfxFab.localMaxY	= (float)localMaxY;
+				if (scaleFactor != null) vfxFab.scaleFactor	= (float)scaleFactor;
 			}
 
 

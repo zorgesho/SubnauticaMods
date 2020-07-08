@@ -79,7 +79,7 @@ namespace Common.Harmony
 			Label lb2 = ilg.DefineLabel();
 
 			yield return new CodeInstruction(OpCodes.Ldarg_0);
-			yield return new CodeInstruction(OpCodes.Callvirt, typeof(Component).method("GetComponent", new Type[0]).MakeGenericMethod(typeof(C)));
+			yield return new CodeInstruction(OpCodes.Callvirt, typeof(Component).method<C>("GetComponent", new Type[0]));
 			yield return new CodeInstruction(OpCodes.Ldnull);
 			yield return new CodeInstruction(OpCodes.Call, typeof(UnityEngine.Object).method("op_Inequality"));
 			yield return new CodeInstruction(OpCodes.Brtrue_S, lb1);

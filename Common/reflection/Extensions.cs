@@ -86,6 +86,7 @@ namespace Common.Reflection
 
 		public static MethodInfo method(this Type type, string name) => _method(type, name, null);
 		public static MethodInfo method(this Type type, string name, params Type[] types) => _method(type, name, types);
+		public static MethodInfo method<T>(this Type type, string name, params Type[] types) => _method(type, name, types)?.MakeGenericMethod(typeof(T));
 
 		public static EventInfo evnt(this Type type, string name) => type.GetEvent(name, ReflectionHelper.bfAll);
 		public static FieldInfo field(this Type type, string name) => type.GetField(name, ReflectionHelper.bfAll);

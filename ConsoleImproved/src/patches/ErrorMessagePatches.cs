@@ -109,10 +109,8 @@ namespace ConsoleImproved
 		}
 	}
 
-
 	// don't clear onscreen messages while console is open
-	[OptionalPatch]
-	[HarmonyPatch(typeof(ErrorMessage), "OnUpdate")]
+	[OptionalPatch, HarmonyPatch(typeof(ErrorMessage), "OnUpdate")]
 	static class ErrorMessage_OnUpdate_Patch
 	{
 		static bool Prepare() => Main.config.keepMessagesOnScreen;
@@ -124,12 +122,10 @@ namespace ConsoleImproved
 			// is console visible
 			void _injectStateCheck(int indexToInject, object labelToJump)
 			{
-				CIHelper.ciInsert(list, indexToInject, CIHelper.toCIList
-				(
+				CIHelper.ciInsert(list, indexToInject,
 					OpCodes.Ldsfld, typeof(DevConsole).field(nameof(DevConsole.instance)),
 					OpCodes.Ldfld,  typeof(DevConsole).field(nameof(DevConsole.state)),
-					OpCodes.Brtrue_S, labelToJump
-				));
+					OpCodes.Brtrue_S, labelToJump);
 			}
 
 			// ignoring (time > message.timeEnd) loop if console is visible (just jumping to "float num = this.offsetY * 7f" line)

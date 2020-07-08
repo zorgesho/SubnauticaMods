@@ -141,12 +141,10 @@ namespace MiscPatches
 
 				Common.Debug.assert(indexForInject >= 5 && indexForJump != -1);
 
-				CIHelper.ciInsert(list, indexForInject, new List<CodeInstruction>()
-				{
-					new CodeInstruction(OpCodes.Ldloc_S, 11),
-					new CodeInstruction(OpCodes.Call, typeof(PropRepCannonImmunity).method(nameof(PropRepCannonImmunity.isObjectImmune))),
-					new CodeInstruction(OpCodes.Brtrue, list[indexForJump].operand)
-				});
+				CIHelper.ciInsert(list, indexForInject,
+					OpCodes.Ldloc_S, 11,
+					OpCodes.Call, typeof(PropRepCannonImmunity).method(nameof(isObjectImmune)),
+					OpCodes.Brtrue, list[indexForJump].operand);
 
 				return list;
 			}

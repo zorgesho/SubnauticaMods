@@ -135,7 +135,10 @@ namespace MiscPatches
 			var list = cins.ToList();
 
 			CIHelper.ciRemove(list, 0, 5);
-			CIHelper.ciInsert(list, 0, CIHelper.toCIList(OpCodes.Ldarg_0, OpCodes.Call, maxSlotsCount, OpCodes.Stloc_0));
+			CIHelper.ciInsert(list, 0,
+				OpCodes.Ldarg_0,
+				OpCodes.Call, maxSlotsCount,
+				OpCodes.Stloc_0);
 
 			return list;
 		}
@@ -164,7 +167,7 @@ namespace MiscPatches
 
 		static void Postfix(SeaMoth __instance, Vehicle.DockType dockType)
 		{
-			foreach (var silo in new string[] {"TorpedoSiloLeft", "TorpedoSiloRight"})
+			foreach (var silo in new[] {"TorpedoSiloLeft", "TorpedoSiloRight"})
 				__instance.transform.Find(silo)?.gameObject.SetActive(dockType != Vehicle.DockType.Cyclops);
 		}
 	}

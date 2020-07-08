@@ -106,6 +106,9 @@ namespace Common.Harmony
 			return list;
 		}
 
+		public static CIList ciInsert(CIList list, int index, params object[] cinsToInsert) =>
+			ciInsert(list, index, toCIList(cinsToInsert));
+
 		public static CIList ciInsert(CIList list, int index, CIList listToInsert)
 		{
 			if (index >= 0 && index <= list.Count)

@@ -99,7 +99,7 @@ namespace GravTrapImproved
 				c.size = new Vector3(0.736f,0.51f,0.564f);
 				c.center = new Vector3(0.076f,0.224f,0.012f);
 
-				obj.FindChild("models").transform.localPosition = Vector3.zero;
+				obj.transform.Find("models").localPosition = Vector3.zero;
 			}
 
 			if (GetComponent<GravTrapMK2.Tag>() && obj.GetComponent<GasPod>() is GasPod gasPod)

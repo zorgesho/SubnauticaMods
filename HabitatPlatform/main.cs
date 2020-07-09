@@ -10,7 +10,7 @@ namespace HabitatPlatform
 
 		public static void patch()
 		{
-			HarmonyHelper.patchAll();
+			HarmonyHelper.patchAll(true);
 			CraftHelper.patchAll();
 
 			PersistentConsoleCommands.createGameObject<ConsoleCommands>();

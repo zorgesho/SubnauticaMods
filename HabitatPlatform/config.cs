@@ -2,7 +2,7 @@
 
 namespace HabitatPlatform
 {
-	[Field.BindConsole("hb_p")]
+	[Field.BindConsole("hbpl")]
 	class ModConfig: Config
 	{
 		public readonly float stepMove = 0.1f;
@@ -12,6 +12,7 @@ namespace HabitatPlatform
 		public readonly bool dbgVisibleFoundations = false;
 		public readonly bool dbgPrintColliders = false;
 		public readonly bool dbgFastPlatformBuild = true;
+		public readonly bool dbgKinematicForBuilded = true;
 #endif
 	}
 }

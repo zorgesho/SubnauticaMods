@@ -10,7 +10,9 @@ namespace HabitatPlatform
 	class PlatformInitializer: MonoBehaviour
 	{
 		static readonly Vector3 initialFoundationPos = new Vector3(11.7f, 1.4f, 7.5f);
-
+#if DEBUG
+		public class FloorTag: MonoBehaviour {} // for use in debug console commands
+#endif
 		class RigidbodyKinematicFixer: MonoBehaviour
 		{
 			Rigidbody rb;
@@ -55,6 +57,13 @@ namespace HabitatPlatform
 
 				while (vfx.constructed < 1) // wait until construction is complete
 					yield return null;
+			}
+			else
+			{
+#if DEBUG
+				if (Main.config.dbgKinematicForBuilded)
+#endif
+					gameObject.GetComponent<Rigidbody>().isKinematic = true;
 			}
 
 			addFloor();
@@ -120,32 +129,14 @@ namespace HabitatPlatform
 
 		void addFloor()
 		{																										"PlatformInitializer: adding floor".logDbg();
-			GameObject prefab = CraftData.GetPrefabForTechType(TechType.RocketBase);
-			GameObject platformBase = prefab.getChild("Base/rocketship_platform/Rocket_Geo/Rocketship_platform/Rocketship_platform_base-1/Rocketship_platform_base_MeshPart0");
-			Material floorMaterialToCopy = platformBase.GetComponent<Renderer>().materials[6];
-
 			var floor = Instantiate(AssetsHelper.loadPrefab("floor.prefab"));
+
 			Material floorMaterial = floor.GetComponent<Renderer>().material;
-
-			Vector2 texScale = floorMaterial.mainTextureScale;
-			Texture texMain = floorMaterial.GetTexture("_MainTex");
-			Texture texBump = floorMaterial.GetTexture("_BumpMap");
-
 			floorMaterial.shader = Shader.Find("MarmosetUBER");
-			floorMaterial.CopyPropertiesFromMaterial(floorMaterialToCopy); // TODO: get rid of this
-			floorMaterial.DisableKeyword("UWE_LIGHTMAP");
 
-			floorMaterial.SetTexture("_MainTex", texMain);
-			floorMaterial.SetTexture("_SpecTex", texMain);
-			floorMaterial.SetTexture("_BumpMap", texBump);
-
-			floorMaterial.SetTextureScale("_MainTex", texScale);
-			floorMaterial.SetTextureScale("_BumpMap", texScale);
-			floorMaterial.SetTextureScale("_SpecTex", texScale);
-
-			var skyApplier = floor.AddComponent<SkyApplier>();
-			skyApplier.renderers = floor.GetComponents<Renderer>();
-			skyApplier.anchorSky = Skies.Auto;
+			floorMaterial.SetTexture("_SpecTex", floorMaterial.GetTexture("_MainTex"));
+			floorMaterial.SetTextureScale("_SpecTex", floorMaterial.mainTextureScale);
+			floorMaterial.SetTextureScale("_BumpMap", floorMaterial.mainTextureScale);
 
 			floor.transform.parent = gameObject.transform;
 			floor.transform.localRotation = Quaternion.identity;
@@ -153,6 +144,9 @@ namespace HabitatPlatform
 			floor.transform.localScale = new Vector3(42.44f, 0.1f, 34.51f);
 
 			CollidersPatch.addIgnored(floor.GetComponent<Collider>());
+#if DEBUG
+			floor.AddComponent<FloorTag>();
+#endif
 		}
 	}
 }

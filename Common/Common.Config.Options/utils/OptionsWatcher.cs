@@ -14,7 +14,7 @@ namespace Common.Configuration.Utils
 		class ActionComparer: IEqualityComparer<Config.Field.IAction>
 		{
 			public bool Equals(Config.Field.IAction x, Config.Field.IAction y) =>
-				object.Equals(x, y)? true: Equals(x.GetType(), y.GetType());
+				object.Equals(x, y) || Equals(x.GetType(), y.GetType());
 
 			public int GetHashCode(Config.Field.IAction obj) => obj.GetType().GetHashCode();
 		}
@@ -42,13 +42,13 @@ namespace Common.Configuration.Utils
 			optionsActive = UnityEngine.Object.FindObjectOfType<uGUI_OptionsPanel>()?.isActiveAndEnabled ?? false;
 		}
 
-		[HarmonyPatch(typeof(uGUI_OptionsPanel), "OnEnable")] [HarmonyPostfix]
+		[HarmonyPostfix, HarmonyPatch(typeof(uGUI_OptionsPanel), "OnEnable")]
 		static void onPanelEnable()
 		{														"uGUI_OptionsPanel enabled".logDbg();
 			optionsActive = true;
 		}
 
-		[HarmonyPatch(typeof(uGUI_OptionsPanel), "OnDisable")] [HarmonyPostfix]
+		[HarmonyPostfix, HarmonyPatch(typeof(uGUI_OptionsPanel), "OnDisable")]
 		static void onPanelDisable()
 		{														"uGUI_OptionsPanel disabled".logDbg();
 			optionsActive = false;

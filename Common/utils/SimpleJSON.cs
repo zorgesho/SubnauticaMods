@@ -291,7 +291,7 @@ namespace Common.Utils
 			public static implicit operator long(Node d) => (d == null)? 0L: d.AsLong;
 
 			public static implicit operator Node(bool b) => new Bool(b);
-			public static implicit operator bool(Node d) => (d == null)? false: d.AsBool;
+			public static implicit operator bool(Node d) => d != null && d.AsBool;
 
 			public static implicit operator Node(KeyValuePair<string, Node> aKeyValue) => aKeyValue.Value;
 
@@ -303,7 +303,7 @@ namespace Common.Utils
 				bool aIsNull = a is Null || a is null || a is LazyCreator;
 				bool bIsNull = b is Null || b is null || b is LazyCreator;
 
-				return (aIsNull && bIsNull)? true: !aIsNull && a.Equals(b);
+				return (aIsNull && bIsNull) || (!aIsNull && a.Equals(b));
 			}
 
 			public static bool operator !=(Node a, object b) => !(a == b);
@@ -860,7 +860,7 @@ namespace Common.Utils
 			public override void WriteToStringBuilder(StringBuilder aSB, int aIndent, int aIndentInc, TextMode aMode) =>
 				aSB.Append(mData? "true": "false");
 
-			public override bool Equals(object obj) => (obj == null)? false: (obj is bool? mData == (bool)obj: false);
+			public override bool Equals(object obj) => obj is bool b && mData == b;
 
 			public override int GetHashCode() => mData.GetHashCode();
 		} // End of Bool
@@ -885,7 +885,7 @@ namespace Common.Utils
 			public override void WriteToStringBuilder(StringBuilder aSB, int aIndent, int aIndentInc, TextMode aMode) =>
 				aSB.Append("null");
 
-			public override bool Equals(object obj) => ReferenceEquals(this, obj)? true: obj is Null;
+			public override bool Equals(object obj) => ReferenceEquals(this, obj) || obj is Null;
 
 			public override int GetHashCode() => 0;
 		} // End of Null
@@ -936,10 +936,10 @@ namespace Common.Utils
 			public override void Add(Node aItem) => Set(new Array()).Add(aItem);
 			public override void Add(string aKey, Node aItem) => Set(new Object()).Add(aKey, aItem);
 
-			public static bool operator ==(LazyCreator a, object b) => b == null? true: ReferenceEquals(a, b);
+			public static bool operator ==(LazyCreator a, object b) => b == null || ReferenceEquals(a, b);
 			public static bool operator !=(LazyCreator a, object b) => !(a == b);
 
-			public override bool Equals(object obj) => obj == null? true: ReferenceEquals(this, obj);
+			public override bool Equals(object obj) => obj == null || ReferenceEquals(this, obj);
 
 			public override int GetHashCode() => 0;
 

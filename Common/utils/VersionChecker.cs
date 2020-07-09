@@ -48,7 +48,7 @@ namespace Common.Utils
 			return 0;
 		}
 
-		public override bool Equals(object obj) => obj is Version? this == (Version)obj: false;
+		public override bool Equals(object obj) => obj is Version ver && this == ver;
 		public override int  GetHashCode() => (major & 0xFF) << 16 | (minor & 0xFF) << 8 | (patch & 0xFF);
 
 		public override string ToString() => $"{major}{separator}{minor}{separator}{patch}";

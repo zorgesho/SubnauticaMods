@@ -24,10 +24,15 @@ namespace CustomHotkeys
 			if (!GUIController.main)
 				return;
 
-			int phase = n.getArgCount() > 0? n.getArg<GUIController.HidePhase>(0).cast<int>(): (int)GUIController.main.hidePhase + 1;
+			int phase = n.getArg(0, GUIController.main.hidePhase + 1).cast<int>();
 			phase %= (int)GUIController.HidePhase.All + 1;
 
 			GUIController.SetHidePhase(GUIController.main.hidePhase = (GUIController.HidePhase)phase);
+		}
+
+		void OnConsoleCommand_devtools_wireframe(NotificationCenter.Notification n)
+		{
+			GL.wireframe = n.getArg(0, !GL.wireframe);
 		}
 #if DEBUG
 		void OnConsoleCommand_logassoc(NotificationCenter.Notification n)
@@ -47,11 +52,7 @@ namespace CustomHotkeys
 		void OnConsoleCommand_setresolution(NotificationCenter.Notification n)
 		{
 			if (n.getArgCount() > 1)
-			{
-				DisplayManager.SetResolution(Math.Max(640, n.getArg<int>(0)),
-											 Math.Max(480, n.getArg<int>(1)),
-											 n.getArgCount() == 3? n.getArg<bool>(2): true);
-			}
+				DisplayManager.SetResolution(Math.Max(640, n.getArg<int>(0)), Math.Max(480, n.getArg<int>(1)), n.getArg(2, true));
 		}
 
 		void OnConsoleCommand_fov(NotificationCenter.Notification n)
@@ -169,7 +170,7 @@ namespace CustomHotkeys
 
 		void OnConsoleCommand_vehicle_enter(NotificationCenter.Notification n)
 		{
-			getProperVehicle(n.getArgCount() == 1? n.getArg<float>(0): 6f)?.EnterVehicle(Player.main, true, true);
+			getProperVehicle(n.getArg(0, 6f))?.EnterVehicle(Player.main, true, true);
 		}
 
 		void OnConsoleCommand_vehicle_upgrades(NotificationCenter.Notification _)

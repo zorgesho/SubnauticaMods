@@ -21,7 +21,7 @@ namespace Common
 		}
 
 		// messages with the same prefix will stay in the same message slot
-		public static void onScreen(this string s, string prefix) => Debug.addMessage(s, prefix);
+		public static string onScreen(this string s, string prefix) { Debug.addMessage(s, prefix); return s; }
 
 		public static void onScreen(this List<string> list, string msg = "", int maxCount = 30)
 		{
@@ -29,11 +29,11 @@ namespace Common
 			listToPrint.ForEach(s => ErrorMessage.AddDebug(msg + s));
 		}
 
-		public static void onScreen(this List<string> list, string prefix)
+		public static string onScreen(this List<string> list, string prefix)
 		{
 			var sb = new StringBuilder();
 			list.ForEach(line => sb.AppendLine(line));
-			sb.ToString().onScreen(prefix);
+			return sb.ToString().onScreen(prefix);
 		}
 	}
 

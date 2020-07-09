@@ -44,13 +44,14 @@ goto :exit
 :BZ :: BelowZero, both branches on Steam
 
 set steam_folder="c:\games\{steam}\steamapps\common"
+set branches_folder="d:\games"
 set game_folder="SubnauticaZero"
 set game_manifest="appmanifest_848450.acf"
 
 taskkill /t /f /im steam.exe 1>nul 2>nul
 
 rmdir %steam_folder%\%game_folder%
-mklink /j %steam_folder%\%game_folder% %steam_folder%\%game_folder%.%branch% 1>nul
+mklink /j %steam_folder%\%game_folder% %branches_folder%\%game_folder%.%branch% 1>nul
 
 del %steam_folder%\..\%game_manifest%
 mklink /h %steam_folder%\..\%game_manifest% %steam_folder%\..\%game_manifest%.%branch% 1>nul

@@ -96,7 +96,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\AssetsHelper.cs" />
     <None Include="src\TestConfig.cs" />
     <None Include="src\BasePower.cs" />
     <None Include="src\ConsoleCommands.cs" />

@@ -107,7 +107,7 @@
     <Compile Include="src\PlatformInitializer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="assets\HabitatPlatform.assets">
+    <None Include="assets\habitatplatform.assets">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="mod.json">

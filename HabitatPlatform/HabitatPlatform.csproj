@@ -86,10 +86,6 @@
       <HintPath>..\..\..\..\games\subnautica\Subnautica_Data\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="UnityEngine.InputLegacyModule">
-      <HintPath>..\..\..\..\games\subnautica\Subnautica_Data\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="UnityEngine.PhysicsModule">
       <HintPath>..\..\..\..\games\subnautica\Subnautica_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
       <Private>False</Private>
@@ -103,6 +99,7 @@
     <Compile Include="src\patches\BuilderPatches.cs" />
     <Compile Include="src\patches\BasePatches.cs" />
     <Compile Include="src\patches\ConstructorPatches.cs" />
+    <Compile Include="src\CameraDroneCharge.cs" />
     <Compile Include="src\PlatformBuildable.cs" />
     <Compile Include="src\PlatformInitializer.cs" />
   </ItemGroup>

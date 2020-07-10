@@ -75,6 +75,8 @@ namespace HabitatPlatform
 		public static void addIgnored(Collider collider) => ignoredColliders.Add(collider);
 		public static void addIgnored(IEnumerable<Collider> colliders) => ignoredColliders.AddRange(colliders);
 
+		public static void removeIgnored(Collider collider) => ignoredColliders.Remove(collider);
+
 		static bool isHabitatPlatform
 		{
 			get

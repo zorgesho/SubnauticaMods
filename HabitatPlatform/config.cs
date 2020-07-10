@@ -1,4 +1,5 @@
-﻿using Common.Configuration;
+﻿using Common;
+using Common.Configuration;
 
 namespace HabitatPlatform
 {
@@ -7,6 +8,8 @@ namespace HabitatPlatform
 	{
 		public readonly float stepMove = 0.1f;
 		public readonly float stepRotate = 0.5f;
+
+		public readonly bool ignoreEnginesColliders = Mod.isDevBuild;
 
 #if DEBUG
 		public readonly bool dbgVisibleFoundations = false;

@@ -72,6 +72,33 @@ namespace HabitatPlatform
 			}
 		}
 
+		void OnConsoleCommand_hbpl_moveengines(NotificationCenter.Notification n)
+		{
+			if (UnityHelper.findNearestToCam<HabitatPlatform.Tag>()?.gameObject is GameObject platform)
+			{
+				GameObject platformBase = platform.getChild("Base/rocketship_platform/Rocket_Geo/Rocketship_platform/");
+
+				float dx = n.getArg<float>(0);
+				float dy = n.getArg<float>(1);
+
+				Vector3[] pos = new[] { new Vector3(dx, -dy, 0f), new Vector3(dx, dy, 0f), new Vector3(-dx, dy, 0f), new Vector3(-dx, -dy, 0f) };
+				for (int i = 1; i <= 4; i++)
+					platformBase.transform.Find($"Rocketship_platform_power_0{i}").localPosition = pos[i - 1];
+			}
+		}
+
+		void OnConsoleCommand_hbpl_lightmap(NotificationCenter.Notification n)
+		{
+			if (UnityHelper.findNearestToCam<HabitatPlatform.Tag>()?.gameObject is GameObject platform)
+			{
+				Texture2D lightmap = AssetsHelper.loadTexture(n.getArg(0));
+				GameObject platformBase = platform.getChild("Base/rocketship_platform/Rocket_Geo/Rocketship_platform/Rocketship_platform_base-1/Rocketship_platform_base_MeshPart0");
+
+				foreach (var m in platformBase.GetComponent<MeshRenderer>().materials)
+					m.SetTexture("_Lightmap", lightmap);
+			}
+		}
+
 		void OnConsoleCommand_hbpl_movebase(NotificationCenter.Notification n)
 		{
 			if (UnityHelper.findNearestToCam<Base>()?.gameObject is GameObject baseGo)

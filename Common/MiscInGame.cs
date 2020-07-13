@@ -64,7 +64,7 @@ namespace Common
 		// can't use vanilla GetVehicle in OnPlayerModeChange after 06.11 update :(
 		public static Vehicle getVehicle(this Player player) => player.GetComponentInParent<Vehicle>();
 
-		public static TechType getHeldToolType() => Inventory.main?.GetHeldTool()?.pickupable.GetTechType() ?? TechType.None;
+		public static TechType getHeldToolType() => Inventory.main?.GetHeldTool()?.pickupable?.GetTechType() ?? TechType.None;
 
 		public static bool isLoadingState => uGUI._main?.loading.loadingBackground.state == true;
 
@@ -81,6 +81,14 @@ namespace Common
 		public static T getArg<T>(this NotificationCenter.Notification n, int index) => _getArg(n, index).convert<T>();
 		public static T getArg<T>(this NotificationCenter.Notification n, int index, T defaultValue) =>
 			index < n.getArgCount()? n.getArg<T>(index): defaultValue;
+
+		public static T[] getArgs<T>(this NotificationCenter.Notification n, int first = 0, int last = -1)
+		{
+			if (last == -1)
+				last = n.getArgCount() - 1;
+
+			return Enumerable.Range(first, last - first + 1).Select(i => n.getArg<T>(i)).ToArray();
+		}
 
 		static object _getArg(this NotificationCenter.Notification n, int index) => n?.data?.Count > index? n.data[index]: null;
 	}

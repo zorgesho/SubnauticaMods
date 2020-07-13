@@ -28,9 +28,10 @@ namespace Common
 
 	static class ArrayExtensions
 	{
-		public static T[] init<T>(this T[] array)
+		public static T[] init<T>(this T[] array) where T: new()
 		{
-			array.Initialize();
+			for (int i = 0; i < array.Length; i++)
+				array[i] = new T();
 			return array;
 		}
 

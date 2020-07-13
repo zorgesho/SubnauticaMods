@@ -16,7 +16,6 @@ namespace HabitatPlatform
 		public readonly bool dbgVisibleFoundations = false;
 		public readonly bool dbgPrintColliders = false;
 		public readonly bool dbgFastPlatformBuild = true;
-		public readonly bool dbgKinematicForBuilded = true;
 #endif
 	}
 }

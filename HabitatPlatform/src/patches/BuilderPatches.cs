@@ -33,7 +33,7 @@ namespace HabitatPlatform
 	{
 		static void checkPlatform(GameObject gameObject)
 		{
-			if (Builder.placementTarget.GetComponentInParent<HabitatPlatform.Tag>() is var tag)
+			if (Builder.placementTarget?.GetComponentInParent<HabitatPlatform.Tag>() is HabitatPlatform.Tag tag)
 				gameObject.transform.parent = tag.GetComponentInChildren<Base>().gameObject.transform;
 		}
 
@@ -67,8 +67,8 @@ namespace HabitatPlatform
 	{
 		static bool dirty = true;
 
-		static Base lastBase = null;
-		static HabitatPlatform.Tag lastPlatform = null;
+		static Base lastBase;
+		static HabitatPlatform.Tag lastPlatform;
 
 		static readonly HashSet<Collider> ignoredColliders = new HashSet<Collider>();
 
@@ -85,9 +85,6 @@ namespace HabitatPlatform
 				{
 					lastBase = Builder.ghostModel?.GetComponent<BaseGhost>()?.targetBase;
 					lastPlatform = lastBase?.gameObject.GetComponentInParent<HabitatPlatform.Tag>();
-
-					$"{lastPlatform}".onScreen();
-
 					dirty = false;
 				}
 

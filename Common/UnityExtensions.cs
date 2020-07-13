@@ -21,16 +21,25 @@ namespace Common
 		public static T ensureComponent<T>(this GameObject go) where T: Component => go.GetComponent<T>() ?? go.AddComponent<T>();
 		public static Component ensureComponent(this GameObject go, Type type) => go.GetComponent(type) ?? go.AddComponent(type);
 
-		public static void setParent(this GameObject go, GameObject parent, bool resetLocalTransform = true)
+		public static void setParent(this GameObject go,
+									 GameObject parent,
+									 bool resetLocalTransform = true,
+									 Vector3? position = null,
+									 Quaternion? rotation = null,
+									 Vector3? scale = null)
 		{
 			go.transform.parent = parent.transform;
 
 			if (resetLocalTransform)
 			{
-				go.transform.localRotation = Quaternion.identity;
 				go.transform.localPosition = Vector3.zero;
+				go.transform.localRotation = Quaternion.identity;
 				go.transform.localScale = Vector3.one;
 			}
+
+			if (position != null) go.transform.localPosition = (Vector3)position;
+			if (rotation != null) go.transform.localRotation = (Quaternion)rotation;
+			if (scale != null)	  go.transform.localScale	 = (Vector3)scale;
 		}
 
 		public static GameObject getChild(this GameObject go, string name) => go.transform.Find(name)?.gameObject;

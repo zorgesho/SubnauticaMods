@@ -1,4 +1,5 @@
 ﻿#if DEBUG
+using System.Linq;
 using System.Collections;
 #endif
 using UnityEngine;
@@ -8,9 +9,11 @@ namespace HabitatPlatform
 {
 	class ConsoleCommands: PersistentConsoleCommands
 	{
+		GameObject _findPlatform() => UnityHelper.findNearestToCam<HabitatPlatform.Tag>()?.gameObject;
+
 		void OnConsoleCommand_hbpl_platform_move(NotificationCenter.Notification n)
 		{
-			if (UnityHelper.findNearestToCam<HabitatPlatform.Tag>()?.gameObject is GameObject platform)
+			if (_findPlatform() is GameObject platform)
 			{
 				Vector3 pos = platform.transform.position;
 				pos += Main.config.stepMove * n.getArg<float>(0) * (Quaternion.AngleAxis(90, Vector3.up) * platform.transform.forward);
@@ -21,12 +24,27 @@ namespace HabitatPlatform
 
 		void OnConsoleCommand_hbpl_platform_rotate(NotificationCenter.Notification n)
 		{
-			if (UnityHelper.findNearestToCam<HabitatPlatform.Tag>()?.gameObject is GameObject platform)
+			if (_findPlatform() is GameObject platform)
 				platform.transform.rotation *= Quaternion.AngleAxis(Main.config.stepRotate * n.getArg<float>(0), Vector3.up);
 		}
 
 		#region debug console commands
 #if DEBUG
+		void OnConsoleCommand_hbpl_dump(NotificationCenter.Notification n)
+		{
+			_findPlatform()?.dump("platform", n.getArg<int>(0));
+		}
+
+		void OnConsoleCommand_hbpl_physics(NotificationCenter.Notification n)
+		{
+			if (_findPlatform() is GameObject platform)
+			{
+				var rb = platform.GetComponent<Rigidbody>();
+				rb.isKinematic = n.getArg(0, !rb.isKinematic);
+				$"Platform physics is {(rb.isKinematic? "off": "on")}".onScreen();
+			}
+		}
+
 		void OnConsoleCommand_hbpl_debug(NotificationCenter.Notification n)
 		{
 			const float delay = 0.5f;
@@ -48,33 +66,32 @@ namespace HabitatPlatform
 			}
 		}
 
-		GameObject _getFloor()
-		{
-			GameObject platform = UnityHelper.findNearestToCam<HabitatPlatform.Tag>()?.gameObject;
-			return platform?.GetComponentInChildren<PlatformInitializer.FloorTag>()?.gameObject;
-		}
+		void _printVec(Vector3 vec, string prefix) => vec.ToString("F4").onScreen(prefix).logDbg();
+		GameObject _findPlatformFloor() => _findPlatform()?.GetComponentInChildren<PlatformInitializer.FloorTag>()?.gameObject;
 
 		void OnConsoleCommand_hbpl_movefloor(NotificationCenter.Notification n)
 		{
-			if (_getFloor() is GameObject floor)
+			if (_findPlatformFloor() is GameObject floor && n.getArgCount() == 3)
 			{
-				var vecParam = new Vector3(n.getArg<float>(0), n.getArg<float>(1), n.getArg<float>(2));
-				(floor.transform.localPosition += vecParam * Main.config.stepMove).ToString("F4").onScreen("floor pos").logDbg();
+				var args = n.getArgs<float>();
+				floor.transform.localPosition += new Vector3(args[0], args[1], args[2]) * Main.config.stepMove;
+				_printVec(floor.transform.localPosition, "floor pos");
 			}
 		}
 
 		void OnConsoleCommand_hbpl_scalefloor(NotificationCenter.Notification n)
 		{
-			if (_getFloor() is GameObject floor)
+			if (_findPlatformFloor() is GameObject floor && n.getArgCount() == 2)
 			{
-				var vecParam = new Vector3(n.getArg<float>(0), 0f, n.getArg<float>(1));
-				(floor.transform.localScale += vecParam * Main.config.stepMove).ToString("F4").onScreen("floor scale").logDbg();
+				var args = n.getArgs<float>();
+				floor.transform.localScale += new Vector3(args[0], 0f, args[1]) * Main.config.stepMove;
+				_printVec(floor.transform.localScale, "floor scale");
 			}
 		}
 
 		void OnConsoleCommand_hbpl_moveengines(NotificationCenter.Notification n)
 		{
-			if (UnityHelper.findNearestToCam<HabitatPlatform.Tag>()?.gameObject is GameObject platform)
+			if (_findPlatform() is GameObject platform)
 			{
 				GameObject platformBase = platform.getChild("Base/rocketship_platform/Rocket_Geo/Rocketship_platform/");
 
@@ -89,7 +106,7 @@ namespace HabitatPlatform
 
 		void OnConsoleCommand_hbpl_lightmap(NotificationCenter.Notification n)
 		{
-			if (UnityHelper.findNearestToCam<HabitatPlatform.Tag>()?.gameObject is GameObject platform)
+			if (_findPlatform() is GameObject platform)
 			{
 				Texture2D lightmap = AssetsHelper.loadTexture(n.getArg(0));
 				GameObject platformBase = platform.getChild("Base/rocketship_platform/Rocket_Geo/Rocketship_platform/Rocketship_platform_base-1/Rocketship_platform_base_MeshPart0");
@@ -101,30 +118,20 @@ namespace HabitatPlatform
 
 		void OnConsoleCommand_hbpl_movebase(NotificationCenter.Notification n)
 		{
-			if (UnityHelper.findNearestToCam<Base>()?.gameObject is GameObject baseGo)
+			if (_findPlatform()?.GetComponentInChildren<Base>()?.gameObject is GameObject baseGo && n.getArgCount() == 3)
 			{
-				var vecParam = new Vector3(n.getArg<float>(0), n.getArg<float>(1), n.getArg<float>(2));
-				(baseGo.transform.localPosition += vecParam * Main.config.stepMove).ToString("F4").onScreen("foundation pos").logDbg();
+				var args = n.getArgs<float>();
+				baseGo.transform.localPosition += new Vector3(args[0], args[1], args[2]) * Main.config.stepMove;
+				_printVec(baseGo.transform.localPosition, "foundation pos");
 			}
 		}
 
 		void OnConsoleCommand_hbpl_toggle_foundations(NotificationCenter.Notification _)
 		{
-			if (UnityHelper.findNearestToCam<HabitatPlatform.Tag>()?.gameObject is GameObject platform)
-			{
-				foreach (var fpiece in platform.GetComponentsInChildren<BaseFoundationPiece>())
-				{
-					GameObject models = fpiece.gameObject.getChild("models");
-
-					for (int i = 0; i < models.transform.childCount; i++)
-					{
-						var rend = models.transform.GetChild(i).GetComponent<MeshRenderer>();
-
-						if (rend)
-							rend.enabled = !rend.enabled;
-					}
-				}
-			}
+			_findPlatform()?.GetComponentsInChildren<BaseFoundationPiece>().
+							 Select(fpiece => fpiece.gameObject.getChild("models")).OfType<GameObject>().
+							 SelectMany(models => models.GetComponentsInChildren<Renderer>()).
+							 ForEach(rend => rend.enabled = !rend.enabled);
 		}
 #endif
 	#endregion

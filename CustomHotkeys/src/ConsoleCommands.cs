@@ -34,6 +34,29 @@ namespace CustomHotkeys
 		{
 			GL.wireframe = n.getArg(0, !GL.wireframe);
 		}
+
+		Vector3? lastPreWarpPos;
+
+		void OnConsoleCommand_warpmem(NotificationCenter.Notification n)
+		{
+			static void _warp(Vector3 pos)
+			{
+				Player.main.SetPosition(pos);
+				Player.main.OnPlayerPositionCheat();
+			}
+
+			if (n.getArgCount() == 3)
+			{
+				lastPreWarpPos = Player.main.transform.position;
+				var args = n.getArgs<float>();
+				_warp(new Vector3(args[0], args[1], args[2]));
+			}
+			else
+			{
+				if (lastPreWarpPos != null)
+					_warp((Vector3)lastPreWarpPos);
+			}
+		}
 #if DEBUG
 		void OnConsoleCommand_logassoc(NotificationCenter.Notification n)
 		{
@@ -156,10 +179,8 @@ namespace CustomHotkeys
 			if (!Inventory.main || n.getArgCount() == 0)
 				return;
 
-			for (int i = 0; i < n.getArgCount(); i++)
+			foreach (var techType in n.getArgs<TechType>())
 			{
-				TechType techType = n.getArg<TechType>(i);
-
 				if (techType != default && getItemFromInventory(techType) is InventoryItem item)
 				{
 					Inventory.main.UseItem(item);

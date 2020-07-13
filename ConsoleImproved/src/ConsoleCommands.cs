@@ -149,6 +149,12 @@ namespace ConsoleImproved
 				}
 			}
 
+			void OnConsoleCommand_dumpscene(NotificationCenter.Notification _)
+			{
+				FindObjectOfType<StoreInformationIdentifier>()?.transform.root.gameObject.dump("scene-dump");
+			}
+
+
 			void OnConsoleCommand_togglecfgvar(NotificationCenter.Notification n)
 			{
 				if (n.getArgCount() == 0)

@@ -95,6 +95,7 @@ namespace Common
 
 
 	// base class for console commands which are exists between scenes
+	[Obsolete] // also NotificationCenter.Notification stuff ^^^
 	abstract class PersistentConsoleCommands: MonoBehaviour
 	{
 		protected class CommandDataAttribute: Attribute

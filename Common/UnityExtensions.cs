@@ -108,11 +108,17 @@ namespace Common
 
 	static class UnityHelper
 	{
+		public static GameObject createPersistentGameObject(string name)
+		{
+			var obj = new GameObject(name, typeof(SceneCleanerPreserve));
+			Object.DontDestroyOnLoad(obj);
+			return obj;
+		}
+
 		public static GameObject createPersistentGameObject<T>(string name) where T: Component
 		{
-			GameObject obj = new GameObject(name, typeof(SceneCleanerPreserve), typeof(T));
-			Object.DontDestroyOnLoad(obj);
-
+			var obj = createPersistentGameObject(name);
+			obj.AddComponent<T>();
 			return obj;
 		}
 

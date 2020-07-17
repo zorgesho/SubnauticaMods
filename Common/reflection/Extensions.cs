@@ -38,6 +38,10 @@ namespace Common.Reflection
 
 					targetType = Enum.GetUnderlyingType(targetType);
 				}
+				else if (Nullable.GetUnderlyingType(targetType) is Type underlyingType)
+				{
+					return Activator.CreateInstance(targetType, obj.convert(underlyingType));
+				}
 
 				return Convert.ChangeType(obj, targetType, CultureInfo.InvariantCulture);
 			}
@@ -92,10 +96,9 @@ namespace Common.Reflection
 		public static FieldInfo field(this Type type, string name) => type.GetField(name, ReflectionHelper.bfAll);
 		public static PropertyInfo property(this Type type, string name) => type.GetProperty(name, ReflectionHelper.bfAll);
 
-		public static FieldInfo[] fields(this Type type) => type.GetFields(ReflectionHelper.bfAll);
-		public static MethodInfo[] methods(this Type type) => type.GetMethods(ReflectionHelper.bfAll);
-		public static MethodInfo[] methods(this Type type, BindingFlags bf) => type.GetMethods(ReflectionHelper.bfAll | bf);
-		public static PropertyInfo[] properties(this Type type) => type.GetProperties(ReflectionHelper.bfAll);
+		public static FieldInfo[] fields(this Type type, BindingFlags bf = ReflectionHelper.bfAll) => type.GetFields(bf);
+		public static MethodInfo[] methods(this Type type, BindingFlags bf = ReflectionHelper.bfAll) => type.GetMethods(bf);
+		public static PropertyInfo[] properties(this Type type, BindingFlags bf = ReflectionHelper.bfAll) => type.GetProperties(bf);
 	}
 
 

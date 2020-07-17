@@ -57,7 +57,9 @@ namespace Common.Harmony
 		// if typeWithPatchMethods is null, we use type from which this method is called
 		public static void patch(Type typeWithPatchMethods = null)
 		{
-			foreach (var method in (typeWithPatchMethods ?? ReflectionHelper.getCallingType()).methods(BindingFlags.DeclaredOnly))
+			typeWithPatchMethods ??= ReflectionHelper.getCallingType();
+
+			foreach (var method in typeWithPatchMethods.methods(ReflectionHelper.bfAll | BindingFlags.DeclaredOnly))
 			{
 				MethodInfo _method_if<H>() where H: Attribute => method.checkAttr<H>()? method: null;
 

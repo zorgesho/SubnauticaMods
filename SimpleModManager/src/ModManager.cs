@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using System.Collections.Generic;
 
 using Oculus.Newtonsoft.Json;
@@ -16,20 +15,20 @@ namespace SimpleModManager
 	{
 		static readonly List<Tuple<string, Config.Field>> modToggleFields = new List<Tuple<string, Config.Field>>();
 
-		class ConsoleCommands: PersistentConsoleCommands
+		class ConsoleCommands: PersistentConsoleCommands_2
 		{
-			void OnConsoleCommand_togglemod(NotificationCenter.Notification n)
-			{
-				if (n.getArgCount() == 0)
-					return;
+			public void mod_toggle(string modName) => setModEnabled(modName, null);
 
-				string modName = n.getArg(0);
+			public void mod_enable(string modName, bool enabled) => setModEnabled(modName, enabled);
+
+			void setModEnabled(string modName, bool? enabled)
+			{
 				var mod = modToggleFields.Find(mod => mod.Item1.Contains(modName));
 
 				if (mod == null)
 					return;
 
-				bool enable = !mod.Item2.value.cast<bool>();
+				bool enable = enabled ?? !mod.Item2.value.cast<bool>();
 				mod.Item2.value = enable;
 				$"{(enable? "<color=lime>enabled</color>": "<color=red>disabled</color>")}".onScreen(mod.Item1);
 			}
@@ -84,15 +83,12 @@ namespace SimpleModManager
 
 		public static void init()
 		{
-			PersistentConsoleCommands.createGameObject<ConsoleCommands>("ModManager");
+			PersistentConsoleCommands_2.register<ConsoleCommands>();
 
 			foreach (var modPath in Directory.EnumerateDirectories(Path.Combine(Paths.modRootPath, "..")))
 			{
-				if (Main.config.blacklist.FirstOrDefault(str => modPath.EndsWith(str)) != null)
-					continue;
-
-				var cfg = Config.tryLoad<ModToggle>(null, Config.LoadOptions.ProcessAttributes);
-				cfg.init(Path.Combine(modPath, "mod.json"));
+				if (Main.config.blacklist.findIndex(str => modPath.EndsWith(str)) == -1)
+					Config.tryLoad<ModToggle>(null, Config.LoadOptions.ProcessAttributes).init(Path.Combine(modPath, "mod.json"));
 			}
 		}
 	}

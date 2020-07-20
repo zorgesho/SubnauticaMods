@@ -1,38 +1,25 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
 
-using UnityEngine;
-
 namespace Common.Configuration.Utils
 {
 	static class CfgVarBinder
 	{
-		class CfgVarCommands: PersistentConsoleCommands
+		class CfgVarCommands: PersistentConsoleCommands_2
 		{
-			void OnConsoleCommand_setcfgvar(NotificationCenter.Notification n)
-			{
-				if (n.getArgCount() == 2)
-				{																			$"setcfgvar: '{n.getArg(0)}' '{n.getArg(1)}'".logDbg();
-					setVarValue(n.getArg(0), n.getArg(1));
-				}
+			public void setcfgvar(string varName, string varValue)
+			{																				$"setcfgvar: '{varName}' '{varValue}'".logDbg();
+				setVarValue(varName, varValue);
 			}
 
-			void OnConsoleCommand_getcfgvar(NotificationCenter.Notification n)
-			{																				$"getcfgvar: '{n.getArg(0)}'".logDbg();
-				if (n.getArgCount() != 1)
-					return;
-
-				string fieldName = n.getArg(0);
-
-				if (getVarValue(fieldName) is object value)
-					$"{fieldName} = {value}".onScreen();
+			public void getcfgvar(string varName)
+			{																				$"getcfgvar: '{varName}'".logDbg();
+				if (getVarValue(varName) is object value)
+					$"{varName} = {value}".onScreen();
 			}
 		}
-#pragma warning disable IDE0052
-		static GameObject consoleCommands;
-#pragma warning restore
 
-		static void init() => consoleCommands ??= PersistentConsoleCommands.createGameObject<CfgVarCommands>("CfgVarCommands_" + Mod.id);
+		static void init() => PersistentConsoleCommands_2.register<CfgVarCommands>();
 
 		static readonly UniqueIDs uniqueIDs = new UniqueIDs();
 		static readonly Dictionary<string, Config.Field> cfgFields = new Dictionary<string, Config.Field>();

@@ -37,10 +37,10 @@ namespace Common
 		public static void register<T>() where T: PersistentConsoleCommands_2
 		{
 			hostGO ??= UnityHelper.createPersistentGameObject($"{Mod.id}.ConsoleCommands");
-			hostGO.AddComponent<T>().init();
+			hostGO.ensureComponent<T>();
 		}
 
-		void init()
+		void Awake()
 		{
 			const BindingFlags bf = BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static;
 			GetType().methods(bf).forEach(method => addCommand(method));

@@ -1,5 +1,6 @@
 ﻿using Harmony;
 using UnityEngine;
+
 using Common;
 
 namespace OxygenRefill
@@ -26,7 +27,7 @@ namespace OxygenRefill
 
 	// prevents registering oxygen source when picking up items
 	[HarmonyPatch(typeof(Inventory), "TryUpdateOxygen")]
-	static class Vehicle_TryUpdateOxygen_Patch
+	static class Inventory_TryUpdateOxygen_Patch
 	{
 		static bool Prefix() => false;
 	}

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Collections.Generic;
 
 using Harmony;
 
@@ -62,8 +61,8 @@ namespace OxygenRefill
 		{
 			if (container._items.TryGetValue(techType, out ItemsContainer.ItemGroup itemGroup))
 				return itemGroup.items.Count(i => predicate(i.item));
-			else
-				return 0;
+
+			return 0;
 		}
 
 		public static bool removeItem(this ItemsContainer container, TechType techType, Predicate<Pickupable> predicate)
@@ -71,7 +70,7 @@ namespace OxygenRefill
 			if (!container._items.TryGetValue(techType, out ItemsContainer.ItemGroup itemGroup))
 				return false;
 
-			List<InventoryItem> items = itemGroup.items;
+			var items = itemGroup.items;
 
 			for (int i = items.Count - 1; i >= 0; i--)
 			{

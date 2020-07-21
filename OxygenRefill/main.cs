@@ -10,11 +10,11 @@ namespace OxygenRefill
 
 		public static void patch()
 		{
-			HarmonyHelper.patchAll();
+			HarmonyHelper.patchAll(true);
 			LanguageHelper.init();
 			CraftHelper.patchAll();
 
-			ConsoleCommands.init();
+			PersistentConsoleCommands_2.register<ConsoleCommands>();
 		}
 	}
 }

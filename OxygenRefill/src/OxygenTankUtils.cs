@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-using Common;
+﻿using Common;
 
 namespace OxygenRefill
 {
@@ -7,7 +6,7 @@ namespace OxygenRefill
 	{
 		public static bool isTankFull(Pickupable tank)
 		{
-			Oxygen oxygen = tank.GetComponent<Oxygen>();
+			var oxygen = tank.GetComponent<Oxygen>();
 			return (oxygen.oxygenCapacity - oxygen.oxygenAvailable < 0.1f);
 		}
 
@@ -15,13 +14,11 @@ namespace OxygenRefill
 
 		public static bool isTankUsed(Oxygen oxygen) => Player.main.oxygenMgr.sources.Contains(oxygen);
 
+		// used for crafting, doesn't take into account full tank in slot
 		public static bool isTankAtSlot(TechType tankType)
 		{
 			InventoryItem tankItem = getTankInSlot();
-			if (tankItem == null || tankItem.item.GetTechType() != tankType)
-				return false;
-
-			return !isTankFull(tankItem.item);
+			return tankItem?.item.GetTechType() == tankType && !isTankFull(tankItem.item);
 		}
 
 		public static bool isTankTechType(TechType techType) =>
@@ -29,49 +26,29 @@ namespace OxygenRefill
 
 		public static void toggleTankUsage()
 		{
-			InventoryItem item = getTankInSlot();
-			if (item == null)
-				return;
+			if (getTankInSlot() is InventoryItem item)
+			{
+				var oxygen = item.item.GetComponent<Oxygen>();
 
-			Oxygen oxygen = item.item.GetComponent<Oxygen>();
-
-			if (isTankUsed(oxygen))
-				Player.main.oxygenMgr.UnregisterSource(oxygen);
-			else
-				Player.main.oxygenMgr.RegisterSource(oxygen);
+				if (isTankUsed(oxygen))
+					Player.main.oxygenMgr.UnregisterSource(oxygen);
+				else
+					Player.main.oxygenMgr.RegisterSource(oxygen);
+			}
 		}
 	}
 
-	static class ConsoleCommands
+	class ConsoleCommands: PersistentConsoleCommands_2
 	{
-		static GameObject go = null;
+		public void toggletankusage() => OxygenTankUtils.toggleTankUsage();
 
-		class Commands: PersistentConsoleCommands
+		public void filltanks(float forcedCapacity = -1f)
 		{
-			void OnConsoleCommand_toggletankusage(NotificationCenter.Notification _) => OxygenTankUtils.toggleTankUsage();
+			void _fill(Oxygen ox) { if (ox) ox.oxygenAvailable = forcedCapacity >= 0f? forcedCapacity: ox.oxygenCapacity; }
 
-			void OnConsoleCommand_filltanks(NotificationCenter.Notification n)
-			{
-				float forcedCapacity = -1f;
+			_fill(OxygenTankUtils.getTankInSlot()?.item.GetComponent<Oxygen>());
 
-				if (n.getArgCount() > 0)
-					forcedCapacity = n.getArg<float>(0);
-
-				if (OxygenTankUtils.getTankInSlot()?.item.GetComponent<Oxygen>() is Oxygen oxygenInSlot)
-					oxygenInSlot.oxygenAvailable = forcedCapacity >= 0f? forcedCapacity: oxygenInSlot.oxygenCapacity;
-
-				foreach (var item in Inventory.main.container)
-				{
-					if (item.item.GetComponent<Oxygen>() is Oxygen oxygen)
-						oxygen.oxygenAvailable = forcedCapacity >= 0f? forcedCapacity: oxygen.oxygenCapacity;
-				}
-			}
-		}
-
-		public static void init()
-		{
-			if (!go)
-				go = PersistentConsoleCommands.createGameObject<Commands>("OxygenRefill.ConsoleCommands");
+			Inventory.main.container.ForEach(item => _fill(item.item.GetComponent<Oxygen>()));
 		}
 	}
 }

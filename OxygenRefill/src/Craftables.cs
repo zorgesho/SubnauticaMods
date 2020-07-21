@@ -9,7 +9,7 @@ namespace OxygenRefill
 	[CraftHelper.PatchFirst]
 	class OxygenRefillStation: CraftableObject
 	{
-		public static ModCraftTreeRoot treeRootNode { get; private set; } = null;
+		public static ModCraftTreeRoot treeRootNode { get; private set; }
 		CraftTree.Type treeType;
 
 		protected override TechData getTechData() => new TechData
@@ -34,7 +34,7 @@ namespace OxygenRefill
 			crafter.craftTree = treeType;
 			crafter.handOverText = L10n.str("ids_UseStation");
 
-			prefab.GetComponentInChildren<SkinnedMeshRenderer>().material.color = new Color(0, 1, 1, 1);
+			prefab.GetComponentInChildren<SkinnedMeshRenderer>().material.color = Color.cyan;
 
 			return prefab;
 		}

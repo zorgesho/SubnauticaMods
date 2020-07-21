@@ -6,3 +6,4 @@ obj/
 
 # Visual Studio cache/options directory
 .vs/
+.dependencies/gameSN/Assembly-CSharp*.dll

@@ -13,8 +13,7 @@ namespace DayNightSpeed
 	{
 		const float dayNightSecs = 1200f;
 
-		[Slider_0_100]
-		[Field.Range(0f, 100f)] // for UI minimum is 0.01f
+		[Slider_0_100, Field.Range(0f, 100f)] // for UI minimum is 0.01f
 		[Field.Action(typeof(DayNightSpeedControl.SettingChanged))]
 		[Options.Field("Day/night speed", tooltipType: typeof(Tooltips.DayNightSpeed))]
 		public readonly float dayNightSpeed = 1.0f;
@@ -25,32 +24,32 @@ namespace DayNightSpeed
 		public readonly bool useAuxSpeeds = false;
 
 		[Options.Field("Hunger/thrist", tooltipType: typeof(Tooltips.HungerThrist))]
-		[Slider_0_100][Range_001_100][HideableSpeed]
+		[Slider_0_100, Range_001_100, HideableSpeed]
 		public readonly float speedHungerThrist = 1.0f;
 		public float auxSpeedHungerThrist => useAuxSpeeds? speedHungerThrist: 1.0f;
 
 		[Options.Field("Plants growth", tooltipType: typeof(Tooltips.Plants))]
 		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
-		[Slider_0_100][Range_001_100][HideableSpeed]
+		[Slider_0_100, Range_001_100, HideableSpeed]
 		public readonly float speedPlantsGrow = 1.0f;
 
 		[Options.Field("Eggs hatching", tooltipType: typeof(Tooltips.Eggs))]
 		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
-		[Slider_0_100][Range_001_100][HideableSpeed]
+		[Slider_0_100, Range_001_100, HideableSpeed]
 		public readonly float speedEggsHatching = 1.0f;
 
 		[Options.Field("Creatures growth", tooltipType: typeof(Tooltips.Creatures))]
 		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
-		[Slider_0_100][Range_001_100][HideableSpeed]
+		[Slider_0_100, Range_001_100, HideableSpeed]
 		public readonly float speedCreaturesGrow = 1.0f;
 
 		[Options.Field("Medkit fabrication", tooltipType: typeof(Tooltips.Medkit))]
 		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
-		[Slider_0_100][Range_001_100][HideableSpeed]
+		[Slider_0_100, Range_001_100, HideableSpeed]
 		public readonly float speedMedkitInterval = 1.0f;
 
 		[Options.Field("Charging/generating power", tooltipType: typeof(Tooltips.PowerCharge))]
-		[Slider_0_100][Range_001_100][HideableSpeed]
+		[Slider_0_100, Range_001_100, HideableSpeed]
 		public readonly float speedPowerCharge = 1.0f;
 		public float auxSpeedPowerCharge => useAuxSpeeds? speedPowerCharge: 1.0f;
 
@@ -105,9 +104,9 @@ namespace DayNightSpeed
 				const string tagsLine  = "<size=18><color=#dddedeff>";
 				const string tagsLineEnd   = "</color></size>";
 
-				static string title(string str) => tagsTitle + str + tagsTitleEnd + Environment.NewLine;
-				static string subtitle(string str) => tagsSubtitle + str + ": " + tagsSubtitleEnd;
-				static string line(string str, bool last = false) => tagsLine + str + tagsLineEnd + (last? "": Environment.NewLine);
+				static string title(string str) => $"{tagsTitle}{str}{tagsTitleEnd}{Environment.NewLine}";
+				static string subtitle(string str) => $"{tagsSubtitle}{str}: {tagsSubtitleEnd}";
+				static string line(string str, bool last = false) => $"{tagsLine}{str}{tagsLineEnd}{(last? "": Environment.NewLine)}";
 
 				public static readonly string ids_restartWarning = Environment.NewLine +
 					"<color=yellow>restart to main menu to apply changes properly</color>";
@@ -326,11 +325,11 @@ namespace DayNightSpeed
 		#region v1.0.0 -> v1.1.0
 #pragma warning disable CS0414 // unused field
 		// obsolete inverted multipliers (v1.0.0)
-		[Field.LoadOnly] [Field.Range(min:0.01f)] readonly float multHungerThrist   = 1.0f;
-		[Field.LoadOnly] [Field.Range(min:0.01f)] readonly float multPlantsGrow     = 1.0f;
-		[Field.LoadOnly] [Field.Range(min:0.01f)] readonly float multEggsHatching   = 1.0f;
-		[Field.LoadOnly] [Field.Range(min:0.01f)] readonly float multCreaturesGrow  = 1.0f;
-		[Field.LoadOnly] [Field.Range(min:0.01f)] readonly float multMedkitInterval = 1.0f;
+		[Field.LoadOnly, Field.Range(min:0.01f)] readonly float multHungerThrist   = 1.0f;
+		[Field.LoadOnly, Field.Range(min:0.01f)] readonly float multPlantsGrow     = 1.0f;
+		[Field.LoadOnly, Field.Range(min:0.01f)] readonly float multEggsHatching   = 1.0f;
+		[Field.LoadOnly, Field.Range(min:0.01f)] readonly float multCreaturesGrow  = 1.0f;
+		[Field.LoadOnly, Field.Range(min:0.01f)] readonly float multMedkitInterval = 1.0f;
 #pragma warning restore
 
 		// variables are renamed (mult* -> speed*) and inverted (new = 1.0f/old)
@@ -344,7 +343,7 @@ namespace DayNightSpeed
 			try
 			{
 				// using reflection to avoid copy/paste and keep new params readonly
-				foreach (var varName in new string[] { "HungerThrist", "PlantsGrow", "EggsHatching", "CreaturesGrow", "MedkitInterval" })
+				foreach (var varName in new[] { "HungerThrist", "PlantsGrow", "EggsHatching", "CreaturesGrow", "MedkitInterval" })
 				{
 					float val = this.getFieldValue<float>("mult" + varName);
 

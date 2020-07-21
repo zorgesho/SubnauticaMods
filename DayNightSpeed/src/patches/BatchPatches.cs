@@ -37,7 +37,7 @@ namespace DayNightSpeed
 		static CIEnumerable transpiler_dnsClamped01_consume(CIEnumerable cins) => transpiler_dnsClamped01(cins, nameof(ModConfig.auxSpeedPowerConsume));
 		static readonly MethodInfo patchSpeedClamped01_consume = typeof(DayNightCyclePatches).method(nameof(transpiler_dnsClamped01_consume));
 
-		static readonly Tuple<MethodInfo, MethodInfo>[] patches = new Tuple<MethodInfo, MethodInfo>[]
+		static readonly Tuple<MethodInfo, MethodInfo>[] patches =
 		{
 			// 1.0 -> dayNightSpeed
 			Tuple.Create(patchSpeedSimple, typeof(DayNightCycle).method("Update")),

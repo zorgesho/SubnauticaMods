@@ -56,7 +56,7 @@ namespace DayNightSpeed
 
 			public static bool isGoalCompleted(string goalKey) => StoryGoalManager.main.completedGoals.Contains(goalKey);
 
-			[HarmonyPatch(typeof(StoryGoalScheduler), "Schedule")][HarmonyPostfix]
+			[HarmonyPostfix, HarmonyPatch(typeof(StoryGoalScheduler), "Schedule")]
 			static void onAddGoal(StoryGoal goal)
 			{
 				if (goal == null || goal.delay > shortGoalDelay || isGoalCompleted(goal.key))
@@ -67,7 +67,7 @@ namespace DayNightSpeed
 				instance.goals.Add(goal.key);											$"StoryGoalsListener: goal added '{goal.key}'".logDbg();
 			}
 
-			[HarmonyPatch(typeof(StoryGoal), "Execute")][HarmonyPostfix]
+			[HarmonyPostfix, HarmonyPatch(typeof(StoryGoal), "Execute")]
 			static void onRemoveGoal(string key)
 			{
 				if (instance.goals.RemoveAll(g => g == key) > 0 && instance.goals.Count == 0)

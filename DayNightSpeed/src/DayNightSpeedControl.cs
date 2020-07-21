@@ -12,6 +12,8 @@ using Common.Configuration;
 
 namespace DayNightSpeed
 {
+	using Debug = Common.Debug;
+
 	[PatchClass]
 	static partial class DayNightSpeedControl
 	{
@@ -23,7 +25,9 @@ namespace DayNightSpeed
 			get => _forcedNormalSpeed;
 
 			set
-			{																															"DayNightCycle.main == null".logDbgError((DayNightCycle.main == null));
+			{
+				Debug.assert(DayNightCycle.main);
+
 				if (_forcedNormalSpeed == value || DayNightCycle.main.IsInSkipTimeMode() || DayNightCycle.main._dayNightSpeed == 0)
 					return;
 
@@ -34,7 +38,7 @@ namespace DayNightSpeed
 		}
 		static bool _forcedNormalSpeed = false;
 
-		[HarmonyPatch(typeof(DayNightCycle), "Awake")][HarmonyPostfix]
+		[HarmonyPostfix, HarmonyPatch(typeof(DayNightCycle), "Awake")]
 		static void initDayNightCycle(DayNightCycle __instance)
 		{
 			__instance._dayNightSpeed = Main.config.dayNightSpeed;
@@ -47,7 +51,9 @@ namespace DayNightSpeed
 
 		// for transpilers
 		public static float getDayNightSpeedClamped01()
-		{																												"DayNightCycle.main == null".logDbgError((DayNightCycle.main == null));
+		{
+			Debug.assert(DayNightCycle.main);
+
 			if (_forcedNormalSpeed)
 				return 1.0f;
 
@@ -60,7 +66,7 @@ namespace DayNightSpeed
 		{
 			public void action()
 			{
-				if (forcedNormalSpeed || DayNightCycle.main == null)
+				if (forcedNormalSpeed || !DayNightCycle.main)
 					return;
 
 				DayNightCycle.main._dayNightSpeed = Main.config.dayNightSpeed;
@@ -68,14 +74,14 @@ namespace DayNightSpeed
 			}
 		}
 
-		class DayNightSpeedCommands: PersistentConsoleCommands
+		class DayNightSpeedCommand: PersistentConsoleCommands_2
 		{
-			void OnConsoleCommand_daynightspeed(NotificationCenter.Notification n)
+			public void daynightspeed(float speed = 0f)
 			{
-				if (n.getArgCount() > 0)
-					DevConsole.SendConsoleCommand($"setcfgvar dns.{nameof(Main.config.dayNightSpeed)} {n.getArg(0)}");
+				if (speed > 0f)
+					DevConsole.SendConsoleCommand($"setcfgvar dns.{nameof(Main.config.dayNightSpeed)} {speed}");
 
-				if (DayNightCycle.main != null)
+				if (DayNightCycle.main)
 					$"Day/night speed is {DayNightCycle.main.dayNightSpeed}".onScreen();
 			}
 		}
@@ -88,7 +94,7 @@ namespace DayNightSpeed
 
 			void Update()
 			{
-				if (DayNightCycle.main == null)
+				if (!DayNightCycle.main)
 					return;
 
 				string clr = forcedNormalSpeed? "<color=#00FF00FF>": "<color=#CCCCCCFF>";
@@ -96,21 +102,19 @@ namespace DayNightSpeed
 				$"{DayNightCycle.main.timePassed:#.###}".onScreen("time passed");
 				$"{DayNightCycle.ToGameDateTime(DayNightCycle.main.timePassedAsFloat)}".onScreen("date/time");
 
-				if (Main.config.dbgCfg.showGoals && DayNightCycle.main != null) // show current goals
+				if (!Main.config.dbgCfg.showGoals)
+					return;
+
+				// show current goals
+				goals.Clear();
+				foreach (var goal in Story.StoryGoalScheduler.main.schedule)
 				{
-					goals.Clear();
-					foreach (var goal in Story.StoryGoalScheduler.main.schedule)
-					{
-						if (goals.Add(goal.goalKey))
-						{
-							const string colorCompleted = "<color=#999900CC>", colorNotCompleted = "<color=#FFFF00FF>";
+					if (!goals.Add(goal.goalKey))
+						continue;
 
-							bool completed = StoryGoalsListener.isGoalCompleted(goal.goalKey);
-							string goalName = (completed? colorCompleted: colorNotCompleted) + goal.goalKey + "</color>";
-
-							$"{(goal.timeExecute - DayNightCycle.main.timePassed):#.###}".onScreen(goalName);
-						}
-					}
+					bool completed = StoryGoalsListener.isGoalCompleted(goal.goalKey);
+					string goalName = $"<color={(completed? "#999900CC": "#FFFF00FF")}>{goal.goalKey}</color>";
+					$"{goal.timeExecute - DayNightCycle.main.timePassed:#.###}".onScreen(goalName);
 				}
 			}
 		}
@@ -122,8 +126,8 @@ namespace DayNightSpeed
 			if (inited || !(inited = true))
 				return;
 
-			gameObject = UnityHelper.createPersistentGameObject<DayNightSpeedCommands>("DayNightSpeedControl");
-			gameObject.AddComponent<StoryGoalsListener>();
+			PersistentConsoleCommands_2.register<DayNightSpeedCommand>();
+			gameObject = UnityHelper.createPersistentGameObject<StoryGoalsListener>("DayNightSpeedControl");
 #if DEBUG
 			gameObject.AddComponent<DayNightSpeedWatch>();
 #endif

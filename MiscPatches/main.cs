@@ -10,8 +10,9 @@ namespace MiscPatches
 		public static void patch()
 		{
 			HarmonyHelper.patchAll();
-			ConsoleCommands.init();
 			MiscStuff.init();
+
+			PersistentConsoleCommands_2.register<ConsoleCommands>();
 		}
 	}
 }

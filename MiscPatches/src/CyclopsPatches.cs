@@ -11,10 +11,7 @@ namespace MiscPatches
 		static void Postfix(SubRoot __instance)
 		{
 			if (!__instance.isBase) // we're in cyclops
-			{
-				foreach (var door in __instance.gameObject.GetAllComponentsInChildren<Openable>())
-					door.Invoke("Close", 0.5f);
-			}
+				__instance.GetComponentsInChildren<Openable>().ForEach(door => door.Invoke("Close", 0.5f));
 		}
 	}
 

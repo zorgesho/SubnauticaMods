@@ -13,7 +13,7 @@ namespace HabitatPlatform
 			HarmonyHelper.patchAll(true);
 			CraftHelper.patchAll();
 
-			PersistentConsoleCommands.createGameObject<ConsoleCommands>();
+			PersistentConsoleCommands_2.register<ConsoleCommands>();
 		}
 	}
 }

@@ -9,35 +9,35 @@ using Common.Configuration;
 
 namespace CustomHotkeys
 {
-	class ConsoleCommands: PersistentConsoleCommands
+	class ConsoleCommands: PersistentConsoleCommands_2
 	{
 		#region dev tools & debug commands
 
 		static void toggleComponent<T>() where T: MonoBehaviour => FindObjectsOfType<T>().ForEach(cmp => cmp.enabled = !cmp.enabled);
 
-		void OnConsoleCommand_devtools_toggleterrain(NotificationCenter.Notification _)	   => toggleComponent<TerrainDebugGUI>();
-		void OnConsoleCommand_devtools_togglegraphics(NotificationCenter.Notification _)   => toggleComponent<GraphicsDebugGUI>();
-		void OnConsoleCommand_devtools_toggleframegraph(NotificationCenter.Notification _) => toggleComponent<UWE.FrameTimeOverlay>();
+		public void devtools_toggleterrain()	=> toggleComponent<TerrainDebugGUI>();
+		public void devtools_togglegraphics()	=> toggleComponent<GraphicsDebugGUI>();
+		public void devtools_toggleframegraph()	=> toggleComponent<UWE.FrameTimeOverlay>();
 
-		void OnConsoleCommand_devtools_hidegui(NotificationCenter.Notification n)
+		public void devtools_hidegui(GUIController.HidePhase? hidePhase)
 		{
 			if (!GUIController.main)
 				return;
 
-			int phase = n.getArg(0, GUIController.main.hidePhase + 1).cast<int>();
+			int phase = (int)(hidePhase ?? GUIController.main.hidePhase + 1);
 			phase %= (int)GUIController.HidePhase.All + 1;
 
 			GUIController.SetHidePhase(GUIController.main.hidePhase = (GUIController.HidePhase)phase);
 		}
 
-		void OnConsoleCommand_devtools_wireframe(NotificationCenter.Notification n)
+		public void devtools_wireframe(bool? enabled)
 		{
-			GL.wireframe = n.getArg(0, !GL.wireframe);
+			GL.wireframe = enabled ?? !GL.wireframe;
 		}
 
 		Vector3? lastPreWarpPos;
 
-		void OnConsoleCommand_warpmem(NotificationCenter.Notification n)
+		public void warpmem(float? x, float y = 0f, float z = 0f)
 		{
 			static void _warp(Vector3 pos)
 			{
@@ -45,11 +45,10 @@ namespace CustomHotkeys
 				Player.main.OnPlayerPositionCheat();
 			}
 
-			if (n.getArgCount() == 3)
+			if (x != null)
 			{
 				lastPreWarpPos = Player.main.transform.position;
-				var args = n.getArgs<float>();
-				_warp(new Vector3(args[0], args[1], args[2]));
+				_warp(new Vector3((float)x, y, z));
 			}
 			else
 			{
@@ -58,60 +57,54 @@ namespace CustomHotkeys
 			}
 		}
 #if DEBUG
-		void OnConsoleCommand_logassoc(NotificationCenter.Notification n)
+		public void logassoc(string ext)
 		{
-			if (n.getArgCount() == 1)
-				WinApi.logAccos(n.getArg(0));
+			WinApi.logAccos(ext);
 		}
 #endif
 		#endregion
 
 		#region misc commands
-		void OnConsoleCommand_setwindowpos(NotificationCenter.Notification n)
+		public void setwindowpos(int x, int y)
 		{
-			WinApi.setWindowPos(n.getArg<int>(0), n.getArg<int>(1));
+			WinApi.setWindowPos(x, y);
 		}
 
-		void OnConsoleCommand_setresolution(NotificationCenter.Notification n)
+		public void setresolution(int width, int height, bool fullscreen = true)
 		{
-			if (n.getArgCount() > 1)
-				DisplayManager.SetResolution(Math.Max(640, n.getArg<int>(0)), Math.Max(480, n.getArg<int>(1)), n.getArg(2, true));
+			DisplayManager.SetResolution(Math.Max(640, width), Math.Max(480, height), fullscreen);
 		}
 
-		void OnConsoleCommand_fov(NotificationCenter.Notification n)
+		public void fov(float fov)
 		{
-			if (n.getArgCount() == 1)
-				SNCameraRoot.main?.SetFov(n.getArg<float>(0));
+			SNCameraRoot.main?.SetFov(fov);
 		}
 
-		[CommandData(caseSensitive = true, combineArgs = true)]
-		void OnConsoleCommand_showmessage(NotificationCenter.Notification n)
+		[Command(caseSensitive = true, combineArgs = true)]
+		public void showmessage(string message)
 		{
-			n.getArg(0)?.onScreen();
+			message.onScreen();
 		}
 
-		void OnConsoleCommand_clearmessages(NotificationCenter.Notification _)
+		public void clearmessages()
 		{
 			GameUtils.clearScreenMessages();
 		}
 
-		void OnConsoleCommand_showmodoptions(NotificationCenter.Notification _)
+		public void showmodoptions()
 		{
 			Options.open();
 		}
 
-		void OnConsoleCommand_wait(NotificationCenter.Notification n)
+		public void wait(float secs)
 		{
-			HotkeyHelper.wait(n.getArg<float>(0));
+			HotkeyHelper.wait(secs);
 		}
 
-		[CommandData(combineArgs = true)]
-		void OnConsoleCommand_addhotkey(NotificationCenter.Notification n)
+		[Command(combineArgs = true)]
+		public void addhotkey(string command)
 		{
-			if (n.getArgCount() == 0)
-				return;
-
-			Main.hkConfig.addHotkey(new HKConfig.Hotkey() { command = n.getArg(0), label = "", mode = HKConfig.Hotkey.Mode.Press });
+			Main.hkConfig.addHotkey(new HKConfig.Hotkey() { command = command, label = "", mode = HKConfig.Hotkey.Mode.Press });
 
 			Options.open();
 			StartCoroutine(_scroll());
@@ -123,64 +116,61 @@ namespace CustomHotkeys
 			}
 		}
 
-		void OnConsoleCommand_lastcommand(NotificationCenter.Notification n)
+		public void lastcommand(int indexFromEnd = 0)
 		{
 			var history = DevConsole.instance.history;
 			if (history.Count == 0)
 				return;
 
-			int index = Math.Max(0, history.Count - Math.Abs(n.getArg<int>(0)) - 1);
-			if (history[index].Trim() != "lastcommand")
+			int index = Math.Max(0, history.Count - Math.Abs(indexFromEnd) - 1);
+			if (history[index].Trim() != nameof(lastcommand))
 				DevConsole.SendConsoleCommand(history[index]);
 		}
 		#endregion
 
 		#region gameplay commands
-		void OnConsoleCommand_autoforward(NotificationCenter.Notification n)
+		public void autoforward(bool? enabled)
 		{
-			if (n.getArgCount() == 0)
+			if (enabled == null)
 				GameInput_AutoForward_Patch.toggleAutoForward();
 			else
-				GameInput_AutoForward_Patch.setAutoForward(n.getArg<bool>(0));
+				GameInput_AutoForward_Patch.setAutoForward((bool)enabled);
 		}
 
-		void OnConsoleCommand_bindslot(NotificationCenter.Notification n)
+		public void bindslot(int slotID, TechType? techType)
 		{
-			if (!Inventory.main || n.getArgCount() == 0)
+			if (!Inventory.main)
 				return;
 
-			int slotID = n.getArg<int>(0);
-
-			if (n.getArgCount() == 1)
+			if (techType == null)
 			{
 				Inventory.main.quickSlots.Unbind(slotID);
 				return;
 			}
 
-			TechType techType = n.getArg<TechType>(1);
-
-			if (techType == default || Inventory.main.quickSlots.binding[slotID]?.item.GetTechType() == techType)
+			if (techType == TechType.None || Inventory.main.quickSlots.binding[slotID]?.item.GetTechType() == techType)
 				return;
 
-			if (getItemFromInventory(techType) is InventoryItem item)
+			if (getItemFromInventory((TechType)techType) is InventoryItem item)
 				Inventory.main.quickSlots.Bind(slotID, item);
 		}
 
-		void OnConsoleCommand_equipslot(NotificationCenter.Notification n)
+		public void equipslot(int slotID = -1)
 		{
-			if (n.getArgCount() == 1)
-				Inventory.main?.quickSlots.SlotKeyDown(n.getArg<int>(0));
+			if (slotID != -1)
+				Inventory.main?.quickSlots.SlotKeyDown(slotID);
 			else
 				Inventory.main?.quickSlots.Deselect();
 		}
 
-		void OnConsoleCommand_useitem(NotificationCenter.Notification n)
+		public void useitem(Hashtable data)
 		{
-			if (!Inventory.main || n.getArgCount() == 0)
+			if (!Inventory.main)
 				return;
 
-			foreach (var techType in n.getArgs<TechType>())
+			for (int i = 0; i < data.Count; i++)
 			{
+				var techType = data[i].convert<TechType>();
 				if (techType != default && getItemFromInventory(techType) is InventoryItem item)
 				{
 					Inventory.main.UseItem(item);
@@ -189,12 +179,12 @@ namespace CustomHotkeys
 			}
 		}
 
-		void OnConsoleCommand_vehicle_enter(NotificationCenter.Notification n)
+		public void vehicle_enter(float distance = 6f)
 		{
-			getProperVehicle(n.getArg(0, 6f))?.EnterVehicle(Player.main, true, true);
+			getProperVehicle(distance)?.EnterVehicle(Player.main, true, true);
 		}
 
-		void OnConsoleCommand_vehicle_upgrades(NotificationCenter.Notification _)
+		public void vehicle_upgrades()
 		{
 			getProperVehicle(4f)?.GetComponentInChildren<VehicleUpgradeConsoleInput>().OnHandClick(null);
 		}

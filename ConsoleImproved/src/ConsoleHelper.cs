@@ -11,9 +11,10 @@ using Common.Reflection;
 
 namespace ConsoleImproved
 {
+	using Debug = Common.Debug;
+
 	static partial class ConsoleHelper
 	{
-		static GameObject consoleObject = null;
 		static readonly string historyPath = Paths.modRootPath + "history.txt";
 
 		static readonly CommandCache commandCache = new CommandCache();
@@ -22,11 +23,8 @@ namespace ConsoleImproved
 
 		static void init()
 		{
-			if (consoleObject == null)
-			{
-				consoleObject = PersistentConsoleCommands.createGameObject<ConsoleCommands>();
-				DevConsole.disableConsole = !Main.config.consoleEnabled;
-			}
+			PersistentConsoleCommands_2.register<ConsoleCommands>();
+			DevConsole.disableConsole = !Main.config.consoleEnabled;
 		}
 
 		static void showMessages(List<string> msgs, string msg)
@@ -53,11 +51,11 @@ namespace ConsoleImproved
 				// save 'historySizeToSave' last history entries or all history if historySizeToSave == 0
 				int i = Main.config.historySizeToSave == 0? 0: Mathf.Max(0, history.Count - Main.config.historySizeToSave);
 
-				StringBuilder sb = new StringBuilder();
+				var sb = new StringBuilder();
 				while (i < history.Count)
 					sb.AppendLine(history[i++]);
 
-				File.WriteAllText(historyPath, sb.ToString());
+				sb.ToString().saveToFile(historyPath);
 			}
 			catch (UnauthorizedAccessException e) { Log.msg(e); }
 		}
@@ -70,7 +68,7 @@ namespace ConsoleImproved
 			string loadedHistory = File.ReadAllText(historyPath);
 
 			if (!loadedHistory.isNullOrEmpty())
-				setHistory(new List<string>(loadedHistory.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries)));
+				setHistory(new List<string>(loadedHistory.Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries)));
 		}
 
 		static void setHistory(List<string> history)
@@ -101,11 +99,11 @@ namespace ConsoleImproved
 					if (assembly.GetType(name_CfgVarBinder, false) is Type type_CfgVarBinder)
 					{
 						var names = type_CfgVarBinder.method("getVarNames").wrap().invoke<string[]>();
-						Common.Debug.assert(names != null);
+						Debug.assert(names != null);
 						cfgVarNames.AddRange(names);
 
 						var getter = type_CfgVarBinder.method("getVarValue").wrap<Func<string, object>>();
-						Common.Debug.assert(getter);
+						Debug.assert(getter);
 						cfgVarGetters.Add(getter);
 					}
 				}

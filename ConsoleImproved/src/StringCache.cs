@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 
 using Common;
@@ -10,14 +11,14 @@ namespace ConsoleImproved
 		// used for console autocomplete
 		abstract class StringCache
 		{
-			protected readonly List<string> strings = new List<string>();
+			protected List<string> strings;
 
 			protected abstract void refresh();
 
 			List<string> find(Predicate<string> predicate)
 			{
 				refresh();
-				return strings.FindAll(predicate);
+				return strings?.FindAll(predicate);
 			}
 
 			public List<string> find(string str)			=> find(s => s.IndexOf(str) >= 0);
@@ -29,13 +30,11 @@ namespace ConsoleImproved
 		{
 			protected override void refresh()
 			{
-				if (strings.Count == DevConsole.commands.Count)
+				if (strings?.Count == DevConsole.commands.Count)
 					return;
 
-				strings.Clear();
-				DevConsole.commands.forEach(cmd => strings.Add(cmd.Key.ToLower() + " ")); // adding space for convenience
-
-				strings.Sort();																		"ConsoleHelper.CommandCache refreshed".logDbg();
+				strings = DevConsole.commands.Select(cmd => cmd.Key.ToLower() + " ").ToList(); // adding space for convenience
+				strings.Sort();
 			}
 		}
 
@@ -44,12 +43,10 @@ namespace ConsoleImproved
 		{
 			protected override void refresh()
 			{
-				if (strings.Count > 0) // techtypes don't change in runtime, so we need refresh this only once
+				if (strings?.Count > 0) // techtypes don't change in runtime, so we need refresh this only once
 					return;
 
-				foreach (TechType t in Enum.GetValues(typeof(TechType)))
-					strings.Add(t.AsString().ToLower());
-
+				strings = Enum.GetValues(typeof(TechType)).OfType<TechType>().Select(t => t.AsString().ToLower()).ToList();
 				strings.Sort();
 			}
 		}
@@ -59,15 +56,13 @@ namespace ConsoleImproved
 		{
 			protected override void refresh()
 			{
-				if (strings.Count > 0)
+				if (strings?.Count > 0)
 					return;
 
-				CfgVarsHelper.getVarNames(out List<string> fields);										fields.logDbg("CfgVarsCache added field ");
+				CfgVarsHelper.getVarNames(out List<string> fields);									$"CfgVarsCache fields added:\r\n{string.Join("\r\n", fields)}".logDbg();
 
-				for (int i = 0; i < fields.Count; i++)
-					fields[i] += " "; // adding space for convenience
-
-				strings.AddRange(fields);
+				strings = fields.Select(field => field + " ").ToList(); // adding space for convenience
+				strings.Sort();
 			}
 		}
 	}

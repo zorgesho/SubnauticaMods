@@ -25,8 +25,11 @@ namespace ConsoleImproved
 
 		public class RefreshTimeDelaySetting: Config.Field.IAction
 		{
-			public void action() => ErrorMessage.main.messages.Where(m => m.timeEnd - Time.time < 1e3f).
-															   ForEach(msg => msg.timeEnd = Time.time + Main.config.msgsSettings.timeDelay);
+			public void action()
+			{
+				ErrorMessage.main.messages.Where(m => m.timeEnd - Time.time < 1e3f).
+										   ForEach(msg => msg.timeEnd = Time.time + Main.config.msgsSettings.timeDelay);
+			}
 		}
 
 		[HarmonyPriority(Priority.High)]
@@ -83,7 +86,7 @@ namespace ConsoleImproved
 		{
 			get
 			{
-				if (ErrorMessage.main == null)
+				if (!ErrorMessage.main)
 					return -1f;
 
 				if (!sampleMessage) // using this to get real preferredHeight
@@ -101,7 +104,7 @@ namespace ConsoleImproved
 		// get max message slots with current settings
 		public static int getSlotCount(bool freeSlots)
 		{
-			if (ErrorMessage.main == null)
+			if (!ErrorMessage.main)
 				return -1;
 
 			float lastMsgPos = freeSlots? ErrorMessage.main.GetYPos(): 0f;

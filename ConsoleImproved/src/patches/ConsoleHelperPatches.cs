@@ -30,10 +30,7 @@ namespace ConsoleImproved
 		[HarmonyPatch(typeof(DevConsole), "OnDisable")]
 		static class DevConsole_OnDisable_Patch
 		{
-			static void Postfix()
-			{
-				saveHistory();
-			}
+			static void Postfix() => saveHistory();
 		}
 
 		[HarmonyPatch(typeof(ConsoleInput), "KeyPressedOverride")]

@@ -14,22 +14,21 @@ namespace ConsoleImproved
 {
 	static partial class ConsoleHelper
 	{
-		class ConsoleCommands: PersistentConsoleCommands
+		class ConsoleCommands: PersistentConsoleCommands_2
 		{
-			void OnConsoleCommand_logpatches(NotificationCenter.Notification n)
+			public void logpatches(string harmonyID)
 			{
-				$"Current patches:\n{PatchesReport.get(n.getArg(0))}".log();
+				$"Current patches:\r\n{PatchesReport.get(harmonyID)}".log();
 			}
 
-			void OnConsoleCommand_pinpatches(NotificationCenter.Notification n)
+			public void pinpatches(string harmonyID, bool omitNames = false)
 			{
 				const float refreshSecs = 0.5f;
 
 				StopAllCoroutines();
 				GameUtils.clearScreenMessages();
 
-				if (n.getArgCount() > 0)
-					StartCoroutine(_printPatches(n.getArg(0), n.getArg<bool>(1)));
+				StartCoroutine(_printPatches(harmonyID, omitNames));
 
 				static IEnumerator _printPatches(string harmonyID, bool omitNames)
 				{
@@ -42,38 +41,32 @@ namespace ConsoleImproved
 			}
 
 
-			void OnConsoleCommand_clearhistory(NotificationCenter.Notification _)
+			public void clearhistory()
 			{
 				setHistory(new List<string>());
 			}
 
-			void OnConsoleCommand_clear(NotificationCenter.Notification _)
+			public void clear()
 			{
 				GameUtils.clearScreenMessages();
 			}
 
 
-			void OnConsoleCommand_findtech(NotificationCenter.Notification n)
+			public void findtech(string matchStr)
 			{
-				if (n.getArgCount() == 0)
-					return;
-
-				var matched = techtypeCache.find(n.getArg(0));
+				var matched = techtypeCache.find(matchStr);
 
 				L10n.str("ids_findEntries").format(matched.Count).onScreen();
 				showMessages(matched, L10n.str("ids_techType"));
 			}
 
 
-			void OnConsoleCommand_dumpresource(NotificationCenter.Notification n)
+			public void dumpresource(string resourcePath)
 			{
-				if (n.getArgCount() == 0)
-					return;
-
-				Resources.Load<GameObject>(n.getArg(0))?.dump();
+				Resources.Load<GameObject>(resourcePath)?.dump();
 			}
 
-			void OnConsoleCommand_dumptarget(NotificationCenter.Notification _)
+			public void dumptarget()
 			{
 				if (Player.main?.GetComponent<GUIHand>().activeTarget is GameObject go)
 				{
@@ -82,20 +75,12 @@ namespace ConsoleImproved
 				}
 			}
 
-			void OnConsoleCommand_dumpprefab(NotificationCenter.Notification n)
+			public void dumpprefab(string techType)
 			{
-				if (n.getArgCount() == 0)
-					return;
-
-				if (n.getArg(0) == "all")
-				{
+				if (techType == "all")
 					StartCoroutine(_dumpAllPrefabs());
-				}
 				else
-				{
-					if (UWE.Utils.TryParseEnum(n.getArg(0), out TechType techType))
-						CraftData.GetPrefabForTechType(techType)?.dump(techType.AsString());
-				}
+					CraftData.GetPrefabForTechType(techType.convert<TechType>())?.dump(techType);
 
 				static IEnumerator _dumpAllPrefabs()
 				{
@@ -109,25 +94,18 @@ namespace ConsoleImproved
 				}
 			}
 
-			void OnConsoleCommand_dumpobjects(NotificationCenter.Notification n)
+			public void dumpobjects(string componentType)
 			{
-				if (n.getArgCount() == 0)
-					return;
-
-				static Type getComponentType(string typeName)
+				static Type _getComponentType(string typeName)
 				{
 					foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
-					{
-						Type type = assembly.GetType(typeName, false, true);
-
-						if (type != null && typeof(Component).IsAssignableFrom(type))
+						if (assembly.GetType(typeName, false, true) is Type type && typeof(Component).IsAssignableFrom(type))
 							return type;
-					}
 
 					return null;
 				}
 
-				Type cmpType = getComponentType(n.getArg(0));
+				Type cmpType = _getComponentType(componentType);
 
 				if (cmpType != null && FindObjectsOfType(cmpType) is Component[] cmps)
 				{
@@ -149,31 +127,27 @@ namespace ConsoleImproved
 				}
 			}
 
-			void OnConsoleCommand_dumpscene(NotificationCenter.Notification _)
+			public void dumpscene()
 			{
 				FindObjectOfType<StoreInformationIdentifier>()?.transform.root.gameObject.dump("scene-dump");
 			}
 
 
-			void OnConsoleCommand_togglecfgvar(NotificationCenter.Notification n)
+			public void togglecfgvar(string varName)
 			{
-				if (n.getArgCount() == 0)
-					return;
-
-				string varName = n.getArg(0);
 				bool varValue = CfgVarsHelper.getVarValue(varName).convert<bool>();
 
 				DevConsole.SendConsoleCommand($"setcfgvar {varName} {!varValue}");
 				CfgVarsHelper.getVarValue(varName).ToString().onScreen(varName);
 			}
 
-			void OnConsoleCommand_printcfgvars(NotificationCenter.Notification n)
+			public void printcfgvars(string cfgvarPrefix = "")
 			{
-				foreach (var c in cfgVarsCache.findByPrefix(n.getArg(0) ?? ""))
+				foreach (var c in cfgVarsCache.findByPrefix(cfgvarPrefix))
 					DevConsole.SendConsoleCommand($"getcfgvar {c}");
 			}
 
-			void OnConsoleCommand_pincfgvars(NotificationCenter.Notification n)
+			public void pincfgvars(string cfgvarPrefix = null) // null for stop
 			{
 				const float refreshSecs = 0.1f;
 				const float varColorChangeTime = 2f;
@@ -181,8 +155,8 @@ namespace ConsoleImproved
 				StopAllCoroutines();
 				GameUtils.clearScreenMessages();
 
-				if (n.getArgCount() > 0)
-					StartCoroutine(_printCfgVars(n.getArg(0) == "all"? "": n.getArg(0)));
+				if (cfgvarPrefix != null)
+					StartCoroutine(_printCfgVars(cfgvarPrefix == "all"? "": cfgvarPrefix));
 
 				static IEnumerator _printCfgVars(string prefix)
 				{

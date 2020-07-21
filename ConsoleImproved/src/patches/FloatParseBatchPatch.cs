@@ -21,7 +21,8 @@ namespace ConsoleImproved
 			MethodInfo getInvariantCulture = typeof(System.Globalization.CultureInfo).method("get_InvariantCulture");
 
 			var list = CIHelper.ciReplace(cins, ci => ci.isOp(OpCodes.Call, floatParse),
-											new CodeInstruction(OpCodes.Call, getInvariantCulture), new CodeInstruction(OpCodes.Call, floatParseCulture));
+											OpCodes.Call, getInvariantCulture,
+											OpCodes.Call, floatParseCulture);
 
 			Debug.assert(list.FindIndex(ci => ci.isOp(OpCodes.Call, floatParse)) == -1);
 
@@ -29,7 +30,7 @@ namespace ConsoleImproved
 		}
 		static readonly MethodInfo patch = typeof(CommandsFloatParsePatch).method(nameof(transpiler));
 
-		static readonly MethodInfo[] toPatch = new MethodInfo[]
+		static readonly MethodInfo[] toPatch =
 		{
 			typeof(BaseFloodSim).method("OnConsoleCommand_baseflood"),
 			typeof(DayNightCycle).method("OnConsoleCommand_daynightspeed"),

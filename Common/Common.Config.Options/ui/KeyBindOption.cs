@@ -86,7 +86,7 @@ namespace Common.Configuration
 
 			// uGUI_Binding derived from UnityEngine.UI.Selectable
 			static readonly PropertyWrapper Component_gameObject =
-				ReflectionHelper.safeGetType("UnityEngine.CoreModule", "UnityEngine.Component").property("gameObject").wrap();
+				Type.GetType("UnityEngine.Component, UnityEngine.CoreModule").property("gameObject").wrap();
 
 			public override void onGameObjectChange(GameObject go)
 			{

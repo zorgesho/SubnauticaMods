@@ -231,7 +231,7 @@ namespace Common
 		public static float getMouseWheelValue() => getAxis? getAxis.invoke("Mouse ScrollWheel"): 0f;
 
 		static readonly MethodWrapper<Func<string, float>> getAxis =
-			ReflectionHelper.safeGetType("UnityEngine.InputLegacyModule", "UnityEngine.Input")?.method("GetAxis")?.wrap<Func<string, float>>();
+			Type.GetType("UnityEngine.Input, UnityEngine.InputLegacyModule")?.method("GetAxis")?.wrap<Func<string, float>>();
 	}
 
 

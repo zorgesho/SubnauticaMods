@@ -5,8 +5,6 @@ using UnityEngine;
 
 namespace Common.Configuration
 {
-	using Reflection;
-
 	partial class Options
 	{
 		partial class Factory
@@ -137,7 +135,7 @@ namespace Common.Configuration
 
 				public void GetTooltip(out string tooltipText, List<TooltipIcon> _) => tooltipText = getTooltip();
 
-				static readonly Type layoutElementType = ReflectionHelper.safeGetType("UnityEngine.UI", "UnityEngine.UI.LayoutElement");
+				static readonly Type layoutElementType = Type.GetType("UnityEngine.UI.LayoutElement, UnityEngine.UI");
 				void Start()
 				{
 					Destroy(gameObject.GetComponent(layoutElementType)); // for removing empty space after label

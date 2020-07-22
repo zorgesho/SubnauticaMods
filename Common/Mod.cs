@@ -54,7 +54,7 @@ namespace Common
 			"Mod inited".logDbg();
 		}
 
-		static readonly Type qmmServices = ReflectionHelper.safeGetType("QModInstaller", "QModManager.API.QModServices");
+		static readonly Type qmmServices = Type.GetType("QModManager.API.QModServices, QModInstaller");
 		static readonly PropertyWrapper qmmServicesMain = qmmServices.property("Main").wrap();
 		static readonly MethodWrapper qmmAddMessage = qmmServices.method("AddCriticalMessage").wrap();
 

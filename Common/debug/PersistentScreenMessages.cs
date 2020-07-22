@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 
 using Harmony;
 using UnityEngine;
@@ -21,7 +22,7 @@ namespace Common
 		{
 			static bool patched = false;
 			static readonly FieldInfo messageEntry = typeof(ErrorMessage._Message).field("entry");
-			static readonly PropertyWrapper text = ReflectionHelper.safeGetType("UnityEngine.UI", "UnityEngine.UI.Text").property("text").wrap();
+			static readonly PropertyWrapper text = Type.GetType("UnityEngine.UI.Text, UnityEngine.UI").property("text").wrap();
 
 			public static void patch()
 			{
@@ -32,8 +33,7 @@ namespace Common
 					HarmonyHelper.patch();
 			}
 
-			[HarmonyPrefix]
-			[HarmonyPatch(typeof(ErrorMessage), "_AddMessage")]
+			[HarmonyPrefix, HarmonyPatch(typeof(ErrorMessage), "_AddMessage")]
 			static bool messagePatch(ErrorMessage __instance, string messageText)
 			{
 				if (messageText.isNullOrEmpty() || messageText[0] != '[')

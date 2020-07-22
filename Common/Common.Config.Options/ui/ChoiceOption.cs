@@ -87,7 +87,7 @@ namespace Common.Configuration
 					if (patched || !(patched = true))
 						return;
 
-					var validateMethod = ReflectionHelper.safeGetType("SMLHelper", "SMLHelper.V2.Options.Utility.Validator")?.method("ValidateID", typeof(string));
+					var validateMethod = Type.GetType("SMLHelper.V2.Options.Utility.Validator, SMLHelper")?.method("ValidateID", typeof(string));
 					Debug.assert(validateMethod != null);
 
 					HarmonyHelper.patch(validateMethod, typeof(ValidatorPatch).method(nameof(validatorPrefix)));						"SMLHelper validator patched".logDbg();

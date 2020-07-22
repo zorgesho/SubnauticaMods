@@ -91,9 +91,9 @@ namespace Common.Configuration
 			Debug.assert(optionsPanel && modsTabIndex != -1);
 		}
 
-		static readonly Type typeScrollRect = ReflectionHelper.safeGetType("UnityEngine.UI", "UnityEngine.UI.ScrollRect");
+		static readonly Type typeScrollRect = Type.GetType("UnityEngine.UI.ScrollRect, UnityEngine.UI");
 		static readonly PropertyWrapper propScrollPos = typeScrollRect.property("verticalNormalizedPosition").wrap();
-		static readonly MethodWrapper mtdSelectableSelect = ReflectionHelper.safeGetType("UnityEngine.UI", "UnityEngine.UI.Selectable").method("Select").wrap();
+		static readonly MethodWrapper mtdSelectableSelect = Type.GetType("UnityEngine.UI.Selectable, UnityEngine.UI").method("Select").wrap();
 
 		// recreates all ui controls in the options panel
 		// keeps selected tab and scroll position

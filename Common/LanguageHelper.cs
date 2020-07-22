@@ -58,7 +58,7 @@ namespace Common
 
 		// using this to avoid including SMLHelper as a reference to Common project
 		static readonly MethodWrapper<Action<string, string>> addString =
-			ReflectionHelper.safeGetType("SMLHelper", "SMLHelper.V2.Handlers.LanguageHandler")?.method("SetLanguageLine")?.wrap<Action<string, string>>();
+			Type.GetType("SMLHelper.V2.Handlers.LanguageHandler, SMLHelper")?.method("SetLanguageLine")?.wrap<Action<string, string>>();
 
 
 		static Dictionary<string, string> substitutedStrings = null; // 'key' string using value of 'value' string

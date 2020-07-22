@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Reflection.Emit;
 using System.Collections.Generic;
 
@@ -62,22 +63,24 @@ namespace Common.Crafting
 
 
 		#region patches
-		// substitute fragment tech type if it already known (for use in transpiler)
-		static TechType substituteTechType(TechType scanTechType)
-		{
-			if (!fragments.TryGetValue(scanTechType, out TechType substTechType))
-				return scanTechType;
-
-			return PDAScanner.complete.Contains(scanTechType)? substTechType: scanTechType;
-		}
 
 		[HarmonyTranspiler, HarmonyPatch(typeof(PDAScanner), "Scan")]
-		static IEnumerable<CodeInstruction> scannerPatch(IEnumerable<CodeInstruction> cins) =>
-			CIHelper.ciInsert(cins,
+		static IEnumerable<CodeInstruction> scannerPatch(IEnumerable<CodeInstruction> cins)
+		{
+			static TechType _substTechType(TechType scanTechType) // substitute fragment tech type if it already known
+			{
+				if (!fragments.TryGetValue(scanTechType, out TechType substTechType))
+					return scanTechType;
+
+				return PDAScanner.complete.Contains(scanTechType)? substTechType: scanTechType;
+			}
+
+			return CIHelper.ciInsert(cins,
 				cin => cin.isOp(OpCodes.Stloc_0), +1, 1,
 					OpCodes.Ldloc_0,
-					new CodeInstruction(OpCodes.Call, typeof(UnlockTechHelper).method(nameof(substituteTechType))),
+					CIHelper.emitCall<Func<TechType, TechType>>(_substTechType),
 					OpCodes.Stloc_0);
+		}
 
 		[HarmonyPrefix, HarmonyPatch(typeof(PDAScanner), "ContainsCompleteEntry")] // for loot spawning
 		static bool fragmentCheckOverride(TechType techType, ref bool __result)

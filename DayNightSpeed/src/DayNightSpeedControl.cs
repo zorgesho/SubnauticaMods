@@ -1,4 +1,5 @@
-﻿#if DEBUG
+﻿using System;
+#if DEBUG
 using System.Collections.Generic;
 #endif
 
@@ -7,7 +8,6 @@ using UnityEngine;
 
 using Common;
 using Common.Harmony;
-using Common.Reflection;
 using Common.Configuration;
 
 namespace DayNightSpeed
@@ -137,7 +137,6 @@ namespace DayNightSpeed
 	// helper for transpilers
 	static class _dnsClamped01
 	{
-		public static CodeInstruction ci => new CodeInstruction(System.Reflection.Emit.OpCodes.Call,
-			typeof(DayNightSpeedControl).method(nameof(DayNightSpeedControl.getDayNightSpeedClamped01)));
+		public static CodeInstruction ci => CIHelper.emitCall<Func<float>>(DayNightSpeedControl.getDayNightSpeedClamped01);
 	}
 }

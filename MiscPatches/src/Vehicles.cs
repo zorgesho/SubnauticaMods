@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Reflection;
 using System.Reflection.Emit;
 using System.Collections.Generic;
 
@@ -10,7 +9,6 @@ using UnityEngine.Events;
 
 using Common;
 using Common.Harmony;
-using Common.Reflection;
 
 namespace MiscPatches
 {
@@ -126,35 +124,37 @@ namespace MiscPatches
 	// Intended for passive modules, issues with selectable modules
 	static class VehiclesLessQuickSlots
 	{
-		static int _seamoth(Vehicle vehicle) => Math.Min(vehicle.slotIDs.Length, Main.config.maxSlotsCountSeamoth);
-		static int _prawn(Vehicle vehicle)   => Math.Min(vehicle.slotIDs.Length, Main.config.maxSlotsCountPrawnSuit + 2);
-
-		static CIEnumerable transpiler(CIEnumerable cins, bool isSeamoth)
+		static CIEnumerable transpiler(CIEnumerable cins)
 		{
-			MethodInfo maxSlotsCount = typeof(VehiclesLessQuickSlots).method(isSeamoth? nameof(_seamoth): nameof(_prawn));
 			var list = cins.ToList();
+
+			static int _slotCount(Vehicle vehicle)
+			{
+				int maxSlotCount = vehicle is SeaMoth? Main.config.maxSlotCountSeamoth: Main.config.maxSlotCountPrawnSuit + 2;
+				return Math.Min(vehicle.slotIDs.Length, maxSlotCount);
+			}
 
 			CIHelper.ciRemove(list, 0, 5);
 			CIHelper.ciInsert(list, 0,
 				OpCodes.Ldarg_0,
-				OpCodes.Call, maxSlotsCount,
+				CIHelper.emitCall<Func<Vehicle, int>>(_slotCount),
 				OpCodes.Stloc_0);
 
 			return list;
 		}
 
-		[HarmonyPatch(typeof(Vehicle), "GetSlotBinding", new Type[] {})]
+		[HarmonyPatch(typeof(Vehicle), "GetSlotBinding", new Type[0])]
 		static class Vehicle_GetSlotBinding_Patch
 		{
 			static bool Prepare() => Main.config.gameplayPatches;
-			static CIEnumerable Transpiler(CIEnumerable cins) => transpiler(cins, true);
+			static CIEnumerable Transpiler(CIEnumerable cins) => transpiler(cins);
 		}
 
-		[HarmonyPatch(typeof(Exosuit), "GetSlotBinding", new Type[] {})]
+		[HarmonyPatch(typeof(Exosuit), "GetSlotBinding", new Type[0])]
 		static class Exosuit_GetSlotBinding_Patch
 		{
 			static bool Prepare() => Main.config.gameplayPatches;
-			static CIEnumerable Transpiler(CIEnumerable cins) => transpiler(cins, false);
+			static CIEnumerable Transpiler(CIEnumerable cins) => transpiler(cins);
 		}
 	}
 

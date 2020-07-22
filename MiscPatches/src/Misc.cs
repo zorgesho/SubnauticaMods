@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -106,7 +107,7 @@ namespace MiscPatches
 	{
 		class ImmuneToPropRepCannon: MonoBehaviour {}
 
-		public static bool isObjectImmune(GameObject go)
+		static bool isObjectImmune(GameObject go)
 		{
 			if (!go || go.GetComponent<ImmuneToPropRepCannon>())
 				return true;
@@ -143,7 +144,7 @@ namespace MiscPatches
 
 				CIHelper.ciInsert(list, indexForInject,
 					OpCodes.Ldloc_S, 11,
-					OpCodes.Call, typeof(PropRepCannonImmunity).method(nameof(isObjectImmune)),
+					CIHelper.emitCall<Func<GameObject, bool>>(isObjectImmune),
 					OpCodes.Brtrue, list[indexForJump].operand);
 
 				return list;

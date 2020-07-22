@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Reflection.Emit;
 using System.Collections.Generic;
 
@@ -95,8 +96,7 @@ namespace CustomHotkeys
 
 				// saving binded keycode to check later in GameInput.UpdateKeyInputs patch
 				var GameInput_ClearInput = typeof(GameInput).method("ClearInput");
-				CIHelper.ciInsert(list, ci => ci.isOp(OpCodes.Call, GameInput_ClearInput),
-					OpCodes.Call, typeof(uGUIBinding_Update_Patch).method(nameof(saveLastBind)));
+				CIHelper.ciInsert(list, ci => ci.isOp(OpCodes.Call, GameInput_ClearInput), CIHelper.emitCall<Action>(saveLastBind));
 
 				if (Main.config.easyBindRemove)
 				{

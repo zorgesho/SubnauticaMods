@@ -55,7 +55,7 @@ namespace HabitatPlatform
 			CIHelper.ciInsert(list, index,
 				OpCodes.Brtrue_S, label,
 				OpCodes.Ldloc_2,
-				OpCodes.Call, typeof(Builder_TryPlace_Patch).method(nameof(checkPlatform)));
+				CIHelper.emitCall<Action<GameObject>>(checkPlatform));
 
 			return list;
 		}

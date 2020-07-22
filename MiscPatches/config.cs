@@ -13,8 +13,8 @@ namespace MiscPatches
 		public readonly float flareBurnTime = 300; // default is 1800
 		public readonly float flareIntensity = 3;  // default is 6
 
-		public readonly int maxSlotsCountSeamoth = 8;
-		public readonly int maxSlotsCountPrawnSuit = 4; // and +2 for arms
+		public readonly int maxSlotCountSeamoth = 8;
+		public readonly int maxSlotCountPrawnSuit = 4; // and +2 for arms
 
 		public readonly float vehicleLightEnergyPerSec = 0.1f;
 		public readonly UnityEngine.KeyCode toggleLightKey = UnityEngine.KeyCode.F;

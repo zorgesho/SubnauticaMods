@@ -36,6 +36,14 @@ namespace Common.Harmony
 
 	static partial class CIHelper // CodeInstruction sequences manipulation methods
 	{
+		public static CodeInstruction emitCall<T>(T func) where T: Delegate
+		{
+			Debug.assert(func?.Method != null);
+			Debug.assert(func.Method.IsStatic, $"CIHelper.emitCall: method {func.Method} is not static!");
+
+			return new CodeInstruction(OpCodes.Call, func.Method);
+		}
+
 		#region CIList methods
 
 		// makes new list with cloned CodeInstructions

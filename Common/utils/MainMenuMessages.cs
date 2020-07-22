@@ -1,4 +1,5 @@
-﻿using System.Reflection.Emit;
+﻿using System;
+using System.Reflection.Emit;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -95,16 +96,17 @@ namespace Common.Utils
 				messageQueue.Clear();
 			}
 
-			static float _getVal(float val, ErrorMessage._Message message) => messages.Contains(message)? 1f: val;
-
 			// we changing result for 'float value = Mathf.Clamp01(MathExtensions.EvaluateLine(...' to 1.0f
 			// so text don't stay in the center of the screen (because of changed 'timeEnd')
 			[HarmonyTranspiler, HarmonyPatch(typeof(ErrorMessage), "OnUpdate")]
 			static IEnumerable<CodeInstruction> updateMessages(IEnumerable<CodeInstruction> cins)
 			{
-				return CIHelper.ciInsert(cins, cin => cin.isOpLoc(OpCodes.Stloc_S, 11), +0, 1,
+				static float _getVal(float val, ErrorMessage._Message message) => messages.Contains(message)? 1f: val;
+
+				return CIHelper.ciInsert(cins,
+					cin => cin.isOpLoc(OpCodes.Stloc_S, 11), +0, 1,
 						OpCodes.Ldloc_S, 6,
-						OpCodes.Call, typeof(Patches).method(nameof(_getVal)));
+						CIHelper.emitCall<Func<float, ErrorMessage._Message, float>>(_getVal));
 			}
 		}
 	}

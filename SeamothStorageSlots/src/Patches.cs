@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+﻿using System;
 using System.Reflection.Emit;
 using System.Collections.Generic;
 
@@ -6,21 +6,19 @@ using Harmony;
 
 using Common;
 using Common.Harmony;
-using Common.Reflection;
 
 namespace SeamothStorageSlots
 {
 	static class SeamothStorageInputPatches
 	{
-		static ItemsContainer getStorageInSlot(Vehicle vehicle, int slotID, TechType techType) =>
-			 vehicle.GetStorageInSlot(slotID, techType) ?? vehicle.GetStorageInSlot(slotID + Main.config.slotsOffset, techType);
-
 		// substitute call for 'this.seamoth.GetStorageInSlot()' with method above
 		static IEnumerable<CodeInstruction> substSlotGetter(IEnumerable<CodeInstruction> cins)
 		{
-			MethodInfo substMethod = typeof(SeamothStorageInputPatches).method(nameof(getStorageInSlot));
+			static ItemsContainer _getStorageInSlot(Vehicle vehicle, int slotID, TechType techType) =>
+				 vehicle.GetStorageInSlot(slotID, techType) ?? vehicle.GetStorageInSlot(slotID + Main.config.slotsOffset, techType);
 
-			return CIHelper.ciReplace(cins, ci => ci.isOp(OpCodes.Callvirt), OpCodes.Call, substMethod);
+			return CIHelper.ciReplace(cins, ci => ci.isOp(OpCodes.Callvirt),
+				CIHelper.emitCall<Func<Vehicle, int, TechType, ItemsContainer>>(_getStorageInSlot));
 		}
 
 		[HarmonyPatch(typeof(SeamothStorageInput), "OpenPDA")]

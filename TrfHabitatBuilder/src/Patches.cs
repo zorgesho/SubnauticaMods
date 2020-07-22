@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Reflection.Emit;
 using System.Collections.Generic;
 
@@ -6,7 +7,6 @@ using Harmony;
 
 using Common;
 using Common.Harmony;
-using Common.Reflection;
 using Common.Configuration;
 
 namespace TrfHabitatBuilder
@@ -125,38 +125,39 @@ namespace TrfHabitatBuilder
 
 
 		static List<TechType> lockedBlueprints;
-		public static void init() => lockedBlueprints = Main.config.lockedBlueprints.get(GameUtils.getHeldToolType());
 
-		public static void updateUnlockState(TechType techType, ref TechUnlockState unlockState)
+		static void init() => lockedBlueprints = Main.config.lockedBlueprints.get(GameUtils.getHeldToolType());
+
+		static void updateUnlockState(TechType techType, ref TechUnlockState unlockState)
 		{
 			if (unlockState == TechUnlockState.Available && lockedBlueprints.Contains(techType))
 				unlockState = TechUnlockState.Locked;
 		}
+		delegate void _updateUnlockState(TechType techType, ref TechUnlockState unlockState);
 
-		public static void lockIcon(TechUnlockState unlockState, string stringForInt)
+		static void lockIcon(TechUnlockState unlockState, string stringForInt)
 		{
 			if (unlockState == TechUnlockState.Locked)
 				uGUI_BuilderMenu.singleton.iconGrid.GetIcon(stringForInt).manager = null;
 		}
 
-
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins)
 		{
 			var list = cins.ToList();
 
-			list.Insert(0, new CodeInstruction(OpCodes.Call, typeof(uGUIBuilderMenu_UpdateItems_Patch).method(nameof(init))));
+			list.Insert(0, CIHelper.emitCall<Action>(init));
 
 			// insert after "TechUnlockState techUnlockState = KnownTech.GetTechUnlockState(techType);"
 			CIHelper.ciInsert(list, cin => cin.isOpLoc(OpCodes.Stloc_S, 4), +1, 1,
 				OpCodes.Ldloc_3,
 				OpCodes.Ldloca_S, 4,
-				OpCodes.Call, typeof(uGUIBuilderMenu_UpdateItems_Patch).method(nameof(updateUnlockState)));
+				CIHelper.emitCall<_updateUnlockState>(updateUnlockState));
 
 			// insert after "this.iconGrid.AddItem"
 			CIHelper.ciInsert(list, cin => cin.isOp(OpCodes.Ceq), +4, 1,
 				OpCodes.Ldloc_S, 4,
 				OpCodes.Ldloc_S, 5,
-				OpCodes.Call, typeof(uGUIBuilderMenu_UpdateItems_Patch).method(nameof(lockIcon)));
+				CIHelper.emitCall<Action<TechUnlockState, string>>(lockIcon));
 
 			return list;
 		}

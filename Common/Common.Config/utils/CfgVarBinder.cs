@@ -5,7 +5,7 @@ namespace Common.Configuration.Utils
 {
 	static class CfgVarBinder
 	{
-		class CfgVarCommands: PersistentConsoleCommands_2
+		class CfgVarCommands: PersistentConsoleCommands
 		{
 			public void setcfgvar(string varName, string varValue)
 			{																				$"setcfgvar: '{varName}' '{varValue}'".logDbg();
@@ -19,7 +19,7 @@ namespace Common.Configuration.Utils
 			}
 		}
 
-		static void init() => PersistentConsoleCommands_2.register<CfgVarCommands>();
+		static void init() => PersistentConsoleCommands.register<CfgVarCommands>();
 
 		static readonly UniqueIDs uniqueIDs = new UniqueIDs();
 		static readonly Dictionary<string, Config.Field> cfgFields = new Dictionary<string, Config.Field>();

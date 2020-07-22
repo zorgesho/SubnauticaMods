@@ -74,7 +74,7 @@ namespace DayNightSpeed
 			}
 		}
 
-		class DayNightSpeedCommand: PersistentConsoleCommands_2
+		class DayNightSpeedCommand: PersistentConsoleCommands
 		{
 			public void daynightspeed(float speed = 0f)
 			{
@@ -126,7 +126,7 @@ namespace DayNightSpeed
 			if (inited || !(inited = true))
 				return;
 
-			PersistentConsoleCommands_2.register<DayNightSpeedCommand>();
+			PersistentConsoleCommands.register<DayNightSpeedCommand>();
 			gameObject = UnityHelper.createPersistentGameObject<StoryGoalsListener>("DayNightSpeedControl");
 #if DEBUG
 			gameObject.AddComponent<DayNightSpeedWatch>();

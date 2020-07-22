@@ -9,7 +9,7 @@ using Common;
 
 namespace HabitatPlatform
 {
-	class ConsoleCommands: PersistentConsoleCommands_2
+	class ConsoleCommands: PersistentConsoleCommands
 	{
 		GameObject _findPlatform() => UnityHelper.findNearestToCam<HabitatPlatform.Tag>()?.gameObject;
 

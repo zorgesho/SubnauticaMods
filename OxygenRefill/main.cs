@@ -14,7 +14,7 @@ namespace OxygenRefill
 			LanguageHelper.init();
 			CraftHelper.patchAll();
 
-			PersistentConsoleCommands_2.register<ConsoleCommands>();
+			PersistentConsoleCommands.register<ConsoleCommands>();
 		}
 	}
 }

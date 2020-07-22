@@ -16,7 +16,7 @@ namespace CustomHotkeys
 			HarmonyHelper.patchAll(true);
 
 			if (config.addConsoleCommands)
-				PersistentConsoleCommands_2.register<ConsoleCommands>();
+				PersistentConsoleCommands.register<ConsoleCommands>();
 		}
 	}
 }

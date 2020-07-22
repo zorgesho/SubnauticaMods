@@ -12,7 +12,7 @@ namespace MiscPatches
 			HarmonyHelper.patchAll();
 			MiscStuff.init();
 
-			PersistentConsoleCommands_2.register<ConsoleCommands>();
+			PersistentConsoleCommands.register<ConsoleCommands>();
 		}
 	}
 }

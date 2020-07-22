@@ -1,15 +1,11 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 using System.Linq;
 using System.Collections.Generic;
 
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace Common
 {
-	using Reflection;
-
 	static partial class StringExtensions
 	{
 		public static string onScreen(this string s)
@@ -41,7 +37,7 @@ namespace Common
 	{
 		public static class Mouse
 		{
-			static string _str(int utf32) => "<color=#ADF8FFFF>" + char.ConvertFromUtf32(utf32) + "</color>";
+			static string _str(int utf32) => $"<color=#ADF8FFFF>{char.ConvertFromUtf32(utf32)}</color>";
 
 			public static readonly string rightButton	= _str(57404);
 			public static readonly string middleButton	= _str(57405);
@@ -70,81 +66,5 @@ namespace Common
 
 		public static void clearScreenMessages() => // expire all messages except QMM main menu messages
 			ErrorMessage.main?.messages.Where(m => m.timeEnd - Time.time < 1e3f).forEach(m => m.timeEnd = Time.time - 1f);
-	}
-
-	static class MiscInGameExtensions
-	{
-		public static int getArgCount(this NotificationCenter.Notification n) => n?.data?.Count ?? 0;
-
-		public static string getArg(this NotificationCenter.Notification n, int index) => _getArg(n, index) as string;
-
-		public static T getArg<T>(this NotificationCenter.Notification n, int index) => _getArg(n, index).convert<T>();
-		public static T getArg<T>(this NotificationCenter.Notification n, int index, T defaultValue) =>
-			index < n.getArgCount()? n.getArg<T>(index): defaultValue;
-
-		public static T[] getArgs<T>(this NotificationCenter.Notification n, int first = 0, int last = -1)
-		{
-			if (last == -1)
-				last = n.getArgCount() - 1;
-
-			return Enumerable.Range(first, last - first + 1).Select(i => n.getArg<T>(i)).ToArray();
-		}
-
-		static object _getArg(this NotificationCenter.Notification n, int index) => n?.data?.Count > index? n.data[index]: null;
-	}
-
-
-	// base class for console commands which are exists between scenes
-	[Obsolete] // also NotificationCenter.Notification stuff ^^^
-	abstract class PersistentConsoleCommands: MonoBehaviour
-	{
-		protected class CommandDataAttribute: Attribute
-		{
-			public bool caseSensitive = false;
-			public bool combineArgs = false;
-		}
-
-		const string cmdPrefix = "OnConsoleCommand_";
-
-		List<Tuple<string, CommandDataAttribute>> commands;
-
-		public static GameObject createGameObject<T>(string name = "ConsoleCommands") where T: PersistentConsoleCommands
-		{
-			return UnityHelper.createPersistentGameObject<T>(name);
-		}
-
-		void registerCommands()
-		{
-			// searching for console commands methods in derived class
-			commands ??= GetType().methods().Where(m => m.Name.StartsWith(cmdPrefix)).
-											 Select(m => Tuple.Create(m.Name.Replace(cmdPrefix, ""), m.getAttr<CommandDataAttribute>())).
-											 ToList();
-
-			foreach (var command in commands)
-			{
-				bool caseSensitive = command.Item2?.caseSensitive ?? false;
-				bool combineArgs = command.Item2?.combineArgs ?? false;
-
-				// double registration is checked inside DevConsole
-				DevConsole.RegisterConsoleCommand(this, command.Item1, caseSensitive, combineArgs);						$"PersistentConsoleCommands: {command.Item1} is registered".logDbg();
-			}
-		}
-
-		void Awake()
-		{
-			SceneManager.sceneUnloaded += onSceneUnloaded;
-			registerCommands();
-		}
-
-		void OnDestroy()
-		{
-			SceneManager.sceneUnloaded -= onSceneUnloaded;
-		}
-
-		// notifications are cleared between some scenes, so we need to reregister commands
-		void onSceneUnloaded(Scene scene)
-		{
-			registerCommands();
-		}
 	}
 }

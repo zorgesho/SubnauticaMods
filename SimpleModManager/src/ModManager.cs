@@ -15,7 +15,7 @@ namespace SimpleModManager
 	{
 		static readonly List<Tuple<string, Config.Field>> modToggleFields = new List<Tuple<string, Config.Field>>();
 
-		class ConsoleCommands: PersistentConsoleCommands_2
+		class ConsoleCommands: PersistentConsoleCommands
 		{
 			public void mod_toggle(string modName) => setModEnabled(modName, null);
 
@@ -83,7 +83,7 @@ namespace SimpleModManager
 
 		public static void init()
 		{
-			PersistentConsoleCommands_2.register<ConsoleCommands>();
+			PersistentConsoleCommands.register<ConsoleCommands>();
 
 			foreach (var modPath in Directory.EnumerateDirectories(Path.Combine(Paths.modRootPath, "..")))
 			{

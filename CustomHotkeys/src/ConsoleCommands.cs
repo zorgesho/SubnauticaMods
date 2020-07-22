@@ -9,7 +9,7 @@ using Common.Configuration;
 
 namespace CustomHotkeys
 {
-	class ConsoleCommands: PersistentConsoleCommands_2
+	class ConsoleCommands: PersistentConsoleCommands
 	{
 		#region dev tools & debug commands
 

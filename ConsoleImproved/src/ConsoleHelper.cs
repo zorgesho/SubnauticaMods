@@ -23,7 +23,7 @@ namespace ConsoleImproved
 
 		static void init()
 		{
-			PersistentConsoleCommands_2.register<ConsoleCommands>();
+			PersistentConsoleCommands.register<ConsoleCommands>();
 			DevConsole.disableConsole = !Main.config.consoleEnabled;
 		}
 

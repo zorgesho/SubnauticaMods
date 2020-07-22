@@ -12,7 +12,7 @@ namespace Common
 	using Reflection;
 
 	// base class for console commands which are exists between scenes
-	abstract class PersistentConsoleCommands_2: MonoBehaviour
+	abstract class PersistentConsoleCommands: MonoBehaviour
 	{
 		protected class CommandAttribute: Attribute
 		{
@@ -34,7 +34,7 @@ namespace Common
 		readonly Dictionary<string, CommandInfo> commands = new Dictionary<string, CommandInfo>();
 		Component commandProxy;
 
-		public static void register<T>() where T: PersistentConsoleCommands_2
+		public static void register<T>() where T: PersistentConsoleCommands
 		{
 			hostGO ??= UnityHelper.createPersistentGameObject($"{Mod.id}.ConsoleCommands");
 			hostGO.ensureComponent<T>();
@@ -119,7 +119,7 @@ namespace Common
 
 		// internal class for creating dynamic proxies for console commands
 		// returns Type that can be used for creating component for registering in DevConsole
-		// proxy component routes calls for OnConsoleCommand_<cmdname> methods to PersistentConsoleCommands_2.runCommand
+		// proxy component routes calls for OnConsoleCommand_<cmdname> methods to PersistentConsoleCommands.runCommand
 		static class CommandProxy
 		{
 			const string cmdPrefix = "OnConsoleCommand_";
@@ -131,7 +131,7 @@ namespace Common
 			static AssemblyBuilder assemblyBuilder;
 			static ModuleBuilder moduleBuilder;
 
-			public static Type create(PersistentConsoleCommands_2 host)
+			public static Type create(PersistentConsoleCommands host)
 			{
 				assemblyBuilder ??= AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName($"{Mod.id}.{nameSuffix}"), AssemblyBuilderAccess.Run);
 				moduleBuilder	??= assemblyBuilder.DefineDynamicModule(nameSuffix);
@@ -139,7 +139,7 @@ namespace Common
 				var typeBuilder = moduleBuilder.DefineType($"{host.GetType().FullName}.CommandProxy", TypeAttributes.Public, typeof(MonoBehaviour));
 
 				const FieldAttributes fa = FieldAttributes.Static | FieldAttributes.Private;
-				var fieldHost = typeBuilder.DefineField(fieldnameHost, typeof(PersistentConsoleCommands_2), fa);
+				var fieldHost = typeBuilder.DefineField(fieldnameHost, typeof(PersistentConsoleCommands), fa);
 				var fieldRunCommand = typeBuilder.DefineField(fieldnameRunCommand, typeof(MethodInfo), fa);
 
 				host.commands.Keys.forEach(cmd => addMethod(typeBuilder, cmd, fieldHost, fieldRunCommand));
@@ -148,7 +148,7 @@ namespace Common
 
 				// can't use FieldBuilder for setting value :(
 				proxyType.field(fieldnameHost).SetValue(null, host);
-				proxyType.field(fieldnameRunCommand).SetValue(null, typeof(PersistentConsoleCommands_2).method(nameof(runCommand)));
+				proxyType.field(fieldnameRunCommand).SetValue(null, typeof(PersistentConsoleCommands).method(nameof(runCommand)));
 
 				return proxyType;
 			}

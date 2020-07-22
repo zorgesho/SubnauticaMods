@@ -38,7 +38,7 @@ namespace OxygenRefill
 		}
 	}
 
-	class ConsoleCommands: PersistentConsoleCommands_2
+	class ConsoleCommands: PersistentConsoleCommands
 	{
 		public void toggletankusage() => OxygenTankUtils.toggleTankUsage();
 

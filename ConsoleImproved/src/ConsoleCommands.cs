@@ -14,7 +14,7 @@ namespace ConsoleImproved
 {
 	static partial class ConsoleHelper
 	{
-		class ConsoleCommands: PersistentConsoleCommands_2
+		class ConsoleCommands: PersistentConsoleCommands
 		{
 			public void logpatches(string harmonyID)
 			{

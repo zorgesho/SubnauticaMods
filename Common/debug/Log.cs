@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Diagnostics;
-using System.Collections.Generic;
 
 namespace Common
 {
@@ -28,10 +27,6 @@ namespace Common
 			if (condition)
 				Log.msg(s, Log.MsgType.ERROR);
 		}
-
-		[Conditional("TRACE")]
-		public static void logDbg(this List<string> strings, string msg = "") =>
-			strings.ForEach(s => Log.msg(msg + s, Log.MsgType.DBG));
 	}
 
 

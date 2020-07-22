@@ -36,8 +36,7 @@ namespace PrawnSuitSettings
 		}
 
 		// Energy usage for drill arm
-		[OptionalPatch]
-		[HarmonyPatch(typeof(ExosuitDrillArm), "IExosuitArm.Update")]
+		[OptionalPatch, HarmonyPatch(typeof(ExosuitDrillArm), "IExosuitArm.Update")]
 		static class ExosuitDrillArm_Update_Patch
 		{
 			static bool Prepare() => Main.config.armsEnergyUsage.enabled;
@@ -53,8 +52,7 @@ namespace PrawnSuitSettings
 		}
 
 		// Energy usage for grappling arm
-		[OptionalPatch]
-		[HarmonyPatch(typeof(ExosuitGrapplingArm), "FixedUpdate")]
+		[OptionalPatch, HarmonyPatch(typeof(ExosuitGrapplingArm), "FixedUpdate")]
 		static class ExosuitGrapplingArm_FixedUpdate_Patch
 		{
 			const float sqrMagnitudeGrapplingArm = 16f; // if hook attached and its sqr length less than that, then don't consume power

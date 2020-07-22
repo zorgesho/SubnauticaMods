@@ -34,8 +34,7 @@ namespace PrawnSuitSettings
 		}
 
 
-		[OptionalPatch]
-		[HarmonyPatch(typeof(Exosuit), "Start")]
+		[OptionalPatch, HarmonyPatch(typeof(Exosuit), "Start")]
 		static class Exosuit_Start_Patch
 		{
 			static bool Prepare() => Main.config.collisionSelfDamage.enabled;
@@ -44,8 +43,7 @@ namespace PrawnSuitSettings
 		}
 
 
-		[OptionalPatch]
-		[HarmonyPatch(typeof(Exosuit), "OnUpgradeModuleChange")]
+		[OptionalPatch, HarmonyPatch(typeof(Exosuit), "OnUpgradeModuleChange")]
 		static class Exosuit_OnUpgradeModuleChange_Patch
 		{
 			static bool Prepare() => Main.config.collisionSelfDamage.enabled;

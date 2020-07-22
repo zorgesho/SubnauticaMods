@@ -179,7 +179,7 @@ namespace ModsOptionsAdjusted
 		#endregion
 
 		#region patches for uGUI_TabbedControlsPanel
-		[HarmonyPatch(typeof(uGUI_TabbedControlsPanel), "AddHeading")][HarmonyPrefix]
+		[HarmonyPrefix, HarmonyPatch(typeof(uGUI_TabbedControlsPanel), "AddHeading")]
 		static bool _addHeading(uGUI_TabbedControlsPanel __instance, int tabIndex, string label)
 		{
 			if (tabIndex != OptionsPanelInfo.modsTabIndex)
@@ -189,13 +189,13 @@ namespace ModsOptionsAdjusted
 			return false;
 		}
 
-		[HarmonyPatch(typeof(uGUI_TabbedControlsPanel), "Awake")][HarmonyPostfix]
+		[HarmonyPostfix, HarmonyPatch(typeof(uGUI_TabbedControlsPanel), "Awake")]
 		static void _awakeInitPrefab(uGUI_TabbedControlsPanel __instance)
 		{
 			initHeadingPrefab(__instance);
 		}
 
-		[HarmonyPatch(typeof(uGUI_TabbedControlsPanel), "SetVisibleTab")][HarmonyPrefix]
+		[HarmonyPrefix, HarmonyPatch(typeof(uGUI_TabbedControlsPanel), "SetVisibleTab")]
 		static void _setVisibleTab(uGUI_TabbedControlsPanel __instance, int tabIndex)
 		{
 			if (tabIndex != OptionsPanelInfo.modsTabIndex)

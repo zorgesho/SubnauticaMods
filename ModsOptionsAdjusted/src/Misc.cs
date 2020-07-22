@@ -9,7 +9,7 @@ namespace ModsOptionsAdjusted
 		public static int modsTabIndex { get; private set; } = -1;
 		public static bool isMainMenu  { get; private set; } = true; // is options opened in main menu or in game
 
-		[HarmonyPatch(typeof(uGUI_OptionsPanel), "AddTab")][HarmonyPostfix]
+		[HarmonyPostfix, HarmonyPatch(typeof(uGUI_OptionsPanel), "AddTab")]
 		static void _addTab(uGUI_OptionsPanel __instance, string label, int __result)
 		{
 			if (label == "Mods")

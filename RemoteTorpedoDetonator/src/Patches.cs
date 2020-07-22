@@ -8,8 +8,7 @@ using Common.Harmony;
 
 namespace RemoteTorpedoDetonator
 {
-	[OptionalPatch]
-	[HarmonyPatch(typeof(SeamothTorpedo), "Awake")]
+	[OptionalPatch, HarmonyPatch(typeof(SeamothTorpedo), "Awake")]
 	static class SeamothTorpedo_Awake_Patch
 	{
 		static bool Prepare() => Main.config.torpedoSpeed != 10f || !Main.config.homingTorpedoes; // non-default values, need to patch
@@ -43,18 +42,15 @@ namespace RemoteTorpedoDetonator
 				vehicle.quickSlotCooldown[slotID] = Main.config.torpedoCooldown;
 		}
 
-		[HarmonyPostfix]
-		[HarmonyPatch(typeof(Vehicle), "OnUpgradeModuleUse")]
+		[HarmonyPostfix, HarmonyPatch(typeof(Vehicle), "OnUpgradeModuleUse")]
 		static void vehiclePatch(Vehicle __instance, TechType techType, int slotID) => postfix(__instance, techType, slotID);
 
-		[HarmonyPostfix]
-		[HarmonyPatch(typeof(SeaMoth), "OnUpgradeModuleUse")]
+		[HarmonyPostfix, HarmonyPatch(typeof(SeaMoth), "OnUpgradeModuleUse")]
 		static void seamothPatch(Vehicle __instance, TechType techType, int slotID) => postfix(__instance, techType, slotID);
 	}
 
 	// infinite torpedoes cheat
-	[OptionalPatch]
-	[HarmonyPatch(typeof(Vehicle), "TorpedoShot")]
+	[OptionalPatch, HarmonyPatch(typeof(Vehicle), "TorpedoShot")]
 	static class Vehicle_TorpedoShot_Patch
 	{
 		static bool Prepare() => Main.config.cheatInfiniteTorpedoes;

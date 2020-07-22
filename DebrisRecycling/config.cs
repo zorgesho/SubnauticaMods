@@ -153,8 +153,7 @@ namespace DebrisRecycling
 			}
 		}
 
-		[NonSerialized]
-		[NoInnerFieldsAttrProcessing]
+		[NonSerialized, NoInnerFieldsAttrProcessing]
 		readonly List<PrefabList> allLists = new List<PrefabList>();
 
 		public Dictionary<string, int> getValidPrefabs()
@@ -314,12 +313,12 @@ namespace DebrisRecycling
 		}
 
 #pragma warning disable IDE0044, IDE0052
-		[Field.LoadOnly] [NoInnerFieldsAttrProcessing] Dictionary<string, int> debrisCargoOpened = new Dictionary<string, int>();
-		[Field.LoadOnly] [NoInnerFieldsAttrProcessing] Dictionary<string, int> debrisMiscMovable = new Dictionary<string, int>();
-		[Field.LoadOnly] [NoInnerFieldsAttrProcessing] Dictionary<string, int> debrisLockers	 = new Dictionary<string, int>();
-		[Field.LoadOnly] [NoInnerFieldsAttrProcessing] Dictionary<string, int> debrisTech		 = new Dictionary<string, int>();
-		[Field.LoadOnly] [NoInnerFieldsAttrProcessing] Dictionary<string, int> debrisCargoClosed = new Dictionary<string, int>();
-		[Field.LoadOnly] [NoInnerFieldsAttrProcessing] Dictionary<string, int> debrisFurniture	 = new Dictionary<string, int>();
+		[Field.LoadOnly, NoInnerFieldsAttrProcessing] Dictionary<string, int> debrisCargoOpened = new Dictionary<string, int>();
+		[Field.LoadOnly, NoInnerFieldsAttrProcessing] Dictionary<string, int> debrisMiscMovable = new Dictionary<string, int>();
+		[Field.LoadOnly, NoInnerFieldsAttrProcessing] Dictionary<string, int> debrisLockers	 = new Dictionary<string, int>();
+		[Field.LoadOnly, NoInnerFieldsAttrProcessing] Dictionary<string, int> debrisTech		 = new Dictionary<string, int>();
+		[Field.LoadOnly, NoInnerFieldsAttrProcessing] Dictionary<string, int> debrisCargoClosed = new Dictionary<string, int>();
+		[Field.LoadOnly, NoInnerFieldsAttrProcessing] Dictionary<string, int> debrisFurniture	 = new Dictionary<string, int>();
 #pragma warning restore
 		#endregion
 	}

@@ -10,8 +10,7 @@ using Common.Harmony;
 namespace PrawnSuitSettings
 {
 	// don't auto pickup resources after drilling
-	[OptionalPatch]
-	[HarmonyPatch(typeof(Drillable), "ManagedUpdate")]
+	[OptionalPatch, HarmonyPatch(typeof(Drillable), "ManagedUpdate")]
 	static class Drillable_ManagedUpdate_Patch__ResourcesPickup
 	{
 		static bool Prepare() => !Main.config.autoPickupDrillableResources;
@@ -30,8 +29,7 @@ namespace PrawnSuitSettings
 		public bool isUsingArm() => usingArm;
 	}
 
-	[OptionalPatch]
-	[HarmonyPatch(typeof(Exosuit), "OnPilotModeBegin")]
+	[OptionalPatch, HarmonyPatch(typeof(Exosuit), "OnPilotModeBegin")]
 	static class Exosuit_OnPilotModeBegin_Patch
 	{
 		static bool Prepare() => Main.config.toggleableDrillArm;
@@ -40,8 +38,7 @@ namespace PrawnSuitSettings
 			__instance.GetComponentInChildren<PrawnSuitDrillArmToggle>()?.setUsingArm(false);
 	}
 
-	[OptionalPatch]
-	[HarmonyPatch(typeof(ExosuitDrillArm), "IExosuitArm.OnUseDown")]
+	[OptionalPatch, HarmonyPatch(typeof(ExosuitDrillArm), "IExosuitArm.OnUseDown")]
 	static class ExosuitDrillArm_OnUseDown_Patch
 	{
 		static bool Prepare() => Main.config.toggleableDrillArm;
@@ -50,8 +47,7 @@ namespace PrawnSuitSettings
 			__instance.gameObject.ensureComponent<PrawnSuitDrillArmToggle>().toggleUsingArm();
 	}
 
-	[OptionalPatch]
-	[HarmonyPatch(typeof(ExosuitDrillArm), "IExosuitArm.OnUseUp")]
+	[OptionalPatch, HarmonyPatch(typeof(ExosuitDrillArm), "IExosuitArm.OnUseUp")]
 	static class ExosuitDrillArm_OnUseUp_Patch
 	{
 		static bool Prepare() => Main.config.toggleableDrillArm;

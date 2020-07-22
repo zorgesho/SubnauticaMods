@@ -69,8 +69,7 @@ namespace TrfHabitatBuilder
 	}
 
 	// patch for locking tabs in the builder menu based on helded builder
-	[OptionalPatch]
-	[HarmonyPatch(typeof(uGUI_BuilderMenu), "Show")]
+	[OptionalPatch, HarmonyPatch(typeof(uGUI_BuilderMenu), "Show")]
 	static class uGUIBuilderMenu_Show_Patch
 	{
 		static bool Prepare() => Main.config.limitBlueprints;
@@ -119,8 +118,7 @@ namespace TrfHabitatBuilder
 
 
 	// patch for locking blueprints based on helded builder
-	[OptionalPatch]
-	[HarmonyPatch(typeof(uGUI_BuilderMenu), "UpdateItems")]
+	[OptionalPatch, HarmonyPatch(typeof(uGUI_BuilderMenu), "UpdateItems")]
 	static class uGUIBuilderMenu_UpdateItems_Patch
 	{
 		static bool Prepare() => Main.config.limitBlueprints;

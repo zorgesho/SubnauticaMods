@@ -71,17 +71,15 @@ namespace Common.Crafting
 			return PDAScanner.complete.Contains(scanTechType)? substTechType: scanTechType;
 		}
 
-		[HarmonyTranspiler]
-		[HarmonyPatch(typeof(PDAScanner), "Scan")]
+		[HarmonyTranspiler, HarmonyPatch(typeof(PDAScanner), "Scan")]
 		static IEnumerable<CodeInstruction> scannerPatch(IEnumerable<CodeInstruction> cins) =>
 			CIHelper.ciInsert(cins,
 				cin => cin.isOp(OpCodes.Stloc_0), +1, 1,
 					OpCodes.Ldloc_0,
-					new CodeInstruction(OpCodes.Call, typeof(UnlockTechHelper).method(nameof(UnlockTechHelper.substituteTechType))),
+					new CodeInstruction(OpCodes.Call, typeof(UnlockTechHelper).method(nameof(substituteTechType))),
 					OpCodes.Stloc_0);
 
-		[HarmonyPrefix]
-		[HarmonyPatch(typeof(PDAScanner), "ContainsCompleteEntry")] // for loot spawning
+		[HarmonyPrefix, HarmonyPatch(typeof(PDAScanner), "ContainsCompleteEntry")] // for loot spawning
 		static bool fragmentCheckOverride(TechType techType, ref bool __result)
 		{
 			if (!fragments.TryGetValue(techType, out TechType substTechType))

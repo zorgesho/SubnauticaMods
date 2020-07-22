@@ -24,7 +24,7 @@ namespace Common.Crafting
 			prefabs[craftableObject.PrefabFileName] = craftableObject;
 		}
 
-		[HarmonyPatch(typeof(PrefabDatabase), "GetPrefabForFilename")][HarmonyPrefix]
+		[HarmonyPrefix, HarmonyPatch(typeof(PrefabDatabase), "GetPrefabForFilename")]
 		static bool getPrefabForFilename(string filename, ref GameObject __result)
 		{																										$"PrefabDatabasePatcher.getPrefabForFilename: {filename}".logDbg();
 			if (prefabs.TryGetValue(filename, out CraftableObject co))
@@ -37,7 +37,7 @@ namespace Common.Crafting
 		}
 #if DEBUG
 		// just for debug for now
-		[HarmonyPatch(typeof(PrefabDatabase), "GetPrefabAsync")][HarmonyPostfix]
+		[HarmonyPostfix, HarmonyPatch(typeof(PrefabDatabase), "GetPrefabAsync")]
 		static void getPrefabAsync(string classId)
 		{
 			if (!prefabs.FirstOrDefault(p => p.Value.ClassID == classId).Equals(default(KeyValuePair<string, CraftableObject>)))

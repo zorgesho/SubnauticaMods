@@ -96,8 +96,7 @@ namespace WarningsDisabler
 			}
 		}
 
-		[NonSerialized]
-		[NoInnerFieldsAttrProcessing]
+		[NonSerialized, NoInnerFieldsAttrProcessing]
 		readonly List<Messages> allMessages = new List<Messages>();
 
 		public bool isMessageAllowed(string message) => !allMessages.Exists(list => !list.isMessageAllowed(message));

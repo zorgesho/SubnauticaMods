@@ -88,8 +88,7 @@ namespace Common.Utils
 				HarmonyHelper.unpatch(typeof(ErrorMessage).method("OnUpdate"), typeof(Patches).method(nameof(updateMessages)));
 			}
 
-			[HarmonyPostfix]
-			[HarmonyPatch(typeof(ErrorMessage), "Awake")]
+			[HarmonyPostfix, HarmonyPatch(typeof(ErrorMessage), "Awake")]
 			static void addMessages()
 			{
 				messageQueue.ForEach(msg => _add(msg));
@@ -100,8 +99,7 @@ namespace Common.Utils
 
 			// we changing result for 'float value = Mathf.Clamp01(MathExtensions.EvaluateLine(...' to 1.0f
 			// so text don't stay in the center of the screen (because of changed 'timeEnd')
-			[HarmonyTranspiler]
-			[HarmonyPatch(typeof(ErrorMessage), "OnUpdate")]
+			[HarmonyTranspiler, HarmonyPatch(typeof(ErrorMessage), "OnUpdate")]
 			static IEnumerable<CodeInstruction> updateMessages(IEnumerable<CodeInstruction> cins)
 			{
 				return CIHelper.ciInsert(cins, cin => cin.isOpLoc(OpCodes.Stloc_S, 11), +0, 1,

@@ -17,7 +17,7 @@ namespace ModsOptionsAdjusted
 	[PatchClass]
 	static class ModOptionsAdjuster
 	{
-		static readonly Tuple<string, Type>[] optionTypes = new Tuple<string, Type>[]
+		static readonly Tuple<string, Type>[] optionTypes =
 		{
 			Tuple.Create("uGUI_ToggleOption",  typeof(AdjustToggleOption)),
 			Tuple.Create("uGUI_SliderOption",  typeof(AdjustSliderOption)),
@@ -25,8 +25,7 @@ namespace ModsOptionsAdjusted
 			Tuple.Create("uGUI_BindingOption", typeof(AdjustBindingOption))
 		};
 
-		[HarmonyPostfix]
-		[HarmonyPatch(typeof(uGUI_TabbedControlsPanel), "AddItem", new Type[] {typeof(int), typeof(GameObject)})]
+		[HarmonyPostfix, HarmonyPatch(typeof(uGUI_TabbedControlsPanel), "AddItem", new[] { typeof(int), typeof(GameObject) })]
 		static void _addItem(int tabIndex, GameObject __result)
 		{
 			if (__result == null || tabIndex != OptionsPanelInfo.modsTabIndex)

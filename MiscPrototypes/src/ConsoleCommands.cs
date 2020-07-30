@@ -1,32 +1,26 @@
-﻿using System;
+﻿using System.Text;
 using System.Collections;
-using System.Text;
 
 using Harmony;
 using UnityEngine;
 
 using Common;
-using Common.Reflection;
 
 namespace MiscPrototypes
 {
-	[HarmonyPatch(typeof(GameInput), "Initialize")] // just to create console commands object
+	[HarmonyPatch(typeof(GameInput), "Initialize")] // just to register console commands
 	static class GameInput_Awake_Patch_ConsoleCommands
 	{
-#pragma warning disable IDE0052
-		static GameObject go = null;
-#pragma warning restore
-		static void Postfix() => go ??= PersistentConsoleCommands.createGameObject<TestConsoleCommands>();
+		static void Postfix() => PersistentConsoleCommands.register<TestConsoleCommands>();
 	}
-
 
 	class TestConsoleCommands: PersistentConsoleCommands
 	{
-		void OnConsoleCommand_debug_gameinput(NotificationCenter.Notification n)
+		void debug_gameinput(bool enable = false)
 		{
 			StopAllCoroutines();
 
-			if (n.getArg<bool>(0))
+			if (enable)
 				StartCoroutine(_dbg());
 
 			static IEnumerator _dbg()
@@ -51,8 +45,7 @@ namespace MiscPrototypes
 			}
 		}
 
-
-		void OnConsoleCommand_debug_print_gameinput(NotificationCenter.Notification n)
+		void debug_print_gameinput()
 		{
 			var sb = new StringBuilder();
 			sb.AppendLine();

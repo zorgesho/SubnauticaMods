@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
-using Harmony;
 
+using Harmony;
+using UnityEngine;
 using SMLHelper.V2.Crafting;
 
 using Common;
@@ -11,77 +9,68 @@ using Common.Crafting;
 
 namespace MiscPrototypes
 {
-	using Object = UnityEngine.Object;
-
 	[HarmonyPatch(typeof(Charger), "Update")]
-	class Charger_Update_Patch
+	static class Charger_Update_Patch
 	{
 		static bool Prefix(Charger __instance)
 		{
-			if (!__instance.GetComponent<PowerCellChargerMy>())
+			if (!__instance.GetComponent<EmergencyPowerStation.Tag>())
 				return true;
 
-			if (true)
+			if (PowerSource.FindRelay(__instance.transform) is PowerRelay powerRelay0)
 			{
-				//__instance.sequence.Update();
-				//if (Time.deltaTime == 0f)
-				//	return false;
+				$"{powerRelay0.GetPower()} {powerRelay0.GetMaxPower()}".onScreen("power relay");
 
-				if (PowerSource.FindRelay(__instance.transform) is PowerRelay powerRelay0)
+				if (powerRelay0.GetPower() > Main.config.maxPowerOnBatteries + 10)
+					return true;
+
+				__instance.sequence.Update();
+
+				if (Time.deltaTime == 0f)
+					return false;
+
+				if (powerRelay0.GetPower() > Main.config.maxPowerOnBatteries)
+					return false;
+
+				bool active = false;
+
+				foreach (var slot in __instance.batteries)
 				{
-					$"{powerRelay0.GetPower()} {powerRelay0.GetMaxPower()}".onScreen("power relay");
+					var battery = slot.Value;
+					if (battery == null)
+						continue;
 
-					if (powerRelay0.GetPower() > Main.config.maxPowerOnBatteries + 10)
-						return true;
-					
-
-					__instance.sequence.Update();
-					if (Time.deltaTime == 0f)
-						return false;
-					
-					if (powerRelay0.GetPower() > Main.config.maxPowerOnBatteries)
-						return false;
-
-					bool active = false;
-
+					if (battery.charge > 0f)
 					{
-						foreach (KeyValuePair<string, IBattery> keyValuePair in __instance.batteries)
-						{
-							if (keyValuePair.Value is IBattery value)
-							{
-								if (value.charge > 0f)
-								{
-									float getPower = Math.Min(value.charge, DayNightCycle.main.deltaTime * __instance.chargeSpeed * value.capacity);
+						float getPower = Math.Min(battery.charge, DayNightCycle.main.deltaTime * __instance.chargeSpeed * battery.capacity);
 
-									$"{getPower} {DayNightCycle.main.deltaTime} {__instance.chargeSpeed}".log();
+						$"{getPower} {DayNightCycle.main.deltaTime} {__instance.chargeSpeed}".log();
 
-									value.charge -= getPower;
-									powerRelay0.AddEnergy(getPower, out float num4);
-									
-									active = true;
-								}
+						battery.charge -= getPower;
+						powerRelay0.AddEnergy(getPower, out float num4);
 
-								if (__instance.slots.TryGetValue(keyValuePair.Key, out Charger.SlotDefinition definition))
-									__instance.UpdateVisuals(definition, value.charge / value.capacity);
-							}
-						}
+						active = true;
 					}
-					__instance.ToggleUIPowered(active);
-					//__instance.ToggleChargeSound(charging);
 
-					if (__instance.player != null && (__instance.player.transform.position - __instance.transform.position).sqrMagnitude >= 16f)
+					if (__instance.slots.TryGetValue(slot.Key, out Charger.SlotDefinition definition))
+						__instance.UpdateVisuals(definition, battery.charge / battery.capacity);
+				}
+
+				__instance.ToggleUIPowered(active);
+				//__instance.ToggleChargeSound(charging);
+
+				if (__instance.player != null && (__instance.player.transform.position - __instance.transform.position).sqrMagnitude >= 16f)
+				{
+					__instance.player = null;
+					if (!__instance.HasChargables())
 					{
-						__instance.player = null;
-						if (!__instance.HasChargables())
-						{
-							__instance.opened = false;
-							__instance.OnClose();
-						}
+						__instance.opened = false;
+						__instance.OnClose();
 					}
 				}
-				return false;
 			}
-
+			return false;
+#if VANILLA_METHOD
 			bool charging = false;
 			if (true)
 			{
@@ -177,15 +166,14 @@ namespace MiscPrototypes
 			}
 
 			return false;
+#endif
 		}
 	}
 
-	class PowerCellChargerMy: MonoBehaviour
-	{
-	}	
-	
 	class EmergencyPowerStation: CraftableObject
 	{
+		public class Tag: MonoBehaviour {}
+
 		protected override TechData getTechData() => new TechData(new Ingredient(TechType.Titanium, 2));
 
 		public override void patch()
@@ -198,21 +186,15 @@ namespace MiscPrototypes
 
 		public override GameObject getGameObject()
 		{
-			GameObject prefab = Object.Instantiate(CraftData.GetPrefabForTechType(TechType.PowerCellCharger));
+			var prefab = CraftHelper.Utils.prefabCopy(TechType.PowerCellCharger);
+			prefab.AddComponent<Tag>();
 
-			PowerCellChargerMy pccmy = prefab.AddComponent<PowerCellChargerMy>();
-
-			PowerSource ps = prefab.AddComponent<PowerSource>();
-			ps.maxPower = 200;
-			ps.power = 0;
+			var powerSource = prefab.AddComponent<PowerSource>();
+			powerSource.maxPower = 200f;
+			powerSource.power = 0f;
 
 			prefab.GetComponent<Constructable>().techType = TechType;
-
-			//SkyApplier skyApplier = prefab.GetComponent<SkyApplier>();
-			//skyApplier.renderers = prefab.GetComponentsInChildren<Renderer>();
-			//skyApplier.anchorSky = Skies.Auto;
-
-			prefab.GetAllComponentsInChildren<SkinnedMeshRenderer>().forEach(rnd => rnd.material.color = new Color(1, 0, 0, 1));
+			prefab.GetComponentsInChildren<SkinnedMeshRenderer>().forEach(rend => rend.material.color = Color.red);
 
 			return prefab;
 		}

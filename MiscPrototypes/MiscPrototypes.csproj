@@ -100,7 +100,6 @@
     <None Include="src\BasePower.cs" />
     <None Include="src\ConsoleCommands.cs" />
     <None Include="src\EmergencyPowerStation.cs" />
-    <None Include="src\DebugPatches.cs" />
     <None Include="src\CraftFromStorages.cs" />
     <Compile Include="config.cs" />
     <Compile Include="main.cs" />

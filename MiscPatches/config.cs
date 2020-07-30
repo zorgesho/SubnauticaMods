@@ -32,6 +32,11 @@ namespace MiscPatches
 		public readonly float batteryChargerSpeed   = 0.0015f; // 0.0015f
 		public readonly float powerCellChargerSpeed = 0.0025f; // 0.0025f
 
+		[Field.Range(min: 0f)]
+		[Options.Field("Objects movement step", "Use <i>setmovetarget</i> and <i>moveobject</i> console commands for moving constructed objects")]
+		[Options.Choice("Moving is disabled", 0f, "0.01", 0.01f, "0.05", 0.05f, "0.1", 0.1f, "0.5", 0.5f, "1", 1f)]
+		public readonly float objectsMoveStep = 0.1f;
+
 		[Options.Field("First animations", "First use animations for tools and escape pod hatch cinematics")]
 		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 		public readonly bool firstAnimations = false;

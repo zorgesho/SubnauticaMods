@@ -104,7 +104,6 @@
     <None Include="src\ui\BulkCrafting.cs" />
     <None Include="src\ui\PingTabToggles.cs" />
     <None Include="src\ui\SelectTabsWithKeys.cs" />
-    <None Include="src\BuildPatches.cs" />
     <None Include="src\DebugPatches.cs" />
     <None Include="src\CraftFromStorages.cs" />
     <Compile Include="config.cs" />

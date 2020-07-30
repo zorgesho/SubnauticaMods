@@ -11,6 +11,8 @@ namespace UITweaks
 		{
 			HarmonyHelper.patchAll(true);
 			LanguageHelper.init();
+
+			PersistentConsoleCommands.register<ConsoleCommands>();
 		}
 	}
 }

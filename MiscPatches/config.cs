@@ -3,6 +3,7 @@ using Common.Configuration;
 
 namespace MiscPatches
 {
+	[Field.BindConsole("misc")]
 	class ModConfig: Config
 	{
 		[Options.Field("Gameplay patches", "Reload in order to apply")]
@@ -31,7 +32,10 @@ namespace MiscPatches
 		public readonly float batteryChargerSpeed   = 0.0015f; // 0.0015f
 		public readonly float powerCellChargerSpeed = 0.0025f; // 0.0025f
 
-		[Field.BindConsole("misc")]
+		[Options.Field("First animations", "First use animations for tools and escape pod hatch cinematics")]
+		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
+		public readonly bool firstAnimations = false;
+
 		public class Debug
 		{
 			public readonly bool buildAnywhere = true;
@@ -67,12 +71,12 @@ namespace MiscPatches
 				[Options.Hideable(typeof(Hider), "fast")]
 				public readonly bool loadEscapePod = false;
 
-				public readonly string[] commandsAfterLoad = new string[]
+				public readonly string[] commandsAfterLoad =
 				{
 				};
 			}
 			public readonly FastStart fastStart = new FastStart();
 		}
-		public Debug dbg = new Debug();
+		public readonly Debug dbg = new Debug();
 	}
 }

@@ -101,6 +101,23 @@ namespace MiscPatches
 		}
 	}
 
+	// disable tools first use animations
+	[OptionalPatch, HarmonyPatch(typeof(Player), "AddUsedTool")]
+	static class Player_AddUsedTool_Patch
+	{
+		static bool Prepare() => !Main.config.firstAnimations;
+		static bool Prefix(ref bool __result) => __result = false;
+	}
+
+	// disable escape pod hatch cinematics
+	[OptionalPatch, HarmonyPatch(typeof(EscapePod), "Awake")]
+	static class EscapePod_Awake_Patch
+	{
+		static bool Prepare() => !Main.config.firstAnimations;
+		static void Prefix(EscapePod __instance) => __instance.bottomHatchUsed = __instance.topHatchUsed = true;
+	}
+
+
 	// For adding propulsion/repulsion cannon immunity to some objects
 	// for now: <BrainCoral> <Drillable>
 	static class PropRepCannonImmunity

@@ -4,15 +4,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">dev</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{5322339C-9933-4FB2-A04A-495718A3F66B}</ProjectGuid>
+    <ProjectGuid>{C049D169-7634-404A-9121-0436A68FA319}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MiscPrototypes</RootNamespace>
-    <AssemblyName>MiscPrototypes</AssemblyName>
+    <RootNamespace>UITweaks</RootNamespace>
+    <AssemblyName>UITweaks</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'test_build|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -68,10 +67,6 @@
       <HintPath>..\.dependencies\Newtonsoft.Json.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="SMLHelper">
-      <HintPath>..\.dependencies\gameSN\SMLHelper.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="UnityEngine">
@@ -82,29 +77,15 @@
       <HintPath>..\.dependencies\UnityEngine.CoreModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="UnityEngine.InputLegacyModule">
-      <HintPath>..\.dependencies\UnityEngine.InputLegacyModule.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine.UI">
-      <HintPath>..\.dependencies\UnityEngine.UI.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine.UIModule">
-      <HintPath>..\.dependencies\UnityEngine.UIModule.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\TestConfig.cs" />
-    <None Include="src\BasePower.cs" />
-    <None Include="src\ConsoleCommands.cs" />
-    <None Include="src\EmergencyPowerStation.cs" />
-    <None Include="src\DebugPatches.cs" />
-    <None Include="src\CraftFromStorages.cs" />
     <Compile Include="config.cs" />
     <Compile Include="main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="src\BulkCrafting.cs" />
+    <None Include="src\UIDebugStuff.cs" />
+    <None Include="src\SelectTabsWithKeys.cs" />
+    <None Include="src\PingTabToggles.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="mod.json">
@@ -112,10 +93,8 @@
     </None>
   </ItemGroup>
   <ItemGroup />
-  <Import Project="..\Common\Common.projitems" Label="Shared" />
   <Import Project="..\Common\Common.Config\Common.Config.projitems" Label="Shared" />
-  <Import Project="..\Common\Common.CraftHelper\Common.CraftHelper.projitems" Label="Shared" />
-  <Import Project="..\Common\Common.Config.Options\Common.Config.Options.projitems" Label="Shared" />
+  <Import Project="..\Common\Common.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>$(SolutionDir)post-build.bat $(ConfigurationName) $(ProjectName) $(ProjectDir) $(TargetPath) $(TargetDir)</PostBuildEvent>

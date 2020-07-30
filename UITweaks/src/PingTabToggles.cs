@@ -1,11 +1,10 @@
-﻿using UnityEngine;
+﻿using Harmony;
+using UnityEngine;
 using UnityEngine.UI;
-using Harmony;
-
 
 using Common;
 
-namespace MiscPrototypes
+namespace UITweaks
 {
 	static class TestPingToggles
 	{
@@ -44,7 +43,7 @@ namespace MiscPrototypes
 			"LLL".onScreen();
 		}
 	}
-	
+
 	[HarmonyPatch(typeof(uGUI_PingTab), "SetEntriesVisibility")]
 	class Player_Update_Patchsdf
 	{

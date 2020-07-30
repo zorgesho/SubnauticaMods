@@ -1,18 +1,18 @@
-﻿using System.Collections.Generic;
-using System.Text;
+﻿using System.Text;
+using System.Collections.Generic;
 
 using Harmony;
 
 using Common;
 
-namespace MiscPrototypes
+namespace UITweaks
 {
 	[HarmonyPatch(typeof(TooltipFactory), "Recipe")]
 	static class TooltipFactory_Recipe_Patch
 	{
 		static void Prefix(TechType techType)
 		{
-			"RECIPTE".onScreen("REC");
+			"RECIPE".onScreen("REC");
 			CraftData.techData.TryGetValue(techType, out CraftData.TechData techData);
 
 			if (InputHelper.getMouseWheelValue() > 0)
@@ -31,7 +31,7 @@ namespace MiscPrototypes
 			//	techData._ingredients.Add(ScrapMetalSmall.TechType, smallScrapCount);
 		}
 
-		
+
 		static bool ___Prefix(TechType techType, bool locked, out string tooltipText, List<TooltipIcon> tooltipIcons)
 		{
 			TooltipFactory.Initialize();
@@ -57,7 +57,7 @@ namespace MiscPrototypes
 				TooltipFactory.WriteIngredients(techData, tooltipIcons);
 			}
 
-				
+
 			tooltipText = stringBuilder.ToString();
 			return false;
 		}

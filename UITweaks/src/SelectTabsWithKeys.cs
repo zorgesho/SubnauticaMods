@@ -1,12 +1,8 @@
-﻿using UnityEngine;
-using Harmony;
+﻿using Harmony;
+using UnityEngine;
 
-using Common;
-
-namespace MiscPrototypes
+namespace UITweaks
 {
-	using Debug = Common.Debug;
-
 	//[HarmonyPatch(typeof(Inventory), "ExecuteItemAction")]
 	//static class TooltipFactory_Recipe_Patchsdfsdf
 	//{
@@ -17,7 +13,7 @@ namespace MiscPrototypes
 
 	//	}
 	//}
-	
+
 	//[HarmonyPatch(typeof(QuickSlots), "Assign")]
 	//static class TooltipFactory_Recipe_Patchssdfsdfdfsdf
 	//{
@@ -28,7 +24,7 @@ namespace MiscPrototypes
 
 	//	}
 	//}
-	
+
 	//[HarmonyPatch(typeof(QuickSlots), "Bind")]
 	//static class TooltipFactory_Recipe_Patcsdfhssdfsdfdfsdf
 	//{
@@ -39,7 +35,7 @@ namespace MiscPrototypes
 
 	//	}
 	//}
-	
+
 	[HarmonyPatch(typeof(Player), "Update")]
 	static class TooltipFactorysdf_Recipe_Patcsdfhssdfsdfdfsdf
 	{
@@ -64,7 +60,7 @@ namespace MiscPrototypes
 
 			return false;
 		}
-		
+
 		public static void update()
 		{
 			if (uGUI_BuilderMenu.singleton.state)
@@ -80,8 +76,7 @@ namespace MiscPrototypes
 				if (Input.GetKeyDown(KeyCode.Alpha5))
 					uGUI_BuilderMenu.singleton.SetCurrentTab(4);
 			}
-			
-			
+
 			if (Input.GetKeyDown(KeyCode.Alpha1))
 			{
 				if (!checkPDA())
@@ -150,5 +145,4 @@ namespace MiscPrototypes
 			}
 		}
 	}
-
 }

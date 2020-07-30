@@ -1,0 +1,12 @@
+{
+  "Id": "UITweaks",
+  "DisplayName": "UI Tweaks",
+  "Author": "zorgesho",
+  "Version": "1.0.0",
+  "Dependencies": [],
+  "VersionDependencies": {},
+  "Enable": true,
+  "Game": "Subnautica",
+  "AssemblyName": "UITweaks.dll",
+  "EntryMethod": "UITweaks.Main.patch"
+}

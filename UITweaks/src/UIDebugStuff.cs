@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 
 using Harmony;
 using UnityEngine;
@@ -7,7 +6,7 @@ using UnityEngine.UI;
 
 using Common;
 
-namespace MiscPrototypes
+namespace UITweaks
 {
 	[HarmonyPatch(typeof(UWE.Utils), "UpdateCusorLockState")] // just to create GuiWatcher object
 	static class UpdateCusorLockState_Patch
@@ -17,8 +16,8 @@ namespace MiscPrototypes
 		{
 			if (!dbgObject)
 			{
-				dbgObject = PersistentConsoleCommands.createGameObject<ConsoleCommands>();
-				dbgObject.AddComponent<GuiWatcher>();
+				PersistentConsoleCommands.register<ConsoleCommands>();
+				dbgObject = UnityHelper.createPersistentGameObject<GuiWatcher>("UITweaks");
 			}
 			return false;
 		}

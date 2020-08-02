@@ -76,9 +76,9 @@ namespace Common.Reflection
 
 	static class TypeExtensions
 	{
-		static MethodInfo _method(this Type type, string name, Type[] types)
+		static MethodInfo _method(this Type type, string name, BindingFlags bf, Type[] types)
 		{
-			try { return types == null? type.GetMethod(name, ReflectionHelper.bfAll): type.GetMethod(name, ReflectionHelper.bfAll, null, types, null); }
+			try { return types == null? type.GetMethod(name, bf): type.GetMethod(name, bf, null, types, null); }
 			catch (AmbiguousMatchException)
 			{
 				$"Ambiguous method: {type.Name}.{name}".logError();
@@ -88,13 +88,13 @@ namespace Common.Reflection
 			return null;
 		}
 
-		public static MethodInfo method(this Type type, string name) => _method(type, name, null);
-		public static MethodInfo method(this Type type, string name, params Type[] types) => _method(type, name, types);
-		public static MethodInfo method<T>(this Type type, string name, params Type[] types) => _method(type, name, types)?.MakeGenericMethod(typeof(T));
+		public static MethodInfo method(this Type type, string name, BindingFlags bf = ReflectionHelper.bfAll) => _method(type, name, bf, null);
+		public static MethodInfo method(this Type type, string name, params Type[] types) => _method(type, name, ReflectionHelper.bfAll, types);
+		public static MethodInfo method<T>(this Type type, string name, params Type[] types) => _method(type, name, ReflectionHelper.bfAll, types)?.MakeGenericMethod(typeof(T));
 
-		public static EventInfo evnt(this Type type, string name) => type.GetEvent(name, ReflectionHelper.bfAll);
-		public static FieldInfo field(this Type type, string name) => type.GetField(name, ReflectionHelper.bfAll);
-		public static PropertyInfo property(this Type type, string name) => type.GetProperty(name, ReflectionHelper.bfAll);
+		public static EventInfo evnt(this Type type, string name, BindingFlags bf = ReflectionHelper.bfAll) => type.GetEvent(name, bf);
+		public static FieldInfo field(this Type type, string name, BindingFlags bf = ReflectionHelper.bfAll) => type.GetField(name, bf);
+		public static PropertyInfo property(this Type type, string name, BindingFlags bf = ReflectionHelper.bfAll) => type.GetProperty(name, bf);
 
 		public static FieldInfo[] fields(this Type type, BindingFlags bf = ReflectionHelper.bfAll) => type.GetFields(bf);
 		public static MethodInfo[] methods(this Type type, BindingFlags bf = ReflectionHelper.bfAll) => type.GetMethods(bf);

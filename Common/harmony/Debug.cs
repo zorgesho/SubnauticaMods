@@ -61,7 +61,7 @@ namespace Common.Harmony
 			{
 				var patchInfo = HarmonyHelper.getPatchInfo(method); // that's bottleneck
 
-				if (harmonyID != null && patchInfo.Owners.FirstOrDefault(id => id.ToLower().Contains(harmonyID)) == null)
+				if (harmonyID != null && !patchInfo.Owners.Any(id => id.ToLower().Contains(harmonyID)))
 					continue;
 
 				appendMethodInfo(method, patchInfo, sb, omitNames);

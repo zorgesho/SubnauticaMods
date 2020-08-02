@@ -21,12 +21,15 @@ namespace ConsoleImproved
 				$"Current patches:\r\n{PatchesReport.get(harmonyID)}".log();
 			}
 
-			public void pinpatches(string harmonyID, bool omitNames = false)
+			public void pinpatches(string harmonyID = null, bool omitNames = false)
 			{
-				const float refreshSecs = 0.5f;
+				const float refreshSecs = 1.0f;
 
 				StopAllCoroutines();
 				GameUtils.clearScreenMessages();
+
+				if (harmonyID == null)
+					return;
 
 				StartCoroutine(_printPatches(harmonyID, omitNames));
 

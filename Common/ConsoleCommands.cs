@@ -43,7 +43,13 @@ namespace Common
 		void Awake()
 		{
 			const BindingFlags bf = BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static;
-			GetType().methods(bf).forEach(method => addCommand(method));
+
+			var methods = GetType().methods(bf);
+
+			if (methods.Length == 0) // if there are no public methods, try declared private methods
+				methods = GetType().methods(bf | BindingFlags.NonPublic);
+
+			methods.forEach(method => addCommand(method));
 
 			commandProxy = gameObject.AddComponent(CommandProxy.create(this));
 

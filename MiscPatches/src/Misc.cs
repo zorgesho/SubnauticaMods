@@ -101,28 +101,27 @@ namespace MiscPatches
 		}
 	}
 
-	// disable tools first use animations
-	[OptionalPatch, HarmonyPatch(typeof(Player), "AddUsedTool")]
-	static class Player_AddUsedTool_Patch
+	// disable first use animations for tools and escape pod hatch cinematics
+	[OptionalPatch, PatchClass]
+	static class FirstAnimationsPatch
 	{
-		static bool Prepare() => !Main.config.firstAnimations;
-		static bool Prefix(ref bool __result) => __result = false;
-	}
+		static bool prepare() => !Main.config.firstAnimations;
 
-	// disable escape pod hatch cinematics
-	[OptionalPatch, HarmonyPatch(typeof(EscapePod), "Awake")]
-	static class EscapePod_Awake_Patch
-	{
-		static bool Prepare() => !Main.config.firstAnimations;
-		static void Prefix(EscapePod __instance) => __instance.bottomHatchUsed = __instance.topHatchUsed = true;
-	}
+		[HarmonyPrefix, HarmonyPatch(typeof(Player), "AddUsedTool")]
+		static bool Player_AddUsedTool_Prefix(ref bool __result) => __result = false;
 
+		[HarmonyPrefix, HarmonyPatch(typeof(EscapePod), "Awake")]
+		static void EscapePod_Awake_Prefix(EscapePod __instance) => __instance.bottomHatchUsed = __instance.topHatchUsed = true;
+	}
 
 	// For adding propulsion/repulsion cannon immunity to some objects
 	// for now: <BrainCoral> <Drillable>
+	[PatchClass]
 	static class PropRepCannonImmunity
 	{
 		class ImmuneToPropRepCannon: MonoBehaviour {}
+
+		static bool prepare() => Main.config.additionalPropRepImmunity;
 
 		static bool isObjectImmune(GameObject go)
 		{
@@ -138,71 +137,57 @@ namespace MiscPatches
 			return false;
 		}
 
-		[HarmonyPatch(typeof(PropulsionCannon), "ValidateNewObject")]
-		static class PropulsionCannon_ValidateNewObject_Patch
+		[HarmonyPrefix, HarmonyPatch(typeof(PropulsionCannon), "ValidateNewObject")]
+		static bool PropulsionCannon_ValidateNewObject_Prefix(GameObject go, ref bool __result) =>
+			__result = !isObjectImmune(go);
+
+		[HarmonyTranspiler, HarmonyPatch(typeof(RepulsionCannon), "OnToolUseAnim")]
+		static IEnumerable<CodeInstruction> RepulsionCannon_OnToolUseAnim_Transpiler(IEnumerable<CodeInstruction> cins)
 		{
-			static bool Prepare() => Main.config.additionalPropRepImmunity;
-			static bool Prefix(GameObject go, ref bool __result) => __result = !isObjectImmune(go);
-		}
+			var list = cins.ToList();
 
-		[HarmonyPatch(typeof(RepulsionCannon), "OnToolUseAnim")]
-		static class RepulsionCannon_OnToolUseAnim_Patch
-		{
-			static bool Prepare() => Main.config.additionalPropRepImmunity;
+			int indexForInject = list.FindIndex(ci => ci.isOp(OpCodes.Brfalse)) + 5;
+			int indexForJump   = list.FindIndex(indexForInject, ci => ci.isOp(OpCodes.Brfalse));
 
-			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins)
-			{
-				var list = cins.ToList();
+			Common.Debug.assert(indexForInject >= 5 && indexForJump != -1);
 
-				int indexForInject = list.FindIndex(ci => ci.isOp(OpCodes.Brfalse)) + 5;
-				int indexForJump   = list.FindIndex(indexForInject, ci => ci.isOp(OpCodes.Brfalse));
+			CIHelper.ciInsert(list, indexForInject,
+				OpCodes.Ldloc_S, 11,
+				CIHelper.emitCall<Func<GameObject, bool>>(isObjectImmune),
+				OpCodes.Brtrue, list[indexForJump].operand);
 
-				Common.Debug.assert(indexForInject >= 5 && indexForJump != -1);
-
-				CIHelper.ciInsert(list, indexForInject,
-					OpCodes.Ldloc_S, 11,
-					CIHelper.emitCall<Func<GameObject, bool>>(isObjectImmune),
-					OpCodes.Brtrue, list[indexForJump].operand);
-
-				return list;
-			}
+			return list;
 		}
 	}
 
-
+	[PatchClass]
 	static class ChangeChargersSpeed
 	{
+		static bool prepare() => Main.config.changeChargersSpeed;
+
+		[HarmonyPostfix, HarmonyPatch(typeof(BatteryCharger), "Initialize")] // BatteryCharger speed
+		static void BatteryCharger_Initialize_Postfix(Charger __instance)
+		{
+			__instance.chargeSpeed = Main.config.batteryChargerSpeed * (Main.config.chargersAbsoluteSpeed? 100f: 1f);
+		}
+
+		[HarmonyPostfix, HarmonyPatch(typeof(PowerCellCharger), "Initialize")] // PowerCellCharger speed
+		static void PowerCellCharger_Initialize_Postfix(Charger __instance)
+		{
+			__instance.chargeSpeed = Main.config.powerCellChargerSpeed * (Main.config.chargersAbsoluteSpeed? 200f: 1f);
+		}
+
 		// chargers speed is not linked to battery capacity
 		[HarmonyPatch(typeof(Charger), "Update")]
 		static class Charger_Update_Patch
 		{
-			static bool Prepare() => Main.config.changeChargersSpeed && Main.config.chargersAbsoluteSpeed;
+			static bool Prepare() => prepare() && Main.config.chargersAbsoluteSpeed;
 
 			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins)
 			{
 				FieldInfo chargeSpeed = typeof(Charger).field("chargeSpeed");
 				return CIHelper.ciRemove(cins, ci => ci.isOp(OpCodes.Ldfld, chargeSpeed), +2, 2); // remove "*capacity"
 			}
-		}
-
-		// BatteryCharger speed
-		[HarmonyPatch(typeof(BatteryCharger), "Initialize")]
-		static class BatteryCharger_Initialize_Patch
-		{
-			static bool Prepare() => Main.config.changeChargersSpeed;
-
-			static void Postfix(Charger __instance) =>
-				__instance.chargeSpeed = Main.config.batteryChargerSpeed * (Main.config.chargersAbsoluteSpeed? 100f: 1f);
-		}
-
-		// PowerCellCharger speed
-		[HarmonyPatch(typeof(PowerCellCharger), "Initialize")]
-		static class PowerCellCharger_Initialize_Patch
-		{
-			static bool Prepare() => Main.config.changeChargersSpeed;
-
-			static void Postfix(Charger __instance) =>
-				__instance.chargeSpeed = Main.config.powerCellChargerSpeed * (Main.config.chargersAbsoluteSpeed? 200f: 1f);
 		}
 	}
 

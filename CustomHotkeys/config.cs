@@ -17,22 +17,13 @@ namespace CustomHotkeys
 		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 		public readonly bool enableDevToolsHotkeys = !Mod.isDevBuild;
 
-		class FeedbackEnabler: Field.IAction
-		{
-			public void action()
-			{
-				if (uGUI_FeedbackCollector.main)
-					uGUI_FeedbackCollector.main.enabled = Main.config.enableFeedback;
-			}
-		}
-
 		class OnlyInMainMenu: Options.Components.Hider.IVisibilityChecker
 		{ public bool visible => Options.mode == Options.Mode.MainMenu; }
 
 		[Options.Field("Enable feedback collector", "Use <b>F8</b> to show feedback collector")]
 		[Options.Hideable(typeof(OnlyInMainMenu))]
-		[Options.FinalizeAction(typeof(FeedbackEnabler))]
 		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
+		[Options.FinalizeAction(typeof(FeedbackCollectorPatch.SettingChanged))]
 		public readonly bool enableFeedback = !Mod.isDevBuild;
 
 		public readonly bool easyBindRemove = true;

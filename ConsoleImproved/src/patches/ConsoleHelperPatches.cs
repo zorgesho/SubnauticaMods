@@ -9,34 +9,26 @@ namespace ConsoleImproved
 {
 	static partial class ConsoleHelper
 	{
-		// patch for full history in console
-		[HarmonyPatch(typeof(ConsoleInput), "Validate")]
-		static class ConsoleInput_Validate_Patch
+		[PatchClass]
+		static class Patches
 		{
-			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins) =>
+			// patch for full history in console
+			[HarmonyTranspiler, HarmonyPatch(typeof(ConsoleInput), "Validate")]
+			static IEnumerable<CodeInstruction> ConsoleInput_Validate_Transpiler(IEnumerable<CodeInstruction> cins) =>
 				CIHelper.ciRemove(cins, 0, 5); // remove first line "this.historyIndex = this.history.Count;"
-		}
 
-		[HarmonyPatch(typeof(DevConsole), "Awake")]
-		static class DevConsole_Awake_Patch
-		{
-			static void Postfix()
+			[HarmonyPostfix, HarmonyPatch(typeof(DevConsole), "Awake")]
+			static void DevConsole_Awake_Postfix()
 			{
 				init();
 				loadHistory();
 			}
-		}
 
-		[HarmonyPatch(typeof(DevConsole), "OnDisable")]
-		static class DevConsole_OnDisable_Patch
-		{
-			static void Postfix() => saveHistory();
-		}
+			[HarmonyPostfix, HarmonyPatch(typeof(DevConsole), "OnDisable")]
+			static void DevConsole_OnDisable_Postfix() => saveHistory();
 
-		[HarmonyPatch(typeof(ConsoleInput), "KeyPressedOverride")]
-		static class ConsoleInput_KeyPressedOverride_Patch
-		{
-			static bool Prefix(ConsoleInput __instance, ref bool __result)
+			[HarmonyPrefix, HarmonyPatch(typeof(ConsoleInput), "KeyPressedOverride")]
+			static bool ConsoleInput_KeyPressedOverride_Prefix(ConsoleInput __instance, ref bool __result)
 			{
 				KeyCode keyCode = __instance.processingEvent.keyCode;
 

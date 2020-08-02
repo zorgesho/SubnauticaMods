@@ -25,7 +25,7 @@ namespace Common
 
 			if (File.Exists(bundlePath))
 			{
-				MethodWrapper loadBundle = Type.GetType("UnityEngine.AssetBundle, UnityEngine.AssetBundleModule").method("LoadFromFile", new[] { typeof(string) }).wrap();
+				MethodWrapper loadBundle = Type.GetType("UnityEngine.AssetBundle, UnityEngine.AssetBundleModule").method("LoadFromFile", typeof(string)).wrap();
 				assetBundle = loadBundle.invoke(bundlePath);
 			}
 		}
@@ -37,7 +37,7 @@ namespace Common
 			if (assetBundle == null)
 				return null;
 
-			_loadAsset ??= Type.GetType("UnityEngine.AssetBundle, UnityEngine.AssetBundleModule").method("LoadAsset", new[] { typeof(string), typeof(Type) }).wrap();
+			_loadAsset ??= Type.GetType("UnityEngine.AssetBundle, UnityEngine.AssetBundleModule").method("LoadAsset", typeof(string), typeof(Type)).wrap();
 			return _loadAsset.invoke(assetBundle, name, typeof(T)) as T;
 		}
 

@@ -9,7 +9,7 @@ namespace PrawnSuitSettings
 
 		public static void patch()
 		{
-			HarmonyHelper.patchAll();
+			HarmonyHelper.patchAll(true);
 
 			if (config.armsEnergyUsage.enabled)
 				ArmsEnergyUsage.refresh();

@@ -10,8 +10,11 @@ using Common.Configuration;
 
 namespace GravTrapImproved
 {
+	[PatchClass]
 	static class GravTrapMK2Patches
 	{
+		static bool prepare() => Main.config.mk2Enabled;
+
 		public static void updateRange(Gravsphere gravsphere)
 		{
 			if (!gravsphere.GetComponent<GravTrapMK2.Tag>())

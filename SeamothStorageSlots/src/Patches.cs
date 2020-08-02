@@ -9,9 +9,12 @@ using Common.Harmony;
 
 namespace SeamothStorageSlots
 {
+	[PatchClass]
 	static class SeamothStorageInputPatches
 	{
-		// substitute call for 'this.seamoth.GetStorageInSlot()' with method above
+		static bool prepare() => Main.config.slotsOffset > 0;
+
+		// substitute call for 'this.seamoth.GetStorageInSlot()'
 		static IEnumerable<CodeInstruction> substSlotGetter(IEnumerable<CodeInstruction> cins)
 		{
 			static ItemsContainer _getStorageInSlot(Vehicle vehicle, int slotID, TechType techType) =>
@@ -21,19 +24,11 @@ namespace SeamothStorageSlots
 				CIHelper.emitCall<Func<Vehicle, int, TechType, ItemsContainer>>(_getStorageInSlot));
 		}
 
-		[HarmonyPatch(typeof(SeamothStorageInput), "OpenPDA")]
-		static class OpenPDA_Patch
-		{
-			static bool Prepare() => Main.config.slotsOffset > 0;
-			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins) => substSlotGetter(cins);
-		}
+		[HarmonyTranspiler, HarmonyPatch(typeof(SeamothStorageInput), "OpenPDA")]
+		static IEnumerable<CodeInstruction> OpenPDA_Patch(IEnumerable<CodeInstruction> cins) => substSlotGetter(cins);
 
-		[HarmonyPatch(typeof(SeamothStorageInput), "OnHandClick")]
-		static class OnHandClick_Patch
-		{
-			static bool Prepare() => Main.config.slotsOffset > 0;
-			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins) => substSlotGetter(cins);
-		}
+		[HarmonyTranspiler, HarmonyPatch(typeof(SeamothStorageInput), "OnHandClick")]
+		static IEnumerable<CodeInstruction> OnHandClick_Patch(IEnumerable<CodeInstruction> cins) => substSlotGetter(cins);
 	}
 
 

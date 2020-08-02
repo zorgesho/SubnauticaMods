@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 
 using UnityEngine;
+
 using Common;
 
 namespace TrfHabitatBuilder
@@ -144,7 +145,7 @@ namespace TrfHabitatBuilder
 				terF_use_open_panel_loop,
 			};
 
-			static readonly Info[] animInfo = new Info[]
+			static readonly Info[] animInfo =
 			{
 				new Info(1f),	// terF_idle
 				new Info(3f),	// terF_panels_up
@@ -154,7 +155,7 @@ namespace TrfHabitatBuilder
 				new Info(Main.config.slowLoopAnim? 0.5f: 1f) // terF_use_open_panel_loop
 			};
 
-			static Dictionary<int, float> animSpeeds = null;
+			static Dictionary<int, float> animSpeeds;
 
 			public static int   getAnimHash(Anim anim) => animInfo[(int)anim].hash;
 			public static float getAnimSpeed(int hash) => animSpeeds.TryGetValue(hash, out float speed)? speed: 1.0f;
@@ -164,7 +165,7 @@ namespace TrfHabitatBuilder
 				if (animSpeeds != null)
 					return;
 
-				animSpeeds =  new Dictionary<int, float>();
+				animSpeeds = new Dictionary<int, float>();
 
 				foreach (Anim anim in Enum.GetValues(typeof(Anim)))
 				{

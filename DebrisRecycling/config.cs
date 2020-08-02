@@ -16,6 +16,18 @@ namespace DebrisRecycling
 		public const string ids_smallScrapName = "Small piece of salvage";
 		public const string ids_restartGame = "<color=yellow>Restart the game to apply changes.</color>";
 
+		public const string ids_hotkeyEnableHint =
+			"Allows to mark most of the objects as salvageab-\nle debris.\n" +
+			"To mark an object point the <b>Habitat Builder</b> to it and press the corresponding hotkey.\n" +
+			"Deconstructing some of the objects can cause various bugs. <color=yellow>Use at your own risk!</color>";
+
+		public const string ids_permHotkeyHint =
+			"Press to add an object to the <b>permanent</b> custom list in the <b>" + Main.prefabsConfigName + "</b>.";
+
+		public const string ids_tempHotkeyHint =
+			"Press to add an object to the <b>temporary</b> custom list in the <b>" + Main.prefabsConfigName + "</b> " +
+			"(cleared at the beginning of each game session).";
+
 		public static string ids_salvageableDebris = "Salvageable debris";
 		public static string ids_tryMoveObject = "Try to move object"; // probably not used very often
 		public static string ids_customDebrisAdded = "<color=#adf8ffff><b>{0}</b></color> is added as salvageable debris";
@@ -51,22 +63,16 @@ namespace DebrisRecycling
 			class HotKeysHider: Options.Components.Hider.Simple
 			{ public HotKeysHider(): base("hotkeys", () => Main.config.customObjects.addToOptionsMenu && Main.config.customObjects.hotkeysEnabled) {} }
 
-			[Options.Field("Allow to add custom debris",
-								"Allows to mark most of the objects as salvageab-\nle debris.\n" +
-								"To mark an object point the <b>Habitat Builder</b> to it and press the corresponding hotkey.\n" +
-								"Deconstructing some of the objects can cause various bugs. <color=yellow>Use at your own risk!</color>")]
+			[Options.Field("Allow to add custom debris", L10n.ids_hotkeyEnableHint)]
 			[Options.Hideable(typeof(Hider))]
 			[Field.Action(typeof(HotKeysHider))]
 			public readonly bool hotkeysEnabled = false;
 
-			[Options.Field("\tMark object as debris",
-								"Press to add an object to the <b>permanent</b> custom list in the <b>" + Main.prefabsConfigName + "</b>.")]
+			[Options.Field("\tMark object as debris", L10n.ids_permHotkeyHint)]
 			[Options.Hideable(typeof(HotKeysHider), "hotkeys")]
 			public readonly KeyCode hotkey = KeyCode.PageUp;
 
-			[Options.Field("\tMark object as debris (temp.)",
-								"Press to add an object to the <b>temporary</b> custom list in the <b>" + Main.prefabsConfigName + "</b> " +
-								"(cleared at the beginning of each game session).")]
+			[Options.Field("\tMark object as debris (temp.)", L10n.ids_tempHotkeyHint)]
 			[Options.Hideable(typeof(HotKeysHider), "hotkeys")]
 			public readonly KeyCode hotkeyTemp = KeyCode.PageDown;
 		}
@@ -172,7 +178,7 @@ namespace DebrisRecycling
 			_updateTo110();
 		}
 
-		[AddPrefabList(Mod.isDevBuild? "<color=#a0a0a0ff>debrisCargoOpened</color>": null)]
+		[AddPrefabList(Mod.isDevBuild? "<color=#a0a0a0>debrisCargoOpened</color>": null)]
 		public readonly PrefabList dbsCargoOpened = new PrefabList(true, new Dictionary<string, int>()
 		{
 			{"Starship_cargo_opened.c390fcfc-3bf4-470a-93bf-39dafb8b2267", 2},
@@ -183,7 +189,7 @@ namespace DebrisRecycling
 			{"Starship_cargo_damaged_opened_large_02.fb2886c4-7e03-4a47-a122-dc7242e7de5b", 10},
 		});
 
-		[AddPrefabList(Mod.isDevBuild? "<color=#a0a0a0ff>debrisMiscMovable</color>": null)]
+		[AddPrefabList(Mod.isDevBuild? "<color=#a0a0a0>debrisMiscMovable</color>": null)]
 		public readonly PrefabList dbsMiscMovable = new PrefabList(true, new Dictionary<string, int>()
 		{
 			{"Starship_exploded_debris_01.5cd34124-935f-4628-b694-a266bc2f5517", 11},
@@ -233,7 +239,7 @@ namespace DebrisRecycling
 			{"Bench_deco.2e9b9389-cfa3-45b1-aee8-ea66b90e841d", 10},
 		});
 
-		[AddPrefabList(Mod.isDevBuild? "<color=#a0a0a0ff>debrisTech</color>": null)]
+		[AddPrefabList(Mod.isDevBuild? "<color=#a0a0a0>debrisTech</color>": null)]
 		public readonly PrefabList dbsTech = new PrefabList(false, new Dictionary<string, int>()
 		{
 			{"tech_light_deco.8ce870ba-b559-45d7-9c10-a5477967db24", 2},				// special processing
@@ -246,7 +252,7 @@ namespace DebrisRecycling
 		});
 
 #if DEBUG
-		[AddPrefabList("<color=#a0a0a0ff>debrisStatic</color>")]
+		[AddPrefabList("<color=#a0a0a0>debrisStatic</color>")]
 		public readonly PrefabList dbsStatic = new PrefabList(false, new Dictionary<string, int>()
 		{
 			{"Starship_exploded_debris_25.a5f0e345-1e46-410f-8bf1-eeeed3e5a126", 10},
@@ -299,7 +305,7 @@ namespace DebrisRecycling
 
 			try
 			{
-				foreach (var name in new string[] {"CargoOpened", "MiscMovable", "Lockers", "Tech", "CargoClosed", "Furniture"})
+				foreach (var name in new[] { "CargoOpened", "MiscMovable", "Lockers", "Tech", "CargoClosed", "Furniture" })
 				{
 					var oldList = this.getFieldValue<Dictionary<string, int>>("debris" + name);
 					var newList = this.getFieldValue<PrefabList>("dbs" + name);
@@ -313,12 +319,12 @@ namespace DebrisRecycling
 		}
 
 #pragma warning disable IDE0044, IDE0052
-		[Field.LoadOnly, NoInnerFieldsAttrProcessing] Dictionary<string, int> debrisCargoOpened = new Dictionary<string, int>();
-		[Field.LoadOnly, NoInnerFieldsAttrProcessing] Dictionary<string, int> debrisMiscMovable = new Dictionary<string, int>();
-		[Field.LoadOnly, NoInnerFieldsAttrProcessing] Dictionary<string, int> debrisLockers	 = new Dictionary<string, int>();
-		[Field.LoadOnly, NoInnerFieldsAttrProcessing] Dictionary<string, int> debrisTech		 = new Dictionary<string, int>();
-		[Field.LoadOnly, NoInnerFieldsAttrProcessing] Dictionary<string, int> debrisCargoClosed = new Dictionary<string, int>();
-		[Field.LoadOnly, NoInnerFieldsAttrProcessing] Dictionary<string, int> debrisFurniture	 = new Dictionary<string, int>();
+		[Field.LoadOnly, NoInnerFieldsAttrProcessing] Dictionary<string, int> debrisCargoOpened	= new Dictionary<string, int>();
+		[Field.LoadOnly, NoInnerFieldsAttrProcessing] Dictionary<string, int> debrisMiscMovable	= new Dictionary<string, int>();
+		[Field.LoadOnly, NoInnerFieldsAttrProcessing] Dictionary<string, int> debrisLockers		= new Dictionary<string, int>();
+		[Field.LoadOnly, NoInnerFieldsAttrProcessing] Dictionary<string, int> debrisTech		= new Dictionary<string, int>();
+		[Field.LoadOnly, NoInnerFieldsAttrProcessing] Dictionary<string, int> debrisCargoClosed	= new Dictionary<string, int>();
+		[Field.LoadOnly, NoInnerFieldsAttrProcessing] Dictionary<string, int> debrisFurniture	= new Dictionary<string, int>();
 #pragma warning restore
 		#endregion
 	}

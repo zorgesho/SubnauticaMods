@@ -15,7 +15,6 @@ namespace PrawnSuitSettings
 			public void action() => Object.FindObjectsOfType<Exosuit>()?.forEach(ex => refresh(ex));
 		}
 
-
 		static void refresh(Exosuit exosuit)
 		{
 			if (exosuit == null)
@@ -33,22 +32,16 @@ namespace PrawnSuitSettings
 			$"CollisionSelfDamage: {damage.mirroredSelfDamage} {damage.speedMinimumForSelfDamage} {damage.mirroredSelfDamageFraction}".logDbg();
 		}
 
-
-		[OptionalPatch, HarmonyPatch(typeof(Exosuit), "Start")]
-		static class Exosuit_Start_Patch
+		[OptionalPatch, PatchClass]
+		static class Patches
 		{
-			static bool Prepare() => Main.config.collisionSelfDamage.enabled;
+			static bool prepare() => Main.config.collisionSelfDamage.enabled;
 
-			static void Postfix(Exosuit __instance) => refresh(__instance);
-		}
+			[HarmonyPostfix, HarmonyPatch(typeof(Exosuit), "Start")]
+			static void Exosuit_Start_Postfix(Exosuit __instance) => refresh(__instance);
 
-
-		[OptionalPatch, HarmonyPatch(typeof(Exosuit), "OnUpgradeModuleChange")]
-		static class Exosuit_OnUpgradeModuleChange_Patch
-		{
-			static bool Prepare() => Main.config.collisionSelfDamage.enabled;
-
-			static void Postfix(Exosuit __instance, TechType techType)
+			[HarmonyPostfix, HarmonyPatch(typeof(Exosuit), "OnUpgradeModuleChange")]
+			static void Exosuit_OnUpgradeModuleChange_Postfix(Exosuit __instance, TechType techType)
 			{
 				if (techType == TechType.VehicleArmorPlating)
 					refresh(__instance);

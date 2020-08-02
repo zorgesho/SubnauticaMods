@@ -15,7 +15,6 @@ namespace PrawnSuitSettings
 			public void action() => refresh();
 		}
 
-
 		public static void refresh()
 		{																													$"ArmsEnergyUsage: {Main.config.armsEnergyUsage.enabled}".logDbg();
 			float grapplingArmEnergyCost = Main.config.armsEnergyUsage.enabled? Main.config.armsEnergyUsage.grapplingArmShoot: 0f;
@@ -29,38 +28,31 @@ namespace PrawnSuitSettings
 			CraftData.energyCost[TechType.ExosuitClawArmModule] = Main.config.armsEnergyUsage.enabled? Main.config.armsEnergyUsage.clawArm: 0.1f;
 		}
 
-
 		static bool consumeArmEnergy(MonoBehaviour exosuitArm, float energyPerSec)
 		{																				$"ArmsEnergyUsage: trying to consume {energyPerSec} energy for {exosuitArm}".logDbg();
 			return exosuitArm.GetComponentInParent<Exosuit>().ConsumeEnergy(energyPerSec * Time.deltaTime);
 		}
 
-		// Energy usage for drill arm
-		[OptionalPatch, HarmonyPatch(typeof(ExosuitDrillArm), "IExosuitArm.Update")]
-		static class ExosuitDrillArm_Update_Patch
+		[OptionalPatch, PatchClass]
+		static class Patches
 		{
-			static bool Prepare() => Main.config.armsEnergyUsage.enabled;
+			static bool prepare() => Main.config.armsEnergyUsage.enabled;
 
-			static void Postfix(ExosuitDrillArm __instance)
+			[HarmonyPostfix, HarmonyPatch(typeof(ExosuitDrillArm), "IExosuitArm.Update")] // energy usage for drill arm
+			static void ExosuitDrillArm_Update_Postfix(ExosuitDrillArm __instance)
 			{
 				if (__instance.drilling && !consumeArmEnergy(__instance, Main.config.armsEnergyUsage.drillArm))
 				{
-					__instance.gameObject.GetComponent<PrawnSuitDrillArmToggle>()?.setUsingArm(false);
+					__instance.gameObject.GetComponent<ToggleableDrillArmPatch.ArmToggle>()?.setUsingArm(false);
 					(__instance as IExosuitArm).OnUseUp(out _);
 				}
 			}
-		}
 
-		// Energy usage for grappling arm
-		[OptionalPatch, HarmonyPatch(typeof(ExosuitGrapplingArm), "FixedUpdate")]
-		static class ExosuitGrapplingArm_FixedUpdate_Patch
-		{
-			const float sqrMagnitudeGrapplingArm = 16f; // if hook attached and its sqr length less than that, then don't consume power
-
-			static bool Prepare() => Main.config.armsEnergyUsage.enabled;
-
-			static void Postfix(ExosuitGrapplingArm __instance)
+			[HarmonyPostfix, HarmonyPatch(typeof(ExosuitGrapplingArm), "FixedUpdate")] // energy usage for grappling arm
+			static void ExosuitGrapplingArm_FixedUpdate_Postfix(ExosuitGrapplingArm __instance)
 			{
+				const float sqrMagnitudeGrapplingArm = 16f; // if hook attached and its sqr length less than that, then don't consume power
+
 				if (__instance.hook.attached && (__instance.hook.transform.position - __instance.front.position).sqrMagnitude > sqrMagnitudeGrapplingArm)
 					if (!consumeArmEnergy(__instance, Main.config.armsEnergyUsage.grapplingArmPull))
 						(__instance as IExosuitArm).OnUseUp(out _);

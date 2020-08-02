@@ -9,7 +9,7 @@ namespace WarningsDisabler
 
 		public static void patch()
 		{
-			HarmonyHelper.patchAll();
+			HarmonyHelper.patchAll(true);
 			LanguageHelper.init();
 		}
 	}

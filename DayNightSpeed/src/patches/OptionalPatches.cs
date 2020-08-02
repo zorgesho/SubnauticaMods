@@ -24,6 +24,7 @@ namespace DayNightSpeed
 	}
 
 	// modifying creature grow and breed time (breed time is half of grow time)
+	[OptionalPatch, PatchClass]
 	static class WaterParkCreaturePatches
 	{
 		static bool prepare() => Main.config.useAuxSpeeds && Main.config.speedCreaturesGrow != 1.0f;
@@ -36,38 +37,25 @@ namespace DayNightSpeed
 				_codeForCfgVar(nameof(ModConfig.speedCreaturesGrow)), OpCodes.Div);
 		}
 
-		[OptionalPatch, HarmonyPatch(typeof(WaterParkCreature), "Update")]
-		static class Update_Patch
-		{
-			static bool Prepare() => prepare();
-			static CIEnumerable Transpiler(CIEnumerable cins) => transpiler(cins);
-		}
+		[HarmonyTranspiler, HarmonyPatch(typeof(WaterParkCreature), "Update")]
+		static CIEnumerable WPC_Update_Transpiler(CIEnumerable cins) => transpiler(cins);
 
-		[OptionalPatch, HarmonyPatch(typeof(WaterParkCreature), "SetMatureTime")]
-		static class SetMatureTime_Patch
-		{
-			static bool Prepare() => prepare();
-			static CIEnumerable Transpiler(CIEnumerable cins) => transpiler(cins);
-		}
+		[HarmonyTranspiler, HarmonyPatch(typeof(WaterParkCreature), "SetMatureTime")]
+		static CIEnumerable WPC_SetMatureTime_Transpiler(CIEnumerable cins) => transpiler(cins);
 	}
 
-	// modifying plants grow time
-	[OptionalPatch, HarmonyPatch(typeof(GrowingPlant), "GetGrowthDuration")]
-	static class GrowingPlant_GetGrowthDuration_Patch
+	// modifying plants grow time and fruits grow time (on lantern tree)
+	[OptionalPatch, PatchClass]
+	static class PlantsGrowPatch
 	{
-		static bool Prepare() => Main.config.useAuxSpeeds && Main.config.speedPlantsGrow != 1.0f;
+		static bool prepare() => Main.config.useAuxSpeeds && Main.config.speedPlantsGrow != 1.0f;
 
-		static CIEnumerable Transpiler(CIEnumerable cins) =>
+		[HarmonyTranspiler, HarmonyPatch(typeof(GrowingPlant), "GetGrowthDuration")]
+		static CIEnumerable GrowingPlant_GetGrowthDuration_Transpiler(CIEnumerable cins) =>
 			ciInsert(cins, ci => ci.isLDC(1f), _codeForCfgVar(nameof(ModConfig.speedPlantsGrow)), OpCodes.Div);
-	}
 
-	// modifying fruits grow time (on lantern tree)
-	[OptionalPatch, HarmonyPatch(typeof(FruitPlant), "Initialize")]
-	static class FruitPlant_Initialize_Patch
-	{
-		static bool Prepare() => Main.config.useAuxSpeeds && Main.config.speedPlantsGrow != 1.0f;
-
-		static void Prefix(FruitPlant __instance) // don't want to use another transpilers here
+		[HarmonyPrefix, HarmonyPatch(typeof(FruitPlant), "Initialize")]
+		static void FruitPlant_Initialize_Prefix(FruitPlant __instance) // don't want to use another transpilers here
 		{
 			if (!__instance.initialized)
 				__instance.fruitSpawnInterval /= Main.config.speedPlantsGrow;
@@ -93,9 +81,11 @@ namespace DayNightSpeed
 
 
 #if DEBUG
-	[PatchClass]
+	[OptionalPatch, PatchClass]
 	static class DebugPatches
 	{
+		static bool prepare() => Main.config.dbgCfg.enabled;
+
 		[HarmonyPrefix, HarmonyPatch(typeof(Bed), "GetCanSleep")]
 		static bool Bed_GetCanSleep_Prefix(ref bool __result)
 		{

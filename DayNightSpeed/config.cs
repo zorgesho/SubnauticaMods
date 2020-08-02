@@ -376,8 +376,17 @@ namespace DayNightSpeed
 
 		#region debug config
 #if DEBUG
+		[Options.Field]
+		[Options.Hideable(typeof(Hider), "dbg")]
 		public class DbgCfg
 		{
+			class Hider: Options.Components.Hider.Simple { public Hider(): base("dbg", () => Main.config.dbgCfg.enabled) {} }
+
+			[Field.Action(typeof(Hider))]
+			[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
+			[Options.Hideable(typeof(Options.Components.Hider.Ignore), "")]
+			public readonly bool enabled = false;
+
 			public readonly bool showGoals = false;
 			public readonly bool showSurvivalStats = false;
 			public readonly bool showToggleLightStats = false;

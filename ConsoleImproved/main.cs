@@ -9,7 +9,7 @@ namespace ConsoleImproved
 
 		public static void patch()
 		{
-			HarmonyHelper.patchAll();
+			HarmonyHelper.patchAll(true);
 			LanguageHelper.init();
 
 			if (config.fixVanillaCommandsFloatParse)

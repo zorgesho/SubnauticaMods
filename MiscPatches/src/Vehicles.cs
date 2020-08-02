@@ -37,46 +37,46 @@ namespace MiscPatches
 			}));
 	}
 
+
+	[PatchClass]
 	static class PrawnSuitLightsToggle // mostly from RandyKnapp's PrawnSuitLightSwitch mod
 	{
-		[HarmonyPatch(typeof(Exosuit), "Awake")]
-		static class Exosuit_Awake_Patch
+		static bool prepare() => Main.config.gameplayPatches;
+
+		[HarmonyPostfix, HarmonyPatch(typeof(Exosuit), "Awake")]
+		static void Exosuit_Awake_Postfix(Exosuit __instance)
 		{
-			static bool Prepare() => Main.config.gameplayPatches;
+			var toggleLights = __instance.gameObject.ensureComponent<ToggleLights>();
+			var toggleLightsPrefab = Resources.Load<GameObject>("WorldEntities/Tools/SeaMoth").GetComponent<SeaMoth>().toggleLights;
 
-			static void Postfix(Exosuit __instance)
-			{
-				var toggleLights = __instance.gameObject.ensureComponent<ToggleLights>();
-				var toggleLightsPrefab = Resources.Load<GameObject>("WorldEntities/Tools/SeaMoth").GetComponent<SeaMoth>().toggleLights;
+			toggleLights.copyFieldsFrom(toggleLightsPrefab, "lightsOnSound", "lightsOffSound", "onSound", "offSound", "energyPerSecond");
 
-				toggleLights.copyFieldsFrom(toggleLightsPrefab, "lightsOnSound", "lightsOffSound", "onSound", "offSound", "energyPerSecond");
-
-				toggleLights.lightsParent = __instance.transform.Find("lights_parent").gameObject;
-				toggleLights.energyMixin = __instance.GetComponent<EnergyMixin>();
-			}
+			toggleLights.lightsParent = __instance.transform.Find("lights_parent").gameObject;
+			toggleLights.energyMixin = __instance.GetComponent<EnergyMixin>();
 		}
 
-		[HarmonyPatch(typeof(Exosuit), "Update")]
-		static class Exosuit_Update_Patch
+		[HarmonyPostfix, HarmonyPatch(typeof(Exosuit), "Update")]
+		static void Exosuit_Update_Postfix(Exosuit __instance)
 		{
-			static bool Prepare() => Main.config.gameplayPatches;
-
-			static void Postfix(Exosuit __instance)
+			if (__instance.GetComponent<ToggleLights>() is ToggleLights toggleLights)
 			{
-				if (__instance.GetComponent<ToggleLights>() is ToggleLights toggleLights)
-				{
-					toggleLights.UpdateLightEnergy();
+				toggleLights.UpdateLightEnergy();
 
-					if (__instance.GetPilotingMode() && Input.GetKeyDown(Main.config.toggleLightKey) && !(Player.main.GetPDA().isOpen || !AvatarInputHandler.main.IsEnabled()))
-						toggleLights.SetLightsActive(!toggleLights.lightsActive);
-				}
+				if (__instance.GetPilotingMode() && Input.GetKeyDown(Main.config.toggleLightKey) && !(Player.main.GetPDA().isOpen || !AvatarInputHandler.main.IsEnabled()))
+					toggleLights.SetLightsActive(!toggleLights.lightsActive);
 			}
 		}
 	}
 
-	// if vehicle's health too low it will take random additional damage
+	// vehicle will take random additional damage if its health is too low
+	[PatchClass]
 	static class VehicleLowHealthExtraDamage
 	{
+		static bool prepare() => Main.config.gameplayPatches;
+
+		[HarmonyPostfix, HarmonyPatch(typeof(Vehicle), "Awake")]
+		static void Vehicle_Awake_Postfix(Vehicle __instance) => __instance.gameObject.ensureComponent<LowHealthExtraDamage>();
+
 		class LowHealthExtraDamage: MonoBehaviour
 		{
 			Vehicle vehicle;
@@ -109,21 +109,16 @@ namespace MiscPatches
 				}
 			}
 		}
-
-		[HarmonyPatch(typeof(Vehicle), "Awake")]
-		static class Vehicle_Awake_Patch
-		{
-			static bool Prepare() => Main.config.gameplayPatches;
-			static void Postfix(Vehicle __instance) => __instance.gameObject.ensureComponent<LowHealthExtraDamage>();
-		}
 	}
-
 
 	// Hide extra quick slots in vehicles
 	// Modules installed in these slots working as usual
 	// Intended for passive modules, issues with selectable modules
+	[PatchClass]
 	static class VehiclesLessQuickSlots
 	{
+		static bool prepare() => Main.config.gameplayPatches;
+
 		static CIEnumerable transpiler(CIEnumerable cins)
 		{
 			var list = cins.ToList();
@@ -143,21 +138,12 @@ namespace MiscPatches
 			return list;
 		}
 
-		[HarmonyPatch(typeof(Vehicle), "GetSlotBinding", new Type[0])]
-		static class Vehicle_GetSlotBinding_Patch
-		{
-			static bool Prepare() => Main.config.gameplayPatches;
-			static CIEnumerable Transpiler(CIEnumerable cins) => transpiler(cins);
-		}
+		[HarmonyTranspiler, HarmonyPatch(typeof(Vehicle), "GetSlotBinding", new Type[0])]
+		static CIEnumerable Vehicle_GetSlotBinding_Transpiler(CIEnumerable cins) => transpiler(cins);
 
-		[HarmonyPatch(typeof(Exosuit), "GetSlotBinding", new Type[0])]
-		static class Exosuit_GetSlotBinding_Patch
-		{
-			static bool Prepare() => Main.config.gameplayPatches;
-			static CIEnumerable Transpiler(CIEnumerable cins) => transpiler(cins);
-		}
+		[HarmonyTranspiler, HarmonyPatch(typeof(Exosuit), "GetSlotBinding", new Type[0])]
+		static CIEnumerable Exosuit_GetSlotBinding_Transpiler(CIEnumerable cins) => transpiler(cins);
 	}
-
 
 	// get access to seamoth torpedo tubes when docked in moonpool
 	[HarmonyPatch(typeof(SeaMoth), "OnDockedChanged")]
@@ -167,46 +153,14 @@ namespace MiscPatches
 
 		static void Postfix(SeaMoth __instance, Vehicle.DockType dockType)
 		{
-			foreach (var silo in new[] {"TorpedoSiloLeft", "TorpedoSiloRight"})
+			foreach (var silo in new[] { "TorpedoSiloLeft", "TorpedoSiloRight" })
 				__instance.transform.Find(silo)?.gameObject.SetActive(dockType != Vehicle.DockType.Cyclops);
-		}
-	}
-
-
-	// Fix hatch and antennas for docked vehicles in cyclops
-	// Playing vehicle dock animation after load, dont find another way
-	// Exosuit is also slightly moved from cyclops dock bay hatch, need to play all docking animations to fix it (like in moonpool)
-	static class CyclopsDockingVehiclesFix
-	{
-		[HarmonyPatch(typeof(Vehicle), "Start")]
-		static class Vehicle_Start_Patch
-		{
-			const float time = 7f;
-
-			static bool Prepare() => Main.config.gameplayPatches;
-
-			static void Postfix(Vehicle __instance)
-			{
-				if (!__instance.docked)
-					return;
-
-				SubRoot subRoot = __instance.GetComponentInParent<SubRoot>();
-				if (subRoot != null && !subRoot.isBase) // we're docked in cyclops
-				{
-					(__instance as IAnimParamReceiver).ForwardAnimationParameterBool("cyclops_dock", true);
-
-					__instance.gameObject.callAfterDelay(time, new UnityAction(() =>
-					{
-						(__instance as IAnimParamReceiver).ForwardAnimationParameterBool("cyclops_dock", false);
-					}));
-				}
-			}
 		}
 	}
 
 	// fix for loading inside the vehicle (https://github.com/Remodor/Subnautica_Mods/blob/master/Rm_VehicleLoadFix/src/patcher/VehiclePatcher.cs)
 	[HarmonyPatch(typeof(Vehicle), "Start")]
-	static class Vehicle_Start_Patch
+	static class Vehicle_Start_Patch_LoadingFix
 	{
 		static bool Prepare() => Main.config.gameplayPatches;
 

@@ -1,4 +1,4 @@
-﻿using System.Linq;
+﻿using System;
 using System.Reflection.Emit;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,7 +9,6 @@ using UnityEngine.SceneManagement;
 
 using Common;
 using Common.Harmony;
-using Common.Reflection;
 using Common.Configuration;
 
 namespace MiscPatches
@@ -62,7 +61,7 @@ namespace MiscPatches
 		public class Purge: Config.Field.IAction
 		{
 			public void action() =>
-				Object.FindObjectsOfType<VFXDestroyAfterSeconds>().forEach(vfx => vfx.lifeTime = 0f);
+				UnityEngine.Object.FindObjectsOfType<VFXDestroyAfterSeconds>().forEach(vfx => vfx.lifeTime = 0f);
 		}
 
 		static void Postfix(VFXController __instance, int i)
@@ -73,50 +72,38 @@ namespace MiscPatches
 	}
 
 
+	[OptionalPatch, PatchClass]
 	static class ScannerRoomCheat
 	{
-		[OptionalPatch, HarmonyPatch(typeof(MapRoomFunctionality), "GetScanRange")]
-		static class MapRoomFunctionality_GetScanRange_Patch
-		{
-			static bool Prepare() => Main.config.dbg.scannerRoomCheat;
+		static bool prepare() => Main.config.dbg.scannerRoomCheat;
 
-			static bool Prefix(ref float __result)
-			{
-				__result = 500f;
-				return false;
-			}
+		[HarmonyPrefix, HarmonyPatch(typeof(MapRoomFunctionality), "GetScanRange")]
+		static bool MRF_GetScanRange_Prefix(ref float __result)
+		{
+			__result = 500f;
+			return false;
 		}
 
-		[OptionalPatch, HarmonyPatch(typeof(MapRoomFunctionality), "GetScanInterval")]
-		static class MapRoomFunctionality_GetScanInterval_Patch
+		[HarmonyPrefix, HarmonyPatch(typeof(MapRoomFunctionality), "GetScanInterval")]
+		static bool MRF_GetScanInterval_Prefix(ref float __result)
 		{
-			static bool Prepare() => Main.config.dbg.scannerRoomCheat;
-
-			static bool Prefix(ref float __result)
-			{
-				__result = 0f;
-				return false;
-			}
+			__result = 0f;
+			return false;
 		}
 	}
 
 
+	[OptionalPatch, PatchClass]
 	static class FastStart
 	{
-		[OptionalPatch, HarmonyPatch(typeof(MainGameController), "Start")]
-		static class MainGameController_Start_Patch
+		static bool prepare() => Main.config.dbg.fastStart.enabled;
+
+		[HarmonyTranspiler, HarmonyPatch(typeof(MainGameController), "Start")]
+		static IEnumerable<CodeInstruction> MainGameController_Start_Transpiler(IEnumerable<CodeInstruction> cins)
 		{
-			static bool Prepare() => Main.config.dbg.fastStart.enabled;
+			return CIHelper.ciReplace(cins, ci => ci.isOp(OpCodes.Call), CIHelper.emitCall<Func<MainGameController, IEnumerator>>(_startGame));
 
-			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins)
-			{
-				var list = cins.ToList();
-				list[list.FindIndex(ci => ci.isOp(OpCodes.Call))].operand = typeof(MainGameController_Start_Patch).method(nameof(StartGame));
-
-				return list;
-			}
-
-			static IEnumerator StartGame(MainGameController _)
+			static IEnumerator _startGame(MainGameController _)
 			{																												"Fast start".logDbg();
 				Physics.autoSyncTransforms = Physics2D.autoSimulation = false;
 
@@ -129,30 +116,21 @@ namespace MiscPatches
 			}
 		}
 
-		[OptionalPatch, HarmonyPatch(typeof(LightmappedPrefabs), "Awake")]
-		static class LightmappedPrefabs_Awake_Patch
+		[HarmonyPrefix, HarmonyPatch(typeof(LightmappedPrefabs), "Awake")]
+		static bool LightmappedPrefabs_Awake_Prefix(LightmappedPrefabs __instance)
 		{
-			static bool Prepare() => Main.config.dbg.fastStart.enabled;
-
-			static bool Prefix(LightmappedPrefabs __instance)
+			if (Main.config.dbg.fastStart.loadEscapePod)
 			{
-				if (Main.config.dbg.fastStart.loadEscapePod)
+				__instance.autoloadScenes = new[]
 				{
-					__instance.autoloadScenes = new LightmappedPrefabs.AutoLoadScene[]
-					{
-						new LightmappedPrefabs.AutoLoadScene() { sceneName = "EscapePod", spawnOnStart = true }
-					};
-				}
-
-				return Main.config.dbg.fastStart.loadEscapePod;
+					new LightmappedPrefabs.AutoLoadScene() { sceneName = "EscapePod", spawnOnStart = true }
+				};
 			}
+
+			return Main.config.dbg.fastStart.loadEscapePod;
 		}
 
-		[OptionalPatch, HarmonyPatch(typeof(uGUI_OptionsPanel), "SyncTerrainChangeRequiresRestartText")]
-		static class ModOptionsPanelFix
-		{
-			static bool Prepare() => Main.config.dbg.fastStart.enabled;
-			static bool Prefix()  => false;
-		}
+		[HarmonyPrefix, HarmonyPatch(typeof(uGUI_OptionsPanel), "SyncTerrainChangeRequiresRestartText")]
+		static bool ModOptionsPanelFix() => false;
 	}
 }

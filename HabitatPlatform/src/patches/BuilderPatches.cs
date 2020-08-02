@@ -93,10 +93,10 @@ namespace HabitatPlatform
 		}
 
 		[HarmonyPostfix, HarmonyPatch(typeof(BaseGhost), "FindBase")]
-		static void patch_FindBase(Base __result) => dirty = (lastBase != __result);
+		static void BaseGhost_FindBase_Postfix(Base __result) => dirty = (lastBase != __result);
 
 		[HarmonyPostfix, HarmonyPatch(typeof(Builder), "GetOverlappedColliders")]
-		static void patch_GetOverlappedColliders(List<Collider> results)
+		static void Builder_GetOverlappedColliders_Postfix(List<Collider> results)
 		{
 			if (!isHabitatPlatform)
 				return;
@@ -108,6 +108,6 @@ namespace HabitatPlatform
 		}
 
 		[HarmonyPostfix, HarmonyPatch(typeof(SceneCleaner), "Open")]
-		static void patch_CleanScene() => ignoredColliders.Clear(); // clear on exit to main menu
+		static void SceneCleaner_Open_Postfix() => ignoredColliders.Clear(); // clear on exit to main menu
 	}
 }

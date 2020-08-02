@@ -10,19 +10,21 @@ using UnityEngine.EventSystems;
 using Common;
 using Common.Harmony;
 using Common.Reflection;
+using Common.Configuration;
 
 namespace CustomHotkeys
 {
 	using Debug = Common.Debug;
 	using CIEnumerable = IEnumerable<CodeInstruction>;
 
-	// disabling F1 and F3 hotkeys for dev tools
-	[OptionalPatch, HarmonyPatch(typeof(MainGameController), "Update")]
-	static class MainGameController_Update_Patch
+	[OptionalPatch, PatchClass]
+	static class DevToolsHotkeysPatch
 	{
-		static bool Prepare() => !Main.config.enableDevToolsHotkeys;
+		static bool prepare() => !Main.config.enableDevToolsHotkeys;
 
-		static CIEnumerable Transpiler(CIEnumerable cins)
+		// disabling F1 and F3 hotkeys for dev tools
+		[HarmonyTranspiler, HarmonyPatch(typeof(MainGameController), "Update")]
+		static CIEnumerable F1_F3_disabler(CIEnumerable cins)
 		{
 			var list = cins.ToList();
 			var isShipping = typeof(PlatformUtils).method("get_isShippingRelease");
@@ -33,31 +35,33 @@ namespace CustomHotkeys
 
 			return CIHelper.ciRemove(list, indexBegin, indexEnd - indexBegin);
 		}
+
+		// disable F6 (hide gui tool)
+		[HarmonyPrefix, HarmonyPatch(typeof(GUIController), "Update")]
+		static bool F6_disabler() => false;
 	}
 
-	// disable F6 (hide gui tool)
-	[OptionalPatch, HarmonyPatch(typeof(GUIController), "Update")]
-	static class GUIController_Update_Patch
+	[OptionalPatch, PatchClass]
+	static class FeedbackCollectorPatch
 	{
-		static bool Prepare() => !Main.config.enableDevToolsHotkeys;
+		static bool prepare() => !Main.config.enableFeedback;
 
-		static bool Prefix() => false;
-	}
+		public class SettingChanged: Config.Field.IAction
+		{
+			public void action()
+			{
+				if (uGUI_FeedbackCollector.main)
+					uGUI_FeedbackCollector.main.enabled = Main.config.enableFeedback;
+			}
+		}
 
-	// disable F8 (feedback collector)
-	[HarmonyPatch(typeof(uGUI_FeedbackCollector), "Awake")]
-	static class uGUIFeedbackCollector_Awake_Patch
-	{
-		static void Postfix(uGUI_FeedbackCollector __instance) => __instance.enabled = Main.config.enableFeedback;
-	}
+		// disable F8 (feedback collector)
+		[HarmonyPostfix, HarmonyPatch(typeof(uGUI_FeedbackCollector), "Awake")]
+		static void uGUIFeedbackCollector_Awake_Postfix(uGUI_FeedbackCollector __instance) => __instance.enabled = Main.config.enableFeedback;
 
-	// remove "Give Feedback" from the ingame menu
-	[OptionalPatch, HarmonyPatch(typeof(IngameMenu), "Start")]
-	static class IngameMenu_Start_Patch
-	{
-		static bool Prepare() => !Main.config.enableFeedback;
-
-		static CIEnumerable Transpiler(CIEnumerable cins) => CIHelper.ciRemove(cins, 0, 3);
+		// remove "Give Feedback" from the ingame menu
+		[HarmonyTranspiler, HarmonyPatch(typeof(IngameMenu), "Start")]
+		static CIEnumerable IngameMenu_Start_Transpiler(CIEnumerable cins) => CIHelper.ciRemove(cins, 0, 3);
 	}
 
 	// patches for removing bindings and blocking 'Up' event after binding

@@ -10,7 +10,6 @@ using UnityEngine.SceneManagement;
 namespace Common.Utils
 {
 	using Harmony;
-	using Reflection;
 
 	static class MainMenuMessages
 	{
@@ -40,7 +39,7 @@ namespace Common.Utils
 
 			messageQueue = new List<string>();
 			messages = new List<ErrorMessage._Message>();
-			Patches.patch();
+			HarmonyHelper.patch(typeof(Patches));
 
 			SceneManager.sceneLoaded += onSceneLoaded;
 		}
@@ -72,23 +71,12 @@ namespace Common.Utils
 				messages.ForEach(msg => msg.timeEnd = Time.time + 1f);
 
 				messages.Clear();
-				Patches.unpatch();
+				HarmonyHelper.patch(typeof(Patches), false);
 			}
 		}
 
 		static class Patches
 		{
-			public static void patch()
-			{
-				HarmonyHelper.patch();
-			}
-
-			public static void unpatch()
-			{
-				HarmonyHelper.unpatch(typeof(ErrorMessage).method("Awake"), typeof(Patches).method(nameof(addMessages)));
-				HarmonyHelper.unpatch(typeof(ErrorMessage).method("OnUpdate"), typeof(Patches).method(nameof(updateMessages)));
-			}
-
 			[HarmonyPostfix, HarmonyPatch(typeof(ErrorMessage), "Awake")]
 			static void addMessages()
 			{

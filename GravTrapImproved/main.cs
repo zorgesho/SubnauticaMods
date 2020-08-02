@@ -13,11 +13,8 @@ namespace GravTrapImproved
 		{
 			LanguageHelper.init();
 
-			HarmonyHelper.patchAll();
+			HarmonyHelper.patchAll(true);
 			CraftHelper.patchAll();
-
-			if (config.mk2Enabled)
-				HarmonyHelper.patch(typeof(GravTrapMK2Patches));
 
 			GravTrapObjectsType.init(Mod.loadConfig<TypesConfig>("types_config.json", Config.LoadOptions.ReadOnly));
 		}

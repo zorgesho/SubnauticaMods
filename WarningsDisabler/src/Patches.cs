@@ -1,13 +1,12 @@
-﻿using System;
-
-using Harmony;
+﻿using Harmony;
 
 using Common;
+using Common.Harmony;
 using Common.Configuration;
 
 namespace WarningsDisabler
 {
-	[HarmonyPatch(typeof(PDANotification), "Play", new Type[] { typeof(object[]) })]
+	[HarmonyPatch(typeof(PDANotification), "Play", typeof(object[]))]
 	static class PDANotification_Play_Patch
 	{
 		static bool Prefix(PDANotification __instance)
@@ -16,8 +15,7 @@ namespace WarningsDisabler
 		}
 	}
 
-
-	[HarmonyPatch(typeof(VoiceNotification), "Play", new Type[] { typeof(object[]) })]
+	[HarmonyPatch(typeof(VoiceNotification), "Play", typeof(object[]))]
 	static class VoiceNotification_Play_Patch
 	{
 		static bool Prefix(VoiceNotification __instance)
@@ -26,8 +24,8 @@ namespace WarningsDisabler
 		}
 	}
 
-
 	// Disabling low oxygen warnings
+	[PatchClass]
 	static class OxygenWarnings
 	{
 		static int hintMessageHash = 0;
@@ -48,22 +46,13 @@ namespace WarningsDisabler
 		}
 
 		// to make sure we hide proper popup
-		[HarmonyPatch(typeof(HintSwimToSurface), "OnLanguageChanged")]
-		static class HintSwimToSurface_OnLanguageChanged_Patch
-		{
-			static void Postfix(HintSwimToSurface __instance) => hintMessageHash = __instance.messageHash;
-		}
+		[HarmonyPostfix, HarmonyPatch(typeof(HintSwimToSurface), "OnLanguageChanged")]
+		static void HSTS_OnLanguageChanged_Postfix(HintSwimToSurface __instance) => hintMessageHash = __instance.messageHash;
 
-		[HarmonyPatch(typeof(HintSwimToSurface), "Update")]
-		static class HintSwimToSurface_Update_Patch
-		{
-			static bool Prefix() => Main.config.oxygenWarningsEnabled;
-		}
+		[HarmonyPrefix, HarmonyPatch(typeof(HintSwimToSurface), "Update")]
+		static bool HSTS_Update_Prefix() => Main.config.oxygenWarningsEnabled;
 
-		[HarmonyPatch(typeof(LowOxygenAlert), "Update")]
-		static class LowOxygenAlert_Update_Patch
-		{
-			static bool Prefix() => Main.config.oxygenWarningsEnabled;
-		}
+		[HarmonyPrefix, HarmonyPatch(typeof(LowOxygenAlert), "Update")]
+		static bool LowOxygenAlert_Update_Prefix() => Main.config.oxygenWarningsEnabled;
 	}
 }

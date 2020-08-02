@@ -1,49 +1,45 @@
 ﻿using System;
+
 using Harmony;
+
 using Common;
+using Common.Harmony;
 
 namespace DebrisRecycling
 {
+	[PatchClass]
 	static class TitaniumCraft
 	{
-		[HarmonyPatch(typeof(uGUI_CraftingMenu), "Open")]
-		static class uGUICraftingMenu_Open_Patch
-		{
-			static bool Prepare() => Main.config.craftConfig.dynamicTitaniumRecipe;
+		static bool prepare() => Main.config.craftConfig.dynamicTitaniumRecipe;
 
-			static void Prefix(CraftTree.Type treeType, ITreeActionReceiver receiver)
+		[HarmonyPrefix, HarmonyPatch(typeof(uGUI_CraftingMenu), "Open")]
+		static void uGUICraftingMenu_Open_Prefix(CraftTree.Type treeType, ITreeActionReceiver receiver)
+		{
+			if (treeType == CraftTree.Type.Fabricator)
 			{
-				if (treeType == CraftTree.Type.Fabricator)
-				{
-					updateTitaniumRecipe();
-					currentPowerRelay = (receiver as GhostCrafter)?.powerRelay;															$"Current power relay: '{currentPowerRelay}'".logDbg();
-				}
+				updateTitaniumRecipe();
+				currentPowerRelay = (receiver as GhostCrafter)?.powerRelay;															$"Current power relay: '{currentPowerRelay}'".logDbg();
 			}
 		}
 
-		[HarmonyPatch(typeof(TooltipFactory), "Recipe")]
-		static class TooltipFactory_Recipe_Patch
+		[HarmonyPrefix, HarmonyPatch(typeof(TooltipFactory), "Recipe")]
+		static void TooltipFactory_Recipe_Prefix(TechType techType, out string tooltipText)
 		{
-			static bool Prepare() => Main.config.craftConfig.dynamicTitaniumRecipe;
+			tooltipText = null;
 
-			static void Prefix(TechType techType, out string tooltipText)
-			{
-				tooltipText = null;
+			if (techType != TechType.Titanium)
+				return;
 
-				if (techType != TechType.Titanium)
-					return;
-
-				if (Main.config.extraPowerConsumption && currentPowerRelay != null && currentPowerRelay.GetPower() < getPowerConsumption() + 7f) // +2 energy units in order not to drain energy completely
-					resetTitaniumRecipe();
-				else
-					updateTitaniumRecipe();
-			}
+			if (Main.config.extraPowerConsumption && currentPowerRelay != null && currentPowerRelay.GetPower() < getPowerConsumption() + 7f) // +2 energy units in order not to drain energy completely
+				resetTitaniumRecipe();
+			else
+				updateTitaniumRecipe();
 		}
 
 		[HarmonyPatch(typeof(GhostCrafter), "Craft")]
 		static class GhostCrafter_Craft_Patch
 		{
-			static bool Prepare() => Main.config.craftConfig.dynamicTitaniumRecipe && Main.config.extraPowerConsumption;
+			static bool Prepare() => prepare() && Main.config.extraPowerConsumption;
 
 			[HarmonyPriority(Priority.High)]
 			static void Prefix(GhostCrafter __instance, TechType techType)

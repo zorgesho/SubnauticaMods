@@ -94,7 +94,7 @@ namespace DayNightSpeed
 
 			void Update()
 			{
-				if (!DayNightCycle.main)
+				if (!DayNightCycle.main || !Main.config.dbgCfg.enabled)
 					return;
 
 				string clr = forcedNormalSpeed? "<color=#00FF00FF>": "<color=#CCCCCCFF>";

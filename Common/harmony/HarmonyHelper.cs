@@ -72,25 +72,12 @@ namespace Common.Harmony
 
 		public static Patches getPatchInfo(MethodBase method) => harmonyInstance.GetPatchInfo(method);
 
-
-		// comparing patches by method's names (for use with shared projects)
-		public static bool isPatchedBy(MethodBase original, MethodBase patch)
+		// checkByName - comparing patches by method's names (for use with shared projects)
+		public static bool isPatchedBy(MethodBase original, MethodBase patch, bool checkByName = false)
 		{
-			Debug.assert(original != null);
-			Debug.assert(patch != null);
-
-			var patches = getPatchInfo(original);
-			if (patches == null)
-				return false;
-
-			string patchFullName = patch.fullName();
-			bool _contains(IList<Patch> list) => list.FirstOrDefault(p => p.patch?.fullName() == patchFullName) != null;
-
-			return _contains(patches.Prefixes) || _contains(patches.Postfixes) || _contains(patches.Transpilers);
+			Debug.assert(original != null && patch != null, $"'{original}' '{patch}'");
+			return getPatchInfo(original).isPatchedBy(patch, checkByName);
 		}
-
-		public static bool isPatchedBy(MethodBase original, string patchName) =>
-			isPatchedBy(original, ReflectionHelper.getCallingType().method(patchName));
 	}
 
 
@@ -105,6 +92,19 @@ namespace Common.Harmony
 				return harmonyMethod.declaringType?.GetConstructor(ReflectionHelper.bfAll, null, harmonyMethod.argumentTypes, null);
 
 			return null;
+		}
+
+		public static bool isPatchedBy(this Patches patches, MethodBase patch, bool checkByName = false)
+		{
+			if (patches == null)
+				return false;
+
+			string patchFullName = checkByName? patch.fullName(): null;
+
+			bool _contains(IList<Patch> list) => list.Count > 0 &&
+				list.Any(p => (checkByName && p.patch?.fullName() == patchFullName) || (!checkByName && Equals(p.patch, patch)));
+
+			return _contains(patches.Prefixes) || _contains(patches.Postfixes) || _contains(patches.Transpilers);
 		}
 	}
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Reflection;
 using System.Collections.Generic;
 
 using Harmony;
@@ -52,11 +51,9 @@ namespace Common.Harmony
 
 			var patches = HarmonyHelper.getPatchInfo(method);
 
-			static bool _contains(IEnumerable<Patch> _list, MethodInfo _method) => _list?.FirstOrDefault(p => p.patch == _method) != null;
-
-			bool prefixActive = _contains(patches?.Prefixes, prefix);
-			bool postfixActive = _contains(patches?.Postfixes, postfix);
-			bool transpilerActive = _contains(patches?.Transpilers, transpiler);
+			bool prefixActive = patches.isPatchedBy(prefix);
+			bool postfixActive = patches.isPatchedBy(postfix);
+			bool transpilerActive = patches.isPatchedBy(transpiler);
 
 			if (val)
 			{

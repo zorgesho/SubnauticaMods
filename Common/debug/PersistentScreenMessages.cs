@@ -29,7 +29,9 @@ namespace Common
 				if (patched || !(patched = true))
 					return;
 
-				if (!HarmonyHelper.isPatchedBy(typeof(ErrorMessage).method("_AddMessage"), nameof(messagePatch))) // patching this only once
+				// don't patch if already patched by other mod
+				var patch = typeof(PersistentScreenMessages).method(nameof(messagePatch));
+				if (!HarmonyHelper.isPatchedBy(typeof(ErrorMessage).method("_AddMessage"), patch, true))
 					HarmonyHelper.patch();
 			}
 

@@ -51,6 +51,10 @@ namespace MiscPatches
 			[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 			public readonly int lootSpawnRerollCount = 0;
 
+			[Options.Field("Pause in ingame menu")]
+			[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
+			public readonly bool ingameMenuPause = true;
+
 			[Field.Action(typeof(UpdateOptionalPatches))]
 			public readonly bool propulsionCannonIgnoreLimits = false;
 

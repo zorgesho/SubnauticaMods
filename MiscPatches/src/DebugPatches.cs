@@ -133,4 +133,13 @@ namespace MiscPatches
 		[HarmonyPrefix, HarmonyPatch(typeof(uGUI_OptionsPanel), "SyncTerrainChangeRequiresRestartText")]
 		static bool ModOptionsPanelFix() => false;
 	}
+
+	// pause in ingame menu
+	[OptionalPatch, HarmonyPatch(typeof(UWE.FreezeTime), "Begin")]
+	static class FreezeTime_Begin_Patch
+	{
+		static bool Prepare() => !Main.config.dbg.ingameMenuPause;
+
+		static bool Prefix(string userId) => userId != "IngameMenu";
+	}
 }

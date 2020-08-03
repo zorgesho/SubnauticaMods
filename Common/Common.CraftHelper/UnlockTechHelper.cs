@@ -9,7 +9,6 @@ using SMLHelper.V2.Handlers;
 namespace Common.Crafting
 {
 	using Harmony;
-	using Reflection;
 
 	static class UnlockTechHelper
 	{
@@ -22,13 +21,8 @@ namespace Common.Crafting
 		static bool inited = false;
 		static void init()
 		{
-			if (inited || !(inited = true))
-				return;
-
-			HarmonyHelper.patch();
-
-			// patching separately because of HarmonyPriority
-			HarmonyHelper.patch(typeof(KnownTech).method("Initialize"), postfix: typeof(UnlockTechHelper).method(nameof(unlockPopupsUpdate)));
+			if (!inited && (inited = true))
+				HarmonyHelper.patch();
 		}
 
 		public static void setFragmentTypeToUnlock(TechType unlockTechType, TechType origFragTechType, TechType substFragTechType, int fragCount, float scanTime)
@@ -93,6 +87,7 @@ namespace Common.Crafting
 		}
 
 		[HarmonyPriority(Priority.Low)]
+		[HarmonyPostfix, HarmonyHelper.Patch(typeof(KnownTech), "Initialize")]
 		static void unlockPopupsUpdate()
 		{
 			KnownTech.AnalysisTech _getEntry(TechType techType) =>

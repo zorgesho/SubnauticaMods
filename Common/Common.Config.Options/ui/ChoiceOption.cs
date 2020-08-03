@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 
+using Harmony;
 using SMLHelper.V2.Options;
 
 namespace Common.Configuration
@@ -76,23 +77,17 @@ namespace Common.Configuration
 			}
 
 
-			// for some reason SMLHelper doesn't allow periods in ChoiceOption's id
-			// and we need them for nested classes
+			// for some reason SMLHelper doesn't allow periods in ChoiceOption's id and we need them for nested classes
 			static class ValidatorPatch
 			{
 				static bool patched = false;
-
 				public static void patch()
 				{
-					if (patched || !(patched = true))
-						return;
-
-					var validateMethod = Type.GetType("SMLHelper.V2.Options.Utility.Validator, SMLHelper")?.method("ValidateID", typeof(string));
-					Debug.assert(validateMethod != null);
-
-					HarmonyHelper.patch(validateMethod, typeof(ValidatorPatch).method(nameof(validatorPrefix)));						"SMLHelper validator patched".logDbg();
+					if (!patched && (patched = true))
+						HarmonyHelper.patch();
 				}
 
+				[HarmonyPrefix, HarmonyHelper.Patch("SMLHelper.V2.Options.Utility.Validator, SMLHelper", "ValidateID", true, typeof(string))]
 				static bool validatorPrefix(string id) => id.IndexOf('.') == -1;
 			}
 		}

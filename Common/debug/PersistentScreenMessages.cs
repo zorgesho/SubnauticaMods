@@ -26,16 +26,11 @@ namespace Common
 
 			public static void patch()
 			{
-				if (patched || !(patched = true))
-					return;
-
-				// don't patch if already patched by other mod
-				var patch = typeof(PersistentScreenMessages).method(nameof(messagePatch));
-				if (!HarmonyHelper.isPatchedBy(typeof(ErrorMessage).method("_AddMessage"), patch, true))
+				if (!patched && (patched = true))
 					HarmonyHelper.patch();
 			}
 
-			[HarmonyPrefix, HarmonyPatch(typeof(ErrorMessage), "_AddMessage")]
+			[HarmonyPrefix, HarmonyHelper.Patch(typeof(ErrorMessage), "_AddMessage", true)]
 			static bool messagePatch(ErrorMessage __instance, string messageText)
 			{
 				if (messageText.isNullOrEmpty() || messageText[0] != '[')

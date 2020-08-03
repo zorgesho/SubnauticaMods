@@ -9,10 +9,7 @@ namespace Common.Harmony
 {
 	using Reflection;
 
-	// is class have methods that can be used as harmony patches (for more: void patch(Type typeWithPatchMethods))
-	public class PatchClassAttribute: Attribute {}
-
-	static class HarmonyHelper
+	static partial class HarmonyHelper
 	{
 		public static HarmonyInstance harmonyInstance => _harmonyInstance ??= HarmonyInstance.Create(Mod.id);
 		static HarmonyInstance _harmonyInstance;
@@ -49,40 +46,6 @@ namespace Common.Harmony
 			{
 				Log.msg(e, "HarmonyHelper.patch");
 				throw e;
-			}
-		}
-
-		// use methods from 'typeWithPatchMethods' class as harmony patches
-		// valid method need to have HarmonyPatch and Harmony[Prefix/Postfix/Transpiler] attributes
-		// if typeWithPatchMethods is null, we use type from which this method is called
-		// patchStatus - null:  patch without checking patched status (with call of 'prepare' method), true: patch, if not already patched, false: unpatch, if already patched
-		public static void patch(Type typeWithPatchMethods = null, bool? patchStatus = null)
-		{
-			typeWithPatchMethods ??= ReflectionHelper.getCallingType();
-
-			if (patchStatus == null && typeWithPatchMethods.method("prepare")?.wrap().invoke<bool>() == false)
-				return; // if val != null, 'prepare' probably called in OptionalPatches already, but we also can call 'patch' method directly
-
-			bool? patched = null; // we will check only first method with patch attribute, they all should have same patch status anyway
-
-			foreach (var method in typeWithPatchMethods.methods(ReflectionHelper.bfAll | BindingFlags.DeclaredOnly))
-			{
-				if (!(method.getAttr<HarmonyPatch>() is HarmonyPatch harmonyPatch))
-					continue;
-
-				var targetMethod = harmonyPatch.info.getTargetMethod();
-
-				bool _isPatched() => patched ??= isPatchedBy(targetMethod, method);
-
-				if (patchStatus == null || (patchStatus == true && !_isPatched()))
-				{
-					MethodInfo _method_if<H>() where H: Attribute => method.checkAttr<H>()? method: null;
-					patch(targetMethod, _method_if<HarmonyPrefix>(), _method_if<HarmonyPostfix>(), _method_if<HarmonyTranspiler>());
-				}
-				else if (patchStatus == false && _isPatched())
-				{
-					unpatch(targetMethod, method);
-				}
 			}
 		}
 

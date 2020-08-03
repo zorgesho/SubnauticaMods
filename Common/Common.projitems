@@ -20,6 +20,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)debug\Log.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)harmony\OptionalPatches.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)harmony\CIHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)harmony\PatchClass.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LanguageHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)utils\MainMenuMessages.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Misc.cs" />

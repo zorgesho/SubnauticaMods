@@ -7,11 +7,9 @@ using UnityEngine.UI;
 
 using Common;
 using Common.Harmony;
-using Common.Reflection;
 
 namespace UITweaks
 {
-	[PatchClass]
 	static class BulkCraftingTooltip
 	{
 		static Text text;
@@ -30,12 +28,13 @@ namespace UITweaks
 
 		static readonly string[] actions =
 		{
+			"",
 			_writeAction(Strings.Mouse.scrollUp + "/" + Strings.Mouse.scrollDown),
 			_writeAction(Strings.Mouse.scrollUp),
 			_writeAction(Strings.Mouse.scrollDown)
 		};
 
-		enum AmountActionHint { None = -1, Both = 0, Increase = 1, Decrease = 2 }
+		enum AmountActionHint { None = 0, Both = 1, Increase = 2, Decrease = 3 } // used as index for actions array
 
 		static void init(uGUI_Tooltip tooltip)
 		{
@@ -51,12 +50,7 @@ namespace UITweaks
 			text.verticalOverflow = VerticalWrapMode.Truncate;
 			textPosX = text.rectTransform.localPosition.x;
 
-			text.text = _writeAction(""); // adding text to update rect size
-
-			var patchCheck = Type.GetType("SMLHelper.V2.Patchers.CraftDataPatcher, SMLHelper")?.method("NeedsPatchingCheckPrefix");
-			Common.Debug.assert(patchCheck != null);
-
-			HarmonyHelper.patch(patchCheck, prefix: typeof(BulkCraftingTooltip).method(nameof(SMLPatchCheck)));
+			text.text = _writeAction("tmp"); // adding temporary text to update rect size
 		}
 
 
@@ -83,14 +77,14 @@ namespace UITweaks
 		{
 			int maxAmount = int.MaxValue;
 
-			if (!GameModeUtils.RequiresIngredients())
-				return maxAmount;
+			if (GameModeUtils.RequiresIngredients())
+			{
+				foreach (var ing in techData._ingredients)
+					maxAmount = Math.Min(maxAmount, Inventory.main.GetPickupCount(ing.techType) / ing.amount);
 
-			foreach (var ing in techData._ingredients)
-				maxAmount = Math.Min(maxAmount, Inventory.main.GetPickupCount(ing.techType) / ing.amount);
-
-			if (currentPowerRelay != null)
-				maxAmount = Math.Min(maxAmount, (int)(currentPowerRelay.GetPower() / 5f - 1f));
+				if (currentPowerRelay != null)
+					maxAmount = Math.Min(maxAmount, (int)(currentPowerRelay.GetPower() / 5f - 1f));
+			}
 
 			return maxAmount;
 		}
@@ -124,7 +118,8 @@ namespace UITweaks
 
 		static void setActionText(AmountActionHint hintType)
 		{
-			text.text = hintType == AmountActionHint.None? "": actions[(int)hintType];
+			if (text)
+				text.text = actions[(int)hintType];
 		}
 
 
@@ -148,74 +143,76 @@ namespace UITweaks
 
 		static void updateActionHint()
 		{
-			AmountActionHint hintType;
-			if (currentCraftAmountMax <= 1)
-				hintType = AmountActionHint.None;
-			else if (currentCraftAmount == 1)
-				hintType = AmountActionHint.Increase;
-			else if (currentCraftAmount == currentCraftAmountMax)
-				hintType = AmountActionHint.Decrease;
-			else
-				hintType = AmountActionHint.Both;
-
-			setActionText(hintType);
+			if		(currentCraftAmountMax <= 1)				  setActionText(AmountActionHint.None);
+			else if (currentCraftAmount == 1)					  setActionText(AmountActionHint.Increase);
+			else if (currentCraftAmount == currentCraftAmountMax) setActionText(AmountActionHint.Decrease);
+			else												  setActionText(AmountActionHint.Both);
 		}
 
-		#region patches
-		// patch for SMLHelper's CraftDataPatcher.NeedsPatchingCheckPrefix
-		// prevents SMLHelper from restoring techdata to original state
-		static bool SMLPatchCheck(TechType techType) => currentTechType != techType || !CraftData.techData.ContainsKey(techType);
 
-		[HarmonyPostfix, HarmonyPatch(typeof(uGUI_Tooltip), "Awake")]
-		static void awakePatch(uGUI_Tooltip __instance) => init(__instance);
-
-		[HarmonyPrefix, HarmonyPatch(typeof(uGUI_Tooltip), "Set")]
-		static void resetText() => setActionText(AmountActionHint.None);
-
-		[HarmonyPostfix, HarmonyPatch(typeof(uGUI_Tooltip), "OnUpdate")]
-		static void checkVisible()
+		[OptionalPatch, PatchClass]
+		static class Patches
 		{
-			if (!uGUI_Tooltip.visible && currentTechType != TechType.None)
-				reset();
+			static bool prepare()
+			{
+				setActionText(AmountActionHint.None); // in case we're going to unpatch
+				return Main.config.bulkCrafting;
+			}
+
+			// prevents SMLHelper from restoring techdata to original state
+			[HarmonyPrefix, HarmonyHelper.Patch("SMLHelper.V2.Patchers.CraftDataPatcher, SMLHelper", "NeedsPatchingCheckPrefix")]
+			static bool SMLPatchCheck(TechType techType) => currentTechType != techType || !CraftData.techData.ContainsKey(techType);
+
+			[HarmonyPostfix, HarmonyPatch(typeof(uGUI_Tooltip), "Awake")]
+			static void awakePatch(uGUI_Tooltip __instance) => init(__instance);
+
+			[HarmonyPrefix, HarmonyPatch(typeof(uGUI_Tooltip), "Set")]
+			static void resetText() => setActionText(AmountActionHint.None);
+
+			[HarmonyPostfix, HarmonyPatch(typeof(uGUI_Tooltip), "OnUpdate")]
+			static void checkVisible()
+			{
+				if (!uGUI_Tooltip.visible && currentTechType != TechType.None)
+					reset();
+			}
+
+			[HarmonyPrefix, HarmonyPatch(typeof(uGUI_CraftingMenu), "Open")]
+			static void getPowerRelay(ITreeActionReceiver receiver)
+			{
+				currentPowerRelay = (receiver as GhostCrafter)?.powerRelay;
+			}
+
+			[HarmonyPrefix, HarmonyPatch(typeof(TooltipFactory), "Recipe")]
+			static void updateRecipe(TechType techType)
+			{
+				if (techType != currentTechType)
+					reset();
+
+				if (currentTechType == TechType.None)
+					init(techType);
+
+				changeAmount(Math.Sign(InputHelper.getMouseWheelValue()));
+				updateActionHint();
+			}
+
+			[HarmonyPostfix, HarmonyPatch(typeof(uGUI_Tooltip), "Rebuild")]
+			static void rebuildTooltip(uGUI_Tooltip __instance, CanvasUpdate executing)
+			{
+				if (text.text == "" || executing != CanvasUpdate.Layout)
+					return;
+
+				float tooltipHeight = -__instance.rectTransform.rect.y;
+				float textHeight = text.rectTransform.sizeDelta.y;
+				__instance.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, tooltipHeight + textHeight);
+
+				float tooltipWidth = __instance.rectTransform.rect.xMax;
+				float textWidth = text.rectTransform.sizeDelta.x + Main.config._tooltipOffsetX;
+				if (tooltipWidth < textWidth)
+					__instance.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, textWidth);
+
+				float textPosY = __instance.iconCanvas.transform.localPosition.y -__instance.iconCanvas.rectTransform.sizeDelta.y;
+				text.rectTransform.localPosition = new Vector2(textPosX, textPosY);
+			}
 		}
-
-		[HarmonyPrefix, HarmonyPatch(typeof(uGUI_CraftingMenu), "Open")]
-		static void getPowerRelay(ITreeActionReceiver receiver)
-		{
-			currentPowerRelay = (receiver as GhostCrafter)?.powerRelay;
-		}
-
-		[HarmonyPrefix, HarmonyPatch(typeof(TooltipFactory), "Recipe")]
-		static void updateRecipe(TechType techType)
-		{
-			if (techType != currentTechType)
-				reset();
-
-			if (currentTechType == TechType.None)
-				init(techType);
-
-			changeAmount(Math.Sign(InputHelper.getMouseWheelValue()));
-			updateActionHint();
-		}
-
-		[HarmonyPostfix, HarmonyPatch(typeof(uGUI_Tooltip), "Rebuild")]
-		static void rebuildTooltip(uGUI_Tooltip __instance, CanvasUpdate executing)
-		{
-			if (text.text == "" || executing != CanvasUpdate.Layout)
-				return;
-
-			float tooltipHeight = -__instance.rectTransform.rect.y;
-			float textHeight = text.rectTransform.sizeDelta.y;
-			__instance.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, tooltipHeight + textHeight);
-
-			float tooltipWidth = __instance.rectTransform.rect.xMax;
-			float textWidth = text.rectTransform.sizeDelta.x + Main.config._tooltipOffsetX;
-			if (tooltipWidth < textWidth)
-				__instance.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, textWidth);
-
-			float textPosY = __instance.iconCanvas.transform.localPosition.y -__instance.iconCanvas.rectTransform.sizeDelta.y;
-			text.rectTransform.localPosition = new Vector2(textPosX, textPosY);
-		}
-		#endregion
 	}
 }

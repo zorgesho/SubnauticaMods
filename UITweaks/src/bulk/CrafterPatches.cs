@@ -10,10 +10,12 @@ using Common.Reflection;
 
 namespace UITweaks
 {
-	[PatchClass]
+	[OptionalPatch, PatchClass]
 	static class CrafterPatches
 	{
 		static readonly Dictionary<CrafterLogic, CraftData.TechData> crafterCache = new Dictionary<CrafterLogic, CraftData.TechData>();
+
+		static bool prepare() => Main.config.bulkCrafting;
 
 		static bool _isAmountChanged(TechType techType) =>
 			techType == BulkCraftingTooltip.currentTechType && BulkCraftingTooltip.currentCraftAmount > 1;

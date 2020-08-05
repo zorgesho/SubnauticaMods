@@ -14,11 +14,11 @@
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'test_build|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'SN.testbuild|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\test_build\</OutputPath>
+    <OutputPath>bin\SN.testbuild\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -26,10 +26,10 @@
     <LangVersion>8.0</LangVersion>
     <NoWarn>IDE0051</NoWarn>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'dev|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'SN.dev|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\dev\</OutputPath>
+    <OutputPath>bin\SN.dev\</OutputPath>
     <DefineConstants>TRACE;DEBUG;LOAD_CONFIG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -37,8 +37,8 @@
     <LangVersion>8.0</LangVersion>
     <NoWarn>IDE0051</NoWarn>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'publish|AnyCPU'">
-    <OutputPath>bin\publish\</OutputPath>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'SN.publish|AnyCPU'">
+    <OutputPath>bin\SN.publish\</OutputPath>
     <DefineConstants>
     </DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>

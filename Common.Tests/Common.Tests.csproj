@@ -30,16 +30,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony-1.2.0.1">
-      <HintPath>..\.dependencies\0Harmony-1.2.0.1.dll</HintPath>
+      <HintPath>..\.dependencies\gameSN\0Harmony-1.2.0.1.dll</HintPath>
     </Reference>
-    <Reference Include="Assembly-CSharp-firstpass_publicized">
-      <HintPath>..\.dependencies\gameSN\Assembly-CSharp-firstpass_publicized.dll</HintPath>
+    <Reference Include="Assembly-CSharp-firstpass.pb">
+      <HintPath>..\.dependencies\gameSN\Assembly-CSharp-firstpass.pb.dll</HintPath>
     </Reference>
-    <Reference Include="Assembly-CSharp_publicized">
-      <HintPath>..\.dependencies\gameSN\Assembly-CSharp_publicized.dll</HintPath>
+    <Reference Include="Assembly-CSharp.pb">
+      <HintPath>..\.dependencies\gameSN\Assembly-CSharp.pb.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>..\.dependencies\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\.dependencies\gameSN\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework, Version=3.12.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\programming\nuget_packages\NUnit.3.12.0\lib\net45\nunit.framework.dll</HintPath>
@@ -47,10 +47,10 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="UnityEngine">
-      <HintPath>..\.dependencies\UnityEngine.dll</HintPath>
+      <HintPath>..\.dependencies\gameSN\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>..\.dependencies\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>..\.dependencies\gameSN\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

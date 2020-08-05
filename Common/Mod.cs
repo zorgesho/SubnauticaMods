@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Threading;
+using System.Reflection;
 using System.Globalization;
 
 namespace Common
@@ -19,9 +20,9 @@ namespace Common
 		const string tmpFileName = "run the game to generate configs"; // name is also in the post-build.bat
 		const string updateMessage = "An update is available! (current version is v<color=orange>{0}</color>, new version is v<color=orange>{1}</color>)";
 
-		public static string id   { get { init(); return _id; } }
+		public static readonly string id = Assembly.GetExecutingAssembly().GetName().Name; // not using mod.json for ID
 		public static string name { get { init(); return _name; } }
-		static string _id, _name;
+		static string _name;
 
 		static bool inited;
 
@@ -39,7 +40,6 @@ namespace Common
 
 			var manifest = SimpleJSON.Parse(File.ReadAllText(Paths.modRootPath + "mod.json"));
 
-			_id = manifest["Id"];
 			_name = manifest["DisplayName"];
 
 			if (manifest["UpdateCheck"].AsBool)

@@ -69,7 +69,11 @@ namespace SimpleModManager
 					enabled = modJson.Property("Enable").Value.ToObject<bool>();
 
 					var cfgField = new Field(this, nameof(enabled));
+
+					Options.nonUniqueOptionsIDsWarning = false;
 					var option = new Options.ToggleOption(cfgField, modJson.Property("DisplayName").Value.ToString());
+					Options.nonUniqueOptionsIDsWarning = true;
+
 					Options.add(option);
 
 					modToggleFields.Add(Tuple.Create(modJson.Property("Id").Value.ToString().ToLower(), cfgField));

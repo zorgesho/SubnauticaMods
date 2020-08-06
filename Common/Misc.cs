@@ -111,7 +111,7 @@ namespace Common
 		readonly HashSet<string> allIDs = new HashSet<string>();
 		readonly Dictionary<string, int> nonUniqueIDs = new Dictionary<string, int>();
 
-		public bool ensureUniqueID(ref string id)
+		public bool ensureUniqueID(ref string id, bool nonUniqueIDsWarning = true)
 		{
 			if (allIDs.Add(id)) // if this is new id, do nothing
 				return true;
@@ -121,7 +121,8 @@ namespace Common
 
 			id += "." + counter;
 #if DEBUG
-			$"UniqueIDs: fixed ID: {id}".logWarning();
+			if (nonUniqueIDsWarning)
+				$"UniqueIDs: fixed ID: {id}".logWarning();
 #endif
 			Debug.assert(allIDs.Add(id)); // checking updated id just in case
 

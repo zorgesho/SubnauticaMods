@@ -37,6 +37,7 @@ namespace Common
 		static readonly string logPrefix = Mod.id;
 #if DEBUG
 		static readonly string customLogPath = Paths.modRootPath + logPrefix + ".log";
+		static readonly string warningsLogPath = Path.Combine(Paths.modRootPath, "..", "warnings.log"); // consolidated log for warnings and up (in QMods root)
 		static Log()
 		{
 			try { File.Delete(customLogPath); }
@@ -48,7 +49,13 @@ namespace Common
 			string formattedMsg = $"[{logPrefix}] {DateTime.Now:HH:mm:ss.fff}   {msgType}: {str}{Environment.NewLine}";
 			Console.Write(formattedMsg);
 #if DEBUG
-			try { File.AppendAllText(customLogPath, formattedMsg); }
+			try
+			{
+				File.AppendAllText(customLogPath, formattedMsg);
+
+				if (msgType >= MsgType.WARNING)
+					File.AppendAllText(warningsLogPath, formattedMsg);
+			}
 			catch (UnauthorizedAccessException) {}
 #endif
 		}

@@ -77,7 +77,7 @@ namespace ConsoleImproved
 					go.dump();
 				}
 			}
-
+#if BRANCH_STABLE
 			public void dumpprefab(string techType)
 			{
 				if (techType == "all")
@@ -96,7 +96,7 @@ namespace ConsoleImproved
 					"Dump complete".onScreen();
 				}
 			}
-
+#endif
 			public void dumpobjects(string componentType)
 			{
 				static Type _getComponentType(string typeName)

@@ -149,8 +149,9 @@ namespace UITweaks
 			else												  setActionText(AmountActionHint.Both);
 		}
 
-
+#if BRANCH_STABLE
 		[OptionalPatch, PatchClass]
+#endif
 		static class Patches
 		{
 			static bool prepare()

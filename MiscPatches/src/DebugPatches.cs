@@ -92,8 +92,9 @@ namespace MiscPatches
 		}
 	}
 
-
+#if BRANCH_STABLE // TODO: patch StartGame instead
 	[OptionalPatch, PatchClass]
+#endif
 	static class FastStart
 	{
 		static bool prepare() => Main.config.dbg.fastStart.enabled;

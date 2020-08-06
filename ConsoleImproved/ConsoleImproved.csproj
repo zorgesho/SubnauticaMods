@@ -1,15 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <Import Project="..\project.props" />
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">dev</Configuration>
+    <Configuration Condition=" '$(Configuration)' == '' ">SN.dev</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{3BD3AB93-7001-4322-A0D8-B9DE42ED38AA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ConsoleImproved</RootNamespace>
     <AssemblyName>ConsoleImproved</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
@@ -18,7 +18,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\SN.dev\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;LOAD_CONFIG</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;GAME_SN;BRANCH_STABLE;LOAD_CONFIG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -27,8 +27,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'SN.publish|AnyCPU'">
     <OutputPath>bin\SN.publish\</OutputPath>
-    <DefineConstants>
-    </DefineConstants>
+    <DefineConstants>GAME_SN;BRANCH_STABLE</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>8.0</LangVersion>
     <Optimize>true</Optimize>
@@ -44,7 +43,30 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\SN.testbuild\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;GAME_SN;BRANCH_STABLE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>IDE0051</NoWarn>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'SNexp.dev|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\SNexp.dev\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;GAME_SN;BRANCH_EXP;LOAD_CONFIG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>8.0</LangVersion>
+    <NoWarn>IDE0051</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'SNexp.testbuild|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\SNexp.testbuild\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;GAME_SN;BRANCH_EXP</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>IDE0051</NoWarn>
@@ -53,45 +75,45 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony-1.2.0.1">
-      <HintPath>..\.dependencies\gameSN\0Harmony-1.2.0.1.dll</HintPath>
+      <HintPath>$(ProjectDependencies)\0Harmony-1.2.0.1.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass">
-      <HintPath>..\.dependencies\gameSN\Assembly-CSharp-firstpass.dll</HintPath>
+      <HintPath>$(ProjectDependencies)\Assembly-CSharp-firstpass.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Assembly-CSharp.pb">
-      <HintPath>..\.dependencies\gameSN\Assembly-CSharp.pb.dll</HintPath>
+      <HintPath>$(ProjectDependencies)\Assembly-CSharp.pb.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>..\.dependencies\gameSN\Newtonsoft.Json.dll</HintPath>
+      <HintPath>$(ProjectDependencies)\Newtonsoft.Json.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="SMLHelper">
-      <HintPath>..\.dependencies\gameSN\SMLHelper.dll</HintPath>
+      <HintPath>$(ProjectDependencies)\SMLHelper.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="UnityEngine">
-      <HintPath>..\.dependencies\gameSN\UnityEngine.dll</HintPath>
+      <HintPath>$(ProjectDependencies)\UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>..\.dependencies\gameSN\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>$(ProjectDependencies)\UnityEngine.CoreModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.IMGUIModule">
-      <HintPath>..\.dependencies\gameSN\UnityEngine.IMGUIModule.dll</HintPath>
+      <HintPath>$(ProjectDependencies)\UnityEngine.IMGUIModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UI">
-      <HintPath>..\.dependencies\gameSN\UnityEngine.UI.dll</HintPath>
+      <HintPath>$(ProjectDependencies)\UnityEngine.UI.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UIModule">
-      <HintPath>..\.dependencies\gameSN\UnityEngine.UIModule.dll</HintPath>
+      <HintPath>$(ProjectDependencies)\UnityEngine.UIModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>

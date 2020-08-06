@@ -10,7 +10,9 @@ using Common.Reflection;
 
 namespace UITweaks
 {
+#if BRANCH_STABLE
 	[OptionalPatch, PatchClass]
+#endif
 	static class CrafterPatches
 	{
 		static readonly Dictionary<CrafterLogic, CraftData.TechData> crafterCache = new Dictionary<CrafterLogic, CraftData.TechData>();

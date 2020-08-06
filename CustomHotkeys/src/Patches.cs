@@ -118,7 +118,9 @@ namespace CustomHotkeys
 		}
 
 		// if we press key while binding in options menu, ignore its 'Up' & 'Held' events
+#if BRANCH_STABLE // TODO: patch new method GetInputStateForButton (exp branch)
 		[HarmonyPatch(typeof(GameInput), "UpdateKeyInputs")]
+#endif
 		static class GameInput_UpdateKeyInputs_Patch
 		{
 			static CIEnumerable Transpiler(CIEnumerable cins, ILGenerator ilg)

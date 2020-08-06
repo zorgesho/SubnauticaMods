@@ -3,7 +3,7 @@
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <Import Project="..\project.props" />
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">dev</Configuration>
+    <Configuration Condition=" '$(Configuration)' == '' ">SN.dev</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{5322339C-9933-4FB2-A04A-495718A3F66B}</ProjectGuid>
     <OutputType>Library</OutputType>

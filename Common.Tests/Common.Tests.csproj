@@ -4,7 +4,7 @@
   <Import Project="..\..\..\..\programming\nuget_packages\NUnit.3.12.0\build\NUnit.props" Condition="Exists('..\..\..\..\programming\nuget_packages\NUnit.3.12.0\build\NUnit.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">dev</Configuration>
+    <Configuration Condition=" '$(Configuration)' == '' ">SN.dev</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{A581DBE2-97A4-4995-8F23-223D9245C338}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -21,7 +21,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\SN.dev\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;GAME_SN;BRANCH_STABLE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>IDE0051; CS0436</NoWarn>
@@ -30,16 +30,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony-1.2.0.1">
-      <HintPath>..\.dependencies\gameSN\0Harmony-1.2.0.1.dll</HintPath>
+      <HintPath>$(ProjectDependencies)\0Harmony-1.2.0.1.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass.pb">
-      <HintPath>..\.dependencies\gameSN\Assembly-CSharp-firstpass.pb.dll</HintPath>
+      <HintPath>$(ProjectDependencies)\Assembly-CSharp-firstpass.pb.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp.pb">
-      <HintPath>..\.dependencies\gameSN\Assembly-CSharp.pb.dll</HintPath>
+      <HintPath>$(ProjectDependencies)\Assembly-CSharp.pb.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>..\.dependencies\gameSN\Newtonsoft.Json.dll</HintPath>
+      <HintPath>$(ProjectDependencies)\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework, Version=3.12.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\programming\nuget_packages\NUnit.3.12.0\lib\net45\nunit.framework.dll</HintPath>
@@ -47,10 +47,10 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="UnityEngine">
-      <HintPath>..\.dependencies\gameSN\UnityEngine.dll</HintPath>
+      <HintPath>$(ProjectDependencies)\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>..\.dependencies\gameSN\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>$(ProjectDependencies)\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

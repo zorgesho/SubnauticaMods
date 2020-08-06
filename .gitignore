@@ -1,9 +1,8 @@
 #  https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
-# build results
 bin/
 obj/
 
-# Visual Studio cache/options directory
 .vs/
-.dependencies/gameSN/Assembly-CSharp*.dll
+
+.dependencies/*/Assembly-CSharp*.dll

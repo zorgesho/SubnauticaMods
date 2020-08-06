@@ -3,9 +3,15 @@ using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
 
+#if BRANCH_EXP
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
+#else
 using Oculus.Newtonsoft.Json;
 using Oculus.Newtonsoft.Json.Converters;
 using Oculus.Newtonsoft.Json.Serialization;
+#endif
 
 namespace Common.Configuration
 {

@@ -8,7 +8,12 @@ namespace Common.Crafting
 		{
 			public static GameObject prefabCopy(TechType techType, bool active = true)
 			{
-				GameObject prefab = CraftData.GetPrefabForTechType(techType); 
+#if BRANCH_EXP
+				GameObject prefab = null;
+				Debug.assert(false, "Not implemented!");
+#else
+				GameObject prefab = CraftData.GetPrefabForTechType(techType);
+#endif
 				if (!prefab)
 					return null;
 
@@ -75,7 +80,12 @@ namespace Common.Crafting
 
 			public static StorageContainer addStorageToPrefab(GameObject prefab, int width, int height, string hoverText = "HoverText", string storageLabel = "StorageLabel")
 			{
+#if BRANCH_EXP
+				GameObject storageRoot = null;
+				Debug.assert(false, "Not implemented!");
+#else
 				GameObject storageRoot = Object.Instantiate(CraftData.GetBuildPrefab(TechType.SmallLocker).getChild("StorageRoot"));
+#endif
 				storageRoot.setParent(prefab, false);
 
 				prefab.SetActive(false); // deactivating gameobject in order to not invoke Awake for StorageContainer when added

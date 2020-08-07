@@ -71,9 +71,7 @@ namespace MiscPatches
 				class Hider: Options.Components.Hider.Simple
 				{ public Hider(): base("fast", () => Main.config.dbg.fastStart.enabled) {} }
 
-#if BRANCH_STABLE
 				[Options.Field("Fast start")]
-#endif
 				[Field.Action(typeof(Hider))]
 				[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 				public readonly bool enabled = false;

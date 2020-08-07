@@ -92,29 +92,34 @@ namespace MiscPatches
 		}
 	}
 
-#if BRANCH_STABLE // TODO: patch StartGame instead
 	[OptionalPatch, PatchClass]
-#endif
 	static class FastStart
 	{
 		static bool prepare() => Main.config.dbg.fastStart.enabled;
 
-		[HarmonyTranspiler, HarmonyPatch(typeof(MainGameController), "Start")]
-		static IEnumerable<CodeInstruction> MainGameController_Start_Transpiler(IEnumerable<CodeInstruction> cins)
+		[HarmonyPatch(typeof(MainGameController), "Start")]
+#if BRANCH_STABLE
+		[HarmonyTranspiler]
+		static IEnumerable<CodeInstruction> fastStartPatch(IEnumerable<CodeInstruction> cins) =>
+			CIHelper.ciReplace(cins, ci => ci.isOp(OpCodes.Call), OpCodes.Pop, CIHelper.emitCall<Func<IEnumerator>>(_startGame));
+#elif BRANCH_EXP
+		[HarmonyPrefix]
+		static bool fastStartPatch(ref IEnumerator __result)
 		{
-			return CIHelper.ciReplace(cins, ci => ci.isOp(OpCodes.Call), CIHelper.emitCall<Func<MainGameController, IEnumerator>>(_startGame));
+			__result = _startGame();
+			return false;
+		}
+#endif
+		static IEnumerator _startGame()
+		{
+			Physics.autoSyncTransforms = Physics2D.autoSimulation = false;
 
-			static IEnumerator _startGame(MainGameController _)
-			{																												"Fast start".logDbg();
-				Physics.autoSyncTransforms = Physics2D.autoSimulation = false;
+			yield return SceneManager.LoadSceneAsync("Essentials", LoadSceneMode.Additive);
 
-				yield return SceneManager.LoadSceneAsync("Essentials", LoadSceneMode.Additive);
+			Application.backgroundLoadingPriority = ThreadPriority.Normal;
 
-				Application.backgroundLoadingPriority = ThreadPriority.Normal;
-
-				foreach (var cmd in Main.config.dbg.fastStart.commandsAfterLoad)
-					DevConsole.SendConsoleCommand(cmd);
-			}
+			foreach (var cmd in Main.config.dbg.fastStart.commandsAfterLoad)
+				DevConsole.SendConsoleCommand(cmd);
 		}
 
 		[HarmonyPrefix, HarmonyPatch(typeof(LightmappedPrefabs), "Awake")]

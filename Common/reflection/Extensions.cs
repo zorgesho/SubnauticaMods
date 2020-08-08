@@ -104,7 +104,19 @@ namespace Common.Reflection
 
 	static class MemberInfoExtensions
 	{
-		public static string fullName(this MemberInfo memberInfo) => (memberInfo == null)? "[null]": memberInfo.DeclaringType.FullName + "." + memberInfo.Name;
+		public static string fullName(this MemberInfo memberInfo)
+		{
+			if (memberInfo == null)
+				return "[null]";
+
+			if ((memberInfo.MemberType & (MemberTypes.Method | MemberTypes.Field | MemberTypes.Property)) != 0)
+				return $"{memberInfo.DeclaringType.FullName}.{memberInfo.Name}";
+
+			if ((memberInfo.MemberType & (MemberTypes.TypeInfo | MemberTypes.NestedType)) != 0)
+				return (memberInfo as Type).FullName;
+
+			return memberInfo.Name;
+		}
 
 		public static EventWrapper wrap(this EventInfo evnt, object obj = null) => new EventWrapper(evnt, obj);
 		public static MethodWrapper wrap(this MethodInfo method) => new MethodWrapper(method);

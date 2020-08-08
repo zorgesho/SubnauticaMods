@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Diagnostics;
 using System.Collections.Generic;
 
 using Harmony;
@@ -42,6 +43,46 @@ namespace Common.Harmony
 				string isFirstOp = (searchFirstOps && list.FindIndex(_ci => _ci.opcode == ci.opcode) == i)? " 1ST":""; // is such an opcode is first encountered in this instruction
 
 				$"{i}{isFirstOp}: {ci.opcode} {operandInfo} {_labelsInfo(ci)}".log();
+			}
+		}
+	}
+
+	// searches types and methods in the assembly (including Common projects) for harmony attributes (from Harmony and HarmonyHelper)
+	// and validates target method (do not runs prepare methods)
+	// uncomment VALIDATE_PATCHES in HarmonyHelper.cs to run on start
+	static class PatchesValidator
+	{
+		static bool testPassed;
+
+		[Conditional("DEBUG")]
+		public static void validate()
+		{
+			testPassed = true;
+
+			Assembly.GetExecutingAssembly().GetTypes().forEach(type => checkType(type));
+
+			if (testPassed)
+				$"PatchesValidator: patches OK".logDbg();
+		}
+
+		static void checkType(Type type)
+		{
+			checkPatches(type);
+			type.methods(ReflectionHelper.bfAll ^ BindingFlags.Instance).forEach(method => checkPatches(method));
+		}
+
+		static void checkPatches(MemberInfo member)
+		{
+			if (member.getAttr<HarmonyPatch>() is HarmonyPatch harmonyPatch && harmonyPatch.info.getTargetMethod() == null)
+				_error($"{harmonyPatch.info.declaringType?.FullName}.{harmonyPatch.info.methodName}");
+
+			if (member.getAttr<HarmonyHelper.PatchAttribute>() is HarmonyHelper.PatchAttribute patchAttr && patchAttr.targetMethod == null)
+				_error($"{patchAttr.type?.FullName}.{patchAttr.methodName}");
+
+			void _error(string method)
+			{
+				testPassed = false;
+				$"PatchesValidator: target method for {member.fullName()} is not found! ({method})".logError();
 			}
 		}
 	}

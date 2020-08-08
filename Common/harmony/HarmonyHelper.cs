@@ -1,4 +1,6 @@
-﻿using System;
+﻿//#define VALIDATE_PATCHES
+
+using System;
 using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
@@ -18,6 +20,9 @@ namespace Common.Harmony
 		{
 			try
 			{
+#if VALIDATE_PATCHES
+				PatchesValidator.validate();
+#endif
 				using (Debug.profiler($"HarmonyHelper.patchAll"))
 				{
 					harmonyInstance.PatchAll(Assembly.GetExecutingAssembly());

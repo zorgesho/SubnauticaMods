@@ -20,9 +20,9 @@ namespace Common.Harmony
 		[AttributeUsage(AttributeTargets.Method)]
 		public class PatchAttribute: Attribute
 		{
-			Type type;
-			readonly string typeName; // assembly-qualified name
-			readonly string methodName;
+			public Type type { get; private set; }
+			public readonly string typeName; // assembly-qualified name
+			public readonly string methodName;
 			readonly Type[] methodParams;
 
 			public readonly bool patchOnce; // need to check before patching if already patched by the same method

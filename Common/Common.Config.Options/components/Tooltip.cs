@@ -53,16 +53,18 @@ namespace Common.Configuration
 				{
 					string tooltip;
 					readonly Type tooltipCmpType;
+					readonly bool localizeAllow; // is it needed to add tooltip string to LanguageHandler
 
 					static readonly UniqueIDs uniqueIDs = new UniqueIDs();
 
 					ModOption parentOption;
 
-					public Add(string tooltip)
+					public Add(string tooltip, bool localizeAllow = true)
 					{
 						this.tooltip = tooltip;
+						this.localizeAllow = localizeAllow;
 					}
-					public Add(Type tooltipCmpType, string tooltip): this(tooltip)
+					public Add(Type tooltipCmpType, string tooltip, bool localizeAllow = true): this(tooltip, localizeAllow)
 					{
 						this.tooltipCmpType = tooltipCmpType;
 
@@ -81,10 +83,13 @@ namespace Common.Configuration
 						if (tooltipCmpType == null)
 							tooltip = $"<size={defaultTextSize}>" + tooltip + "</size>";
 
-						string stringID = option.id + ".tooltip";
-						uniqueIDs.ensureUniqueID(ref stringID); // in case we add more than one tooltip to the option (e.g. for heading)
+						if (localizeAllow)
+						{
+							string stringID = option.id + ".tooltip";
+							uniqueIDs.ensureUniqueID(ref stringID); // in case we add more than one tooltip to the option (e.g. for heading)
 
-						registerLabel(stringID, ref tooltip, false);
+							registerLabel(stringID, ref tooltip, false);
+						}
 					}
 
 					protected virtual GameObject getTargetGameObject(GameObject optionGameObject) => optionGameObject;

@@ -90,7 +90,7 @@ namespace CustomHotkeys
 
 					var tooltip = "<color=white><b>Command: </b></color>";
 					tooltip += hotkey.command.Replace(";", "<color=orange><b>;</b></color>").Replace("|", "<color=yellow><b>|</b></color>");
-					option.addHandler(new Options.Components.Tooltip.Add(tooltip));
+					option.addHandler(new Options.Components.Tooltip.Add(tooltip, false));
 
 					bindOptions.Add(option);
 					Options.add(option);

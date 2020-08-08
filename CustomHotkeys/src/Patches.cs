@@ -39,6 +39,10 @@ namespace CustomHotkeys
 		// disable F6 (hide gui tool)
 		[HarmonyPrefix, HarmonyPatch(typeof(GUIController), "Update")]
 		static bool F6_disabler() => false;
+
+		// disable Shift+F5 (smoke test)
+		[HarmonyPrefix, HarmonyPatch(typeof(MainMenuController), "Update")]
+		static bool ShiftF5_disabler() => false;
 	}
 
 	[OptionalPatch, PatchClass]

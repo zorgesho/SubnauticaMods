@@ -3,6 +3,7 @@
   <Import Project="..\..\..\..\programming\nuget_packages\NUnit3TestAdapter.3.15.1\build\net35\NUnit3TestAdapter.props" Condition="Exists('..\..\..\..\programming\nuget_packages\NUnit3TestAdapter.3.15.1\build\net35\NUnit3TestAdapter.props')" />
   <Import Project="..\..\..\..\programming\nuget_packages\NUnit.3.12.0\build\NUnit.props" Condition="Exists('..\..\..\..\programming\nuget_packages\NUnit.3.12.0\build\NUnit.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <Import Project="..\project.props" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">SN.dev</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>

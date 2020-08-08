@@ -15,7 +15,7 @@ namespace Common.Configuration.Utils
 		{
 			if (timestamps == null)
 			{
-				UnityHelper.createPersistentGameObject<FocusListener>("ConfigReloaderFocusListener");
+				UnityHelper.createPersistentGameObject<FocusListener>($"{Mod.id}.ConfigReloaderFocusListener");
 				timestamps = new Dictionary<Config, DateTime>();
 				reloadableFields = new Dictionary<Config, List<Config.Field>>();
 			}

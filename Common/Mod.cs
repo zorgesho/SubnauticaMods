@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define DISABLE_VERSION_CHECK_IN_DEVBUILD
+
+using System;
 using System.IO;
 using System.Threading;
 using System.Reflection;
@@ -39,10 +41,16 @@ namespace Common
 			catch (UnauthorizedAccessException) {}
 
 			var manifest = SimpleJSON.Parse(File.ReadAllText(Paths.modRootPath + "mod.json"));
-
 			_name = manifest["DisplayName"];
+			bool needCheckVer = manifest["UpdateCheck"].AsBool;
 
-			if (manifest["UpdateCheck"].AsBool)
+#if DISABLE_VERSION_CHECK_IN_DEVBUILD
+			if (needCheckVer && isDevBuild)
+				"Version check is disabled for dev build!".logDbg();
+
+			needCheckVer &= !isDevBuild;
+#endif
+			if (needCheckVer)
 			{
 				var currentVersion = new Version(manifest["Version"]);
 				var latestVersion = VersionChecker.getLatestVersion(manifest["VersionURL"]);							$"Latest version is {latestVersion}".logDbg();

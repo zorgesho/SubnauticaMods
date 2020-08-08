@@ -64,9 +64,7 @@ namespace Common.Utils
 			static IEnumerator _waitForLoad()
 			{
 				yield return new WaitForSeconds(1f);
-
-				while (SaveLoadManager.main.isLoading)
-					yield return null;
+				yield return new WaitWhile(() => SaveLoadManager.main.isLoading);
 																						"MainMenuMessages: game loading finished".logDbg();
 				messages.ForEach(msg => msg.timeEnd = Time.time + 1f);
 

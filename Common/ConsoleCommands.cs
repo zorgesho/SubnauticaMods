@@ -42,7 +42,7 @@ namespace Common
 
 		void Awake()
 		{
-			const BindingFlags bf = BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static;
+			const BindingFlags bf = ReflectionHelper.bfAll ^ BindingFlags.NonPublic | BindingFlags.DeclaredOnly;
 
 			var methods = GetType().methods(bf);
 

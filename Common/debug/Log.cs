@@ -46,7 +46,8 @@ namespace Common
 #endif
 		public static void msg(string str, MsgType msgType)
 		{
-			string formattedMsg = $"[{logPrefix}] {DateTime.Now:HH:mm:ss.fff}   {msgType}: {str}{Environment.NewLine}";
+			string currentFrame = Mod.isShuttingDown? "": $" [{UnityEngine.Time.frameCount}]"; // we can't access to Time class while in shutdown state
+			string formattedMsg = $"[{logPrefix}] {DateTime.Now:HH:mm:ss.fff}{currentFrame}  {msgType}: {str}{Environment.NewLine}";
 			Console.Write(formattedMsg);
 #if DEBUG
 			try

@@ -6,6 +6,8 @@ using System.Threading;
 using System.Reflection;
 using System.Globalization;
 
+using UnityEngine;
+
 namespace Common
 {
 	using Utils;
@@ -19,6 +21,9 @@ namespace Common
 #else
 			false;
 #endif
+		public static bool isShuttingDown { get; private set; }
+		class ShutdownListener: MonoBehaviour { void OnApplicationQuit() { isShuttingDown = true; "Shutting down".logDbg(); } }
+
 		const string tmpFileName = "run the game to generate configs"; // name is also in the post-build.bat
 		const string updateMessage = "An update is available! (current version is v<color=orange>{0}</color>, new version is v<color=orange>{1}</color>)";
 
@@ -33,6 +38,8 @@ namespace Common
 		{
 			if (inited || !(inited = true))
 				return;
+
+			UnityHelper.createPersistentGameObject<ShutdownListener>($"{id}.ShutdownListener");
 
 			// may be overkill to make it for all mods and from the start
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;

@@ -1,10 +1,13 @@
-﻿using System;
+﻿#if BRANCH_STABLE
+using System;
 using System.Reflection.Emit;
-using System.Collections;
 using System.Collections.Generic;
+#endif
+using System.Collections;
 
 using Harmony;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 using Common;
@@ -147,5 +150,31 @@ namespace MiscPatches
 		static bool Prepare() => !Main.config.dbg.ingameMenuPause;
 
 		static bool Prefix(string userId) => userId != "IngameMenu";
+	}
+
+	// add game slot info to the load buttons
+	[HarmonyPatch(typeof(MainMenuLoadPanel), "UpdateLoadButtonState")]
+	static class MainMenuLoadPanel_UpdateLoadButtonState_Patch
+	{
+		static bool Prepare() => Main.config.dbg.showSaveSlotID;
+
+		static void Postfix(MainMenuLoadButton lb) =>
+			lb.load.FindChild("SaveGameLength").GetComponent<Text>().text += $" | {lb.saveGame}";
+	}
+
+	// change initial equipment in creative mode
+	[OptionalPatch, HarmonyPatch(typeof(Player), "SetupCreativeMode")]
+	static class Player_SetupCreativeMode_Patch
+	{
+		static bool Prepare() => Main.config.dbg.overrideInitialEquipment;
+
+		static bool Prefix()
+		{
+			foreach (var item in Main.config.dbg.initialEquipment)
+				CraftData.AddToInventory(item.Key, item.Value);
+
+			KnownTech.UnlockAll(false);
+			return false;
+		}
 	}
 }

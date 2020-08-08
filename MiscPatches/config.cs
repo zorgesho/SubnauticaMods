@@ -1,4 +1,6 @@
-﻿using Common.Harmony;
+﻿using System.Collections.Generic;
+
+using Common.Harmony;
 using Common.Configuration;
 
 namespace MiscPatches
@@ -54,6 +56,17 @@ namespace MiscPatches
 			[Options.Field("Pause in ingame menu")]
 			[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 			public readonly bool ingameMenuPause = true;
+
+			[Options.Field("Show save slot ID", "Show save slot ID on the load buttons\nReload in order to apply")]
+			public readonly bool showSaveSlotID = true;
+
+			[Options.Field("Override initial equipment", "Used for creative mode only")]
+			[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
+			public readonly bool overrideInitialEquipment = true;
+
+			// can be changed with console command 'initial_equipment'
+			[NoInnerFieldsAttrProcessing]
+			public readonly Dictionary<TechType, int> initialEquipment = new Dictionary<TechType, int>();
 
 			[Field.Action(typeof(UpdateOptionalPatches))]
 			public readonly bool propulsionCannonIgnoreLimits = false;

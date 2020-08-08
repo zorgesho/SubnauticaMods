@@ -1,5 +1,8 @@
 ﻿using System;
+
+using UWE;
 using UnityEngine;
+
 using Common;
 
 namespace MiscPatches
@@ -63,6 +66,55 @@ namespace MiscPatches
 				"No target is selected!".onScreen();
 		}
 
+#pragma warning disable CS0618 // obsolete
+		public void game_startnew(GameMode gameMode = GameMode.Creative)
+		{
+			if (uGUI_MainMenu.main)
+				CoroutineHost.StartCoroutine(uGUI_MainMenu.main.StartNewGame(gameMode));
+		}
+#pragma warning restore CS0618
+
+		public void game_load(int slotID = -1)
+		{
+			if (!uGUI_MainMenu.main)
+				return;
+
+			string slotToLoad = null;
+			SaveLoadManager.GameInfo gameinfoToLoad = null;
+
+			if (slotID == -1) // loading most recent save
+			{
+				foreach (var slot in SaveLoadManager.main.GetActiveSlotNames())
+				{
+					var gameinfo = SaveLoadManager.main.GetGameInfo(slot);
+					gameinfoToLoad ??= gameinfo;
+
+					if (gameinfoToLoad.dateTicks < gameinfo.dateTicks)
+					{
+						slotToLoad = slot;
+						gameinfoToLoad = gameinfo;
+					}
+				}
+			}
+			else
+			{
+				slotToLoad = $"slot{slotID:D4}";
+				gameinfoToLoad = SaveLoadManager.main.GetGameInfo(slotToLoad);
+			}
+
+			if (gameinfoToLoad != null)
+				CoroutineHost.StartCoroutine(uGUI_MainMenu.main.LoadGameAsync(slotToLoad, gameinfoToLoad.changeSet, gameinfoToLoad.gameMode));
+		}
+
+		public void initial_equipment(TechType techType = default, int count = 1)
+		{
+			if (techType == default)
+				Main.config.dbg.initialEquipment.Clear();
+			else
+				Main.config.dbg.initialEquipment[techType] = count;
+
+			Main.config.save();
+		}
 
 		static class ObjectMover
 		{

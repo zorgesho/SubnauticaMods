@@ -106,6 +106,14 @@ namespace MiscPatches
 				CoroutineHost.StartCoroutine(uGUI_MainMenu.main.LoadGameAsync(slotToLoad, gameinfoToLoad.changeSet, gameinfoToLoad.gameMode));
 		}
 
+		public void game_quit(bool quitToDesktop = false)
+		{
+			if (uGUI_MainMenu.main && quitToDesktop)
+				Application.Quit();
+			else
+				IngameMenu.main?.QuitGame(quitToDesktop);
+		}
+
 		public void initial_equipment(TechType techType = default, int count = 1)
 		{
 			if (techType == default)

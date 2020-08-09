@@ -39,12 +39,7 @@ namespace DebrisRecycling
 
 			int modelType = Random.value < 0.5f? 1: 2;
 
-#if BRANCH_EXP
-			GameObject prefabMetal = null;
-			Common.Debug.assert(false, "Not implemented!");
-#elif BRANCH_STABLE
-			GameObject prefabMetal = CraftData.GetPrefabForTechType(TechType.ScrapMetal);
-#endif
+			GameObject prefabMetal = CraftHelper.Utils.getPrefab(TechType.ScrapMetal);
 			GameObject modelMetal = Object.Instantiate(prefabMetal.getChild((modelType == 1? "Model/Metal_wreckage_03_11": "Model/Metal_wreckage_03_10")));
 
 			prefab.destroyChild("model/Titanium_small");

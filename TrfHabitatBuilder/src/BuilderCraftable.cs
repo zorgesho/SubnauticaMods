@@ -20,11 +20,8 @@ namespace TrfHabitatBuilder
 
 			bldCmp.copyFieldsFrom(trfCmp, "rightHandIKTarget", "leftHandIKTarget", "ikAimRightArm", "ikAimLeftArm", "mainCollider", "pickupable", "useLeftAimTargetOnPlayer", "drawSound");
 			bldCmp.buildSound = trfCmp.placeLoopSound;
-#if BRANCH_EXP
-			bldCmp.completeSound = null;
-#elif BRANCH_STABLE
-			bldCmp.completeSound = CraftData.GetPrefabForTechType(TechType.Builder).GetComponent<BuilderTool>().completeSound;
-#endif
+			bldCmp.completeSound = CraftHelper.Utils.getPrefab(TechType.Builder).GetComponent<BuilderTool>().completeSound;
+
 			Object.DestroyImmediate(trfCmp);
 
 			bldCmp.animator = prefab.getChild("terraformer_anim").GetComponent<Animator>();

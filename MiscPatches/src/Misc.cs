@@ -11,6 +11,7 @@ using UnityEngine.Events;
 
 using Common;
 using Common.Harmony;
+using Common.Crafting;
 using Common.Reflection;
 
 namespace MiscPatches
@@ -73,9 +74,7 @@ namespace MiscPatches
 	}
 
 	// we can kill HangingStingers now
-#if BRANCH_STABLE
 	[HarmonyPatch(typeof(HangingStinger), "Start")]
-#endif
 	static class HangingStinger_Start_Patch
 	{
 		static GameObject deathEffect = null;
@@ -89,12 +88,7 @@ namespace MiscPatches
 
 			if (!deathEffect)
 			{
-#if BRANCH_EXP
-				GameObject prefab = null;
-				Common.Debug.assert(false, "Not implemented!");
-#elif BRANCH_STABLE
-				GameObject prefab = CraftData.GetPrefabForTechType(TechType.BlueCluster);
-#endif
+				GameObject prefab = CraftHelper.Utils.getPrefab(TechType.BlueCluster);
 				deathEffect = prefab.GetComponent<LiveMixin>().data.deathEffect;
 			}
 

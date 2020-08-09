@@ -8,6 +8,7 @@ using UnityEngine;
 
 using Common;
 using Common.Harmony;
+using Common.Crafting;
 using Common.Reflection;
 
 namespace ConsoleImproved
@@ -77,26 +78,26 @@ namespace ConsoleImproved
 					go.dump();
 				}
 			}
-#if BRANCH_STABLE
+
 			public void dumpprefab(string techType)
 			{
 				if (techType == "all")
 					StartCoroutine(_dumpAllPrefabs());
 				else
-					CraftData.GetPrefabForTechType(techType.convert<TechType>())?.dump(techType);
+					CraftHelper.Utils.getPrefab(techType.convert<TechType>())?.dump(techType);
 
 				static IEnumerator _dumpAllPrefabs()
 				{
 					foreach (TechType techType in Enum.GetValues(typeof(TechType)))
 					{
-						CraftData.GetPrefabForTechType(techType)?.dump(techType.AsString());
+						CraftHelper.Utils.getPrefab(techType)?.dump(techType.AsString());
 						yield return null;
 					}
 
 					"Dump complete".onScreen();
 				}
 			}
-#endif
+
 			public void dumpobjects(string componentType)
 			{
 				static Type _getComponentType(string typeName)

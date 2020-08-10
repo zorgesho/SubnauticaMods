@@ -192,6 +192,12 @@ namespace MiscPatches
 		}
 	}
 
+	[OptionalPatch, HarmonyPatch(typeof(WaterscapeVolume), "RenderImage")] // from ExtraOptions mod
+	static class FogFixPatch
+	{
+		static bool Prepare() => Main.config.fixFog;
+		static void Prefix(ref bool cameraInside) => cameraInside = false;
+	}
 
 	static class MiscStuff
 	{

@@ -43,6 +43,10 @@ namespace MiscPatches
 		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 		public readonly bool firstAnimations = false;
 
+		[Options.Field("Fix fog", "Fix fog underwater while in vehicles")]
+		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
+		public readonly bool fixFog = false;
+
 		public class Debug
 		{
 			public readonly bool buildAnywhere = true;

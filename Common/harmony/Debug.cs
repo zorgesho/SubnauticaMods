@@ -79,6 +79,12 @@ namespace Common.Harmony
 				$"PatchesValidator: patches OK".logDbg();
 		}
 
+		public static string getFullName(HarmonyMethod info) =>
+			info == null? "[null]": $"{info.declaringType?.FullName}.{info.methodName}";
+
+		public static string getFullName(HarmonyHelper.PatchAttribute attr) =>
+			attr == null? "[null]": $"{attr.type?.FullName}.{attr.methodName}";
+
 		static void checkType(Type type)
 		{
 			checkPatches(type);
@@ -87,11 +93,13 @@ namespace Common.Harmony
 
 		static void checkPatches(MemberInfo member)
 		{
-			if (member.getAttr<HarmonyPatch>() is HarmonyPatch harmonyPatch && harmonyPatch.info.getTargetMethod() == null)
-				_error($"{harmonyPatch.info.declaringType?.FullName}.{harmonyPatch.info.methodName}");
+			var harmonyPatch = member.getAttr<HarmonyPatch>();
+			if (harmonyPatch != null && harmonyPatch.info.getTargetMethod() == null)
+				_error(getFullName(harmonyPatch.info));
 
-			if (member.getAttr<HarmonyHelper.PatchAttribute>() is HarmonyHelper.PatchAttribute patchAttr && patchAttr.targetMethod == null)
-				_error($"{patchAttr.type?.FullName}.{patchAttr.methodName}");
+			var patchAttr = HarmonyHelper.PatchAttribute.merge(member.getAttrs<HarmonyHelper.PatchAttribute>());
+			if (patchAttr != null && patchAttr.targetMethod == null)
+				_error(getFullName(patchAttr));
 
 			void _error(string method)
 			{

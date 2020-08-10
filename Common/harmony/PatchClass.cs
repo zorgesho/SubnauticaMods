@@ -125,17 +125,26 @@ namespace Common.Harmony
 			static MethodBase _getPatchTarget(MethodInfo method)
 			{
 				if (method.getAttr<HarmonyPatch>() is HarmonyPatch harmonyPatch)
-					return harmonyPatch.info.getTargetMethod();
+				{
+					var targetMethod = harmonyPatch.info.getTargetMethod();
+					Debug.assert(targetMethod != null, _error(PatchesValidator.getFullName(harmonyPatch.info)));
+
+					return targetMethod;
+				}
 
 				if (PatchAttribute.merge(method.getAttrs<PatchAttribute>()) is PatchAttribute patchAttr)
 				{
 					var targetMethod = patchAttr.targetMethod;
+					Debug.assert(targetMethod != null, _error(PatchesValidator.getFullName(patchAttr)));
 
 					bool patchOnce = patchAttr.options.HasFlag(PatchOptions.PatchOnce);
 					return patchOnce && isPatchedBy(targetMethod, method, true)? null: targetMethod;
 				}
 
 				return null;
+
+				string _error(string targetMethod) =>
+					$"Patch target method is null! Patch method: {method.fullName()}, target method: {targetMethod}";
 			}
 		}
 	}

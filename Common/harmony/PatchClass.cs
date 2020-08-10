@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+#if BRANCH_EXP
+using System.Runtime.CompilerServices;
+#endif
 
 using Harmony;
 
@@ -19,6 +22,9 @@ namespace Common.Harmony
 		{
 			None = 0,
 			PatchOnce = 1, // need to check before patching if already patched by the same method
+#if BRANCH_EXP
+			PatchIteratorMethod = 2, // if target method is iterator, we will patch its MoveNext method
+#endif // no StateMachineAttribute in .NET 4.0
 		}
 
 		// for use with patch classes
@@ -70,7 +76,19 @@ namespace Common.Harmony
 				return attrMain;
 			}
 
-			public MethodInfo targetMethod => (type ??= Type.GetType(typeName))?.method(methodName, methodParams);
+			public MethodInfo targetMethod
+			{
+				get
+				{
+					type ??= Type.GetType(typeName);
+					var targetMethod = type?.method(methodName, methodParams);
+#if BRANCH_EXP
+					if (options.HasFlag(PatchOptions.PatchIteratorMethod) && targetMethod != null)
+						targetMethod = targetMethod.getAttr<StateMachineAttribute>()?.StateMachineType.method("MoveNext");
+#endif
+					return targetMethod;
+				}
+			}
 		}
 
 		// use methods from 'typeWithPatchMethods' class as harmony patches

@@ -66,6 +66,34 @@ namespace Common.Harmony
 		}
 	}
 
+#if BRANCH_EXP
+	static partial class HarmonyHelper
+	{
+		// helper for patching iterator methods
+		public class IteratorWrapper
+		{
+			readonly object obj;
+			FieldInfo _fiState, _fiCurrent;
+
+			FieldInfo fiState => _fiState ??= obj.GetType().field("<>1__state");
+			FieldInfo fiCurrent => _fiCurrent ??= obj.GetType().field("<>2__current");
+
+			public IteratorWrapper(object obj) => this.obj = obj;
+
+			public int state
+			{
+				get => fiState.GetValue(obj).cast<int>();
+				set => fiState.SetValue(obj, value);
+			}
+
+			public object current
+			{
+				get => fiCurrent.GetValue(obj);
+				set => fiCurrent.SetValue(obj, value);
+			}
+		}
+	}
+#endif
 
 	static partial class HarmonyExtensions
 	{

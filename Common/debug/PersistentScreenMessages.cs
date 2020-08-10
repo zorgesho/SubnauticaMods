@@ -30,7 +30,9 @@ namespace Common
 					HarmonyHelper.patch();
 			}
 
-			[HarmonyPrefix, HarmonyHelper.Patch(typeof(ErrorMessage), "_AddMessage", true)]
+			[HarmonyPrefix]
+			[HarmonyHelper.Patch(typeof(ErrorMessage), "_AddMessage")]
+			[HarmonyHelper.Patch(HarmonyHelper.PatchOptions.PatchOnce)]
 			static bool messagePatch(ErrorMessage __instance, string messageText)
 			{
 				if (messageText.isNullOrEmpty() || messageText[0] != '[')

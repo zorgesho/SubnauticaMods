@@ -35,6 +35,8 @@ namespace Common
 			return array;
 		}
 
+		public static bool isNullOrEmpty(this Array array) => array == null || array.Length == 0;
+
 		public static bool contains<T>(this T[] array, T val) => Array.IndexOf(array, val) != -1;
 
 		public static int findIndex<T>(this T[] array, int beginIndex, int endIndex, Predicate<T> predicate) =>

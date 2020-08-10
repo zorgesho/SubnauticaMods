@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 
 using Harmony;
@@ -13,11 +14,18 @@ namespace Common.Harmony
 
 	static partial class HarmonyHelper
 	{
+		[Flags]
+		public enum PatchOptions
+		{
+			None = 0,
+			PatchOnce = 1, // need to check before patching if already patched by the same method
+		}
+
 		// for use with patch classes
 		// attribute can use assembly-qualified name for target type
 		// it can be used on methods with HarmonyPriority attribute
 		// patch class can check for patched status of target method if 'patchOnce' is true
-		[AttributeUsage(AttributeTargets.Method)]
+		[AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
 		public class PatchAttribute: Attribute
 		{
 			public Type type { get; private set; }
@@ -25,28 +33,42 @@ namespace Common.Harmony
 			public readonly string methodName;
 			readonly Type[] methodParams;
 
-			public readonly bool patchOnce; // need to check before patching if already patched by the same method
+			public PatchOptions options { get; private set; }
 
-			PatchAttribute(Type type, string typeName, string methodName, Type[] methodParams, bool patchOnce)
+			PatchAttribute(Type type, string typeName, string methodName, Type[] methodParams, PatchOptions options = PatchOptions.None)
 			{
 				this.type = type;
 				this.typeName = typeName;
 				this.methodName = methodName;
 				this.methodParams = methodParams;
-				this.patchOnce = patchOnce;
+				this.options = options;
 			}
 
 			public PatchAttribute(string typeName, string methodName):
-				this(null, typeName, methodName, null, false) {}
+				this(null, typeName, methodName, null) {}
 
-			public PatchAttribute(string typeName, string methodName, bool patchOnce, params Type[] methodParams):
-				this(null, typeName, methodName, methodParams, patchOnce) {}
+			public PatchAttribute(string typeName, string methodName, params Type[] methodParams):
+				this(null, typeName, methodName, methodParams) {}
 
 			public PatchAttribute(Type type, string methodName):
-				this(type, null, methodName, null, false) {}
+				this(type, null, methodName, null) {}
 
-			public PatchAttribute(Type type, string methodName, bool patchOnce):
-				this(type, null, methodName, null, patchOnce) {}
+			public PatchAttribute(PatchOptions options):
+				this(null, null, null, null, options) {}
+
+			// just merge options to the main attribute (with type and method)
+			public static PatchAttribute merge(PatchAttribute[] attrs)
+			{
+				if (attrs.isNullOrEmpty()) return null;
+				if (attrs.Length == 1) return attrs[0];
+
+				var attrMain = attrs.FirstOrDefault(attr => attr.methodName != null);
+
+				if (attrMain != null)
+					attrs.forEach(attr => attrMain.options |= attr.options);
+
+				return attrMain;
+			}
 
 			public MethodInfo targetMethod => (type ??= Type.GetType(typeName))?.method(methodName, methodParams);
 		}
@@ -87,10 +109,12 @@ namespace Common.Harmony
 				if (method.getAttr<HarmonyPatch>() is HarmonyPatch harmonyPatch)
 					return harmonyPatch.info.getTargetMethod();
 
-				if (method.getAttr<PatchAttribute>() is PatchAttribute patchAttr)
+				if (PatchAttribute.merge(method.getAttrs<PatchAttribute>()) is PatchAttribute patchAttr)
 				{
 					var targetMethod = patchAttr.targetMethod;
-					return patchAttr.patchOnce && isPatchedBy(targetMethod, method, true)? null: targetMethod;
+
+					bool patchOnce = patchAttr.options.HasFlag(PatchOptions.PatchOnce);
+					return patchOnce && isPatchedBy(targetMethod, method, true)? null: targetMethod;
 				}
 
 				return null;

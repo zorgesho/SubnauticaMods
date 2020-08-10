@@ -87,7 +87,9 @@ namespace Common.Configuration
 						HarmonyHelper.patch();
 				}
 
-				[HarmonyPrefix, HarmonyHelper.Patch("SMLHelper.V2.Options.Utility.Validator, SMLHelper", "ValidateID", true, typeof(string))]
+				[HarmonyPrefix]
+				[HarmonyHelper.Patch(HarmonyHelper.PatchOptions.PatchOnce)]
+				[HarmonyHelper.Patch("SMLHelper.V2.Options.Utility.Validator, SMLHelper", "ValidateID", typeof(string))]
 				static bool validatorPrefix(string id) => id.IndexOf('.') == -1;
 			}
 		}

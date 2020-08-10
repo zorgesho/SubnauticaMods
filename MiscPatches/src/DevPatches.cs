@@ -1,9 +1,6 @@
-﻿#if BRANCH_STABLE
-using System;
-using System.Reflection.Emit;
+﻿using System.Collections;
 using System.Collections.Generic;
-#endif
-using System.Collections;
+using System.Reflection.Emit;
 
 using Harmony;
 using UnityEngine;
@@ -13,6 +10,11 @@ using UnityEngine.SceneManagement;
 using Common;
 using Common.Harmony;
 using Common.Configuration;
+
+#if BRANCH_EXP
+using System.Linq;
+using Common.Reflection;
+#endif
 
 namespace MiscPatches
 {
@@ -64,7 +66,7 @@ namespace MiscPatches
 		public class Purge: Config.Field.IAction
 		{
 			public void action() =>
-				UnityEngine.Object.FindObjectsOfType<VFXDestroyAfterSeconds>().forEach(vfx => vfx.lifeTime = 0f);
+				Object.FindObjectsOfType<VFXDestroyAfterSeconds>().forEach(vfx => vfx.lifeTime = 0f);
 		}
 
 		static void Postfix(VFXController __instance, int i)
@@ -104,7 +106,8 @@ namespace MiscPatches
 #if BRANCH_STABLE
 		[HarmonyTranspiler]
 		static IEnumerable<CodeInstruction> fastStartPatch(IEnumerable<CodeInstruction> cins) =>
-			CIHelper.ciReplace(cins, ci => ci.isOp(OpCodes.Call), OpCodes.Pop, CIHelper.emitCall<Func<IEnumerator>>(_startGame));
+			CIHelper.ciReplace(cins, ci => ci.isOp(OpCodes.Call),
+				OpCodes.Pop, CIHelper.emitCall<System.Func<IEnumerator>>(_startGame));
 #elif BRANCH_EXP
 		[HarmonyPrefix]
 		static bool fastStartPatch(ref IEnumerator __result)
@@ -176,5 +179,41 @@ namespace MiscPatches
 			KnownTech.UnlockAll(false);
 			return false;
 		}
+	}
+
+	[PatchClass]
+	static class DevToolsDisabler
+	{
+		[HarmonyPrefix, HarmonyPatch(typeof(Telemetry), "Awake")]
+		static bool Telemetry_Awake_Prefix(Telemetry __instance)
+		{
+			Object.Destroy(__instance);
+			return false;
+		}
+
+		[HarmonyPrefix]
+		[HarmonyPatch(typeof(GameAnalytics), "Send", typeof(GameAnalytics.EventInfo), typeof(string))]
+		static bool GameAnalytics_Send_Prefix() => false;
+
+#if BRANCH_STABLE
+		[HarmonyPostfix, HarmonyPatch(typeof(MonitorLauncher), "Awake")] // fix for exception at startup
+		static void MonitorLauncher_Awake_Prefix(MonitorLauncher __instance) => Object.Destroy(__instance);
+#endif
+
+#if BRANCH_EXP // fix for exception in exp branch because SentrySDK is deleted by QMM
+		[HarmonyTranspiler]
+		[HarmonyHelper.Patch(typeof(SystemsSpawner), "SetupSingleton")]
+		[HarmonyHelper.Patch(HarmonyHelper.PatchOptions.PatchIteratorMethod)]
+		static IEnumerable<CodeInstruction> SetupSingleton_Transpiler(IEnumerable<CodeInstruction> cins)
+		{
+			var list = cins.ToList();
+			var getSentrySDK = typeof(GameObject).method<SentrySdk>("GetComponent");
+
+			int[] i = list.ciFindIndexes(ci => ci.isOp(OpCodes.Callvirt, getSentrySDK),
+										 ci => ci.isOp(OpCodes.Ldc_I4_0));
+
+			return i == null? cins: list.ciRemoveRange(i[0] - 2, i[1] - 1);
+		}
+#endif
 	}
 }

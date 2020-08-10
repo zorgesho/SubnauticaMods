@@ -20,7 +20,7 @@ namespace DayNightSpeed
 		static bool Prepare() => Main.config.useAuxSpeeds && Main.config.speedEggsHatching != 1.0f;
 
 		static CIEnumerable Transpiler(CIEnumerable cins) =>
-			ciInsert(cins, ci => ci.isLDC(1f), _codeForCfgVar(nameof(ModConfig.speedEggsHatching)), OpCodes.Div);
+			cins.ciInsert(ci => ci.isLDC(1f), _codeForCfgVar(nameof(ModConfig.speedEggsHatching)), OpCodes.Div);
 	}
 
 	// modifying creature grow and breed time (breed time is half of grow time)
@@ -33,7 +33,7 @@ namespace DayNightSpeed
 		{
 			FieldInfo growingPeriod = typeof(WaterParkCreatureParameters).field("growingPeriod");
 
-			return ciInsert(cins, ci => ci.isOp(OpCodes.Ldfld, growingPeriod), +1, 0,
+			return cins.ciInsert(ci => ci.isOp(OpCodes.Ldfld, growingPeriod), +1, 0,
 				_codeForCfgVar(nameof(ModConfig.speedCreaturesGrow)), OpCodes.Div);
 		}
 
@@ -52,7 +52,7 @@ namespace DayNightSpeed
 
 		[HarmonyTranspiler, HarmonyPatch(typeof(GrowingPlant), "GetGrowthDuration")]
 		static CIEnumerable GrowingPlant_GetGrowthDuration_Transpiler(CIEnumerable cins) =>
-			ciInsert(cins, ci => ci.isLDC(1f), _codeForCfgVar(nameof(ModConfig.speedPlantsGrow)), OpCodes.Div);
+			cins.ciInsert(ci => ci.isLDC(1f), _codeForCfgVar(nameof(ModConfig.speedPlantsGrow)), OpCodes.Div);
 
 		[HarmonyPrefix, HarmonyPatch(typeof(FruitPlant), "Initialize")]
 		static void FruitPlant_Initialize_Prefix(FruitPlant __instance) // don't want to use another transpilers here

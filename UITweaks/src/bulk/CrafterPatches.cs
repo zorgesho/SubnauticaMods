@@ -61,15 +61,17 @@ namespace UITweaks
 			var list = cins.ToList();
 
 			var get_linkedItemCount = typeof(ITechData).method("get_linkedItemCount");
-			int index = list.findIndexForLast(ci => ci.isOp(OpCodes.Callvirt, get_linkedItemCount), ci => ci.isOp(OpCodes.Ldc_I4_1)) + 2;
+			int index = list.ciFindIndexForLast(ci => ci.isOp(OpCodes.Callvirt, get_linkedItemCount),
+												ci => ci.isOp(OpCodes.Ldc_I4_1));
+
+			return index == -1? cins:
+				list.ciInsert(index + 2, OpCodes.Ldarg_0, CIHelper.emitCall<Action<CrafterLogic>>(_changeLinkedItemsAmount));
 
 			static void _changeLinkedItemsAmount(CrafterLogic instance)
 			{
 				if (crafterCache.TryGetValue(instance, out CraftData.TechData data))
 					instance.numCrafted = data.craftAmount;
 			}
-
-			return CIHelper.ciInsert(list, index, OpCodes.Ldarg_0, CIHelper.emitCall<Action<CrafterLogic>>(_changeLinkedItemsAmount));
 		}
 	}
 }

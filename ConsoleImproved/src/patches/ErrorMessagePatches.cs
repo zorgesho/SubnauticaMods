@@ -13,8 +13,6 @@ using Common.Configuration;
 
 namespace ConsoleImproved
 {
-	using Debug = Common.Debug;
-
 	[HarmonyPatch(typeof(ErrorMessage), "Awake")]
 	static class ErrorMessageSettings
 	{
@@ -123,46 +121,30 @@ namespace ConsoleImproved
 			var list = cins.ToList();
 
 			// is console visible
-			void _injectStateCheck(int indexToInject, object labelToJump)
+			void _injectStateCheck(int indexToInject, int indexToJump)
 			{
-				CIHelper.ciInsert(list, indexToInject,
+				var label = list.ciDefineLabel(indexToJump, ilg);
+
+				list.ciInsert(indexToInject,
 					OpCodes.Ldsfld, typeof(DevConsole).field(nameof(DevConsole.instance)),
 					OpCodes.Ldfld,  typeof(DevConsole).field(nameof(DevConsole.state)),
-					OpCodes.Brtrue_S, labelToJump);
+					OpCodes.Brtrue_S, label);
 			}
 
-			// ignoring (time > message.timeEnd) loop if console is visible (just jumping to "float num = this.offsetY * 7f" line)
-			int indexToJump1 = list.FindIndex(ci => ci.isLDC(7f)) - 2;
-			Debug.assert(indexToJump1 >= 0);
+			MethodInfo CanvasRenderer_SetAlpha = typeof(CanvasRenderer).method("SetAlpha");
+			MethodInfo Transform_setLocalPosition = typeof(Transform).method("set_localPosition");
 
-			if (indexToJump1 < 0)
+			int[] i = list.ciFindIndexes(ci => ci.isLDC(7f), // -2, jump index
+										 ci => ci.isOp(OpCodes.Callvirt, Transform_setLocalPosition), // +1, inject index
+										 ci => ci.isOp(OpCodes.Callvirt, CanvasRenderer_SetAlpha)); // +1, jump index
+			if (i == null)
 				return cins;
-
-			Label lb1 = ilg.DefineLabel();
-			list[indexToJump1].labels.Add(lb1);
-
-			int indexToInject1 = 2;
-			_injectStateCheck(indexToInject1, lb1);
 
 			// ignoring alpha changes for message entry if console is visible (last two lines in the second loop)
-			MethodInfo CanvasRenderer_SetAlpha = typeof(CanvasRenderer).method(nameof(CanvasRenderer.SetAlpha));
-			int indexToJump2 = list.FindIndex(indexToJump1, ci => ci.isOp(OpCodes.Callvirt, CanvasRenderer_SetAlpha)) + 1;
-			Debug.assert(indexToJump2 >= 0);
+			_injectStateCheck(i[1] + 1, i[2] + 1);
 
-			if (indexToJump2 < 0)
-				return cins;
-
-			Label lb2 = ilg.DefineLabel();
-			list[indexToJump2].labels.Add(lb2);
-
-			MethodInfo Transform_setLocalPosition = typeof(Transform).method("set_localPosition");
-			int indexToInject2 = list.FindIndex(indexToJump1, ci => ci.isOp(OpCodes.Callvirt, Transform_setLocalPosition)) + 1;
-			Debug.assert(indexToInject2 >= 0);
-
-			if (indexToInject2 < 0)
-				return cins;
-
-			_injectStateCheck(indexToInject2, lb2);
+			// ignoring (time > message.timeEnd) loop if console is visible (just jumping to "float num = this.offsetY * 7f" line)
+			_injectStateCheck(2, i[0] - 2);
 
 			return list;
 		}

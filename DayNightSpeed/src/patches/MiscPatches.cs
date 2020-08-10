@@ -17,8 +17,9 @@ namespace DayNightSpeed
 	static class Survival_UpdateStats_Patch
 	{
 		static CIEnumerable Transpiler(CIEnumerable cins) =>
-			ciInsert(cins, ci => ci.isLDC(100f), +1, 2, _codeForCfgVar(nameof(ModConfig.dayNightSpeed)), OpCodes.Mul,
-														_codeForCfgVar(nameof(ModConfig.auxSpeedHungerThrist)), OpCodes.Mul);
+			cins.ciInsert(ci => ci.isLDC(100f), +1, 2,
+				_codeForCfgVar(nameof(ModConfig.dayNightSpeed)), OpCodes.Mul,
+				_codeForCfgVar(nameof(ModConfig.auxSpeedHungerThrist)), OpCodes.Mul);
 
 #if DEBUG // debug patch
 		static void Postfix(Survival __instance)
@@ -36,7 +37,7 @@ namespace DayNightSpeed
 		static CIEnumerable Transpiler(CIEnumerable cins)
 		{
 			int ld = 0;
-			return ciInsert(cins, ci => (ci.isOp(OpCodes.Ldarg_2) && ++ld == 2) || ci.isLDC(0.1f), +1, 2,
+			return cins.ciInsert(ci => (ci.isOp(OpCodes.Ldarg_2) && ++ld == 2) || ci.isLDC(0.1f), +1, 2,
 				_codeForCfgVar(nameof(ModConfig.dayNightSpeed)), OpCodes.Mul);
 		}
 	}
@@ -46,7 +47,7 @@ namespace DayNightSpeed
 	static class MapRoomFunctionality_GetScanInterval_Patch
 	{
 		static CIEnumerable Transpiler(CIEnumerable cins) =>
-			ciInsert(cins, ci => ci.isOp(OpCodes.Call), _dnsClamped01.ci, OpCodes.Mul);
+			cins.ciInsert(ci => ci.isOp(OpCodes.Call), _dnsClamped01.ci, OpCodes.Mul);
 	}
 
 	// fixing sunbeam counter so it shows realtime seconds regardless of daynightspeed
@@ -54,7 +55,7 @@ namespace DayNightSpeed
 	static class uGUISunbeamCountdown_UpdateInterface_Patch
 	{
 		static CIEnumerable Transpiler(CIEnumerable cins) =>
-			ciInsert(cins, ci => ci.isOp(OpCodes.Sub), _codeForCfgVar(nameof(ModConfig.dayNightSpeed)), OpCodes.Div);
+			cins.ciInsert(ci => ci.isOp(OpCodes.Sub), _codeForCfgVar(nameof(ModConfig.dayNightSpeed)), OpCodes.Div);
 	}
 
 	// we can use object with propulsion cannon after shot in 3 seconds
@@ -62,7 +63,7 @@ namespace DayNightSpeed
 	static class PropulseCannonAmmoHandler_Update_Patch
 	{
 		static CIEnumerable Transpiler(CIEnumerable cins) =>
-			ciInsert(cins, ci => ci.isLDC(3.0f), _dnsClamped01.ci, OpCodes.Mul);
+			cins.ciInsert(ci => ci.isLDC(3.0f), _dnsClamped01.ci, OpCodes.Mul);
 	}
 
 	// fixed lifetime for explosion
@@ -70,7 +71,7 @@ namespace DayNightSpeed
 	static class WorldForces_AddExplosion_Patch
 	{
 		static CIEnumerable Transpiler(CIEnumerable cins) =>
-			ciInsert(cins, ci => ci.isLDC(500f), _dnsClamped01.ci, OpCodes.Div);
+			cins.ciInsert(ci => ci.isLDC(500f), _dnsClamped01.ci, OpCodes.Div);
 	}
 
 	// fixed lifetime for current
@@ -78,7 +79,7 @@ namespace DayNightSpeed
 	static class WorldForces_AddCurrent_Patch
 	{
 		static CIEnumerable Transpiler(CIEnumerable cins) =>
-			ciInsert(cins, ci => ci.isOp(OpCodes.Ldarg_S, (byte)5), _dnsClamped01.ci, OpCodes.Mul);
+			cins.ciInsert(ci => ci.isOp(OpCodes.Ldarg_S, (byte)5), _dnsClamped01.ci, OpCodes.Mul);
 	}
 
 	// fixes for explosions and currents
@@ -89,8 +90,8 @@ namespace DayNightSpeed
 		{
 			var list = cins.ToList();
 
-			ciInsert(list, ci => ci.isLDC<double>(0.03f), _dnsClamped01.ci, OpCodes.Mul); // do not change to 0.03d !
-			ciInsert(list, ci => ci.isLDC(500f), _dnsClamped01.ci, OpCodes.Div); // changing only first '500f'
+			list.ciInsert(ci => ci.isLDC<double>(0.03f), _dnsClamped01.ci, OpCodes.Mul); // do not change to 0.03d !
+			list.ciInsert(ci => ci.isLDC(500f), _dnsClamped01.ci, OpCodes.Div); // changing only first '500f'
 
 			return list;
 		}

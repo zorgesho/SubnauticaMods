@@ -147,17 +147,14 @@ namespace MiscPatches
 		{
 			var list = cins.ToList();
 
-			int indexForInject = list.FindIndex(ci => ci.isOp(OpCodes.Brfalse)) + 5;
-			int indexForJump   = list.FindIndex(indexForInject, ci => ci.isOp(OpCodes.Brfalse));
-
-			Common.Debug.assert(indexForInject >= 5 && indexForJump != -1);
-
-			CIHelper.ciInsert(list, indexForInject,
-				OpCodes.Ldloc_S, 11,
-				CIHelper.emitCall<Func<GameObject, bool>>(isObjectImmune),
-				OpCodes.Brtrue, list[indexForJump].operand);
-
-			return list;
+			int[] i = list.ciFindIndexes(ci => ci.isOp(OpCodes.Brfalse),
+										 ci => ci.isOpLoc(OpCodes.Ldloc_S, 11), // Rigidbody component = gameObject.GetComponent<Rigidbody>();
+										 ci => ci.isOp(OpCodes.Brfalse));
+			return i == null? cins:
+				list.ciInsert(i[1],
+					OpCodes.Ldloc_S, 11,
+					CIHelper.emitCall<Func<GameObject, bool>>(isObjectImmune),
+					OpCodes.Brtrue, list[i[2]].operand);
 		}
 	}
 

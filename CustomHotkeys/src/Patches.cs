@@ -29,11 +29,11 @@ namespace CustomHotkeys
 			var list = cins.ToList();
 			var isShipping = typeof(PlatformUtils).method("get_isShippingRelease");
 
-			int indexBegin = list.FindIndex(ci => ci.isOp(OpCodes.Call, isShipping));
-			int indexEnd   = list.FindLastIndex(ci => ci.isOp(OpCodes.Blt)) + 1;
-			Debug.assert(indexBegin != -1 && indexEnd != 0);
+			int[] i = list.ciFindIndexes(ci => ci.isOp(OpCodes.Call, isShipping),
+										 ci => ci.isOp(OpCodes.Call, isShipping),
+										 ci => ci.isOp(OpCodes.Blt));
 
-			return CIHelper.ciRemove(list, indexBegin, indexEnd - indexBegin);
+			return i == null? cins: list.ciRemoveRange(i[0], i[2]);
 		}
 
 		// disable F6 (hide gui tool)
@@ -135,34 +135,29 @@ namespace CustomHotkeys
 				var Input_GetKeyUp = typeof(Input).method("GetKeyUp", typeof(KeyCode));
 				var field_lastBindedIndex = typeof(BindingPatches).field(nameof(lastBindedIndex));
 
-				int index = list.FindIndex(ci => ci.isOp(OpCodes.Call, Input_GetKey));
-				Debug.assert(index != -1);
+				int[] i = list.ciFindIndexes(ci => ci.isOp(OpCodes.Call, Input_GetKey),
+											 ci => ci.isOp(OpCodes.Call, Input_GetKeyUp));
+				if (i == null)
+					return cins;
 
-				Label lb0 = list[index + 1].operand.cast<Label>();
+				Label lb1 = list[i[1] + 1].operand.cast<Label>();
+				Label lb2 = list.ciDefineLabel(i[1] + 2, ilg); // label for 'inputState.flags |= GameInput.InputStateFlags.Up'
 
-				list.InsertRange(index + 2, CIHelper.toCIList
-				(
-					OpCodes.Ldloc_S, 4,						//	if (i == BindingPatches.lastBindedIndex)
-					OpCodes.Ldsfld, field_lastBindedIndex,
-					OpCodes.Beq_S, lb0
-				));
-
-				index = list.FindIndex(ci => ci.isOp(OpCodes.Call, Input_GetKeyUp));
-				Debug.assert(index != -1);
-
-				Label lb1 = list[index + 1].operand.cast<Label>();
-				Label lb2 = ilg.DefineLabel();
-				list[index + 2].labels.Add(lb2); // label for 'inputState.flags |= GameInput.InputStateFlags.Up'
-
-				list.InsertRange(index + 2, CIHelper.toCIList
-				(
+				CIHelper.LabelClipboard.__enabled = false;
+				list.ciInsert(i[1] + 2,
 					OpCodes.Ldloc_S, 4,						//	if (i == BindingPatches.lastBindedIndex)
 					OpCodes.Ldsfld, field_lastBindedIndex,
 					OpCodes.Bne_Un_S, lb2,
 					OpCodes.Ldc_I4_M1,						//		BindingPatches.lastBindedIndex = -1;
 					OpCodes.Stsfld, field_lastBindedIndex,
-					OpCodes.Br_S, lb1						//	else inputState.flags |= GameInput.InputStateFlags.Up;
-				));
+					OpCodes.Br_S, lb1);						//	else inputState.flags |= GameInput.InputStateFlags.Up;
+
+				Label lb0 = list[i[0] + 1].operand.cast<Label>();
+
+				list.ciInsert(i[0] + 2,
+					OpCodes.Ldloc_S, 4,						//	if (i == BindingPatches.lastBindedIndex)
+					OpCodes.Ldsfld, field_lastBindedIndex,
+					OpCodes.Beq_S, lb0);
 
 				return list;
 			}

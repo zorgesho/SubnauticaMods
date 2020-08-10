@@ -7,6 +7,8 @@ using Harmony;
 
 namespace Common.Harmony
 {
+	using Reflection;
+
 	using CIEnumerable = IEnumerable<CodeInstruction>;
 	using CIList = List<CodeInstruction>;
 	using CIPredicate = Predicate<CodeInstruction>;
@@ -21,17 +23,6 @@ namespace Common.Harmony
 		// for local variables ops
 		public static bool isOpLoc(this CodeInstruction ci, OpCode opcode, int index) =>
 			ci.opcode == opcode && ((ci.operand as LocalBuilder)?.LocalIndex == index);
-
-		public static int findIndexForLast(this CIList list, params CIPredicate[] predicates)
-		{
-			int index = 0;
-
-			foreach (var p in predicates)
-				if ((index = list.FindIndex(index, p)) == -1)
-					return -1;
-
-			return index;
-		}
 	}
 
 	static partial class CIHelper // CodeInstruction sequences manipulation methods
@@ -47,7 +38,7 @@ namespace Common.Harmony
 		#region CIList methods
 
 		// makes new list with cloned CodeInstructions
-		public static CIList copyCIList(CIList list) => list.Select(ci => ci.Clone()).ToList();
+		static CIList copyCIList(CIList list) => list.Select(ci => ci.Clone()).ToList();
 
 		// makes list with CodeInstructions from various objects (see 'switch' for object types)
 		public static CIList toCIList(params object[] cins)
@@ -80,6 +71,43 @@ namespace Common.Harmony
 
 			return list;
 		}
+
+		// find indexes in the list for each predicate
+		// each predicate start index searching from the result of the previous predicate
+		// returns null if any predicate in chain fails to find a match
+		public static int[] ciFindIndexes(this CIList list, params CIPredicate[] predicates)
+		{
+			int[] indexes = new int[predicates.Length];
+
+			for (int i = 0; i < indexes.Length; i++)
+			{
+				indexes[i] = list.FindIndex(i == 0? 0: indexes[i - 1] + 1, predicates[i]);
+
+				if (indexes[i] == -1 || (indexes[i] == list.Count - 1 && i < indexes.Length - 1))
+				{
+					Debug.assert(false, $"CIHelper.ciFindIndexes: index not found (predicate: {i}, result: {indexes[i]})");
+					return null;
+				}
+			}
+
+			return indexes;
+		}
+
+		// find index for the last predicate
+		// returns -1 if any predicate in chain fails to find a match
+		public static int ciFindIndexForLast(this CIList list, params CIPredicate[] predicates)
+		{
+			int[] indexes = list.ciFindIndexes(predicates);
+			return indexes == null? -1: indexes[indexes.Length - 1];
+		}
+
+		public static Label ciDefineLabel(this CIList list, int index, ILGenerator ilg)
+		{
+			Label label = ilg.DefineLabel();
+			list[index].labels.Add(label);
+			return label;
+		}
+
 		#endregion
 
 		#region ciInsert
@@ -87,18 +115,18 @@ namespace Common.Harmony
 		// indexOffset - change actual index from matched for insertion
 		// if indexOffset is 0 than cinsToInsert will be inserted right before finded instruction
 		// throws assert exception if there were no matches at all or if maxMatchCount > 0 and there were less predicate matches
-		public static CIList ciInsert(CIEnumerable cins, CIPredicate predicate, int indexOffset, int maxMatchCount, params object[] cinsToInsert) =>
+		public static CIList ciInsert(this CIEnumerable cins, CIPredicate predicate, int indexOffset, int maxMatchCount, params object[] cinsToInsert) =>
 			ciInsert(cins.ToList(), predicate, indexOffset, maxMatchCount, cinsToInsert);
 
 		// for just first predicate match (insert right after finded instruction)
-		public static CIList ciInsert(CIEnumerable cins, CIPredicate predicate, params object[] cinsToInsert) =>
+		public static CIList ciInsert(this CIEnumerable cins, CIPredicate predicate, params object[] cinsToInsert) =>
 			ciInsert(cins.ToList(), predicate, cinsToInsert);
 
 		// for just first predicate match (insert right after finded instruction)
-		public static CIList ciInsert(CIList list, CIPredicate predicate, params object[] cinsToInsert) =>
+		public static CIList ciInsert(this CIList list, CIPredicate predicate, params object[] cinsToInsert) =>
 			ciInsert(list, predicate, 1, 1, cinsToInsert);
 
-		public static CIList ciInsert(CIList list, CIPredicate predicate, int indexOffset, int maxMatchCount, params object[] cinsToInsert)
+		public static CIList ciInsert(this CIList list, CIPredicate predicate, int indexOffset, int maxMatchCount, params object[] cinsToInsert)
 		{
 			bool anyInserts = false; // just for assert
 			int index, index0 = 0;
@@ -125,10 +153,10 @@ namespace Common.Harmony
 			return list;
 		}
 
-		public static CIList ciInsert(CIList list, int index, params object[] cinsToInsert) =>
+		public static CIList ciInsert(this CIList list, int index, params object[] cinsToInsert) =>
 			ciInsert(list, index, toCIList(cinsToInsert));
 
-		public static CIList ciInsert(CIList list, int index, CIList listToInsert)
+		public static CIList ciInsert(this CIList list, int index, CIList listToInsert)
 		{
 			if (index >= 0 && index <= list.Count)
 			{
@@ -147,19 +175,28 @@ namespace Common.Harmony
 		#region ciRemove
 		// indexOffset - change actual index from matched for removing
 		// countToRemove - instructions count to be removed
-		public static CIList ciRemove(CIEnumerable cins, CIPredicate predicate, int indexOffset, int countToRemove) =>
+		public static CIList ciRemove(this CIEnumerable cins, CIPredicate predicate, int indexOffset, int countToRemove) =>
 			ciRemove(cins.ToList(), predicate, indexOffset, countToRemove);
 
-		public static CIList ciRemove(CIList list, CIPredicate predicate, int indexOffset, int countToRemove)
+		public static CIList ciRemove(this CIList list, CIPredicate predicate, int indexOffset, int countToRemove)
 		{
 			int index = list.FindIndex(predicate);
 			return ciRemove(list, (index == -1? -1: index + indexOffset), countToRemove);
 		}
 
-		public static CIList ciRemove(CIEnumerable cins, int index, int countToRemove) =>
+		public static CIList ciRemove(this CIEnumerable cins, int index, int countToRemove) =>
 			ciRemove(cins.ToList(), index, countToRemove);
 
-		public static CIList ciRemove(CIList list, int index, int countToRemove)
+		public static CIList ciRemoveRange(this CIList list, int indexBegin, int indexEnd)
+		{
+			if (indexEnd != -1) // indexBegin will be checked in ciRemove
+				return ciRemove(list, indexBegin, indexEnd - indexBegin + 1);
+
+			Debug.assert(false, "ciRemove: CodeInstruction index is invalid");
+			return list;
+		}
+
+		public static CIList ciRemove(this CIList list, int index, int countToRemove)
 		{
 			if (index >= 0 && index + countToRemove <= list.Count)
 			{
@@ -177,18 +214,22 @@ namespace Common.Harmony
 
 		#region ciReplace
 		// replaces first matched CodeInstruction with cinsForReplace CodeInstructions
-		public static CIList ciReplace(CIEnumerable cins, CIPredicate predicate, params object[] cinsForReplace) =>
+		public static CIList ciReplace(this CIEnumerable cins, CIPredicate predicate, params object[] cinsForReplace) =>
 			ciReplace(cins.ToList(), predicate, cinsForReplace);
 
-		public static CIList ciReplace(CIList list, CIPredicate predicate, params object[] cinsForReplace) =>
+		public static CIList ciReplace(this CIList list, CIPredicate predicate, params object[] cinsForReplace) =>
 			ciReplace(list, list.FindIndex(predicate), cinsForReplace);
 
-		public static CIList ciReplace(CIList list, int index, params object[] cinsForReplace)
+		public static CIList ciReplace(this CIList list, int index, params object[] cinsForReplace)
 		{
 			if (index >= 0)
 			{
 				CIList listToInsert = toCIList(cinsForReplace);
-				ciInsert(list, index, listToInsert); // insert first, so we can copy labels in ciInsert
+
+				bool processLabels = LabelClipboard.__enabled; // will autoenable after next operation
+				ciInsert(list, index, listToInsert); // insert first, so we can process labels in ciInsert
+
+				LabelClipboard.__enabled = processLabels;
 				ciRemove(list, index + listToInsert.Count, 1);
 			}
 			else Debug.assert(false, "ciReplace: CodeInstruction index is invalid");
@@ -198,12 +239,17 @@ namespace Common.Harmony
 		#endregion
 
 		#region label clipboard
-		static class LabelClipboard
+		public static class LabelClipboard
 		{
+			public static bool __enabled; // will autoenable after ci operation
+
 			static List<Label> labels;
 
 			public static void copyFrom(CIList list, int index)
 			{
+				if (!__enabled)
+					return;
+
 				Debug.assert(labels == null);
 
 				if (index != list.Count && list[index].labels.Count > 0)
@@ -215,6 +261,12 @@ namespace Common.Harmony
 
 			public static void pasteTo(CIList list, int index)
 			{
+				if (!__enabled)
+				{
+					__enabled = true;
+					return;
+				}
+
 				if (labels != null)
 					list[index].labels.AddRange(labels);
 

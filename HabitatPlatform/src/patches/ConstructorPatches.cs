@@ -35,19 +35,20 @@ namespace HabitatPlatform
 		{
 			var list = cins.ToList();
 
-			int index = list.FindIndex(ci => ci.isLDC((int)TechType.RocketBase));
+			int[] i = list.ciFindIndexes(ci => ci.isLDC((int)TechType.RocketBase), // inject
+										 ci => ci.isLDC(25f)); // jump
+			if (i == null)
+				return cins;
 
-			Label labelAssign = ilg.DefineLabel();
-			Label labelExit = list[index + 1].operand.cast<Label>();
+			Label labelAssign = list.ciDefineLabel(i[1], ilg);
+			Label labelExit = list[i[0] + 1].operand.cast<Label>(); // store old label
+			list[i[0] + 1] = new CodeInstruction(OpCodes.Beq_S, labelAssign); // replace with new label
 
-			list[index + 1] = new CodeInstruction(OpCodes.Beq_S, labelAssign);
-
-			CIHelper.ciInsert(list, index + 2,
+			CIHelper.LabelClipboard.__enabled = false;
+			list.ciInsert(i[0] + 2,
 				OpCodes.Ldarg_1,
 				OpCodes.Call, typeof(HabitatPlatform).method("get_TechType"),
 				OpCodes.Bne_Un_S, labelExit);
-
-			list[list.FindIndex(index, ci => ci.isLDC(25f))].labels.Add(labelAssign);
 
 			return list;
 		}

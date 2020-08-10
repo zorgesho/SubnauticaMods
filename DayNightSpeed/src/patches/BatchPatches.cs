@@ -26,7 +26,7 @@ namespace DayNightSpeed
 			MethodInfo deltaTime = typeof(DayNightCycle).method("get_deltaTime");
 			MethodInfo dayNightSpeed = typeof(DayNightCycle).method("get_dayNightSpeed");
 
-			return ciInsert(cins, ci => ci.isOp(OpCodes.Callvirt, deltaTime) || ci.isOp(OpCodes.Callvirt, dayNightSpeed), +1, 0,
+			return cins.ciInsert(ci => ci.isOp(OpCodes.Callvirt, deltaTime) || ci.isOp(OpCodes.Callvirt, dayNightSpeed), +1, 0,
 				_dnsClamped01.ci, OpCodes.Div,
 				_codeForCfgVar(multCfgVarName), OpCodes.Mul);
 		}

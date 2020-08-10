@@ -44,13 +44,14 @@ namespace HabitatPlatform
 			MethodInfo getSubRoot = typeof(GameObject).method<SubRoot>("GetComponentInParent", new Type[0]);
 
 			// adding check there -> SubRoot componentInParent2 = Builder.placementTarget.GetComponentInParent<SubRoot>();
-			int index = list.findIndexForLast(cin => cin.isOp(OpCodes.Callvirt, getSubRoot),
-											  cin => cin.isOp(OpCodes.Brfalse));
+			int index = list.ciFindIndexForLast(cin => cin.isOp(OpCodes.Callvirt, getSubRoot),
+												cin => cin.isOp(OpCodes.Brfalse));
+			if (index == -1)
+				return cins;
 
 			list[index].opcode = OpCodes.Br;
 
-			Label label = ilg.DefineLabel();
-			list[index + 1].labels.Add(label);
+			var label = list.ciDefineLabel(index + 1, ilg);
 
 			CIHelper.ciInsert(list, index,
 				OpCodes.Brtrue_S, label,

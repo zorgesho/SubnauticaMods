@@ -67,7 +67,7 @@ namespace PrawnSuitGrapplingArmUpgrade
 		static CIEnumerable Transpiler(CIEnumerable cins, ILGenerator ilg)
 		{
 			int ldc25 = 0;
-			return ciReplace(cins, ci => ci.isLDC(25f) && ++ldc25 == 2,
+			return cins.ciReplace(ci => ci.isLDC(25f) && ++ldc25 == 2,
 				_codeForCfgVar<float, GrapplingArmUpgraded>(25f, nameof(Main.config.hookSpeed), ilg));
 		}
 	}

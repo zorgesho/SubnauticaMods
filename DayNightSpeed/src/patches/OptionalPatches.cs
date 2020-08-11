@@ -29,19 +29,16 @@ namespace DayNightSpeed
 	{
 		static bool prepare() => Main.config.useAuxSpeeds && Main.config.speedCreaturesGrow != 1.0f;
 
-		static CIEnumerable transpiler(CIEnumerable cins)
+		[HarmonyTranspiler]
+		[HarmonyPatch(typeof(WaterParkCreature), "Update")]
+		[HarmonyPatch(typeof(WaterParkCreature), "SetMatureTime")]
+		static CIEnumerable WaterParkCreature_Transpiler(CIEnumerable cins)
 		{
 			FieldInfo growingPeriod = typeof(WaterParkCreatureParameters).field("growingPeriod");
 
 			return cins.ciInsert(ci => ci.isOp(OpCodes.Ldfld, growingPeriod), +1, 0,
 				_codeForCfgVar(nameof(ModConfig.speedCreaturesGrow)), OpCodes.Div);
 		}
-
-		[HarmonyTranspiler, HarmonyPatch(typeof(WaterParkCreature), "Update")]
-		static CIEnumerable WPC_Update_Transpiler(CIEnumerable cins) => transpiler(cins);
-
-		[HarmonyTranspiler, HarmonyPatch(typeof(WaterParkCreature), "SetMatureTime")]
-		static CIEnumerable WPC_SetMatureTime_Transpiler(CIEnumerable cins) => transpiler(cins);
 	}
 
 	// modifying plants grow time and fruits grow time (on lantern tree)

@@ -49,10 +49,9 @@ namespace WarningsDisabler
 		[HarmonyPostfix, HarmonyPatch(typeof(HintSwimToSurface), "OnLanguageChanged")]
 		static void HSTS_OnLanguageChanged_Postfix(HintSwimToSurface __instance) => hintMessageHash = __instance.messageHash;
 
-		[HarmonyPrefix, HarmonyPatch(typeof(HintSwimToSurface), "Update")]
-		static bool HSTS_Update_Prefix() => Main.config.oxygenWarningsEnabled;
-
-		[HarmonyPrefix, HarmonyPatch(typeof(LowOxygenAlert), "Update")]
-		static bool LowOxygenAlert_Update_Prefix() => Main.config.oxygenWarningsEnabled;
+		[HarmonyPrefix]
+		[HarmonyPatch(typeof(LowOxygenAlert), "Update")]
+		[HarmonyPatch(typeof(HintSwimToSurface), "Update")]
+		static bool OxygenAlert_Prefix() => Main.config.oxygenWarningsEnabled;
 	}
 }

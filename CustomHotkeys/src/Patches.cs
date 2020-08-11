@@ -36,13 +36,10 @@ namespace CustomHotkeys
 			return i == null? cins: list.ciRemoveRange(i[0], i[2]);
 		}
 
-		// disable F6 (hide gui tool)
-		[HarmonyPrefix, HarmonyPatch(typeof(GUIController), "Update")]
-		static bool F6_disabler() => false;
-
-		// disable Shift+F5 (smoke test)
-		[HarmonyPrefix, HarmonyPatch(typeof(MainMenuController), "Update")]
-		static bool ShiftF5_disabler() => false;
+		[HarmonyPrefix]
+		[HarmonyPatch(typeof(GUIController), "Update")] // disable F6 (hide gui tool)
+		[HarmonyPatch(typeof(MainMenuController), "Update")] // disable Shift+F5 (smoke test)
+		static bool hotkeyDisabler() => false;
 	}
 
 	[OptionalPatch, PatchClass]

@@ -106,30 +106,42 @@ namespace Common.Harmony
 
 			foreach (var method in typeWithPatchMethods.methods(ReflectionHelper.bfAll | BindingFlags.DeclaredOnly))
 			{
-				if (!(_getPatchTarget(method) is MethodBase targetMethod))
+				bool _isPatched(MethodBase targetMethod) => patched ??= isPatchedBy(targetMethod, method);
+
+				if (!(_getPatchTargets(method) is MethodBase[] targetMethods))
 					continue;
 
-				bool _isPatched() => patched ??= isPatchedBy(targetMethod, method);
-
-				if (patchStatus == null || (patchStatus == true && !_isPatched()))
+				foreach (var targetMethod in targetMethods)
 				{
-					MethodInfo _method_if<H>() where H: Attribute => method.checkAttr<H>()? method: null;
-					patch(targetMethod, _method_if<HarmonyPrefix>(), _method_if<HarmonyPostfix>(), _method_if<HarmonyTranspiler>());
-				}
-				else if (patchStatus == false && _isPatched())
-				{
-					unpatch(targetMethod, method);
+					if (patchStatus == null || (patchStatus == true && !_isPatched(targetMethod)))
+					{
+						MethodInfo _method_if<H>() where H: Attribute => method.checkAttr<H>()? method: null;
+						patch(targetMethod, _method_if<HarmonyPrefix>(), _method_if<HarmonyPostfix>(), _method_if<HarmonyTranspiler>());
+					}
+					else if (patchStatus == false && _isPatched(targetMethod))
+					{
+						unpatch(targetMethod, method);
+					}
 				}
 			}
 
-			static MethodBase _getPatchTarget(MethodInfo method)
+			static MethodBase[] _getPatchTargets(MethodInfo method)
 			{
-				if (method.getAttr<HarmonyPatch>() is HarmonyPatch harmonyPatch)
-				{
-					var targetMethod = harmonyPatch.info.getTargetMethod();
-					Debug.assert(targetMethod != null, _error(PatchesValidator.getFullName(harmonyPatch.info)));
+				string _error(string targetMethod) =>
+					$"Patch target method is null! Patch method: {method.fullName()}, target method: {targetMethod}";
 
-					return targetMethod;
+				var harmonyPatches = method.getAttrs<HarmonyPatch>();
+				if (!harmonyPatches.isNullOrEmpty())
+				{
+					MethodBase _getTargetMethod(HarmonyPatch patch)
+					{
+						var targetMethod = patch.info.getTargetMethod();
+						Debug.assert(targetMethod != null, _error(PatchesValidator.getFullName(patch.info)));
+
+						return targetMethod;
+					}
+
+					return harmonyPatches.Select(_getTargetMethod).ToArray();
 				}
 
 				if (PatchAttribute.merge(method.getAttrs<PatchAttribute>()) is PatchAttribute patchAttr)
@@ -138,13 +150,10 @@ namespace Common.Harmony
 					Debug.assert(targetMethod != null, _error(PatchesValidator.getFullName(patchAttr)));
 
 					bool patchOnce = patchAttr.options.HasFlag(PatchOptions.PatchOnce);
-					return patchOnce && isPatchedBy(targetMethod, method, true)? null: targetMethod;
+					return patchOnce && isPatchedBy(targetMethod, method, true)? null: new[] { targetMethod };
 				}
 
 				return null;
-
-				string _error(string targetMethod) =>
-					$"Patch target method is null! Patch method: {method.fullName()}, target method: {targetMethod}";
 			}
 		}
 	}

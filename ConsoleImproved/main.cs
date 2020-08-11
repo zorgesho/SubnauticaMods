@@ -11,9 +11,6 @@ namespace ConsoleImproved
 		{
 			HarmonyHelper.patchAll(true);
 			LanguageHelper.init();
-
-			if (config.fixVanillaCommandsFloatParse)
-				CommandsFloatParsePatch.patchAll();
 		}
 	}
 }

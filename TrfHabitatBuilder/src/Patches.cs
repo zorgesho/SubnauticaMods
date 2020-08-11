@@ -14,11 +14,10 @@ namespace TrfHabitatBuilder
 	[PatchClass]
 	static class BuilderToolPatches
 	{
-		[HarmonyPrefix, HarmonyPatch(typeof(BuilderTool), "Start")]
-		static bool BuilderTool_Start_Prefix(BuilderTool __instance) => !__instance.gameObject.GetComponent<TrfBuilderControl>();
-
-		[HarmonyPrefix, HarmonyPatch(typeof(BuilderTool), "OnDisable")]
-		static bool BuilderTool_OnDisable_Prefix(BuilderTool __instance) => !__instance.gameObject.GetComponent<TrfBuilderControl>();
+		[HarmonyPrefix]
+		[HarmonyPatch(typeof(BuilderTool), "Start")]
+		[HarmonyPatch(typeof(BuilderTool), "OnDisable")]
+		static bool BuilderTool_Prefix(BuilderTool __instance) => !__instance.gameObject.GetComponent<TrfBuilderControl>();
 
 		[HarmonyPrefix, HarmonyPatch(typeof(BuilderTool), "LateUpdate")]
 		static bool BuilderTool_LateUpdate_Prefix(BuilderTool __instance)

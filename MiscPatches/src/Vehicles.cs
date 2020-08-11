@@ -119,7 +119,10 @@ namespace MiscPatches
 	{
 		static bool prepare() => Main.config.gameplayPatches;
 
-		static CIEnumerable transpiler(CIEnumerable cins)
+		[HarmonyTranspiler]
+		[HarmonyPatch(typeof(Vehicle), "GetSlotBinding", new Type[0])]
+		[HarmonyPatch(typeof(Exosuit), "GetSlotBinding", new Type[0])]
+		static CIEnumerable GetSlotBinding_Transpiler(CIEnumerable cins)
 		{
 			var list = cins.ToList();
 
@@ -129,20 +132,14 @@ namespace MiscPatches
 				return Math.Min(vehicle.slotIDs.Length, maxSlotCount);
 			}
 
-			CIHelper.ciRemove(list, 0, 5);
-			CIHelper.ciInsert(list, 0,
+			list.ciRemove(0, 5);
+			list.ciInsert(0,
 				OpCodes.Ldarg_0,
 				CIHelper.emitCall<Func<Vehicle, int>>(_slotCount),
 				OpCodes.Stloc_0);
 
 			return list;
 		}
-
-		[HarmonyTranspiler, HarmonyPatch(typeof(Vehicle), "GetSlotBinding", new Type[0])]
-		static CIEnumerable Vehicle_GetSlotBinding_Transpiler(CIEnumerable cins) => transpiler(cins);
-
-		[HarmonyTranspiler, HarmonyPatch(typeof(Exosuit), "GetSlotBinding", new Type[0])]
-		static CIEnumerable Exosuit_GetSlotBinding_Transpiler(CIEnumerable cins) => transpiler(cins);
 	}
 
 	// get access to seamoth torpedo tubes when docked in moonpool

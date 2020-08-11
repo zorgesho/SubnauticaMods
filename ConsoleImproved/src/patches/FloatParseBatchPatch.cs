@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Globalization;
 using System.Collections.Generic;
 
 using Harmony;
@@ -12,43 +13,35 @@ using Common.Reflection;
 namespace ConsoleImproved
 {
 	// patching vanilla console commands that use float.Parse method to use locale independent conversion
+	[PatchClass]
 	static class CommandsFloatParsePatch
 	{
-		static IEnumerable<CodeInstruction> transpiler(IEnumerable<CodeInstruction> cins)
-		{
-			MethodInfo floatParse = typeof(float).method("Parse", typeof(string));
-			MethodInfo floatParseCulture = typeof(float).method("Parse", typeof(string), typeof(IFormatProvider));
-			MethodInfo getInvariantCulture = typeof(System.Globalization.CultureInfo).method("get_InvariantCulture");
+		static readonly MethodInfo floatParse = typeof(float).method("Parse", typeof(string));
+		static readonly MethodInfo floatParseCulture = typeof(float).method("Parse", typeof(string), typeof(IFormatProvider));
+		static readonly MethodInfo getInvariantCulture = typeof(CultureInfo).method("get_InvariantCulture");
 
-			var list = CIHelper.ciReplace(cins, ci => ci.isOp(OpCodes.Call, floatParse),
-											OpCodes.Call, getInvariantCulture,
-											OpCodes.Call, floatParseCulture);
+		static bool prepare() => Main.config.fixVanillaCommandsFloatParse;
+
+		[HarmonyTranspiler]
+		[HarmonyPatch(typeof(BaseFloodSim), "OnConsoleCommand_baseflood")]
+		[HarmonyPatch(typeof(DayNightCycle), "OnConsoleCommand_daynightspeed")]
+		[HarmonyPatch(typeof(CreateConsoleCommand), "OnConsoleCommand_create")]
+		[HarmonyPatch(typeof(GameModeConsoleCommands), "OnConsoleCommand_damage")]
+		[HarmonyPatch(typeof(PlayerMotor), "OnConsoleCommand_swimx")]
+		[HarmonyPatch(typeof(SNCameraRoot), "OnConsoleCommand_farplane")]
+		[HarmonyPatch(typeof(SNCameraRoot), "OnConsoleCommand_nearplane")]
+		[HarmonyPatch(typeof(SpawnConsoleCommand), "OnConsoleCommand_spawn")]
+		[HarmonyPatch(typeof(SpeedConsoleCommand), "OnConsoleCommand_speed")]
+		[HarmonyPatch(typeof(WaterParkCreature), "OnConsoleCommand_setwpcage")]
+		static IEnumerable<CodeInstruction> floatParseFix(IEnumerable<CodeInstruction> cins)
+		{
+			var list = cins.ciReplace(ci => ci.isOp(OpCodes.Call, floatParse),
+				OpCodes.Call, getInvariantCulture,
+				OpCodes.Call, floatParseCulture);
 
 			Debug.assert(list.FindIndex(ci => ci.isOp(OpCodes.Call, floatParse)) == -1);
 
 			return list;
-		}
-		static readonly MethodInfo patch = typeof(CommandsFloatParsePatch).method(nameof(transpiler));
-
-		static readonly MethodInfo[] toPatch =
-		{
-			typeof(BaseFloodSim).method("OnConsoleCommand_baseflood"),
-			typeof(DayNightCycle).method("OnConsoleCommand_daynightspeed"),
-			typeof(CreateConsoleCommand).method("OnConsoleCommand_create"),
-			typeof(GameModeConsoleCommands).method("OnConsoleCommand_damage"),
-			typeof(PlayerMotor).method("OnConsoleCommand_swimx"),
-			typeof(SNCameraRoot).method("OnConsoleCommand_farplane"),
-			typeof(SNCameraRoot).method("OnConsoleCommand_nearplane"),
-			typeof(SpawnConsoleCommand).method("OnConsoleCommand_spawn"),
-			typeof(SpeedConsoleCommand).method("OnConsoleCommand_speed"),
-			typeof(WaterParkCreature).method("OnConsoleCommand_setwpcage"),
-		};
-
-		static bool patched = false;
-		public static void patchAll()
-		{
-			if (!patched && (patched = true))
-				toPatch.forEach(p => HarmonyHelper.patch(p, transpiler: patch));
 		}
 	}
 }

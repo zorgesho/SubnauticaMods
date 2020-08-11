@@ -93,9 +93,8 @@ namespace Common.Harmony
 
 		static void checkPatches(MemberInfo member)
 		{
-			var harmonyPatch = member.getAttr<HarmonyPatch>();
-			if (harmonyPatch != null && harmonyPatch.info.getTargetMethod() == null)
-				_error(getFullName(harmonyPatch.info));
+			member.getAttrs<HarmonyPatch>().Where(patch => patch.info.getTargetMethod() == null).
+											forEach(patch => _error(getFullName(patch.info)));
 
 			var patchAttr = HarmonyHelper.PatchAttribute.merge(member.getAttrs<HarmonyHelper.PatchAttribute>());
 			if (patchAttr != null && patchAttr.targetMethod == null)

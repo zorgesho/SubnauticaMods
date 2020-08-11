@@ -26,6 +26,17 @@ namespace CustomHotkeys
 		[Options.FinalizeAction(typeof(FeedbackCollectorPatch.SettingChanged))]
 		public readonly bool enableFeedback = !Mod.isDevBuild;
 
+		public class HotkeyHider: Field.IAction
+		{ public void action() => Options.Components.Hider.refresh("hotkeys"); }
+
+		[Options.Field("Show unassigned hotkeys")]
+		[Field.Action(typeof(HotkeyHider))]
+		public readonly bool showUnassigned = true;
+
+		[Options.Field("Show hidden hotkeys", "Show hotkeys which are set to hidden in <b>" + Main.hotkeyConfigName + "</b>")]
+		[Field.Action(typeof(HotkeyHider))]
+		public readonly bool showHidden = false;
+
 		public readonly bool easyBindRemove = true;
 		public readonly bool addConsoleCommands = true;
 
@@ -52,6 +63,15 @@ namespace CustomHotkeys
 	{
 		[NonSerialized, NoInnerFieldsAttrProcessing]
 		readonly List<Options.ModOption> bindOptions = new List<Options.ModOption>();
+
+		class HotkeyHider: Options.Components.Hider.IVisibilityChecker
+		{
+			readonly Hotkey hotkey;
+			public HotkeyHider(Hotkey hotkey) => this.hotkey = hotkey;
+
+			public bool visible => (Main.config.showUnassigned || hotkey.key != default) &&
+								   (Main.config.showHidden || hotkey.hidden != true);
+		}
 
 		public void addHotkey(Hotkey hotkey)
 		{
@@ -81,16 +101,19 @@ namespace CustomHotkeys
 				int id = 0;
 				foreach (var hotkey in hotkeys)
 				{
-					if (hotkey.hidden == true)
-						continue;
-
+					bool hidden = hotkey.hidden == true;
 					var cfgField = new Field(hotkey, nameof(Hotkey.key), this, $"hotkey.{id++:D2}");
 					var label = !string.IsNullOrWhiteSpace(hotkey.label)? hotkey.label: hotkey.command.clampLength(30).Replace("...", "<color=silver>...</color>");
+
+					if (hidden)
+						label = $"<color=silver>{label}</color>";
+
 					var option = new Options.KeyWModBindOption(cfgField, label);
 
 					var tooltip = "<color=white><b>Command: </b></color>";
 					tooltip += hotkey.command.Replace(";", "<color=orange><b>;</b></color>").Replace("|", "<color=yellow><b>|</b></color>");
 					option.addHandler(new Options.Components.Tooltip.Add(tooltip, false));
+					option.addHandler(new Options.Components.Hider.Add(new HotkeyHider(hotkey), "hotkeys"));
 
 					bindOptions.Add(option);
 					Options.add(option);
@@ -110,6 +133,7 @@ namespace CustomHotkeys
 			{ public void action() => HotkeyHelper.updateBinds(); }
 
 			[Field.Action(typeof(UpdateBinds))]
+			[Field.Action(typeof(ModConfig.HotkeyHider))]
 			public InputHelper.KeyWithModifier key;
 
 			public string command;
@@ -133,7 +157,7 @@ namespace CustomHotkeys
 
 		[Field.Action(typeof(HotkeyListChanged))]
 		[AddHotkeys, Field.Reloadable, NoInnerFieldsAttrProcessing]
-		readonly List<Hotkey> hotkeys = new List<Hotkey>()
+		public readonly List<Hotkey> hotkeys = new List<Hotkey>()
 		{
 #if DEBUG && !GENERATE_SAMPLE_CONFIG
 			new Hotkey { command = "autoforward", label = "Autoforward", key = KeyCode.LeftAlt },

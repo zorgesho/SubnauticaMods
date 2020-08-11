@@ -116,6 +116,27 @@ namespace CustomHotkeys
 			}
 		}
 
+		public void hktools_mark_unassigned_as_hidden(bool val = true)
+		{
+			foreach (var hotkey in Main.hkConfig.hotkeys)
+				if (hotkey.key == default)
+					hotkey.hidden = val;
+
+			Main.hkConfig.save();
+		}
+
+		public void hktools_add_default_fields()
+		{
+			foreach (var hotkey in Main.hkConfig.hotkeys)
+			{
+				hotkey.mode ??= default;
+				hotkey.label ??= "";
+				hotkey.hidden ??= false;
+			}
+
+			Main.hkConfig.save();
+		}
+
 		public void lastcommand(int indexFromEnd = 0)
 		{
 			var history = DevConsole.instance.history;

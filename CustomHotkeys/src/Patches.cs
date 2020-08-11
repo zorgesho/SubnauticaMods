@@ -122,42 +122,47 @@ namespace CustomHotkeys
 		}
 
 		// if we press key while binding in options menu, ignore its 'Up' & 'Held' events
-#if BRANCH_STABLE // TODO: patch new method GetInputStateForButton (exp branch)
+#if BRANCH_STABLE
 		[HarmonyPatch(typeof(GameInput), "UpdateKeyInputs")]
+#elif BRANCH_EXP
+		[HarmonyPatch(typeof(GameInput), "GetInputState")]
 #endif
-		static class GameInput_UpdateKeyInputs_Patch
+		static class GameInput_UpdateKeyState_Patch
 		{
 			static CIEnumerable Transpiler(CIEnumerable cins, ILGenerator ilg)
 			{
 				var list = cins.ToList();
-
-				var Input_GetKey = typeof(Input).method("GetKey", typeof(KeyCode));
-				var Input_GetKeyUp = typeof(Input).method("GetKeyUp", typeof(KeyCode));
 				var field_lastBindedIndex = typeof(BindingPatches).field(nameof(lastBindedIndex));
+#if BRANCH_STABLE
+				var Input_GetKey = typeof(Input).method("GetKey", typeof(KeyCode));
+				var cinsCompare = CIHelper.toCIList(OpCodes.Ldloc_S, 4,
+													OpCodes.Ldsfld, field_lastBindedIndex);
+#elif BRANCH_EXP
+				object Input_GetKey = null; // exp branch uses InputUtils, but we don't really need to check method in GetInputState
+				var cinsCompare = CIHelper.toCIList(OpCodes.Ldarg_1, CIHelper.emitCall<Func<KeyCode>>(_lastBindedKeyCode));
 
+				static KeyCode _lastBindedKeyCode() =>
+					lastBindedIndex == -1 || GameInput.inputs.Count == 0? default: GameInput.inputs[lastBindedIndex].keyCode;
+#endif
 				int[] i = list.ciFindIndexes(ci => ci.isOp(OpCodes.Call, Input_GetKey),
-											 ci => ci.isOp(OpCodes.Call, Input_GetKeyUp));
+											 ci => ci.isOp(OpCodes.Call),
+											 ci => ci.isOp(OpCodes.Call));
 				if (i == null)
 					return cins;
 
-				Label lb1 = list[i[1] + 1].operand.cast<Label>();
-				Label lb2 = list.ciDefineLabel(i[1] + 2, ilg); // label for 'inputState.flags |= GameInput.InputStateFlags.Up'
+				Label lb1 = list[i[2] + 1].operand.cast<Label>();
+				Label lb2 = list.ciDefineLabel(i[2] + 2, ilg); // label for 'inputState.flags |= GameInput.InputStateFlags.Up'
 
 				CIHelper.LabelClipboard.__enabled = false;
-				list.ciInsert(i[1] + 2,
-					OpCodes.Ldloc_S, 4,						//	if (i == BindingPatches.lastBindedIndex)
-					OpCodes.Ldsfld, field_lastBindedIndex,
+				list.ciInsert(i[2] + 2,
+					cinsCompare,							// compare last binded key with current
 					OpCodes.Bne_Un_S, lb2,
-					OpCodes.Ldc_I4_M1,						//		BindingPatches.lastBindedIndex = -1;
+					OpCodes.Ldc_I4_M1,						// BindingPatches.lastBindedIndex = -1;
 					OpCodes.Stsfld, field_lastBindedIndex,
-					OpCodes.Br_S, lb1);						//	else inputState.flags |= GameInput.InputStateFlags.Up;
+					OpCodes.Br_S, lb1);						// else inputState.flags |= GameInput.InputStateFlags.Up;
 
 				Label lb0 = list[i[0] + 1].operand.cast<Label>();
-
-				list.ciInsert(i[0] + 2,
-					OpCodes.Ldloc_S, 4,						//	if (i == BindingPatches.lastBindedIndex)
-					OpCodes.Ldsfld, field_lastBindedIndex,
-					OpCodes.Beq_S, lb0);
+				list.ciInsert(i[0] + 2, cinsCompare, OpCodes.Beq_S, lb0);
 
 				return list;
 			}

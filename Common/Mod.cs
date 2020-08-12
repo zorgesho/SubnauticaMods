@@ -21,6 +21,13 @@ namespace Common
 #else
 			false;
 #endif
+		public const bool isBranchStable =
+#if BRANCH_STABLE
+			true;
+#elif BRANCH_EXP
+			false;
+#endif
+
 		public static bool isShuttingDown { get; private set; }
 		class ShutdownListener: MonoBehaviour { void OnApplicationQuit() { isShuttingDown = true; "Shutting down".logDbg(); } }
 

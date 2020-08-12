@@ -110,8 +110,9 @@ namespace MiscPatches
 				OpCodes.Pop, CIHelper.emitCall<System.Func<IEnumerator>>(_startGame));
 #elif BRANCH_EXP
 		[HarmonyPrefix]
-		static bool fastStartPatch(ref IEnumerator __result)
+		static bool fastStartPatch(MainGameController __instance, ref IEnumerator __result)
 		{
+			MainGameController.instance = __instance;
 			__result = _startGame();
 			return false;
 		}

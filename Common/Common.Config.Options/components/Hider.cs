@@ -94,8 +94,8 @@ namespace Common.Configuration
 
 				static IEnumerable<Hider> getHiders(string id) => hiders.Where(cmp => cmp.id == id || cmp.groupID == id);
 
-				public static void refresh(string id) => getHiders(id).ForEach(cmp => cmp.refresh());
-				public static void setVisible(string id, bool val) => getHiders(id).ForEach(cmp => cmp.setVisible(val));
+				public static void refresh(string id) => getHiders(id).forEach(cmp => cmp.refresh());
+				public static void setVisible(string id, bool val) => getHiders(id).forEach(cmp => cmp.setVisible(val));
 
 				public void refresh() => setVisible(visChecker.visible);
 				public void setVisible(bool val) => gameObject.SetActive(visible = val);

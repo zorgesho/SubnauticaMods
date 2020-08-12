@@ -5,14 +5,13 @@ using System.Collections.Generic;
 
 using Harmony;
 
+using Common;
 using Common.Harmony;
 using Common.Reflection;
 
 namespace UITweaks
 {
-#if BRANCH_STABLE
 	[OptionalPatch, PatchClass]
-#endif
 	static class CrafterPatches
 	{
 		static readonly Dictionary<CrafterLogic, CraftData.TechData> crafterCache = new Dictionary<CrafterLogic, CraftData.TechData>();
@@ -55,7 +54,11 @@ namespace UITweaks
 		[HarmonyPostfix, HarmonyPatch(typeof(CrafterLogic), "Reset")]
 		static void reset(CrafterLogic __instance) => crafterCache.Remove(__instance);
 
-		[HarmonyTranspiler, HarmonyPatch(typeof(CrafterLogic), "TryPickup")]
+		[HarmonyTranspiler]
+		[HarmonyHelper.Patch(typeof(CrafterLogic), Mod.isBranchStable? "TryPickup": "TryPickupAsync")]
+#if BRANCH_EXP
+		[HarmonyHelper.Patch(HarmonyHelper.PatchOptions.PatchIteratorMethod)]
+#endif
 		static IEnumerable<CodeInstruction> pickup(IEnumerable<CodeInstruction> cins)
 		{
 			var list = cins.ToList();
@@ -65,7 +68,9 @@ namespace UITweaks
 												ci => ci.isOp(OpCodes.Ldc_I4_1));
 
 			return index == -1? cins:
-				list.ciInsert(index + 2, OpCodes.Ldarg_0, CIHelper.emitCall<Action<CrafterLogic>>(_changeLinkedItemsAmount));
+				list.ciInsert(index + 2,
+					Mod.isBranchStable? OpCodes.Ldarg_0: OpCodes.Ldloc_1,
+					CIHelper.emitCall<Action<CrafterLogic>>(_changeLinkedItemsAmount));
 
 			static void _changeLinkedItemsAmount(CrafterLogic instance)
 			{

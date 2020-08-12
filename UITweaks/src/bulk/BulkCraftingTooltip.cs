@@ -38,14 +38,15 @@ namespace UITweaks
 
 		static void init(uGUI_Tooltip tooltip)
 		{
-			var textGO = UnityEngine.Object.Instantiate(tooltip.gameObject.getChild("Text"), tooltip.transform);
-			textGO.name = "BottomText";
+			var textGO = tooltip.gameObject.getChild(Mod.isBranchStable? "Text": "Container/Text");
+			var textGOBottom = UnityEngine.Object.Instantiate(textGO, textGO.transform.parent);
+			textGOBottom.name = "BottomText";
 
-			var sizeFitter = textGO.AddComponent<ContentSizeFitter>();
+			var sizeFitter = textGOBottom.AddComponent<ContentSizeFitter>();
 			sizeFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 			sizeFitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
 
-			text = textGO.GetComponent<Text>();
+			text = textGOBottom.GetComponent<Text>();
 			text.horizontalOverflow = HorizontalWrapMode.Overflow;
 			text.verticalOverflow = VerticalWrapMode.Truncate;
 			textPosX = text.rectTransform.localPosition.x;
@@ -149,9 +150,7 @@ namespace UITweaks
 			else												  setActionText(AmountActionHint.Both);
 		}
 
-#if BRANCH_STABLE
 		[OptionalPatch, PatchClass]
-#endif
 		static class Patches
 		{
 			static bool prepare()

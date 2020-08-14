@@ -1,22 +1,33 @@
+:: usage: update_game_sources.bat <SN|BZ>
+:: uses currently selected branch
 @echo off
 
+set games_folder=c:\games
+set /p game_ver=<%games_folder%\branch%1%.info
+
 if %1 == SN goto :SN
-if %1 == SNexp goto :SNexp
+if %1 == BZ goto :BZ
 goto :eof
 
 :SN
-if exist c:\games\.subnautica.stable (set game_folder=c:\games\.subnautica.stable) else (set game_folder=c:\games\subnautica)
+set game_folder=%games_folder%\subnautica
 set game_dll_folder=%game_folder%\Subnautica_Data\Managed
+
+set /p buildtime=<%game_folder%\Subnautica_Data\StreamingAssets\__buildtime.txt
+set /p version=<%game_folder%\Subnautica_Data\StreamingAssets\SNUnmanagedData\plastic_status.ignore
 goto :main
 
-:SNexp
-set game_folder=d:\games\steamapps\common\subnautica
-set game_dll_folder=%game_folder%\Subnautica_Data\Managed
+:BZ
+set game_folder=%games_folder%\subnautica.bz
+set game_dll_folder=%game_folder%\SubnauticaZero_Data\Managed
+
+set /p buildtime=<%game_folder%\SubnauticaZero_Data\StreamingAssets\__buildtime.txt
+set /p version=<%game_folder%\SubnauticaZero_Data\StreamingAssets\SNUnmanagedData\plastic_status.ignore
 goto :main
 
 :main
-set project_depends=%cd%\.dependencies\game%1
-set game_sources=%cd%\..\game_sources\%1
+set project_depends=%cd%\.dependencies\game%game_ver%
+set game_sources=%cd%\..\game_sources\%game_ver%
 ::goto :sources
 
 :: copy to project dependencies
@@ -44,7 +55,7 @@ ilspycmd %game_sources%\dlls\Assembly-CSharp.dll -p -o %game_sources%\Assembly-C
 echo Generating sources for Assembly-CSharp-firstpass.dll ...
 ilspycmd %game_sources%\dlls\Assembly-CSharp-firstpass.dll -p -o %game_sources%\Assembly-CSharp-firstpass\ -r %game_dll_folder%
 
-start c:\tools\tortoise_svn\bin\TortoiseProc.exe /command:diff /path:%game_sources%
+start c:\tools\tortoise_svn\bin\TortoiseProc.exe /command:commit /path:%game_sources% /logmsg:"v%version% (%buildtime%)"
 
 echo ===========
-echo ALL DONE
+echo ALL DONE (%game_ver%)

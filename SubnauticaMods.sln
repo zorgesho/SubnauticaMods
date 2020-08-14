@@ -80,7 +80,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{A9265C46
 	ProjectSection(SolutionItems) = preProject
 		mods_cleanup.bat = mods_cleanup.bat
 		post-build.bat = post-build.bat
-		reinstall_qmm.bat = reinstall_qmm.bat
 		switch_branches.bat = switch_branches.bat
 		update_game_sources.bat = update_game_sources.bat
 	EndProjectSection

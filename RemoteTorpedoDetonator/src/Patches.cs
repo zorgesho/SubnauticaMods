@@ -8,8 +8,7 @@ using Common.Harmony;
 
 namespace RemoteTorpedoDetonator
 {
-	[OptionalPatch]
-	[HarmonyPatch(typeof(SeamothTorpedo), "Awake")]
+	[OptionalPatch, HarmonyPatch(typeof(SeamothTorpedo), "Awake")]
 	static class SeamothTorpedo_Awake_Patch
 	{
 		static bool Prepare() => Main.config.torpedoSpeed != 10f || !Main.config.homingTorpedoes; // non-default values, need to patch
@@ -34,27 +33,21 @@ namespace RemoteTorpedoDetonator
 	[PatchClass]
 	static class Vehicle_OnUpgradeModuleUse_Patch
 	{
-		static void postfix(Vehicle vehicle, TechType techType, int slotID)
-		{
-			if (techType == TorpedoDetonatorModule.TechType)
-				vehicle.gameObject.GetComponent<TorpedoDetonatorControl>()?.detonateTorpedoes();
-
-			if (techType == TechType.SeamothTorpedoModule && vehicle.quickSlotCooldown[slotID] > Main.config.torpedoCooldown)
-				vehicle.quickSlotCooldown[slotID] = Main.config.torpedoCooldown;
-		}
-
-		[HarmonyPostfix]
-		[HarmonyPatch(typeof(Vehicle), "OnUpgradeModuleUse")]
-		static void vehiclePatch(Vehicle __instance, TechType techType, int slotID) => postfix(__instance, techType, slotID);
-
 		[HarmonyPostfix]
 		[HarmonyPatch(typeof(SeaMoth), "OnUpgradeModuleUse")]
-		static void seamothPatch(Vehicle __instance, TechType techType, int slotID) => postfix(__instance, techType, slotID);
+		[HarmonyPatch(typeof(Vehicle), "OnUpgradeModuleUse")]
+		static void OnUpgradeModuleUse_Postfix(Vehicle __instance, TechType techType, int slotID)
+		{
+			if (techType == TorpedoDetonatorModule.TechType)
+				__instance.gameObject.GetComponent<TorpedoDetonatorControl>()?.detonateTorpedoes();
+
+			if (techType == TechType.SeamothTorpedoModule && __instance.quickSlotCooldown[slotID] > Main.config.torpedoCooldown)
+				__instance.quickSlotCooldown[slotID] = Main.config.torpedoCooldown;
+		}
 	}
 
 	// infinite torpedoes cheat
-	[OptionalPatch]
-	[HarmonyPatch(typeof(Vehicle), "TorpedoShot")]
+	[OptionalPatch, HarmonyPatch(typeof(Vehicle), "TorpedoShot")]
 	static class Vehicle_TorpedoShot_Patch
 	{
 		static bool Prepare() => Main.config.cheatInfiniteTorpedoes;

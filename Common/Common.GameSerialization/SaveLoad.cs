@@ -1,5 +1,9 @@
 ﻿using System.IO;
+#if BRANCH_EXP
+using Newtonsoft.Json;
+#else
 using Oculus.Newtonsoft.Json;
+#endif
 
 namespace Common.GameSerialization
 {

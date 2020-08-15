@@ -33,10 +33,14 @@ namespace Common.Reflection
 			{
 				if (targetType.IsEnum)
 				{
-					if (obj is string)
-						return Enum.Parse(targetType, (string)obj, true);
+					if (obj is string str)
+						return Enum.Parse(targetType, str, true);
 
 					targetType = Enum.GetUnderlyingType(targetType);
+				}
+				else if (Nullable.GetUnderlyingType(targetType) is Type underlyingType)
+				{
+					return Activator.CreateInstance(targetType, obj.convert(underlyingType));
 				}
 
 				return Convert.ChangeType(obj, targetType, CultureInfo.InvariantCulture);
@@ -72,9 +76,9 @@ namespace Common.Reflection
 
 	static class TypeExtensions
 	{
-		static MethodInfo _method(this Type type, string name, Type[] types)
+		static MethodInfo _method(this Type type, string name, BindingFlags bf, Type[] types)
 		{
-			try { return types == null? type.GetMethod(name, ReflectionHelper.bfAll): type.GetMethod(name, ReflectionHelper.bfAll, null, types, null); }
+			try { return types == null? type.GetMethod(name, bf): type.GetMethod(name, bf, null, types, null); }
 			catch (AmbiguousMatchException)
 			{
 				$"Ambiguous method: {type.Name}.{name}".logError();
@@ -84,23 +88,35 @@ namespace Common.Reflection
 			return null;
 		}
 
-		public static MethodInfo method(this Type type, string name) => _method(type, name, null);
-		public static MethodInfo method(this Type type, string name, params Type[] types) => _method(type, name, types);
+		public static MethodInfo method(this Type type, string name, BindingFlags bf = ReflectionHelper.bfAll) => _method(type, name, bf, null);
+		public static MethodInfo method(this Type type, string name, params Type[] types) => _method(type, name, ReflectionHelper.bfAll, types);
+		public static MethodInfo method<T>(this Type type, string name, params Type[] types) => _method(type, name, ReflectionHelper.bfAll, types)?.MakeGenericMethod(typeof(T));
 
-		public static EventInfo evnt(this Type type, string name) => type.GetEvent(name, ReflectionHelper.bfAll);
-		public static FieldInfo field(this Type type, string name) => type.GetField(name, ReflectionHelper.bfAll);
-		public static PropertyInfo property(this Type type, string name) => type.GetProperty(name, ReflectionHelper.bfAll);
+		public static EventInfo evnt(this Type type, string name, BindingFlags bf = ReflectionHelper.bfAll) => type.GetEvent(name, bf);
+		public static FieldInfo field(this Type type, string name, BindingFlags bf = ReflectionHelper.bfAll) => type.GetField(name, bf);
+		public static PropertyInfo property(this Type type, string name, BindingFlags bf = ReflectionHelper.bfAll) => type.GetProperty(name, bf);
 
-		public static FieldInfo[] fields(this Type type) => type.GetFields(ReflectionHelper.bfAll);
-		public static MethodInfo[] methods(this Type type) => type.GetMethods(ReflectionHelper.bfAll);
-		public static MethodInfo[] methods(this Type type, BindingFlags bf) => type.GetMethods(ReflectionHelper.bfAll | bf);
-		public static PropertyInfo[] properties(this Type type) => type.GetProperties(ReflectionHelper.bfAll);
+		public static FieldInfo[] fields(this Type type, BindingFlags bf = ReflectionHelper.bfAll) => type.GetFields(bf);
+		public static MethodInfo[] methods(this Type type, BindingFlags bf = ReflectionHelper.bfAll) => type.GetMethods(bf);
+		public static PropertyInfo[] properties(this Type type, BindingFlags bf = ReflectionHelper.bfAll) => type.GetProperties(bf);
 	}
 
 
 	static class MemberInfoExtensions
 	{
-		public static string fullName(this MemberInfo memberInfo) => (memberInfo == null)? "[null]": memberInfo.DeclaringType.FullName + "." + memberInfo.Name;
+		public static string fullName(this MemberInfo memberInfo)
+		{
+			if (memberInfo == null)
+				return "[null]";
+
+			if ((memberInfo.MemberType & (MemberTypes.Method | MemberTypes.Field | MemberTypes.Property)) != 0)
+				return $"{memberInfo.DeclaringType.FullName}.{memberInfo.Name}";
+
+			if ((memberInfo.MemberType & (MemberTypes.TypeInfo | MemberTypes.NestedType)) != 0)
+				return (memberInfo as Type).FullName;
+
+			return memberInfo.Name;
+		}
 
 		public static EventWrapper wrap(this EventInfo evnt, object obj = null) => new EventWrapper(evnt, obj);
 		public static MethodWrapper wrap(this MethodInfo method) => new MethodWrapper(method);

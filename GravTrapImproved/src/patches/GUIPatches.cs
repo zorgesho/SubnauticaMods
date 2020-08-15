@@ -5,6 +5,7 @@ using Harmony;
 using UnityEngine;
 
 using Common;
+using Common.Harmony;
 
 namespace GravTrapImproved
 {
@@ -55,12 +56,13 @@ namespace GravTrapImproved
 			}
 		}
 
-		[HarmonyPatch(typeof(GUIHand), "OnUpdate")]
-		static class GUIHand_OnUpdate_Patch
+		[PatchClass]
+		static class ExtraGUITextPatch
 		{
-			static bool Prepare() => Main.config.extraGUIText;
+			static bool prepare() => Main.config.extraGUIText;
 
-			static void Postfix(GUIHand __instance)
+			[HarmonyPostfix, HarmonyPatch(typeof(GUIHand), "OnUpdate")]
+			static void GUIHand_OnUpdate_Postfix(GUIHand __instance)
 			{
 				if (!__instance.player.IsFreeToInteract() || !AvatarInputHandler.main.IsEnabled())
 					return;
@@ -68,14 +70,9 @@ namespace GravTrapImproved
 				if (__instance.GetTool() is PlayerTool tool && tool.pickupable.GetTechType().isGravTrap())
 					HandReticle.main.SetUseTextRaw(tool.GetCustomUseText(), GravTrapObjectsType.getFrom(tool.gameObject).techTypeListName);
 			}
-		}
 
-		[HarmonyPatch(typeof(Pickupable), "OnHandHover")]
-		static class Pickupable_OnHandHover_Patch
-		{
-			static bool Prepare() => Main.config.extraGUIText;
-
-			static void Postfix(Pickupable __instance)
+			[HarmonyPostfix, HarmonyPatch(typeof(Pickupable), "OnHandHover")]
+			static void Pickupable_OnHandHover_Postfix(Pickupable __instance)
 			{
 				if (__instance.GetTechType().isGravTrap())
 					HandReticle.main.interactText2 = GravTrapObjectsType.getFrom(__instance.gameObject).techTypeListName;

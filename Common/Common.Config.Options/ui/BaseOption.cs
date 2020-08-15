@@ -7,6 +7,8 @@ namespace Common.Configuration
 {
 	partial class Options
 	{
+		public static bool nonUniqueOptionsIDsWarning = true;
+
 		public abstract class ModOption
 		{
 			static readonly UniqueIDs uniqueIDs = new UniqueIDs();
@@ -36,7 +38,7 @@ namespace Common.Configuration
 				this.cfgField = cfgField;
 
 				id = cfgField.id;
-				uniqueIDs.ensureUniqueID(ref id);
+				uniqueIDs.ensureUniqueID(ref id, nonUniqueOptionsIDsWarning);
 
 				this.label = label ?? id.clampLength(40);
 				registerLabel(id, ref this.label);

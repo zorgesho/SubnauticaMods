@@ -4,7 +4,9 @@ using System;
 using System.Collections.Generic;
 
 using UnityEngine;
+
 using Common;
+using Common.Crafting;
 
 namespace TrfHabitatBuilder
 {
@@ -144,7 +146,7 @@ namespace TrfHabitatBuilder
 				terF_use_open_panel_loop,
 			};
 
-			static readonly Info[] animInfo = new Info[]
+			static readonly Info[] animInfo =
 			{
 				new Info(1f),	// terF_idle
 				new Info(3f),	// terF_panels_up
@@ -154,7 +156,7 @@ namespace TrfHabitatBuilder
 				new Info(Main.config.slowLoopAnim? 0.5f: 1f) // terF_use_open_panel_loop
 			};
 
-			static Dictionary<int, float> animSpeeds = null;
+			static Dictionary<int, float> animSpeeds;
 
 			public static int   getAnimHash(Anim anim) => animInfo[(int)anim].hash;
 			public static float getAnimSpeed(int hash) => animSpeeds.TryGetValue(hash, out float speed)? speed: 1.0f;
@@ -164,7 +166,7 @@ namespace TrfHabitatBuilder
 				if (animSpeeds != null)
 					return;
 
-				animSpeeds =  new Dictionary<int, float>();
+				animSpeeds = new Dictionary<int, float>();
 
 				foreach (Anim anim in Enum.GetValues(typeof(Anim)))
 				{
@@ -202,7 +204,7 @@ namespace TrfHabitatBuilder
 			//cbeams[1] = new ConstructionBeam(builderTool.beamRight, builderTool.nozzleRight);
 
 			GameObject beamsRoot = gameObject.getChild("terraformer_anim/Terraformer_Export_Skele/root_jnt/body_jnt/head_jnt");
-			GameObject beamPrefab = CraftData.GetPrefabForTechType(TechType.Builder).getChild("builder/builder_FP/Root/r_nozzle_root/r_nozzle/R_laser/beamRight");
+			GameObject beamPrefab = CraftHelper.Utils.getPrefab(TechType.Builder).getChild("builder/builder_FP/Root/r_nozzle_root/r_nozzle/R_laser/beamRight");
 
 			cbeams[0] = new ConstructionBeam(beamsRoot, beamPrefab, "Left", new Vector3(-0.1813f, -0.007f, 0.06f));
 			cbeams[1] = new ConstructionBeam(beamsRoot, beamPrefab, "Right", new Vector3(0.1813f, -0.007f, 0.06f));

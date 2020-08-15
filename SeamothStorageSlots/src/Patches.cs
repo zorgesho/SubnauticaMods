@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+﻿using System;
 using System.Reflection.Emit;
 using System.Collections.Generic;
 
@@ -6,35 +6,25 @@ using Harmony;
 
 using Common;
 using Common.Harmony;
-using Common.Reflection;
 
 namespace SeamothStorageSlots
 {
+	[PatchClass]
 	static class SeamothStorageInputPatches
 	{
-		static ItemsContainer getStorageInSlot(Vehicle vehicle, int slotID, TechType techType) =>
-			 vehicle.GetStorageInSlot(slotID, techType) ?? vehicle.GetStorageInSlot(slotID + Main.config.slotsOffset, techType);
+		static bool prepare() => Main.config.slotsOffset > 0;
 
-		// substitute call for 'this.seamoth.GetStorageInSlot()' with method above
-		static IEnumerable<CodeInstruction> substSlotGetter(IEnumerable<CodeInstruction> cins)
-		{
-			MethodInfo substMethod = typeof(SeamothStorageInputPatches).method(nameof(getStorageInSlot));
-
-			return CIHelper.ciReplace(cins, ci => ci.isOp(OpCodes.Callvirt), OpCodes.Call, substMethod);
-		}
-
+		// substitute call for 'this.seamoth.GetStorageInSlot()'
+		[HarmonyTranspiler]
 		[HarmonyPatch(typeof(SeamothStorageInput), "OpenPDA")]
-		static class OpenPDA_Patch
-		{
-			static bool Prepare() => Main.config.slotsOffset > 0;
-			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins) => substSlotGetter(cins);
-		}
-
 		[HarmonyPatch(typeof(SeamothStorageInput), "OnHandClick")]
-		static class OnHandClick_Patch
+		static IEnumerable<CodeInstruction> SeamothStorageInput_Transpiler(IEnumerable<CodeInstruction> cins)
 		{
-			static bool Prepare() => Main.config.slotsOffset > 0;
-			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins) => substSlotGetter(cins);
+			static ItemsContainer _getStorageInSlot(Vehicle vehicle, int slotID, TechType techType) =>
+				 vehicle.GetStorageInSlot(slotID, techType) ?? vehicle.GetStorageInSlot(slotID + Main.config.slotsOffset, techType);
+
+			return CIHelper.ciReplace(cins, ci => ci.isOp(OpCodes.Callvirt),
+				CIHelper.emitCall<Func<Vehicle, int, TechType, ItemsContainer>>(_getStorageInSlot));
 		}
 	}
 

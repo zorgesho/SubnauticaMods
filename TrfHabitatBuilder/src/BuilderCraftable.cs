@@ -20,7 +20,7 @@ namespace TrfHabitatBuilder
 
 			bldCmp.copyFieldsFrom(trfCmp, "rightHandIKTarget", "leftHandIKTarget", "ikAimRightArm", "ikAimLeftArm", "mainCollider", "pickupable", "useLeftAimTargetOnPlayer", "drawSound");
 			bldCmp.buildSound = trfCmp.placeLoopSound;
-			bldCmp.completeSound = CraftData.GetPrefabForTechType(TechType.Builder).GetComponent<BuilderTool>().completeSound;
+			bldCmp.completeSound = CraftHelper.Utils.getPrefab(TechType.Builder).GetComponent<BuilderTool>().completeSound;
 
 			Object.DestroyImmediate(trfCmp);
 

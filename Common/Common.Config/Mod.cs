@@ -4,14 +4,14 @@ namespace Common
 {
 	static partial class Mod
 	{
-		public static C init<C>() where C: Config, new()
+		public static C init<C>() where C: Config
 		{
 			init();
 			return loadConfig<C>();
 		}
 
 
-		public static C loadConfig<C>(string name = Config.defaultName, Config.LoadOptions loadOptions = Config.LoadOptions.Default) where C: Config, new()
+		public static C loadConfig<C>(string name = Config.defaultName, Config.LoadOptions loadOptions = Config.LoadOptions.Default) where C: Config
 		{
 			C config = Config.tryLoad<C>(name, loadOptions);
 

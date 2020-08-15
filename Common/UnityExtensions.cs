@@ -18,19 +18,28 @@ namespace Common
 		public static void callAfterDelay(this GameObject go, float delay, UnityAction action) =>
 			go.AddComponent<CallAfterDelay>().init(delay, action);
 
-		public static T ensureComponent<T>(this GameObject go) where T: Component => go.GetComponent<T>() ?? go.AddComponent<T>();
+		public static T ensureComponent<T>(this GameObject go) where T: Component => go.ensureComponent(typeof(T)) as T;
 		public static Component ensureComponent(this GameObject go, Type type) => go.GetComponent(type) ?? go.AddComponent(type);
 
-		public static void setParent(this GameObject go, GameObject parent, bool resetLocalTransform = true)
+		public static void setParent(this GameObject go,
+									 GameObject parent,
+									 bool resetLocalTransform = true,
+									 Vector3? position = null,
+									 Quaternion? rotation = null,
+									 Vector3? scale = null)
 		{
 			go.transform.parent = parent.transform;
 
 			if (resetLocalTransform)
 			{
-				go.transform.localRotation = Quaternion.identity;
 				go.transform.localPosition = Vector3.zero;
+				go.transform.localRotation = Quaternion.identity;
 				go.transform.localScale = Vector3.one;
 			}
+
+			if (position != null) go.transform.localPosition = (Vector3)position;
+			if (rotation != null) go.transform.localRotation = (Quaternion)rotation;
+			if (scale != null)	  go.transform.localScale	 = (Vector3)scale;
 		}
 
 		public static GameObject getChild(this GameObject go, string name) => go.transform.Find(name)?.gameObject;
@@ -59,6 +68,9 @@ namespace Common
 
 		public static void destroyChild(this GameObject go, string name, bool immediate = true) =>
 			go.getChild(name)?._destroy(immediate);
+
+		public static void destroyChildren(this GameObject go, params string[] children) =>
+			children.forEach(name => go.destroyChild(name, true));
 
 		public static void destroyComponent<T>(this GameObject go, bool immediate = true) where T: Component =>
 			go.GetComponent<T>()?._destroy(immediate);
@@ -89,19 +101,59 @@ namespace Common
 
 	static class VectorExtension
 	{
-		public static Vector2 setX(this Vector2 vec, float val)  { vec.x = val; return vec; }
-		public static Vector2 setY(this Vector2 vec, float val)  { vec.y = val; return vec; }
+		public static Vector2 setX(this Vector2 vec, float val) { vec.x = val; return vec; }
+		public static Vector2 setY(this Vector2 vec, float val) { vec.y = val; return vec; }
 	}
 
 
 	static class UnityHelper
 	{
+		public static GameObject createPersistentGameObject(string name)
+		{
+			var obj = new GameObject(name, typeof(SceneCleanerPreserve));
+			Object.DontDestroyOnLoad(obj);
+			return obj;
+		}
+
 		public static GameObject createPersistentGameObject<T>(string name) where T: Component
 		{
-			GameObject obj = new GameObject(name, typeof(SceneCleanerPreserve), typeof(T));
-			Object.DontDestroyOnLoad(obj);
-
+			var obj = createPersistentGameObject(name);
+			obj.AddComponent<T>();
 			return obj;
+		}
+
+		public static C findNearestToCam<C>() where C: Component =>
+			findNearest<C>(LargeWorldStreamer.main?.cachedCameraPosition, out _);
+
+		public static C findNearestToPlayer<C>() where C: Component =>
+			findNearest<C>(Player.main?.transform.position, out _);
+
+		public static C findNearestToPlayer<C>(out float distSq) where C: Component =>
+			findNearest<C>(Player.main?.transform.position, out distSq);
+
+		// for use in non-performance critical code
+		public static C findNearest<C>(Vector3? pos, out float distSq) where C: Component
+		{
+			distSq = float.MaxValue;
+
+			if (pos == null)
+				return null;
+
+			C result = null;
+			Vector3 validPos = (Vector3)pos;
+
+			foreach (var c in Object.FindObjectsOfType<C>())
+			{
+				float tmpDistSq = (c.transform.position - validPos).sqrMagnitude;
+
+				if (tmpDistSq < distSq)
+				{
+					distSq = tmpDistSq;
+					result = c;
+				}
+			}
+
+			return result;
 		}
 	}
 
@@ -157,7 +209,7 @@ namespace Common
 			public static bool operator !=(KeyWithModifier key1, KeyWithModifier key2) => !(key1 == key2);
 
 			public override int  GetHashCode() => ((int)modifier & 0xFFF) << 12 | ((int)key & 0xFFF);
-			public override bool Equals(object obj) => obj is KeyWithModifier? this == (KeyWithModifier)obj: false;
+			public override bool Equals(object obj) => obj is KeyWithModifier key && this == key;
 
 			public override string ToString() => this == default? "": (modifier == KeyCode.None? $"{key}": $"{modifier}+{key}");
 
@@ -179,7 +231,7 @@ namespace Common
 		public static float getMouseWheelValue() => getAxis? getAxis.invoke("Mouse ScrollWheel"): 0f;
 
 		static readonly MethodWrapper<Func<string, float>> getAxis =
-			ReflectionHelper.safeGetType("UnityEngine.InputLegacyModule", "UnityEngine.Input")?.method("GetAxis")?.wrap<Func<string, float>>();
+			Type.GetType("UnityEngine.Input, UnityEngine.InputLegacyModule")?.method("GetAxis")?.wrap<Func<string, float>>();
 	}
 
 

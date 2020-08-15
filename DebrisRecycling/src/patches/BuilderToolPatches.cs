@@ -1,6 +1,4 @@
-﻿using System;
-
-using Harmony;
+﻿using Harmony;
 using UnityEngine;
 
 namespace DebrisRecycling
@@ -12,7 +10,7 @@ namespace DebrisRecycling
 		static bool Prefix(Constructable c, bool state) => !(state && c.gameObject.GetComponent<DebrisDeconstructable>());
 	}
 
-	[HarmonyPatch(typeof(BuilderTool), "OnHover", new Type[] { typeof(Constructable) })]
+	[HarmonyPatch(typeof(BuilderTool), "OnHover", typeof(Constructable))]
 	static class BuilderTool_OnHover_Patch
 	{
 		static bool Prefix(BuilderTool __instance, Constructable constructable)

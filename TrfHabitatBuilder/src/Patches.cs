@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Reflection.Emit;
 using System.Collections.Generic;
 
@@ -6,28 +7,20 @@ using Harmony;
 
 using Common;
 using Common.Harmony;
-using Common.Reflection;
 using Common.Configuration;
 
 namespace TrfHabitatBuilder
 {
-	#region builder patches
-	[HarmonyPatch(typeof(BuilderTool), "Start")]
-	static class BuilderTool_Start_Patch
+	[PatchClass]
+	static class BuilderToolPatches
 	{
-		static bool Prefix(BuilderTool __instance) => !__instance.gameObject.GetComponent<TrfBuilderControl>();
-	}
+		[HarmonyPrefix]
+		[HarmonyPatch(typeof(BuilderTool), "Start")]
+		[HarmonyPatch(typeof(BuilderTool), "OnDisable")]
+		static bool BuilderTool_Prefix(BuilderTool __instance) => !__instance.gameObject.GetComponent<TrfBuilderControl>();
 
-	[HarmonyPatch(typeof(BuilderTool), "OnDisable")]
-	static class BuilderTool_OnDisable_Patch
-	{
-		static bool Prefix(BuilderTool __instance) => !__instance.gameObject.GetComponent<TrfBuilderControl>();
-	}
-
-	[HarmonyPatch(typeof(BuilderTool), "LateUpdate")]
-	static class BuilderTool_LateUpdate_Patch
-	{
-		static bool Prefix(BuilderTool __instance)
+		[HarmonyPrefix, HarmonyPatch(typeof(BuilderTool), "LateUpdate")]
+		static bool BuilderTool_LateUpdate_Prefix(BuilderTool __instance)
 		{
 			TrfBuilderControl tbc = __instance.gameObject.GetComponent<TrfBuilderControl>();
 			if (tbc == null)
@@ -36,30 +29,26 @@ namespace TrfHabitatBuilder
 			tbc.updateBeams();
 			return false;
 		}
-	}
 
-	[HarmonyPatch(typeof(QuickSlots), "SetAnimationState")]
-	static class QuickSlots_SetAnimationState_Patch
-	{
-		static readonly string builderToolName = nameof(TrfBuilder).ToLower();
+		static readonly string trfBuilderToolName = nameof(TrfBuilder).ToLower();
 
-		static bool Prefix(QuickSlots __instance, string toolName)
+		[HarmonyPrefix, HarmonyPatch(typeof(QuickSlots), "SetAnimationState")]
+		static bool QuickSlots_SetAnimationState_Prefix(QuickSlots __instance, string toolName)
 		{
-			if (toolName != builderToolName)
+			if (toolName != trfBuilderToolName)
 				return true;
 
 			__instance.SetAnimationState("terraformer");
 			return false;
 		}
 	}
-	#endregion
 
 	#region GUI patches
 	class UpdateBuilderPanel: Config.Field.IAction
 	{
 		public void action()
 		{
-			OptionalPatches.update();
+			OptionalPatches.update(); // we need to update patches before the code below, so we using single action
 
 			if (!Main.config.limitBlueprints)
 				uGUIBuilderMenu_Show_Patch.enableAllTabs();
@@ -69,8 +58,7 @@ namespace TrfHabitatBuilder
 	}
 
 	// patch for locking tabs in the builder menu based on helded builder
-	[OptionalPatch]
-	[HarmonyPatch(typeof(uGUI_BuilderMenu), "Show")]
+	[OptionalPatch, HarmonyPatch(typeof(uGUI_BuilderMenu), "Show")]
 	static class uGUIBuilderMenu_Show_Patch
 	{
 		static bool Prepare() => Main.config.limitBlueprints;
@@ -119,46 +107,45 @@ namespace TrfHabitatBuilder
 
 
 	// patch for locking blueprints based on helded builder
-	[OptionalPatch]
-	[HarmonyPatch(typeof(uGUI_BuilderMenu), "UpdateItems")]
+	[OptionalPatch, HarmonyPatch(typeof(uGUI_BuilderMenu), "UpdateItems")]
 	static class uGUIBuilderMenu_UpdateItems_Patch
 	{
 		static bool Prepare() => Main.config.limitBlueprints;
 
-
 		static List<TechType> lockedBlueprints;
-		public static void init() => lockedBlueprints = Main.config.lockedBlueprints.get(GameUtils.getHeldToolType());
 
-		public static void updateUnlockState(TechType techType, ref TechUnlockState unlockState)
+		static void init() => lockedBlueprints = Main.config.lockedBlueprints.get(GameUtils.getHeldToolType());
+
+		static void updateUnlockState(TechType techType, ref TechUnlockState unlockState)
 		{
 			if (unlockState == TechUnlockState.Available && lockedBlueprints.Contains(techType))
 				unlockState = TechUnlockState.Locked;
 		}
+		delegate void _updateUnlockState(TechType techType, ref TechUnlockState unlockState);
 
-		public static void lockIcon(TechUnlockState unlockState, string stringForInt)
+		static void lockIcon(TechUnlockState unlockState, string stringForInt)
 		{
 			if (unlockState == TechUnlockState.Locked)
 				uGUI_BuilderMenu.singleton.iconGrid.GetIcon(stringForInt).manager = null;
 		}
 
-
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins)
 		{
 			var list = cins.ToList();
 
-			list.Insert(0, new CodeInstruction(OpCodes.Call, typeof(uGUIBuilderMenu_UpdateItems_Patch).method(nameof(init))));
+			list.Insert(0, CIHelper.emitCall<Action>(init));
 
 			// insert after "TechUnlockState techUnlockState = KnownTech.GetTechUnlockState(techType);"
 			CIHelper.ciInsert(list, cin => cin.isOpLoc(OpCodes.Stloc_S, 4), +1, 1,
 				OpCodes.Ldloc_3,
 				OpCodes.Ldloca_S, 4,
-				OpCodes.Call, typeof(uGUIBuilderMenu_UpdateItems_Patch).method(nameof(updateUnlockState)));
+				CIHelper.emitCall<_updateUnlockState>(updateUnlockState));
 
 			// insert after "this.iconGrid.AddItem"
 			CIHelper.ciInsert(list, cin => cin.isOp(OpCodes.Ceq), +4, 1,
 				OpCodes.Ldloc_S, 4,
 				OpCodes.Ldloc_S, 5,
-				OpCodes.Call, typeof(uGUIBuilderMenu_UpdateItems_Patch).method(nameof(lockIcon)));
+				CIHelper.emitCall<Action<TechUnlockState, string>>(lockIcon));
 
 			return list;
 		}

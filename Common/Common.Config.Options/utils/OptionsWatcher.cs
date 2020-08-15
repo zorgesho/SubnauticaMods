@@ -14,7 +14,7 @@ namespace Common.Configuration.Utils
 		class ActionComparer: IEqualityComparer<Config.Field.IAction>
 		{
 			public bool Equals(Config.Field.IAction x, Config.Field.IAction y) =>
-				object.Equals(x, y)? true: Equals(x.GetType(), y.GetType());
+				object.Equals(x, y) || Equals(x.GetType(), y.GetType());
 
 			public int GetHashCode(Config.Field.IAction obj) => obj.GetType().GetHashCode();
 		}

@@ -95,7 +95,7 @@ namespace CustomHotkeys
 
 			bool getKeyState()
 			{
-				 if (key.key == KeyCode.None || GameInput.clearInput || GameInput.scanningInput || FPSInputModule.current.lockMovement)
+				 if (key.key == KeyCode.None || GameInput.clearInput || GameInput.scanningInput || FPSInputModule.current?.lockMovement == true)
 					return false;
 
 				return (getKeyState(keyInputIndex) & targetState) != 0u && getModState();

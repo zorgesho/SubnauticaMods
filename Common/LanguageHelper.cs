@@ -23,9 +23,9 @@ namespace Common
 			if (inited || !(inited = true))
 				return;
 
-			// search for any classes that inherited from LanguageHelper and add their public static string members to SMLHelper.LanguageHandler
+			// search for any classes that derived from LanguageHelper and add their public static string members to SMLHelper.LanguageHandler
 			ReflectionHelper.definedTypes.
-				Where(type => typeof(LanguageHelper).IsAssignableFrom(type)).
+				Where(type => type.IsSubclassOf(typeof(LanguageHelper))).
 				SelectMany(type => type.fields()).
 				Where(field => field.FieldType == typeof(string) && field.IsStatic && field.IsPublic && !field.IsLiteral). // const strings are not added to LanguageHandler
 				forEach(field => field.SetValue(null, add(field.Name, field.GetValue(null) as string))); // changing value of string to its name, so we can use it as a string id for 'str' method
@@ -58,7 +58,7 @@ namespace Common
 
 		// using this to avoid including SMLHelper as a reference to Common project
 		static readonly MethodWrapper<Action<string, string>> addString =
-			ReflectionHelper.safeGetType("SMLHelper", "SMLHelper.V2.Handlers.LanguageHandler")?.method("SetLanguageLine")?.wrap<Action<string, string>>();
+			Type.GetType("SMLHelper.V2.Handlers.LanguageHandler, SMLHelper")?.method("SetLanguageLine")?.wrap<Action<string, string>>();
 
 
 		static Dictionary<string, string> substitutedStrings = null; // 'key' string using value of 'value' string
@@ -69,15 +69,14 @@ namespace Common
 			if (substitutedStrings == null)
 			{
 				substitutedStrings = new Dictionary<string, string>();
-
-				HarmonyHelper.patch(typeof(Language).method("LoadLanguageFile"),
-					postfix: typeof(LanguageHelper).method(nameof(substituteStrings)));
+				HarmonyHelper.patch();
 			}
 
 			substitutedStrings[stringID] = substituteStringID;
 		}
 
 		[HarmonyPriority(Priority.Low)]
+		[HarmonyPostfix, HarmonyHelper.Patch(typeof(Language), "LoadLanguageFile")]
 		static void substituteStrings(Language __instance) =>
 			substitutedStrings.forEach(subst => __instance.strings[subst.Key] = __instance.strings[subst.Value]);
 	}

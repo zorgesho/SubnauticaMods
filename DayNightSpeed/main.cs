@@ -10,11 +10,9 @@ namespace DayNightSpeed
 		public static void patch()
 		{
 			HarmonyHelper.patchAll(true);
-
 			LanguageHelper.init();
 
 			DayNightSpeedControl.init();
-			DayNightCyclePatches.init();
 		}
 	}
 }

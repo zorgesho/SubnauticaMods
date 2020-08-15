@@ -11,18 +11,17 @@ namespace ConsoleImproved
 		{
 			int delimPos = text.LastIndexOf(' ');
 
-			if (delimPos > 0) // trying complete parameter
-			{
-				string cmd = text.Substring(0, delimPos + 1).Trim();
-				StringCache stringCache = techtypeCache; // default secondary cache
-
-				if (cmd == "setcfgvar" || cmd == "getcfgvar") // hack, todo more general
-					stringCache = cfgVarsCache;
-
-				return cmd + " " + tryCompleteString(text.Substring(delimPos + 1), stringCache);
-			}
-			else
+			if (delimPos == -1)
 				return tryCompleteString(text, commandCache);
+
+			// trying complete parameter
+			string cmd = text.Substring(0, delimPos + 1).Trim();
+			StringCache stringCache = techtypeCache; // default secondary cache
+
+			if (cmd == "setcfgvar" || cmd == "getcfgvar") // hack, todo more general
+				stringCache = cfgVarsCache;
+
+			return cmd + " " + tryCompleteString(text.Substring(delimPos + 1), stringCache);
 		}
 
 		// used for last string from console text
@@ -55,11 +54,11 @@ namespace ConsoleImproved
 
 				foreach (var s in strings)
 				{
-					if (!s.StartsWith(prefix))
-					{
-						res = false;
-						break;
-					}
+					if (s.StartsWith(prefix))
+						continue;
+
+					res = false;
+					break;
 				}
 			}
 

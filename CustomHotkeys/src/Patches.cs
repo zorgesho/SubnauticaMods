@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Reflection.Emit;
 using System.Collections.Generic;
 
@@ -9,54 +10,59 @@ using UnityEngine.EventSystems;
 using Common;
 using Common.Harmony;
 using Common.Reflection;
+using Common.Configuration;
 
 namespace CustomHotkeys
 {
 	using Debug = Common.Debug;
 	using CIEnumerable = IEnumerable<CodeInstruction>;
 
-	// disabling F1 and F3 hotkeys for dev tools
-	[OptionalPatch, HarmonyPatch(typeof(MainGameController), "Update")]
-	static class MainGameController_Update_Patch
+	[OptionalPatch, PatchClass]
+	static class DevToolsHotkeysPatch
 	{
-		static bool Prepare() => !Main.config.enableDevToolsHotkeys;
+		static bool prepare() => !Main.config.enableDevToolsHotkeys;
 
-		static CIEnumerable Transpiler(CIEnumerable cins)
+		// disabling F1 and F3 hotkeys for dev tools
+		[HarmonyTranspiler, HarmonyPatch(typeof(MainGameController), "Update")]
+		static CIEnumerable F1_F3_disabler(CIEnumerable cins)
 		{
 			var list = cins.ToList();
 			var isShipping = typeof(PlatformUtils).method("get_isShippingRelease");
 
-			int indexBegin = list.FindIndex(ci => ci.isOp(OpCodes.Call, isShipping));
-			int indexEnd   = list.FindLastIndex(ci => ci.isOp(OpCodes.Blt)) + 1;
-			Debug.assert(indexBegin != -1 && indexEnd != 0);
+			int[] i = list.ciFindIndexes(ci => ci.isOp(OpCodes.Call, isShipping),
+										 ci => ci.isOp(OpCodes.Call, isShipping),
+										 ci => ci.isOp(OpCodes.Blt));
 
-			return CIHelper.ciRemove(list, indexBegin, indexEnd - indexBegin);
+			return i == null? cins: list.ciRemoveRange(i[0], i[2]);
 		}
+
+		[HarmonyPrefix]
+		[HarmonyPatch(typeof(GUIController), "Update")] // disable F6 (hide gui tool)
+		[HarmonyPatch(typeof(MainMenuController), "Update")] // disable Shift+F5 (smoke test)
+		static bool hotkeyDisabler() => false;
 	}
 
-	// disable F6 (hide gui tool)
-	[OptionalPatch, HarmonyPatch(typeof(GUIController), "Update")]
-	static class GUIController_Update_Patch
+	[OptionalPatch, PatchClass]
+	static class FeedbackCollectorPatch
 	{
-		static bool Prepare() => !Main.config.enableDevToolsHotkeys;
+		static bool prepare() => !Main.config.enableFeedback;
 
-		static bool Prefix() => false;
-	}
+		public class SettingChanged: Config.Field.IAction
+		{
+			public void action()
+			{
+				if (uGUI_FeedbackCollector.main)
+					uGUI_FeedbackCollector.main.enabled = Main.config.enableFeedback;
+			}
+		}
 
-	// disable F8 (feedback collector)
-	[HarmonyPatch(typeof(uGUI_FeedbackCollector), "Awake")]
-	static class uGUIFeedbackCollector_Awake_Patch
-	{
-		static void Postfix(uGUI_FeedbackCollector __instance) => __instance.enabled = Main.config.enableFeedback;
-	}
+		// disable F8 (feedback collector)
+		[HarmonyPostfix, HarmonyPatch(typeof(uGUI_FeedbackCollector), "Awake")]
+		static void uGUIFeedbackCollector_Awake_Postfix(uGUI_FeedbackCollector __instance) => __instance.enabled = Main.config.enableFeedback;
 
-	// remove "Give Feedback" from the ingame menu
-	[OptionalPatch, HarmonyPatch(typeof(IngameMenu), "Start")]
-	static class IngameMenu_Start_Patch
-	{
-		static bool Prepare() => !Main.config.enableFeedback;
-
-		static CIEnumerable Transpiler(CIEnumerable cins) => CIHelper.ciRemove(cins, 0, 3);
+		// remove "Give Feedback" from the ingame menu
+		[HarmonyTranspiler, HarmonyPatch(typeof(IngameMenu), "Start")]
+		static CIEnumerable IngameMenu_Start_Transpiler(CIEnumerable cins) => CIHelper.ciRemove(cins, 0, 3);
 	}
 
 	// patches for removing bindings and blocking 'Up' event after binding
@@ -95,8 +101,7 @@ namespace CustomHotkeys
 
 				// saving binded keycode to check later in GameInput.UpdateKeyInputs patch
 				var GameInput_ClearInput = typeof(GameInput).method("ClearInput");
-				CIHelper.ciInsert(list, ci => ci.isOp(OpCodes.Call, GameInput_ClearInput),
-					OpCodes.Call, typeof(uGUIBinding_Update_Patch).method(nameof(saveLastBind)));
+				CIHelper.ciInsert(list, ci => ci.isOp(OpCodes.Call, GameInput_ClearInput), CIHelper.emitCall<Action>(saveLastBind));
 
 				if (Main.config.easyBindRemove)
 				{
@@ -114,45 +119,43 @@ namespace CustomHotkeys
 		}
 
 		// if we press key while binding in options menu, ignore its 'Up' & 'Held' events
-		[HarmonyPatch(typeof(GameInput), "UpdateKeyInputs")]
-		static class GameInput_UpdateKeyInputs_Patch
+		[HarmonyPatch(typeof(GameInput), Mod.isBranchStable? "UpdateKeyInputs": "GetInputState")]
+		static class GameInput_UpdateKeyState_Patch
 		{
 			static CIEnumerable Transpiler(CIEnumerable cins, ILGenerator ilg)
 			{
 				var list = cins.ToList();
-
-				var Input_GetKey = typeof(Input).method("GetKey", typeof(KeyCode));
-				var Input_GetKeyUp = typeof(Input).method("GetKeyUp", typeof(KeyCode));
 				var field_lastBindedIndex = typeof(BindingPatches).field(nameof(lastBindedIndex));
+#if BRANCH_STABLE
+				var Input_GetKey = typeof(Input).method("GetKey", typeof(KeyCode));
+				var cinsCompare = CIHelper.toCIList(OpCodes.Ldloc_S, 4,
+													OpCodes.Ldsfld, field_lastBindedIndex);
+#elif BRANCH_EXP
+				object Input_GetKey = null; // exp branch uses InputUtils, but we don't really need to check method in GetInputState
+				var cinsCompare = CIHelper.toCIList(OpCodes.Ldarg_1, CIHelper.emitCall<Func<KeyCode>>(_lastBindedKeyCode));
 
-				int index = list.FindIndex(ci => ci.isOp(OpCodes.Call, Input_GetKey));
-				Debug.assert(index != -1);
+				static KeyCode _lastBindedKeyCode() =>
+					lastBindedIndex == -1 || GameInput.inputs.Count == 0? default: GameInput.inputs[lastBindedIndex].keyCode;
+#endif
+				int[] i = list.ciFindIndexes(ci => ci.isOp(OpCodes.Call, Input_GetKey),
+											 ci => ci.isOp(OpCodes.Call),
+											 ci => ci.isOp(OpCodes.Call));
+				if (i == null)
+					return cins;
 
-				Label lb0 = list[index + 1].operand.cast<Label>();
+				Label lb1 = list[i[2] + 1].operand.cast<Label>();
+				Label lb2 = list.ciDefineLabel(i[2] + 2, ilg); // label for 'inputState.flags |= GameInput.InputStateFlags.Up'
 
-				list.InsertRange(index + 2, CIHelper.toCIList
-				(
-					OpCodes.Ldloc_S, 4,						//	if (i == BindingPatches.lastBindedIndex)
-					OpCodes.Ldsfld, field_lastBindedIndex,
-					OpCodes.Beq_S, lb0
-				));
-
-				index = list.FindIndex(ci => ci.isOp(OpCodes.Call, Input_GetKeyUp));
-				Debug.assert(index != -1);
-
-				Label lb1 = list[index + 1].operand.cast<Label>();
-				Label lb2 = ilg.DefineLabel();
-				list[index + 2].labels.Add(lb2); // label for 'inputState.flags |= GameInput.InputStateFlags.Up'
-
-				list.InsertRange(index + 2, CIHelper.toCIList
-				(
-					OpCodes.Ldloc_S, 4,						//	if (i == BindingPatches.lastBindedIndex)
-					OpCodes.Ldsfld, field_lastBindedIndex,
+				CIHelper.LabelClipboard.__enabled = false;
+				list.ciInsert(i[2] + 2,
+					cinsCompare,							// compare last binded key with current
 					OpCodes.Bne_Un_S, lb2,
-					OpCodes.Ldc_I4_M1,						//		BindingPatches.lastBindedIndex = -1;
+					OpCodes.Ldc_I4_M1,						// BindingPatches.lastBindedIndex = -1;
 					OpCodes.Stsfld, field_lastBindedIndex,
-					OpCodes.Br_S, lb1						//	else inputState.flags |= GameInput.InputStateFlags.Up;
-				));
+					OpCodes.Br_S, lb1);						// else inputState.flags |= GameInput.InputStateFlags.Up;
+
+				Label lb0 = list[i[0] + 1].operand.cast<Label>();
+				list.ciInsert(i[0] + 2, cinsCompare, OpCodes.Beq_S, lb0);
 
 				return list;
 			}

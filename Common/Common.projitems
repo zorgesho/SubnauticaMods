@@ -9,6 +9,8 @@
     <Import_RootNamespace>Common</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)ConsoleCommands.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)debug\MaterialDumper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)debug\ObjectDumper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)debug\Misc.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)debug\PersistentScreenMessages.cs" />
@@ -18,6 +20,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)debug\Log.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)harmony\OptionalPatches.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)harmony\CIHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)harmony\PatchClass.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LanguageHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)utils\MainMenuMessages.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Misc.cs" />

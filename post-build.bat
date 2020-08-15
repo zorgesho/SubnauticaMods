@@ -4,18 +4,22 @@
 :: %4 $(TargetPath)
 :: %5 $(TargetDir)
 
-set qmods_path="c:\games\subnautica\QMods"
-
 :: name is also in the Mod.cs
 set tmp_info_file="run the game to generate configs"
 
-if %1 == test_build goto :exit
-if not exist %qmods_path% goto :exit
+set qmods_path="c:\games\subnautica\QMods"
+if not exist %qmods_path% goto :eof
 
-xcopy %4 %qmods_path%\%2\ /q /y
-xcopy %3mod.json %qmods_path%\%2\ /q /y
-if exist %3assets\ xcopy %3assets %qmods_path%\%2\assets\ /e /q /y
+echo %1 | findstr /c:"testbuild" 1>nul && goto :eof
 
-if %1 == publish copy nul %qmods_path%\%2\%tmp_info_file%
+echo %2.pdb > ..\.pdb-ignore
 
-:exit
+:: adding info file to version for publish 
+echo %1 | findstr /c:"publish" 1>nul && copy nul %5%tmp_info_file% > nul
+
+:: renaming mod.SN.json/mod.BZ.json to mod.json if any
+if exist mod.*.json move mod.*.json mod.json
+
+echo =====
+xcopy %5*.* %qmods_path%\%2\ /e /y /exclude:..\.pdb-ignore
+del ..\.pdb-ignore

@@ -3,6 +3,7 @@ using System.Text;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
+#if !BRANCH_EXP
 namespace System.Runtime.CompilerServices // nice trick (for use in .NET 4.0)
 {
 	// https://thomaslevesque.com/2012/06/13/using-c-5-caller-info-attributes-when-targeting-earlier-versions-of-the-net-framework/
@@ -11,6 +12,7 @@ namespace System.Runtime.CompilerServices // nice trick (for use in .NET 4.0)
 	[AttributeUsage(AttributeTargets.Parameter)] class CallerMemberNameAttribute: Attribute {}
 	[AttributeUsage(AttributeTargets.Parameter)] class CallerLineNumberAttribute: Attribute {}
 }
+#endif
 
 namespace Common
 {

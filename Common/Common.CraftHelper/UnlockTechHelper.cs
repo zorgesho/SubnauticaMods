@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Reflection.Emit;
 using System.Collections.Generic;
 
@@ -8,7 +9,6 @@ using SMLHelper.V2.Handlers;
 namespace Common.Crafting
 {
 	using Harmony;
-	using Reflection;
 
 	static class UnlockTechHelper
 	{
@@ -21,13 +21,8 @@ namespace Common.Crafting
 		static bool inited = false;
 		static void init()
 		{
-			if (inited || !(inited = true))
-				return;
-
-			HarmonyHelper.patch();
-
-			// patching separately because of HarmonyPriority
-			HarmonyHelper.patch(typeof(KnownTech).method("Initialize"), postfix: typeof(UnlockTechHelper).method(nameof(unlockPopupsUpdate)));
+			if (!inited && (inited = true))
+				HarmonyHelper.patch();
 		}
 
 		public static void setFragmentTypeToUnlock(TechType unlockTechType, TechType origFragTechType, TechType substFragTechType, int fragCount, float scanTime)
@@ -62,26 +57,26 @@ namespace Common.Crafting
 
 
 		#region patches
-		// substitute fragment tech type if it already known (for use in transpiler)
-		static TechType substituteTechType(TechType scanTechType)
+
+		[HarmonyTranspiler, HarmonyPatch(typeof(PDAScanner), "Scan")]
+		static IEnumerable<CodeInstruction> scannerPatch(IEnumerable<CodeInstruction> cins)
 		{
-			if (!fragments.TryGetValue(scanTechType, out TechType substTechType))
-				return scanTechType;
+			static TechType _substTechType(TechType scanTechType) // substitute fragment tech type if it already known
+			{
+				if (!fragments.TryGetValue(scanTechType, out TechType substTechType))
+					return scanTechType;
 
-			return PDAScanner.complete.Contains(scanTechType)? substTechType: scanTechType;
-		}
+				return PDAScanner.complete.Contains(scanTechType)? substTechType: scanTechType;
+			}
 
-		[HarmonyTranspiler]
-		[HarmonyPatch(typeof(PDAScanner), "Scan")]
-		static IEnumerable<CodeInstruction> scannerPatch(IEnumerable<CodeInstruction> cins) =>
-			CIHelper.ciInsert(cins,
+			return CIHelper.ciInsert(cins,
 				cin => cin.isOp(OpCodes.Stloc_0), +1, 1,
 					OpCodes.Ldloc_0,
-					new CodeInstruction(OpCodes.Call, typeof(UnlockTechHelper).method(nameof(UnlockTechHelper.substituteTechType))),
+					CIHelper.emitCall<Func<TechType, TechType>>(_substTechType),
 					OpCodes.Stloc_0);
+		}
 
-		[HarmonyPrefix]
-		[HarmonyPatch(typeof(PDAScanner), "ContainsCompleteEntry")] // for loot spawning
+		[HarmonyPrefix, HarmonyPatch(typeof(PDAScanner), "ContainsCompleteEntry")] // for loot spawning
 		static bool fragmentCheckOverride(TechType techType, ref bool __result)
 		{
 			if (!fragments.TryGetValue(techType, out TechType substTechType))
@@ -92,6 +87,7 @@ namespace Common.Crafting
 		}
 
 		[HarmonyPriority(Priority.Low)]
+		[HarmonyPostfix, HarmonyHelper.Patch(typeof(KnownTech), "Initialize")]
 		static void unlockPopupsUpdate()
 		{
 			KnownTech.AnalysisTech _getEntry(TechType techType) =>

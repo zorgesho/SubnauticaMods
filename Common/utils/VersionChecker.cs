@@ -48,7 +48,7 @@ namespace Common.Utils
 			return 0;
 		}
 
-		public override bool Equals(object obj) => obj is Version? this == (Version)obj: false;
+		public override bool Equals(object obj) => obj is Version ver && this == ver;
 		public override int  GetHashCode() => (major & 0xFF) << 16 | (minor & 0xFF) << 8 | (patch & 0xFF);
 
 		public override string ToString() => $"{major}{separator}{minor}{separator}{patch}";
@@ -79,7 +79,7 @@ namespace Common.Utils
 			versionURL = url;
 
 			if (!url.isNullOrEmpty() && !go)
-				go = UnityHelper.createPersistentGameObject<CheckVersion>("VersionChecker." + Mod.id);
+				go = UnityHelper.createPersistentGameObject<CheckVersion>($"{Mod.id}.VersionChecker");
 		}
 
 		class CheckVersion: MonoBehaviour
@@ -91,8 +91,7 @@ namespace Common.Utils
 				var thread = new Thread(checkVersion);
 				thread.Start();
 
-				while (thread.IsAlive)
-					yield return null;
+				yield return new WaitWhile(() => thread.IsAlive);
 
 				Destroy(gameObject);
 			}

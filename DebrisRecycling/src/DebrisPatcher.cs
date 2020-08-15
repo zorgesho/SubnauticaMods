@@ -26,7 +26,7 @@ namespace DebrisRecycling
 		static Dictionary<string, int> validPrefabs;
 
 		public static bool isValidObject(GameObject go) => isValidPrefab(go?.GetComponent<PrefabIdentifier>()?.ClassId);
-		public static bool isValidPrefab(string prefabID) => prefabID != null? validPrefabs.ContainsKey(prefabID): false;
+		public static bool isValidPrefab(string prefabID) => prefabID != null && validPrefabs.ContainsKey(prefabID);
 
 		public static void init(PrefabsConfig config)
 		{

@@ -1,7 +1,12 @@
-﻿using System;
+﻿#define DISABLE_VERSION_CHECK_IN_DEVBUILD
+
+using System;
 using System.IO;
 using System.Threading;
+using System.Reflection;
 using System.Globalization;
+
+using UnityEngine;
 
 namespace Common
 {
@@ -16,12 +21,22 @@ namespace Common
 #else
 			false;
 #endif
+		public const bool isBranchStable =
+#if BRANCH_STABLE
+			true;
+#elif BRANCH_EXP
+			false;
+#endif
+
+		public static bool isShuttingDown { get; private set; }
+		class ShutdownListener: MonoBehaviour { void OnApplicationQuit() { isShuttingDown = true; "Shutting down".logDbg(); } }
+
 		const string tmpFileName = "run the game to generate configs"; // name is also in the post-build.bat
 		const string updateMessage = "An update is available! (current version is v<color=orange>{0}</color>, new version is v<color=orange>{1}</color>)";
 
-		public static string id   { get { init(); return _id; } }
+		public static readonly string id = Assembly.GetExecutingAssembly().GetName().Name; // not using mod.json for ID
 		public static string name { get { init(); return _name; } }
-		static string _id, _name;
+		static string _name;
 
 		static bool inited;
 
@@ -31,6 +46,8 @@ namespace Common
 			if (inited || !(inited = true))
 				return;
 
+			UnityHelper.createPersistentGameObject<ShutdownListener>($"{id}.ShutdownListener");
+
 			// may be overkill to make it for all mods and from the start
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
@@ -38,11 +55,16 @@ namespace Common
 			catch (UnauthorizedAccessException) {}
 
 			var manifest = SimpleJSON.Parse(File.ReadAllText(Paths.modRootPath + "mod.json"));
-
-			_id = manifest["Id"];
 			_name = manifest["DisplayName"];
+			bool needCheckVer = manifest["UpdateCheck"].AsBool;
 
-			if (manifest["UpdateCheck"].AsBool)
+#if DISABLE_VERSION_CHECK_IN_DEVBUILD
+			if (needCheckVer && isDevBuild)
+				"Version check is disabled for dev build!".logDbg();
+
+			needCheckVer &= !isDevBuild;
+#endif
+			if (needCheckVer)
 			{
 				var currentVersion = new Version(manifest["Version"]);
 				var latestVersion = VersionChecker.getLatestVersion(manifest["VersionURL"]);							$"Latest version is {latestVersion}".logDbg();
@@ -54,7 +76,7 @@ namespace Common
 			"Mod inited".logDbg();
 		}
 
-		static readonly Type qmmServices = ReflectionHelper.safeGetType("QModInstaller", "QModManager.API.QModServices");
+		static readonly Type qmmServices = Type.GetType("QModManager.API.QModServices, QModInstaller");
 		static readonly PropertyWrapper qmmServicesMain = qmmServices.property("Main").wrap();
 		static readonly MethodWrapper qmmAddMessage = qmmServices.method("AddCriticalMessage").wrap();
 

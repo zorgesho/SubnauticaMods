@@ -8,7 +8,7 @@ namespace Common
 	{
 		public static void addRange<T>(this ICollection<T> target, IEnumerable<T> source) => source.forEach(e => target.Add(e));
 
-		public static void add<T>(this List<T> target, T item, int count)
+		public static void add<T>(this List<T> target, T item, int count) where T: struct
 		{
 			for (int i = 0; i < count; i++)
 				target.Add(item);
@@ -28,11 +28,14 @@ namespace Common
 
 	static class ArrayExtensions
 	{
-		public static T[] init<T>(this T[] array)
+		public static T[] init<T>(this T[] array) where T: new()
 		{
-			array.Initialize();
+			for (int i = 0; i < array.Length; i++)
+				array[i] = new T();
 			return array;
 		}
+
+		public static bool isNullOrEmpty(this Array array) => array == null || array.Length == 0;
 
 		public static bool contains<T>(this T[] array, T val) => Array.IndexOf(array, val) != -1;
 
@@ -110,7 +113,7 @@ namespace Common
 		readonly HashSet<string> allIDs = new HashSet<string>();
 		readonly Dictionary<string, int> nonUniqueIDs = new Dictionary<string, int>();
 
-		public bool ensureUniqueID(ref string id)
+		public bool ensureUniqueID(ref string id, bool nonUniqueIDsWarning = true)
 		{
 			if (allIDs.Add(id)) // if this is new id, do nothing
 				return true;
@@ -120,7 +123,8 @@ namespace Common
 
 			id += "." + counter;
 #if DEBUG
-			$"UniqueIDs: fixed ID: {id}".logWarning();
+			if (nonUniqueIDsWarning)
+				$"UniqueIDs: fixed ID: {id}".logWarning();
 #endif
 			Debug.assert(allIDs.Add(id)); // checking updated id just in case
 

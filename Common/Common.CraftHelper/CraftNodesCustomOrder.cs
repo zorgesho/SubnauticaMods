@@ -85,8 +85,8 @@ namespace Common.Crafting
 		{
 			getNodeList(treeType).Add(new CraftNode(id, path, idAfter));
 
-			LanguageHandler.SetLanguageLine($"{treeType.ToString()}Menu_{id}", displayName);
-			SpriteHandler.RegisterSprite(SpriteManager.Group.Category, $"{treeType.ToString()}_{id}", SpriteManager.Get(spriteTechType));
+			LanguageHandler.SetLanguageLine($"{treeType}Menu_{id}", displayName);
+			SpriteHandler.RegisterSprite(SpriteManager.Group.Category, $"{treeType}_{id}", SpriteManager.Get(spriteTechType));
 		}
 
 		static void addNodesToTree(CraftTree.Type treeType, ref global::CraftNode rootNode)
@@ -107,9 +107,9 @@ namespace Common.Crafting
 
 		static void patchCraftTree(CraftTree.Type treeType)
 		{
-			string targetMethod = treeType.ToString() + (treeType != CraftTree.Type.MapRoom? "Scheme": "Sheme"); // :-\
+			string targetMethod = $"{treeType}{(treeType != CraftTree.Type.MapRoom? "Scheme": "Sheme")}"; // :-\
 
-			HarmonyHelper.patch(typeof(CraftTree).method(targetMethod), postfix: typeof(CraftNodesCustomOrder).method("addNodesTo_" + treeType.ToString()));
+			HarmonyHelper.patch(typeof(CraftTree).method(targetMethod), postfix: typeof(CraftNodesCustomOrder).method($"addNodesTo_{treeType}"));
 		}
 	}
 }

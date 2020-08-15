@@ -2,6 +2,8 @@
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Reflection;
+using System.Collections.Generic;
 
 using UnityEngine;
 
@@ -38,14 +40,14 @@ namespace Common
 		{
 			static readonly StringBuilder output = new StringBuilder();
 
-			static bool dumpFields = true;
-			static bool dumpProperties = true;
+			static bool dumpProperties;
+			static bool dumpFields;
 
-			public static string dump(GameObject go, bool _dumpProperties, bool _dumpFields)
+			public static string dump(GameObject go, bool dumpProperties, bool dumpFields)
 			{
-				output.Length = 0;
-				dumpProperties = _dumpProperties;
-				dumpFields = _dumpFields;
+				output.Clear();
+				ObjectDumper.dumpProperties = dumpProperties;
+				ObjectDumper.dumpFields = dumpFields;
 
 				dump(go, "");
 
@@ -65,17 +67,8 @@ namespace Common
  
 			static void dump(Component cmp, string indent)
 			{
-				static string _formatValue(object value)
-				{
-					if (value == null)
-						return "";
-
-					string result = value.ToString();
-					if (!result.isNullOrEmpty())
-						result = result.Replace("\n", " ").Replace("\t", " ").TrimEnd();
-
-					return result;
-				}
+				static void _sort<T>(List<T> list) where T: MemberInfo => list.Sort((m1, m2) => m1.Name.CompareTo(m2.Name));
+				static string _formatValue(object value) => value?.ToString().Replace('\n', ' ').Replace('\t', ' ').Trim() ?? "";
 
 				Type cmpType = cmp.GetType();
 				output.AppendLine($"{indent}component: {cmpType}");
@@ -87,7 +80,7 @@ namespace Common
 						var properties = cmpType.properties().ToList();
 						if (properties.Count > 0)
 						{
-							properties.Sort((p1, p2) => p1.Name.CompareTo(p2.Name));
+							_sort(properties);
 							output.AppendLine($"{indent}\tPROPERTIES:");
 
 							foreach (var prop in properties)
@@ -103,7 +96,7 @@ namespace Common
 						var fields = cmpType.fields().ToList();
 						if (fields.Count > 0)
 						{
-							fields.Sort((f1, f2) => f1.Name.CompareTo(f2.Name));
+							_sort(fields);
 							output.AppendLine($"{indent}\tFIELDS:");
 
 							foreach (var field in fields)

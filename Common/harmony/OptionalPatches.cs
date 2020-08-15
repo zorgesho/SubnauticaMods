@@ -24,23 +24,28 @@ namespace Common.Harmony
 				optionalPatches.ForEach(type => update(type));
 		}
 
-		// calls setEnabled with result of 'Prepare' method
+		// calls setEnabled with result of 'prepare' method
 		public static void update(Type patchType)
 		{
 			using var _ = Debug.profiler($"Update optional patch: {patchType}", allowNested: false);
 
-			var prepare = patchType.method("Prepare").wrap();
+			var prepare = patchType.method("prepare", ReflectionHelper.bfAll | BindingFlags.IgnoreCase).wrap();
 			Debug.assert(prepare);
 
 			if (prepare)
 				setEnabled(patchType, prepare.invoke<bool>());
 		}
 
-		public static void setEnabled(Type patchType, bool val)
-		{																														$"OptionalPatches: setEnabled {patchType} => {val}".logDbg();
-			if (!(patchType.getAttr<HarmonyPatch>() is HarmonyPatch patch))
-				return;
+		public static void setEnabled(Type patchType, bool enabled)
+		{
+			if (patchType.getAttr<HarmonyPatch>() is HarmonyPatch patch) // regular harmony patch
+				setEnabled(patchType, patch, enabled);
+			else if (patchType.checkAttr<PatchClassAttribute>()) // optional patch class
+				HarmonyHelper.patch(patchType, enabled);
+		}
 
+		static void setEnabled(Type patchType, HarmonyPatch patch, bool enabled)
+		{																									$"OptionalPatches: setEnabled {patchType} => {enabled}".logDbg();
 			var method = patch.info.getTargetMethod();
 
 			if (method == null && $"OptionalPatches: method is null!".logError())
@@ -52,18 +57,16 @@ namespace Common.Harmony
 
 			var patches = HarmonyHelper.getPatchInfo(method);
 
-			static bool _contains(IEnumerable<Patch> _list, MethodInfo _method) => _list?.FirstOrDefault(p => p.patch == _method) != null;
+			bool prefixActive = patches.isPatchedBy(prefix);
+			bool postfixActive = patches.isPatchedBy(postfix);
+			bool transpilerActive = patches.isPatchedBy(transpiler);
 
-			bool prefixActive = _contains(patches?.Prefixes, prefix);
-			bool postfixActive = _contains(patches?.Postfixes, postfix);
-			bool transpilerActive = _contains(patches?.Transpilers, transpiler);
-
-			if (val)
+			if (enabled)
 			{
 				if (!prefixActive && !postfixActive && !transpilerActive)
 					HarmonyHelper.patch(method, prefix, postfix, transpiler);
 			}
-			else 
+			else
 			{
 				// need to check if this is actual patches to avoid unnecessary updates in harmony (with transpilers especially)
 				if (prefixActive)	  HarmonyHelper.unpatch(method, prefix);

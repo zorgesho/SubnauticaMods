@@ -20,7 +20,7 @@ namespace Common.Configuration
 			Default = ProcessAttributes | MainConfig
 		}
 
-		static readonly bool ignoreExistingFile = // can be overrided by LoadOptions.ForcedLoad
+		const bool ignoreExistingFile = // can be overrided by LoadOptions.ForcedLoad
 #if (DEBUG && !LOAD_CONFIG)
 			true;
 #else

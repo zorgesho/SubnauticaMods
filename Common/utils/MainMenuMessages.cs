@@ -1,4 +1,5 @@
-﻿using System.Reflection.Emit;
+﻿using System;
+using System.Reflection.Emit;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -9,7 +10,6 @@ using UnityEngine.SceneManagement;
 namespace Common.Utils
 {
 	using Harmony;
-	using Reflection;
 
 	static class MainMenuMessages
 	{
@@ -39,7 +39,7 @@ namespace Common.Utils
 
 			messageQueue = new List<string>();
 			messages = new List<ErrorMessage._Message>();
-			Patches.patch();
+			HarmonyHelper.patch(typeof(Patches));
 
 			SceneManager.sceneLoaded += onSceneLoaded;
 		}
@@ -64,30 +64,17 @@ namespace Common.Utils
 			static IEnumerator _waitForLoad()
 			{
 				yield return new WaitForSeconds(1f);
-
-				while (SaveLoadManager.main.isLoading)
-					yield return null;
+				yield return new WaitWhile(() => SaveLoadManager.main.isLoading);
 																						"MainMenuMessages: game loading finished".logDbg();
 				messages.ForEach(msg => msg.timeEnd = Time.time + 1f);
 
 				messages.Clear();
-				Patches.unpatch();
+				HarmonyHelper.patch(typeof(Patches), false);
 			}
 		}
 
 		static class Patches
 		{
-			public static void patch()
-			{
-				HarmonyHelper.patch();
-			}
-
-			public static void unpatch()
-			{
-				HarmonyHelper.unpatch(typeof(ErrorMessage).method("Awake"), typeof(Patches).method(nameof(addMessages)));
-				HarmonyHelper.unpatch(typeof(ErrorMessage).method("OnUpdate"), typeof(Patches).method(nameof(updateMessages)));
-			}
-
 			[HarmonyPostfix, HarmonyPatch(typeof(ErrorMessage), "Awake")]
 			static void addMessages()
 			{
@@ -95,16 +82,17 @@ namespace Common.Utils
 				messageQueue.Clear();
 			}
 
-			static float _getVal(float val, ErrorMessage._Message message) => messages.Contains(message)? 1f: val;
-
 			// we changing result for 'float value = Mathf.Clamp01(MathExtensions.EvaluateLine(...' to 1.0f
 			// so text don't stay in the center of the screen (because of changed 'timeEnd')
 			[HarmonyTranspiler, HarmonyPatch(typeof(ErrorMessage), "OnUpdate")]
 			static IEnumerable<CodeInstruction> updateMessages(IEnumerable<CodeInstruction> cins)
 			{
-				return CIHelper.ciInsert(cins, cin => cin.isOpLoc(OpCodes.Stloc_S, 11), +0, 1,
+				static float _getVal(float val, ErrorMessage._Message message) => messages.Contains(message)? 1f: val;
+
+				return CIHelper.ciInsert(cins,
+					cin => cin.isOpLoc(OpCodes.Stloc_S, 11), +0, 1,
 						OpCodes.Ldloc_S, 6,
-						OpCodes.Call, typeof(Patches).method(nameof(_getVal)));
+						CIHelper.emitCall<Func<float, ErrorMessage._Message, float>>(_getVal));
 			}
 		}
 	}

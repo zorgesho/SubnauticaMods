@@ -42,44 +42,39 @@ namespace Common.Harmony
 
 		static CodeInstruction getCfgVarCI(string cfgVarName)
 		{
-			if (Config.main == null)
-				return null;
+			if (Config.main != null)
+			{
+				if (Config.main.GetType().field(cfgVarName) is FieldInfo varField)
+					return new CodeInstruction(OpCodes.Ldfld, varField);
 
-			if (Config.main.GetType().field(cfgVarName) is FieldInfo varField)
-				return new CodeInstruction(OpCodes.Ldfld, varField);
+				if (Config.main.GetType().property(cfgVarName)?.GetGetMethod() is MethodInfo varGetter)
+					return new CodeInstruction(OpCodes.Callvirt, varGetter);
+			}
 
-			if (Config.main.GetType().property(cfgVarName)?.GetGetMethod() is MethodInfo varGetter)
-				return new CodeInstruction(OpCodes.Callvirt, varGetter);
-
+			Debug.assert(false, $"_codeForCfgVar: member for {cfgVarName} is not found");
 			return null;
 		}
 
 		public static CIEnumerable _codeForCfgVar(string cfgVarName)
 		{
-			var cfgVarCI = getCfgVarCI(cfgVarName);
-			Debug.assert(cfgVarCI != null, $"_codeForCfgVar: member for {cfgVarName} is not found");
-
-			if (cfgVarCI == null)
-				yield break;
-
-			yield return new CodeInstruction(OpCodes.Call, mainConfig);
-			yield return cfgVarCI;
+			if (getCfgVarCI(cfgVarName) is CodeInstruction cfgVarCI)
+			{
+				yield return new CodeInstruction(OpCodes.Call, mainConfig);
+				yield return cfgVarCI;
+			}
 		}
 
 
 		public static CIEnumerable _codeForCfgVar<T, C>(T val, string cfgVarName, ILGenerator ilg) where C: Component
 		{																												$"HarmonyHelper._codeForCfgVar: injecting {val} => {cfgVarName} ({typeof(C)})".logDbg();
-			var cfgVarCI = getCfgVarCI(cfgVarName);
-			Debug.assert(cfgVarCI != null, $"_codeForCfgVar: member for {cfgVarName} is not found");
-
-			if (cfgVarCI == null)
+			if (!(getCfgVarCI(cfgVarName) is CodeInstruction cfgVarCI))
 				yield break;
 
 			Label lb1 = ilg.DefineLabel();
 			Label lb2 = ilg.DefineLabel();
 
 			yield return new CodeInstruction(OpCodes.Ldarg_0);
-			yield return new CodeInstruction(OpCodes.Callvirt, typeof(Component).method("GetComponent", new Type[0]).MakeGenericMethod(typeof(C)));
+			yield return new CodeInstruction(OpCodes.Callvirt, typeof(Component).method<C>("GetComponent", new Type[0]));
 			yield return new CodeInstruction(OpCodes.Ldnull);
 			yield return new CodeInstruction(OpCodes.Call, typeof(UnityEngine.Object).method("op_Inequality"));
 			yield return new CodeInstruction(OpCodes.Brtrue_S, lb1);

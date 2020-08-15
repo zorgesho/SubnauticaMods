@@ -1,4 +1,6 @@
-﻿using System;
+﻿//#define VALIDATE_PATCHES
+
+using System;
 using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
@@ -9,10 +11,7 @@ namespace Common.Harmony
 {
 	using Reflection;
 
-	// is class have methods that can be used as harmony patches (for more: void patch(Type typeWithPatchMethods))
-	public class PatchClassAttribute: Attribute {}
-
-	static class HarmonyHelper
+	static partial class HarmonyHelper
 	{
 		public static HarmonyInstance harmonyInstance => _harmonyInstance ??= HarmonyInstance.Create(Mod.id);
 		static HarmonyInstance _harmonyInstance;
@@ -21,6 +20,9 @@ namespace Common.Harmony
 		{
 			try
 			{
+#if VALIDATE_PATCHES
+				PatchesValidator.validate();
+#endif
 				using (Debug.profiler($"HarmonyHelper.patchAll"))
 				{
 					harmonyInstance.PatchAll(Assembly.GetExecutingAssembly());
@@ -52,45 +54,46 @@ namespace Common.Harmony
 			}
 		}
 
-		// use methods from 'typeWithPatchMethods' class as harmony patches
-		// valid method need to have HarmonyPatch and Harmony[Prefix/Postfix/Transpiler] attributes
-		// if typeWithPatchMethods is null, we use type from which this method is called
-		public static void patch(Type typeWithPatchMethods = null)
-		{
-			foreach (var method in (typeWithPatchMethods ?? ReflectionHelper.getCallingType()).methods(BindingFlags.DeclaredOnly))
-			{
-				MethodInfo _method_if<H>() where H: Attribute => method.checkAttr<H>()? method: null;
-
-				if (method.getAttr<HarmonyPatch>() is HarmonyPatch harmonyPatch)
-					patch(harmonyPatch.info.getTargetMethod(), _method_if<HarmonyPrefix>(), _method_if<HarmonyPostfix>(), _method_if<HarmonyTranspiler>());
-			}
-		}
-
 		public static void unpatch(MethodBase original, MethodInfo patch) => harmonyInstance.Unpatch(original, patch);
 
 		public static Patches getPatchInfo(MethodBase method) => harmonyInstance.GetPatchInfo(method);
 
-
-		// comparing patches by method's names (for use with shared projects)
-		public static bool isPatchedBy(MethodBase original, MethodBase patch)
+		// checkByName - comparing patches by method's names (for use with shared projects)
+		public static bool isPatchedBy(MethodBase original, MethodBase patch, bool checkByName = false)
 		{
-			Debug.assert(original != null);
-			Debug.assert(patch != null);
-
-			var patches = getPatchInfo(original);
-			if (patches == null)
-				return false;
-
-			string patchFullName = patch.fullName();
-			bool _contains(IList<Patch> list) => list.FirstOrDefault(p => p.patch?.fullName() == patchFullName) != null;
-
-			return _contains(patches.Prefixes) || _contains(patches.Postfixes) || _contains(patches.Transpilers);
+			Debug.assert(original != null && patch != null, $"'{original}' '{patch}'");
+			return getPatchInfo(original).isPatchedBy(patch, checkByName);
 		}
-
-		public static bool isPatchedBy(MethodBase original, string patchName) =>
-			isPatchedBy(original, ReflectionHelper.getCallingType().method(patchName));
 	}
 
+#if BRANCH_EXP
+	static partial class HarmonyHelper
+	{
+		// helper for patching iterator methods
+		public class IteratorWrapper
+		{
+			readonly object obj;
+			FieldInfo _fiState, _fiCurrent;
+
+			FieldInfo fiState => _fiState ??= obj.GetType().field("<>1__state");
+			FieldInfo fiCurrent => _fiCurrent ??= obj.GetType().field("<>2__current");
+
+			public IteratorWrapper(object obj) => this.obj = obj;
+
+			public int state
+			{
+				get => fiState.GetValue(obj).cast<int>();
+				set => fiState.SetValue(obj, value);
+			}
+
+			public object current
+			{
+				get => fiCurrent.GetValue(obj);
+				set => fiCurrent.SetValue(obj, value);
+			}
+		}
+	}
+#endif
 
 	static partial class HarmonyExtensions
 	{
@@ -103,6 +106,19 @@ namespace Common.Harmony
 				return harmonyMethod.declaringType?.GetConstructor(ReflectionHelper.bfAll, null, harmonyMethod.argumentTypes, null);
 
 			return null;
+		}
+
+		public static bool isPatchedBy(this Patches patches, MethodBase patch, bool checkByName = false)
+		{
+			if (patches == null)
+				return false;
+
+			string patchFullName = checkByName? patch.fullName(): null;
+
+			bool _contains(IList<Patch> list) => list.Count > 0 &&
+				list.Any(p => (checkByName && p.patch?.fullName() == patchFullName) || (!checkByName && Equals(p.patch, patch)));
+
+			return _contains(patches.Prefixes) || _contains(patches.Postfixes) || _contains(patches.Transpilers);
 		}
 	}
 }

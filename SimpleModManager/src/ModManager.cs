@@ -41,6 +41,12 @@ namespace SimpleModManager
 
 		class ModToggle: Config
 		{
+			class HideHidden: Options.Components.Hider.IVisibilityChecker
+			{ public bool visible => Main.config.showHiddenMods; }
+
+			class HideBlacklisted: Options.Components.Hider.IVisibilityChecker
+			{ public bool visible => Main.config.showBlacklistedMods; }
+
 			[Field.Action(typeof(ModToggled))]
 			bool enabled = true;
 
@@ -73,11 +79,19 @@ namespace SimpleModManager
 					modJson = JsonConvert.DeserializeObject(File.ReadAllText(modJsonPath)) as JObject;
 					enabled = modJson.Property("Enable").Value.ToObject<bool>();
 
+					string dir = Path.GetDirectoryName(modJsonPath);
+					bool hidden = (new DirectoryInfo(dir).Attributes & FileAttributes.Hidden) != 0;
+					bool blacklisted = Main.config.blacklist.findIndex(str => dir.EndsWith(str)) != -1;
+
 					var cfgField = new Field(this, nameof(enabled));
 
 					Options.nonUniqueOptionsIDsWarning = false;
-					var option = new Options.ToggleOption(cfgField, modJson.Property("DisplayName").Value.ToString());
+					string optionName = $"{(hidden? "<color=silver>": "")}{modJson.Property("DisplayName").Value}{(hidden? "</color>": "")}";
+					var option = new Options.ToggleOption(cfgField, optionName);
 					Options.nonUniqueOptionsIDsWarning = true;
+
+					if (hidden)		 option.addHandler(new Options.Components.Hider.Add(new HideHidden(), "hidden-mod"));
+					if (blacklisted) option.addHandler(new Options.Components.Hider.Add(new HideBlacklisted(), "blacklist-mod"));
 
 					Options.add(option);
 
@@ -95,10 +109,7 @@ namespace SimpleModManager
 			PersistentConsoleCommands.register<ConsoleCommands>();
 
 			foreach (var modPath in Directory.EnumerateDirectories(Path.Combine(Paths.modRootPath, "..")))
-			{
-				if (Main.config.blacklist.findIndex(str => modPath.EndsWith(str)) == -1)
-					Config.tryLoad<ModToggle>(null, Config.LoadOptions.ProcessAttributes).init(Path.Combine(modPath, "mod.json"));
-			}
+				Config.tryLoad<ModToggle>(null, Config.LoadOptions.ProcessAttributes).init(Path.Combine(modPath, "mod.json"));
 		}
 	}
 }

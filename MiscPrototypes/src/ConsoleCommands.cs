@@ -1,19 +1,12 @@
 ﻿using System.Text;
 using System.Collections;
 
-using Harmony;
 using UnityEngine;
 
 using Common;
 
 namespace MiscPrototypes
 {
-	[HarmonyPatch(typeof(GameInput), "Initialize")] // just to register console commands
-	static class GameInput_Awake_Patch_ConsoleCommands
-	{
-		static void Postfix() => PersistentConsoleCommands.register<TestConsoleCommands>();
-	}
-
 	class TestConsoleCommands: PersistentConsoleCommands
 	{
 		void debug_gameinput(bool enable = false)

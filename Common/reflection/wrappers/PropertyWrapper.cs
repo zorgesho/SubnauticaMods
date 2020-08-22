@@ -20,7 +20,7 @@ namespace Common.Reflection
 			setter ??= propertyInfo?.GetSetMethod();
 			Debug.assert(setter != null);
 
-			setter?.Invoke(obj, new object[] { value });
+			setter?.Invoke(obj, new[] { value });
 		}
 
 		public object get(object obj = null)

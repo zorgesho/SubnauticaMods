@@ -17,7 +17,7 @@ namespace ConsoleImproved
 	{
 		class ConsoleCommands: PersistentConsoleCommands
 		{
-			public void logpatches(string harmonyID)
+			public void logpatches(string harmonyID = null)
 			{
 				$"Current patches:\r\n{PatchesReport.get(harmonyID)}".log();
 			}
@@ -98,7 +98,7 @@ namespace ConsoleImproved
 				}
 			}
 
-			public void dumpobjects(string componentType)
+			public void dumpobjects(string componentType, int dumpParent = 0)
 			{
 				static Type _getComponentType(string typeName)
 				{
@@ -122,7 +122,7 @@ namespace ConsoleImproved
 						int index = 0;
 						foreach (var cmp in cmps)
 						{
-							cmp.gameObject.dump(cmp.gameObject.name + "_" + index++);
+							cmp.gameObject.dump(cmp.gameObject.name + "_" + index++, dumpParent);
 							yield return null;
 						}
 
@@ -142,7 +142,7 @@ namespace ConsoleImproved
 				bool varValue = CfgVarsHelper.getVarValue(varName).convert<bool>();
 
 				DevConsole.SendConsoleCommand($"setcfgvar {varName} {!varValue}");
-				CfgVarsHelper.getVarValue(varName).ToString().onScreen(varName);
+				CfgVarsHelper.getVarValue(varName)?.ToString().onScreen(varName);
 			}
 
 			public void printcfgvars(string cfgvarPrefix = "")

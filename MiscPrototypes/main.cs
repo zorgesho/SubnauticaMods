@@ -17,6 +17,8 @@ namespace MiscPrototypes
 			HarmonyHelper.patchAll(true);
 			LanguageHelper.init();
 			CraftHelper.patchAll();
+
+			PersistentConsoleCommands.register<TestConsoleCommands>();
 		}
 	}
 }

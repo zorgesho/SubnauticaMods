@@ -120,7 +120,7 @@
   <ItemGroup>
     <None Include="src\TestConfig.cs" />
     <None Include="src\BasePower.cs" />
-    <None Include="src\ConsoleCommands.cs" />
+    <Compile Include="src\ConsoleCommands.cs" />
     <None Include="src\EmergencyPowerStation.cs" />
     <None Include="src\CraftFromStorages.cs" />
     <Compile Include="config.cs" />

@@ -121,8 +121,11 @@ namespace MiscPatches
 		{
 			Physics.autoSyncTransforms = Physics2D.autoSimulation = false;
 
+#if BRANCH_STABLE
 			yield return SceneManager.LoadSceneAsync("Essentials", LoadSceneMode.Additive);
-
+#elif BRANCH_EXP
+			yield return AddressablesUtility.LoadSceneAsync("Essentials", LoadSceneMode.Additive);
+#endif
 			Application.backgroundLoadingPriority = ThreadPriority.Normal;
 
 			foreach (var cmd in Main.config.dbg.fastStart.commandsAfterLoad)
@@ -162,8 +165,12 @@ namespace MiscPatches
 	{
 		static bool Prepare() => Main.config.dbg.showSaveSlotID;
 
-		static void Postfix(MainMenuLoadButton lb) =>
-			lb.load.FindChild("SaveGameLength").GetComponent<Text>().text += $" | {lb.saveGame}";
+		static void Postfix(MainMenuLoadButton lb)
+		{
+			string textPath = (Mod.isBranchStable? "": "SaveDetails/") + "SaveGameLength";
+			if (lb.load.getChild(textPath)?.GetComponent<Text>() is Text text)
+				text.text += $" | {lb.saveGame}";
+		}
 	}
 
 	// change initial equipment in creative mode

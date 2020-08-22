@@ -96,6 +96,10 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="Unity.ResourceManager" Condition="$(Configuration.Contains('SNexp.'))">
+      <HintPath>$(ProjectDependencies)\Unity.ResourceManager.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="UnityEngine">
       <HintPath>$(ProjectDependencies)\UnityEngine.dll</HintPath>
       <Private>False</Private>

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Text;
+using System.Collections;
 
 using UWE;
 using UnityEngine;
@@ -64,6 +66,41 @@ namespace MiscPatches
 
 			if (!ObjectMover.moveObject(offset))
 				"No target is selected!".onScreen();
+		}
+
+		public void dumpprefabcache()
+		{
+			GameObject.Find("/SMLHelper.PrefabCache")?.dump();
+		}
+
+		public void pinprefabcache(bool val = true)
+		{
+			var prefabRoot = GameObject.Find("/SMLHelper.PrefabCache")?.transform.GetChild(0);
+
+			if (!prefabRoot)
+				return;
+
+			StopAllCoroutines();
+
+			if (val)
+				StartCoroutine(_pincache());
+
+			IEnumerator _pincache()
+			{
+				var sb = new StringBuilder();
+
+				while (true)
+				{
+					sb.Clear();
+					sb.AppendLine();
+
+					foreach (Transform prefab in prefabRoot)
+						sb.AppendLine(prefab.name);
+
+					sb.ToString().onScreen("prefab cache");
+					yield return null;
+				}
+			}
 		}
 
 #pragma warning disable CS0618 // obsolete

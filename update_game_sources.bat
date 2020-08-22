@@ -30,9 +30,8 @@ set project_depends=%cd%\.dependencies\game%game_ver%
 set game_sources=%cd%\..\game_sources\%game_ver%
 ::goto :sources
 
-:: copy to project dependencies
-copy %game_dll_folder%\Assembly-CSharp.dll %project_depends%\
-copy %game_dll_folder%\Assembly-CSharp-firstpass.dll %project_depends%\
+:: update dlls in project dependencies
+xcopy %game_dll_folder%\*.dll %project_depends% /u /y /q
 
 :: publicize
 copy c:\programming\assembly_publicizer\AssemblyPublicizer.exe %game_dll_folder% 1>nul

@@ -66,7 +66,6 @@ namespace Common.Harmony
 		}
 	}
 
-#if BRANCH_EXP
 	static partial class HarmonyHelper
 	{
 		// helper for patching iterator methods
@@ -93,7 +92,6 @@ namespace Common.Harmony
 			}
 		}
 	}
-#endif
 
 	static partial class HarmonyExtensions
 	{

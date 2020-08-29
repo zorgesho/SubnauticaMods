@@ -1,4 +1,8 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using System.Collections;
+using System.Collections.Generic;
+
+using UnityEngine;
 
 using SMLHelper.V2.Assets;
 using SMLHelper.V2.Crafting;
@@ -10,21 +14,27 @@ namespace Common.Crafting
 
 	abstract class CraftableObject: ModPrefab
 	{
-		protected CraftableObject(): this(ReflectionHelper.getCallingType().Name) {}
+		protected CraftableObject(): this(ReflectionHelper.getCallingDerivedType().Name) {}
 		protected CraftableObject(string classID): base(classID, classID + "_Prefab") {}
 
 		bool isUsingExactPrefab = false; // using result of getGameObject as prefab, without smlhelper additional stuff
 
 		public abstract void patch();
-		public abstract GameObject getGameObject();
+
+		public virtual GameObject getGameObject() => null;
+		public virtual IEnumerator getGameObjectAsync(IOut<GameObject> result) => null;
+
 		protected abstract TechData getTechData();
 
-		public override GameObject GetGameObject()
+		public sealed override GameObject GetGameObject()
 		{
-			if (isUsingExactPrefab && $"CraftableObject.GetGameObject called, but isUsingExactPrefab is TRUE ({ClassID})".logError())
-				Debug.logStack();
-
+			Debug.assert(!isUsingExactPrefab);
 			return isUsingExactPrefab? null: getGameObject();
+		}
+		public sealed override IEnumerator GetGameObjectAsync(IOut<GameObject> result)
+		{
+			Debug.assert(!isUsingExactPrefab);
+			return isUsingExactPrefab? null: getGameObjectAsync(result);
 		}
 
 		void registerPrefabAndTechData()
@@ -124,5 +134,109 @@ namespace Common.Crafting
 		protected void setItemSize(int width, int height) => CraftDataHandler.SetItemSize(TechType, width, height);
 
 		protected void setCraftingTime(float time) => CraftDataHandler.SetCraftingTime(TechType, time);
+	}
+
+
+	// class that simplify work with sync/async prefabs
+	abstract class PoolCraftableObject: CraftableObject
+	{
+		class PrefabInfo
+		{
+			public bool copy; // create prefab copy
+
+			// get prefab either by techType or filepath
+			public TechType techType;
+			public string filepath;
+		}
+
+		List<PrefabInfo> poolPrefabInfo;
+
+		protected int addPrefabToPool(TechType techType, bool copy = true)
+		{
+			Debug.assert(poolPrefabInfo != null);
+
+			poolPrefabInfo.Add(new PrefabInfo() { techType = techType, copy = copy });
+			return poolPrefabInfo.Count;
+		}
+
+		protected int addPrefabToPool(string filepath, bool copy = true)
+		{
+			Debug.assert(poolPrefabInfo != null);
+
+			poolPrefabInfo.Add(new PrefabInfo() { filepath = filepath, copy = copy });
+			return poolPrefabInfo.Count;
+		}
+
+		GameObject preparePrefab(PrefabInfo info)
+		{
+			Debug.assert(info.techType != default || info.filepath != null);
+
+			if (info.techType != default)
+				return info.copy? PrefabUtils.getPrefabCopy(info.techType): PrefabUtils.getPrefab(info.techType);
+			else
+				return info.copy? PrefabUtils.getPrefabCopy(info.filepath): PrefabUtils.getPrefab(info.filepath);
+		}
+
+		IEnumerator preparePrefabAsync(PrefabInfo info, IOut<GameObject> result)
+		{
+			Debug.assert(info.techType != default || info.filepath != null);
+
+			CoroutineTask<GameObject> task;
+
+			if (info.techType != default)
+				task = info.copy? PrefabUtils.getPrefabCopyAsync(info.techType): PrefabUtils.getPrefabAsync(info.techType);
+			else
+				task = info.copy? PrefabUtils.getPrefabCopyAsync($"{info.filepath}.prefab"): PrefabUtils.getPrefabAsync($"{info.filepath}.prefab");
+
+			yield return task;
+			result.Set(task.GetResult());
+		}
+
+		void preparePool()
+		{
+			if (poolPrefabInfo != null)
+				return;
+
+			poolPrefabInfo = new List<PrefabInfo>();
+			initPrefabPool();
+		}
+
+		GameObject _processPrefabs(GameObject[] prefabs)
+		{
+			if (prefabs.Length == 0 || prefabs.Any(prefab => prefab == null))
+				return null;
+
+			return prefabs.Length == 1? getGameObject(prefabs[0]): getGameObject(prefabs);
+		}
+
+		public sealed override GameObject getGameObject()
+		{
+			preparePool();
+
+			var prefabs = poolPrefabInfo.Select(info => preparePrefab(info)).ToArray();
+			return _processPrefabs(prefabs);
+		}
+
+		public sealed override IEnumerator getGameObjectAsync(IOut<GameObject> result)
+		{
+			preparePool();
+
+			var prefabs = new GameObject[poolPrefabInfo.Count];
+
+			for (int i = 0; i < poolPrefabInfo.Count; i++)
+			{
+				var taskResult = new TaskResult<GameObject>();
+				yield return preparePrefabAsync(poolPrefabInfo[i], taskResult);
+
+				prefabs[i] = taskResult.Get();
+			}
+
+			result.Set(_processPrefabs(prefabs));
+		}
+
+		protected abstract void initPrefabPool();
+
+		protected virtual GameObject getGameObject(GameObject prefab) => prefab;
+		protected virtual GameObject getGameObject(GameObject[] prefabs) => null;
 	}
 }

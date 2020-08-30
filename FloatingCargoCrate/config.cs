@@ -7,6 +7,7 @@ namespace FloatingCargoCrate
 	class ModConfig: Config
 	{
 		[Field.Range(1, 2)] public readonly int cargoModelType = 1;
+		public string crateModelName => $"Starship_cargo{(cargoModelType == 2? "_02": "")}";
 
 		[Field.Range(1, 8)]  public readonly int storageWidth = 8;
 		[Field.Range(1, 10)] public readonly int storageHeight = 8;

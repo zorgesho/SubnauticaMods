@@ -7,7 +7,7 @@ namespace PrawnSuitGrapplingArmUpgrade
 {
 	class GrapplingArmUpgraded: MonoBehaviour {} // just to distinguish between vanilla arm and upgraded
 
-	class GrapplingArmUpgradeModule: CraftableObject
+	class GrapplingArmUpgradeModule: PoolCraftableObject
 	{
 		public static new TechType TechType { get; private set; } = 0;
 
@@ -20,11 +20,11 @@ namespace PrawnSuitGrapplingArmUpgrade
 			new Ingredient(TechType.AluminumOxide, 1)
 		)	{ craftAmount = 1};
 
-		public override GameObject getGameObject()
-		{
-			var prefab = CraftHelper.Utils.prefabCopy(TechType.ExosuitGrapplingArmModule);
+		protected override void initPrefabPool() => addPrefabToPool(TechType.ExosuitGrapplingArmModule);
 
-			CraftHelper.Utils.initVFXFab(prefab, posOffset: new Vector3(0.08f, 0.1f, 0f), localMaxY: 0.35f, scaleFactor: 0.5f);
+		protected override GameObject getGameObject(GameObject prefab)
+		{
+			PrefabUtils.initVFXFab(prefab, posOffset: new Vector3(0.08f, 0.1f, 0f), localMaxY: 0.35f, scaleFactor: 0.5f);
 
 			return prefab;
 		}

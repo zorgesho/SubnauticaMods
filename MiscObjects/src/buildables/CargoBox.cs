@@ -6,7 +6,7 @@ using Common.Crafting;
 
 namespace MiscObjects
 {
-	class CargoBox: CraftableObject
+	class CargoBox: PoolCraftableObject
 	{
 		protected override TechData getTechData() => new TechData(new Ingredient(TechType.Titanium, 2));
 
@@ -18,14 +18,20 @@ namespace MiscObjects
 			unlockOnStart();
 		}
 
-		public override GameObject getGameObject()
+		protected override void initPrefabPool()
 		{
-			var prefab = CraftHelper.Utils.prefabCopy("WorldEntities/Doodads/Debris/Wrecks/Decoration/Starship_cargo");
-			var model = prefab.FindChild("Starship_cargo");
+			addPrefabToPool("WorldEntities/Doodads/Debris/Wrecks/Decoration/Starship_cargo");
+			addPrefabToPool(TechType.SmallLocker, false);
+		}
+
+		protected override GameObject getGameObject(GameObject[] prefabs)
+		{
+			var prefab = prefabs[0];
+			var model = prefab.getChild("Starship_cargo");
 
 			prefab.destroyComponent<Rigidbody>();
 
-			var constructable = CraftHelper.Utils.initConstructable(prefab, model);
+			var constructable = PrefabUtils.initConstructable(prefab, model);
 			constructable.allowedInBase = true;
 			constructable.allowedInSub = true;
 			constructable.allowedOnGround = true;
@@ -33,7 +39,8 @@ namespace MiscObjects
 			constructable.forceUpright = true;
 			constructable.placeDefaultDistance = 3f;
 
-			CraftHelper.Utils.addStorageToPrefab(prefab, 5, 5, L10n.str(L10n.ids_OpenBox), L10n.str(L10n.ids_BoxInv));
+			Utils.addStorageToPrefab(prefab, prefabs[1]);
+			PrefabUtils.initStorage(prefab, 5, 5, L10n.str(L10n.ids_OpenBox), L10n.str(L10n.ids_BoxInv));
 
 			return prefab;
 		}

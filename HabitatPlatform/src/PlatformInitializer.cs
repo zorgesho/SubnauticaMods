@@ -54,9 +54,6 @@ namespace HabitatPlatform
 
 		IEnumerator Start()
 		{
-			if (gameObject.transform.position.y < -4500f) // don't add stuff to SMLHelper prefab
-				yield break;
-
 			yield return null; // wait for one frame while VFXConstructing is initialized
 
 			var vfx = gameObject.getChild("Base").GetComponent<VFXConstructing>();
@@ -64,10 +61,9 @@ namespace HabitatPlatform
 			if (vfx.constructed < 1)
 			{
 				gameObject.AddComponent<RigidbodyKinematicFixer>();
-				addFoundations(); // foundations added to platform explicitly only while constructing
+				yield return addFoundations(); // foundations added to platform explicitly only while constructing
 
-				while (vfx.constructed < 1) // wait until construction is complete
-					yield return null;
+				yield return new WaitWhile(() => vfx.constructed < 1); // wait until construction is complete
 			}
 			else
 			{
@@ -81,16 +77,22 @@ namespace HabitatPlatform
 		}
 
 
-		void addFoundations()
+		IEnumerator addFoundations()
 		{																										"PlatformInitializer: adding foundations".logDbg();
-			GameObject baseObject = CraftHelper.Utils.prefabCopy("WorldEntities/Structures/Base");
+			var task = PrefabUtils.getPrefabCopyAsync("WorldEntities/Structures/Base.prefab", PrefabUtils.CopyOptions.None);
+			yield return task;
+			var baseObject = task.GetResult(); // for some reason we can't instantiate it right to the gameObject
+
 			LargeWorld.main?.streamer.cellManager.RegisterEntity(baseObject);
 
 			// adding Base to platform
 			baseObject.setParent(gameObject, position: firstFoundationPos);
 
 			// creating ghost foundation
-			GameObject foundation = CraftHelper.Utils.prefabCopy(TechType.BaseFoundation);
+			task = PrefabUtils.getPrefabCopyAsync(TechType.BaseFoundation, PrefabUtils.CopyOptions.None);
+			yield return task;
+			var foundation = task.GetResult();
+
 			var csBase = foundation.GetComponent<ConstructableBase>();
 			var baseGhost = csBase.model.GetComponent<BaseGhost>();
 

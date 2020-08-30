@@ -3,6 +3,7 @@ using System.Text;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Collections;
 using System.Collections.Generic;
 
 using Harmony;
@@ -87,10 +88,7 @@ namespace MiscPatches
 			LiveMixin liveMixin = __instance.GetComponent<LiveMixin>();
 
 			if (!deathEffect)
-			{
-				GameObject prefab = CraftHelper.Utils.getPrefab(TechType.BlueCluster);
-				deathEffect = prefab.GetComponent<LiveMixin>().data.deathEffect;
-			}
+				UWE.CoroutineHost.StartCoroutine(_deathEffect());
 
 			// can't change it just once, stingers use three LiveMixinData (short, middle, long)
 			liveMixin.data.destroyOnDeath = true;
@@ -99,6 +97,13 @@ namespace MiscPatches
 			liveMixin.data.maxHealth = maxHealth;
 
 			liveMixin.health = liveMixin.data.maxHealth;
+
+			static IEnumerator _deathEffect() // multiple ?
+			{
+				var task = PrefabUtils.getPrefabAsync(TechType.BlueCluster);
+				yield return task;
+				deathEffect = task.GetResult().GetComponent<LiveMixin>().data.deathEffect;
+			}
 		}
 	}
 

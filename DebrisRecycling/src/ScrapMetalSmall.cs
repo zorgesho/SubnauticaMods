@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+
+using UnityEngine;
 using SMLHelper.V2.Crafting;
 using SMLHelper.V2.Handlers;
 
@@ -19,7 +21,7 @@ namespace DebrisRecycling
 
 
 	[CraftHelper.PatchFirst]
-	class ScrapMetalSmall: CraftableObject
+	class ScrapMetalSmall: PoolCraftableObject
 	{
 		public static new TechType TechType { get; private set; } = 0;
 
@@ -31,21 +33,22 @@ namespace DebrisRecycling
 			useTextFrom(descriptionFrom: TechType.ScrapMetal);
 		}
 
-		public override GameObject getGameObject()
+		protected override void initPrefabPool()
 		{
-			GameObject prefab = CraftHelper.Utils.prefabCopy(TechType.Titanium);
+			addPrefabToPool(TechType.Titanium);
+			addPrefabToPool(TechType.ScrapMetal, false);
+		}
+
+		protected override GameObject getGameObject(GameObject[] prefabs)
+		{
+			var prefab = prefabs[0];
 
 			prefab.destroyComponent<ResourceTracker>();
+			prefab.destroyChild("model/Titanium_small");
 
 			int modelType = Random.value < 0.5f? 1: 2;
-
-			GameObject prefabMetal = CraftHelper.Utils.getPrefab(TechType.ScrapMetal);
-			GameObject modelMetal = Object.Instantiate(prefabMetal.getChild((modelType == 1? "Model/Metal_wreckage_03_11": "Model/Metal_wreckage_03_10")));
-
-			prefab.destroyChild("model/Titanium_small");
-			modelMetal.transform.parent = prefab.getChild("model").transform;
-			modelMetal.transform.localPosition = Vector3.zero;
-			modelMetal.transform.localEulerAngles = new Vector3(-90f, 0f, 0f);
+			var wreckage = prefabs[1].getChild(modelType == 1? "Model/Metal_wreckage_03_11": "Model/Metal_wreckage_03_10");
+			Object.Instantiate(wreckage, prefab.getChild("model").transform, Vector3.zero, Quaternion.Euler(-90f, 0f, 0f), true);
 
 			GameObject collision = prefab.getChild("collision");
 			collision.destroyComponent<SphereCollider>();
@@ -73,7 +76,8 @@ namespace DebrisRecycling
 			this.resultCount = resultCount;
 		}
 
-		public override GameObject getGameObject() => CraftHelper.Utils.prefabCopy(TechType.Titanium);
+		public override GameObject getGameObject() => PrefabUtils.getPrefabCopy(TechType.Titanium);
+		public override IEnumerator getGameObjectAsync(IOut<GameObject> gameObject) => PrefabUtils.getPrefabCopyAsync(TechType.Titanium, gameObject);
 
 		protected override TechData getTechData()
 		{

@@ -8,7 +8,7 @@ using Common.Crafting;
 
 namespace HabitatPlatform
 {
-	class HabitatPlatform: CraftableObject
+	class HabitatPlatform: PoolCraftableObject
 	{
 		public class Tag: MonoBehaviour {}
 
@@ -35,10 +35,10 @@ namespace HabitatPlatform
 			unlockOnStart();
 		}
 
-		public override GameObject getGameObject()
-		{
-			GameObject prefab = CraftHelper.Utils.prefabCopy(TechType.RocketBase, false);
+		protected override void initPrefabPool() => addPrefabToPool(TechType.RocketBase);
 
+		protected override GameObject getGameObject(GameObject prefab)
+		{
 			prefab.AddComponent<Tag>();
 			prefab.AddComponent<PlatformInitializer>();
 
@@ -83,7 +83,6 @@ namespace HabitatPlatform
 			for (int i = 1; i < skyAppliers.Length; i++) // keep only first one, others are for the interior
 				Object.DestroyImmediate(skyAppliers[i]);
 
-			prefab.SetActive(true);
 			return prefab;
 		}
 	}

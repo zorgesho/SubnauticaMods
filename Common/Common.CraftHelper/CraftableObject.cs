@@ -169,12 +169,16 @@ namespace Common.Crafting
 
 		GameObject preparePrefab(PrefabInfo info)
 		{
+#if BRANCH_EXP
+			return null;
+#elif BRANCH_STABLE
 			Debug.assert(info.techType != default || info.filepath != null);
 
 			if (info.techType != default)
 				return info.copy? PrefabUtils.getPrefabCopy(info.techType): PrefabUtils.getPrefab(info.techType);
 			else
 				return info.copy? PrefabUtils.getPrefabCopy(info.filepath): PrefabUtils.getPrefab(info.filepath);
+#endif
 		}
 
 		IEnumerator preparePrefabAsync(PrefabInfo info, IOut<GameObject> result)

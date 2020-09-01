@@ -103,6 +103,10 @@
       <HintPath>$(ProjectDependencies)\UnityEngine.CoreModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.InputLegacyModule">
+      <HintPath>$(ProjectDependencies)\UnityEngine.InputLegacyModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="UnityEngine.TextRenderingModule">
       <HintPath>$(ProjectDependencies)\UnityEngine.TextRenderingModule.dll</HintPath>
       <Private>False</Private>
@@ -119,8 +123,8 @@
     <Compile Include="src\bulk\BulkCraftingTooltip.cs" />
     <Compile Include="src\bulk\CrafterPatches.cs" />
     <Compile Include="src\ConsoleCommands.cs" />
-    <None Include="src\SelectTabsWithKeys.cs" />
-    <None Include="src\PingTabToggles.cs" />
+    <Compile Include="src\MiscTweaks.cs" />
+    <Compile Include="src\PDATweaks.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="mod.json">

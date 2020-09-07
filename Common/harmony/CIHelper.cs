@@ -7,8 +7,6 @@ using Harmony;
 
 namespace Common.Harmony
 {
-	using Reflection;
-
 	using CIEnumerable = IEnumerable<CodeInstruction>;
 	using CIList = List<CodeInstruction>;
 	using CIPredicate = Predicate<CodeInstruction>;
@@ -88,9 +86,14 @@ namespace Common.Harmony
 					Debug.assert(false, $"CIHelper.ciFindIndexes: index not found (predicate: {i}, result: {indexes[i]})");
 					return null;
 				}
-			}
+			}																												$"CIHelper.ciFindIndexes result: {string.Join(" ", indexes)}".logDbg();
 
 			return indexes;
+		}
+
+		public static int[] ciFindIndexes(this CIList list, params OpCode[] opcodes)
+		{
+			return list.ciFindIndexes(opcodes.Select(opcode => new CIPredicate(ci => ci.isOp(opcode))).ToArray());
 		}
 
 		// find index for the last predicate

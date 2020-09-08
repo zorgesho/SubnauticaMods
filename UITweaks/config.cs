@@ -38,6 +38,12 @@ namespace UITweaks
 			[Options.Field] // TODO name & tooltip
 			public readonly bool tabHotkeysEnabled = true;
 
+			[Options.Field] // TODO name & tooltip
+			[Field.Action(typeof(UpdateOptionalPatches))] // TODO use FinalizeAction
+			public readonly bool pingToggles = true;
+
+			public bool pingTogglesEnabled => enabled && pingToggles;
+
 			[Field.Reloadable]
 			[NoInnerFieldsAttrProcessing]
 			public readonly Dictionary<PDATab, KeyCode> tabHotkeys = new Dictionary<PDATab, KeyCode>()

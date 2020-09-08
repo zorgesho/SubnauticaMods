@@ -6,6 +6,11 @@ namespace UITweaks
 {
 	class ConsoleCommands: PersistentConsoleCommands
 	{
+		public void ui_setpingenabled(PingType pingType, int colorIndex, bool enabled)
+		{
+			PingToggles.setPingEnabled(pingType, colorIndex, enabled);
+		}
+
 #if DEBUG
 		public void ui_log_known_blueprints()
 		{

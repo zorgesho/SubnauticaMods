@@ -161,6 +161,7 @@ Global
 		Common\Common.projitems*{bfb9336c-f678-4af1-8b10-0bddcd3aeac8}*SharedItemsImports = 4
 		Common\Common.Config.Options\Common.Config.Options.projitems*{c049d169-7634-404a-9121-0436a68fa319}*SharedItemsImports = 4
 		Common\Common.Config\Common.Config.projitems*{c049d169-7634-404a-9121-0436a68fa319}*SharedItemsImports = 4
+		Common\Common.GameSerialization\Common.GameSerialization.projitems*{c049d169-7634-404a-9121-0436a68fa319}*SharedItemsImports = 4
 		Common\Common.projitems*{c049d169-7634-404a-9121-0436a68fa319}*SharedItemsImports = 4
 		Common\Common.Config.Options\Common.Config.Options.projitems*{c3985fbe-6652-4230-934f-0c931f448dc2}*SharedItemsImports = 4
 		Common\Common.Config\Common.Config.projitems*{c3985fbe-6652-4230-934f-0c931f448dc2}*SharedItemsImports = 4
@@ -470,7 +471,6 @@ Global
 		{EBFA5C5C-995C-4E6D-9F6E-C9C33F864EF6} = {51F4A336-ADD0-4AD9-BBCF-336DAAB8EF4D}
 		{A9265C46-2A40-4E3D-A4FB-7F3DCDA6AFD9} = {7B8B7765-2191-43CD-ABE0-89BBEF79CFC2}
 		{1832033A-214B-48C2-89BA-EEA25FC69B19} = {7B8B7765-2191-43CD-ABE0-89BBEF79CFC2}
-		{C049D169-7634-404A-9121-0436A68FA319} = {51F4A336-ADD0-4AD9-BBCF-336DAAB8EF4D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0A745472-1C11-4AB7-B6C4-79A169E0FB35}

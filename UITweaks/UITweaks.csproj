@@ -120,8 +120,7 @@
     <Compile Include="config.cs" />
     <Compile Include="main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="src\bulk\BulkCraftingTooltip.cs" />
-    <Compile Include="src\bulk\CrafterPatches.cs" />
+    <Compile Include="src\BulkCraftingTooltip.cs" />
     <Compile Include="src\ConsoleCommands.cs" />
     <Compile Include="src\MiscTweaks.cs" />
     <Compile Include="src\PDATweaks.cs" />

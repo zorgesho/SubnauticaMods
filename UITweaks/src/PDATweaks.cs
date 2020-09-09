@@ -95,7 +95,7 @@ namespace UITweaks
 					if (key.Value >= KeyCode.Alpha1 && key.Value <= KeyCode.Alpha9 && _isHoveredItemBindable()) // ignore alpha keys if we binding slots
 						continue;
 
-					if (Input.GetKeyDown(key.Value))
+					if (!FPSInputModule.current.lockMovement && Input.GetKeyDown(key.Value))
 						uGUI_PDA.main.OpenTab(key.Key);
 				}
 
@@ -130,6 +130,12 @@ namespace UITweaks
 				if (Main.config.pdaTweaks.tabHotkeysEnabled)
 					UWE.CoroutineHost.StartCoroutine(tabHotkeys());
 			}
+
+			// compatibility patch for SlotExtender mod
+			// don't close PDA when tab hotkey is pressed while inside a vehicle
+			[HarmonyHelper.Patch(HarmonyHelper.PatchOptions.CanBeAbsent)]
+			[HarmonyPrefix, HarmonyHelper.Patch("SlotExtender.SlotExtender, SlotExtender", "TryUseSlotItem")]
+			static bool keepPDAOpen() => !(Main.config.pdaTweaks.tabHotkeysEnabled && Player.main?.GetPDA()?.isOpen == true);
 		}
 	}
 }

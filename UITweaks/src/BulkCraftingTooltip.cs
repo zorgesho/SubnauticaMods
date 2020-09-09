@@ -13,6 +13,8 @@ using Common.Reflection;
 
 namespace UITweaks
 {
+	using CIEnumerable = IEnumerable<CodeInstruction>;
+
 	static class BulkCraftingTooltip
 	{
 		static Text text;
@@ -74,6 +76,14 @@ namespace UITweaks
 			CraftData.techData[techType] = currentTechData;
 		}
 
+		// if EasyCraft mod is installed we will use it to get count of available ingredients
+		static readonly MethodWrapper<Func<TechType, int>> EasyCraft_GetPickupCount =
+			Type.GetType("EasyCraft.ClosestItemContainers, EasyCraft")?.method("GetPickupCount").wrap<Func<TechType, int>>();
+
+		static int getCountAvailable(TechType techType)
+		{
+			return EasyCraft_GetPickupCount? EasyCraft_GetPickupCount.invoke(techType): Inventory.main.GetPickupCount(techType);
+		}
 
 		static int getMaxAmount(CraftData.TechData techData)
 		{
@@ -82,7 +92,7 @@ namespace UITweaks
 			if (GameModeUtils.RequiresIngredients())
 			{
 				foreach (var ing in techData._ingredients)
-					maxAmount = Math.Min(maxAmount, Inventory.main.GetPickupCount(ing.techType) / ing.amount);
+					maxAmount = Math.Min(maxAmount, getCountAvailable(ing.techType) / ing.amount);
 
 				if (currentPowerRelay != null)
 					maxAmount = Math.Min(maxAmount, (int)(currentPowerRelay.GetPower() / 5f - 1f));
@@ -221,18 +231,46 @@ namespace UITweaks
 		[OptionalPatch, PatchClass]
 		static class CrafterPatches
 		{
-			static readonly Dictionary<CrafterLogic, CraftData.TechData> crafterCache = new Dictionary<CrafterLogic, CraftData.TechData>();
-
 			static bool prepare() => Main.config.bulkCrafting;
+
+			static readonly Dictionary<CrafterLogic, CraftData.TechData> crafterCache = new Dictionary<CrafterLogic, CraftData.TechData>();
 
 			static bool _isAmountChanged(TechType techType) =>
 				techType == currentTechType && currentCraftAmount > 1;
 
-			[HarmonyPrefix, HarmonyPatch(typeof(Crafter), "Craft")]
-			static void craftFixDuration(TechType techType, ref float duration)
+			[OptionalPatch, PatchClass]
+			static class CraftDurationPatches
 			{
-				if (_isAmountChanged(techType))
-					duration *= currentCraftAmount;
+				static bool prepare() => CrafterPatches.prepare() && true; // TODO
+
+				static void fixCraftDuration(TechType techType, ref float duration)
+				{
+					if (_isAmountChanged(techType))
+						duration *= currentCraftAmount;
+				}
+
+				[HarmonyPriority(Priority.HigherThanNormal)] // just in case
+				[HarmonyPrefix, HarmonyHelper.Patch(typeof(Crafter), "Craft")]
+				static void fixCraftDuration_Vanilla(TechType techType, ref float duration) => fixCraftDuration(techType, ref duration);
+
+				// compatibility patches for EasyCraft mod for fixing craft duration
+				[HarmonyHelper.Patch(HarmonyHelper.PatchOptions.CanBeAbsent)]
+				[HarmonyPrefix, HarmonyHelper.Patch("EasyCraft.GhostCrafter_Craft_Patch, EasyCraft", "Prefix")]
+				static void fixCraftDuration_EasyCraft(TechType techType, ref float duration) => fixCraftDuration(techType, ref duration);
+
+				// EasyCraft clamps duration to 20 sec, we set it to 5 min
+				[HarmonyHelper.Patch(HarmonyHelper.PatchOptions.CanBeAbsent)]
+				[HarmonyTranspiler, HarmonyHelper.Patch("EasyCraft.Main, EasyCraft", "GhostCraft")]
+				static CIEnumerable extendDurationClamp(CIEnumerable cins)
+				{
+					var list = cins.ToList();
+					int i = list.ciFindIndexForLast(ci => ci.isLDC(20f));
+
+					if (i != -1)
+						list[i].operand = 300f;
+
+					return cins;
+				}
 			}
 
 			[HarmonyPrefix, HarmonyPatch(typeof(CrafterLogic), "Craft")]
@@ -250,7 +288,7 @@ namespace UITweaks
 			}
 
 			[HarmonyTranspiler, HarmonyPatch(typeof(GhostCrafter), "Craft")]
-			static IEnumerable<CodeInstruction> craftFixEnergyConsumption(IEnumerable<CodeInstruction> cins)
+			static CIEnumerable craftFixEnergyConsumption(CIEnumerable cins)
 			{
 				static float _energyToConsume(TechType techType) =>
 					_isAmountChanged(techType)? 5f * currentCraftAmount: 5f;
@@ -263,10 +301,10 @@ namespace UITweaks
 
 			[HarmonyTranspiler]
 			[HarmonyHelper.Patch(typeof(CrafterLogic), Mod.isBranchStable? "TryPickup": "TryPickupAsync")]
-	#if BRANCH_EXP
+#if BRANCH_EXP
 			[HarmonyHelper.Patch(HarmonyHelper.PatchOptions.PatchIteratorMethod)]
-	#endif
-			static IEnumerable<CodeInstruction> pickup(IEnumerable<CodeInstruction> cins)
+#endif
+			static CIEnumerable pickup(CIEnumerable cins)
 			{
 				var list = cins.ToList();
 

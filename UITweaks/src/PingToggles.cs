@@ -325,6 +325,28 @@ namespace UITweaks
 
 				static bool _allowedToChange(uGUI_PingEntry entry) => entry.visibility.interactable;
 			}
+
+			// compatibility patch for SubnauticaMap mod
+			// hide ping icons from the map for disabled pings
+			[HarmonyHelper.Patch(HarmonyHelper.PatchOptions.CanBeAbsent)]
+			[HarmonyPostfix, HarmonyHelper.Patch("SubnauticaMap.Controller, SubnauticaMap", "UpdateIcons")]
+			static void updateMapPings(object __instance)
+			{
+				if (!PingToggleToolbar.instance)
+					return;
+
+				object[] pingIcons = new object[PingManager.pings.Count];
+				Traverse.Create(__instance).Field("pingMapIconList").Property("Values").Method("System.Collections.ICollection.CopyTo", pingIcons, 0).GetValue();
+
+				foreach (var pingIcon in pingIcons)
+				{
+					var icon = Traverse.Create(pingIcon);
+					bool? enabled = PingToggleToolbar.instance.pingStates.getPingState(icon.Field("ping").GetValue<PingInstance>());
+
+					if (enabled != null)
+						icon.Property("active").SetValue((bool)enabled);
+				}
+			}
 		}
 	}
 }

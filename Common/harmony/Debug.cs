@@ -97,7 +97,7 @@ namespace Common.Harmony
 											forEach(patch => _error(getFullName(patch.info)));
 
 			var patchAttr = HarmonyHelper.PatchAttribute.merge(member.getAttrs<HarmonyHelper.PatchAttribute>());
-			if (patchAttr != null && patchAttr.targetMethod == null)
+			if (patchAttr != null && !patchAttr.options.HasFlag(HarmonyHelper.PatchOptions.CanBeAbsent) && patchAttr.targetMethod == null)
 				_error(getFullName(patchAttr));
 
 			void _error(string method)

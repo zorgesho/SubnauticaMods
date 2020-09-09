@@ -21,6 +21,7 @@ namespace Common.Harmony
 			None = 0,
 			PatchOnce = 1, // need to check before patching if already patched by the same method
 			PatchIteratorMethod = 2, // if target method is iterator, we will patch its MoveNext method
+			CanBeAbsent = 4, // don't throw assert if target method is not found
 		}
 
 		// for use with patch classes
@@ -143,7 +144,10 @@ namespace Common.Harmony
 				if (PatchAttribute.merge(method.getAttrs<PatchAttribute>()) is PatchAttribute patchAttr)
 				{
 					var targetMethod = patchAttr.targetMethod;
-					Debug.assert(targetMethod != null, _error(PatchesValidator.getFullName(patchAttr)));
+					Debug.assert(patchAttr.options.HasFlag(PatchOptions.CanBeAbsent) || targetMethod != null, _error(PatchesValidator.getFullName(patchAttr)));
+
+					if (targetMethod == null)
+						return null;
 
 					bool patchOnce = patchAttr.options.HasFlag(PatchOptions.PatchOnce);
 					return patchOnce && isPatchedBy(targetMethod, method, true)? null: new[] { targetMethod };

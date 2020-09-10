@@ -18,9 +18,11 @@ namespace UITweaks
 
 	static class PingToggles
 	{
+		static bool pingTogglesEnabled => Main.config.pdaTweaks.enabled && Main.config.pdaTweaks.pingTogglesEnabled;
+
 		public static void setPingEnabled(PingType pingType, int colorIndex, bool enabled)
 		{
-			if (!Main.config.pdaTweaks.pingTogglesEnabled)
+			if (!pingTogglesEnabled)
 				return;
 
 			if (PingToggleToolbar.instance)
@@ -66,7 +68,7 @@ namespace UITweaks
 
 				public bool? getPingState(PingType pingType, int colorIndex)
 				{
-					if (!Main.config.pdaTweaks.pingTogglesEnabled)
+					if (!pingTogglesEnabled)
 						return true;
 
 					bool typeExist = pingEnabled.TryGetValue(hash(pingType, -1), out bool typeEnabled);
@@ -289,10 +291,10 @@ namespace UITweaks
 		{
 			static bool prepare()
 			{
-				if (!Main.config.pdaTweaks.pingTogglesEnabled)
+				if (!pingTogglesEnabled)
 					UnityEngine.Object.Destroy(PingToggleToolbar.instance);
 
-				return Main.config.pdaTweaks.pingTogglesEnabled;
+				return pingTogglesEnabled;
 			}
 
 			[HarmonyPostfix]

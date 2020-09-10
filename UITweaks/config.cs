@@ -11,11 +11,18 @@ namespace UITweaks
 	[Field.BindConsole("ui")]
 	class ModConfig: Config
 	{
-		public readonly float _tooltipOffsetX = 30f; // TODO remove
+		public class BulkCrafting
+		{
+			[Options.Field] // TODO name & tooltip
+			[Field.Action(typeof(UpdateOptionalPatches))] // TODO use FinalizeAction
+			public readonly bool enabled = true;
 
-		[Options.Field] // TODO name & tooltip
-		[Field.Action(typeof(UpdateOptionalPatches))] // TODO use FinalizeAction
-		public readonly bool bulkCrafting = true;
+			[Field.Action(typeof(UpdateOptionalPatches))]
+			public readonly bool changeCraftDuration = true;
+
+			public readonly bool changePowerConsumption = true;
+		}
+		public readonly BulkCrafting bulkCrafting = new BulkCrafting();
 
 		[Options.Hideable(typeof(Hider), "pda")]
 		public class PDATweaks
@@ -40,9 +47,7 @@ namespace UITweaks
 
 			[Options.Field] // TODO name & tooltip
 			[Field.Action(typeof(UpdateOptionalPatches))] // TODO use FinalizeAction
-			public readonly bool pingToggles = true;
-
-			public bool pingTogglesEnabled => enabled && pingToggles;
+			public readonly bool pingTogglesEnabled = true;
 
 			[Field.Reloadable]
 			[NoInnerFieldsAttrProcessing]

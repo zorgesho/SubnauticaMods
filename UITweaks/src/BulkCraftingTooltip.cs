@@ -39,8 +39,15 @@ namespace UITweaks
 
 		enum AmountActionHint { None = 0, Both = 1, Increase = 2, Decrease = 3 } // used as index for actions array
 
+		class BulkCraftingInitedTag: MonoBehaviour {}
+
 		static void init(uGUI_Tooltip tooltip)
 		{
+			if (!tooltip || tooltip.GetComponent<BulkCraftingInitedTag>())
+				return;
+
+			tooltip.gameObject.AddComponent<BulkCraftingInitedTag>();
+
 			var textGO = tooltip.gameObject.getChild(Mod.isBranchStable? "Text": "Container/Text");
 			var textGOBottom = UnityEngine.Object.Instantiate(textGO, textGO.transform.parent);
 			textGOBottom.name = "BottomText";
@@ -163,12 +170,16 @@ namespace UITweaks
 
 
 		[OptionalPatch, PatchClass]
-		static class Patches
+		static class TooltipPatches
 		{
 			static bool prepare()
 			{
-				setActionText(AmountActionHint.None); // in case we're going to unpatch
-				return Main.config.bulkCrafting;
+				if (Main.config.bulkCrafting.enabled)
+					init(uGUI_Tooltip.main); // in case we enable it after tooltip awake
+				else
+					setActionText(AmountActionHint.None);
+
+				return Main.config.bulkCrafting.enabled;
 			}
 
 			// prevents SMLHelper from restoring techdata to original state
@@ -191,7 +202,7 @@ namespace UITweaks
 			[HarmonyPrefix, HarmonyPatch(typeof(uGUI_CraftingMenu), "Open")]
 			static void getPowerRelay(ITreeActionReceiver receiver)
 			{
-				currentPowerRelay = (receiver as GhostCrafter)?.powerRelay;
+				currentPowerRelay = Main.config.bulkCrafting.changePowerConsumption? (receiver as GhostCrafter)?.powerRelay: null;
 			}
 
 			[HarmonyPrefix, HarmonyPatch(typeof(TooltipFactory), "Recipe")]
@@ -210,6 +221,8 @@ namespace UITweaks
 			[HarmonyPostfix, HarmonyPatch(typeof(uGUI_Tooltip), "Rebuild")]
 			static void rebuildTooltip(uGUI_Tooltip __instance, CanvasUpdate executing)
 			{
+				const float tooltipOffsetX = 30f;
+
 				if (text.text == "" || executing != CanvasUpdate.Layout)
 					return;
 
@@ -218,7 +231,7 @@ namespace UITweaks
 				__instance.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, tooltipHeight + textHeight);
 
 				float tooltipWidth = __instance.rectTransform.rect.xMax;
-				float textWidth = text.rectTransform.sizeDelta.x + Main.config._tooltipOffsetX;
+				float textWidth = text.rectTransform.sizeDelta.x + tooltipOffsetX;
 				if (tooltipWidth < textWidth)
 					__instance.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, textWidth);
 
@@ -231,7 +244,7 @@ namespace UITweaks
 		[OptionalPatch, PatchClass]
 		static class CrafterPatches
 		{
-			static bool prepare() => Main.config.bulkCrafting;
+			static bool prepare() => Main.config.bulkCrafting.enabled;
 
 			static readonly Dictionary<CrafterLogic, CraftData.TechData> crafterCache = new Dictionary<CrafterLogic, CraftData.TechData>();
 
@@ -241,7 +254,7 @@ namespace UITweaks
 			[OptionalPatch, PatchClass]
 			static class CraftDurationPatches
 			{
-				static bool prepare() => CrafterPatches.prepare() && true; // TODO
+				static bool prepare() => CrafterPatches.prepare() && Main.config.bulkCrafting.changeCraftDuration;
 
 				static void fixCraftDuration(TechType techType, ref float duration)
 				{
@@ -291,7 +304,7 @@ namespace UITweaks
 			static CIEnumerable craftFixEnergyConsumption(CIEnumerable cins)
 			{
 				static float _energyToConsume(TechType techType) =>
-					_isAmountChanged(techType)? 5f * currentCraftAmount: 5f;
+					(Main.config.bulkCrafting.changePowerConsumption && _isAmountChanged(techType))? 5f * currentCraftAmount: 5f;
 
 				return CIHelper.ciReplace(cins, ci => ci.isLDC(5f), OpCodes.Ldarg_1, CIHelper.emitCall<Func<TechType, float>>(_energyToConsume));
 			}

@@ -21,6 +21,9 @@ namespace UITweaks
 			public readonly bool changeCraftDuration = true;
 
 			public readonly bool changePowerConsumption = true;
+
+			[Field.Action(typeof(UpdateOptionalPatches))]
+			public readonly bool inventoryItemsFasterAnim = true;
 		}
 		public readonly BulkCrafting bulkCrafting = new BulkCrafting();
 

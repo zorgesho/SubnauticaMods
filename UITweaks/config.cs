@@ -70,6 +70,14 @@ namespace UITweaks
 		[Field.Action(typeof(UpdateOptionalPatches))] // TODO use FinalizeAction
 		public readonly bool builderMenuTabHotkeysEnabled = true;
 
+		[Options.Field("Show save slot ID", "Show save slot ID on the load buttons")] // TODO
+		[Field.Action(typeof(UpdateOptionalPatches))] // TODO use FinalizeAction
+		public readonly bool showSaveSlotID = true;
+
+		[Options.Field] // TODO
+		[Field.Action(typeof(UpdateOptionalPatches))] // TODO use FinalizeAction
+		public readonly bool hideMessagesWhileLoading = true;
+
 		public readonly bool showToolbarHotkeys = true;
 	}
 

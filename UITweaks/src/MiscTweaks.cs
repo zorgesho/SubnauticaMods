@@ -2,7 +2,9 @@
 
 using Harmony;
 using UnityEngine;
+using UnityEngine.UI;
 
+using Common;
 using Common.Harmony;
 
 namespace UITweaks
@@ -14,18 +16,6 @@ namespace UITweaks
 		{
 			static bool prepare() => Main.config.builderMenuTabHotkeysEnabled;
 
-			static IEnumerator builderMenuTabHotkeys()
-			{
-				while (uGUI_BuilderMenu.singleton.state)
-				{
-					for (int i = 0; i < 5; i++)
-						if (Input.GetKeyDown(KeyCode.Alpha1 + i))
-							uGUI_BuilderMenu.singleton.SetCurrentTab(i);
-
-					yield return null;
-				}
-			}
-
 			[HarmonyPostfix, HarmonyPatch(typeof(uGUI_BuilderMenu), "GetToolbarTooltip")]
 			static void modifyTooltip(int index, ref string tooltipText)
 			{
@@ -36,8 +26,42 @@ namespace UITweaks
 			[HarmonyPostfix, HarmonyPatch(typeof(uGUI_BuilderMenu), "Open")]
 			static void openMenu()
 			{
-				UWE.CoroutineHost.StartCoroutine(builderMenuTabHotkeys());
+				UWE.CoroutineHost.StartCoroutine(_builderMenuTabHotkeys());
+
+				static IEnumerator _builderMenuTabHotkeys()
+				{
+					while (uGUI_BuilderMenu.singleton.state)
+					{
+						for (int i = 0; i < 5; i++)
+							if (Input.GetKeyDown(KeyCode.Alpha1 + i))
+								uGUI_BuilderMenu.singleton.SetCurrentTab(i);
+
+						yield return null;
+					}
+				}
 			}
+		}
+
+		// add game slot info to the load buttons
+		[OptionalPatch, HarmonyPatch(typeof(MainMenuLoadPanel), "UpdateLoadButtonState")]
+		static class MainMenuLoadPanel_UpdateLoadButtonState_Patch
+		{
+			static bool Prepare() => Main.config.showSaveSlotID;
+
+			static void Postfix(MainMenuLoadButton lb)
+			{
+				string textPath = (Mod.isBranchStable? "": "SaveDetails/") + "SaveGameLength";
+				if (lb.load.getChild(textPath)?.GetComponent<Text>() is Text text)
+					text.text += $" | {lb.saveGame}";
+			}
+		}
+
+		// don't show messages while loading
+		[OptionalPatch, HarmonyPatch(typeof(ErrorMessage), "AddError")]
+		static class ErrorMessage_AddError_Patch
+		{
+			static bool Prepare() => Main.config.hideMessagesWhileLoading;
+			static bool Prefix() => !GameUtils.isLoadingState;
 		}
 	}
 }

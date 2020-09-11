@@ -87,5 +87,12 @@ namespace Common
 			else
 				MainMenuMessages.add(msg, size, color);
 		}
+
+		static readonly MethodWrapper qmmGetMod = qmmServices.method("GetMod", typeof(string)).wrap();
+
+		public static bool isModEnabled(string modID)
+		{
+			return qmmGetMod.invoke(qmmServicesMain.get(), modID)?.getPropertyValue<bool>("Enable") == true;
+		}
 	}
 }

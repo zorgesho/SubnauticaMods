@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using UnityEngine;
 
@@ -78,11 +79,29 @@ namespace UITweaks
 		[Field.Action(typeof(UpdateOptionalPatches))] // TODO use FinalizeAction
 		public readonly bool hideMessagesWhileLoading = true;
 
-		[Options.Field] // TODO
-		[Field.Action(typeof(UpdateOptionalPatches))] // TODO use FinalizeAction
-		public readonly bool renameBeacons = true;
+		class HideRenameBeacons: Options.Components.Hider.IVisibilityChecker
+		{ public bool visible => !Main.config.oldRenameBeaconsModActive; }
 
+		[Options.Field] // TODO
+		[Options.Hideable(typeof(HideRenameBeacons))]
+		[Field.Action(typeof(UpdateOptionalPatches))] // TODO use FinalizeAction
+		public bool renameBeacons = true;
+
+		[NonSerialized]
+		bool oldRenameBeaconsModActive = false;
+
+		public readonly KeyCode renameBeaconsKey = KeyCode.None; // using middle mouse button by default
 		public readonly bool showToolbarHotkeys = true;
+
+		protected override void onLoad()
+		{
+			if (Mod.isModEnabled("RenameBeacons"))
+			{
+				oldRenameBeaconsModActive = true;
+				renameBeacons = false;
+				Mod.addCriticalMessage(L10n.str(L10n.ids_modMerged), color: "yellow");
+			}
+		}
 	}
 
 	class L10n: LanguageHelper
@@ -92,5 +111,7 @@ namespace UITweaks
 
 		public static readonly string ids_beaconName = "Name";
 		public static readonly string ids_beaconRename = "rename";
+
+		public static readonly string ids_modMerged = "<b>RenameBeacons</b> mod is now merged into <b>UI Tweaks</b> mod, you can safely delete it.";
 	}
 }

@@ -3,6 +3,7 @@
 using Harmony;
 using UnityEngine;
 using UnityEngine.UI;
+using SMLHelper.V2.Utility;
 
 using Common;
 using Common.Harmony;
@@ -40,8 +41,14 @@ namespace UITweaks
 			[HarmonyPostfix, HarmonyPatch(typeof(TooltipFactory), "ItemActions")]
 			static void TooltipFactory_ItemActions_Postfix(StringBuilder sb, InventoryItem item)
 			{
-				if (item.item.GetTechType() == TechType.Beacon)
-					TooltipFactory.WriteAction(sb, Strings.Mouse.middleButton, L10n.str(L10n.ids_beaconRename));
+				if (item.item.GetTechType() != TechType.Beacon)
+					return;
+
+				string btn = Main.config.renameBeaconsKey == default? Strings.Mouse.middleButton: KeyCodeUtils.KeyCodeToString(Main.config.renameBeaconsKey);
+				TooltipFactory.WriteAction(sb, btn, L10n.str(L10n.ids_beaconRename));
+
+				if (Main.config.renameBeaconsKey != default && Input.GetKeyDown(Main.config.renameBeaconsKey))
+					renameBeacon(item.item.GetComponent<Beacon>());
 			}
 
 			[HarmonyPostfix, HarmonyPatch(typeof(TooltipFactory), "ItemCommons")]
@@ -60,7 +67,7 @@ namespace UITweaks
 			[HarmonyPostfix, HarmonyPatch(typeof(uGUI_InventoryTab), "OnPointerClick")]
 			static void uGUIInventoryTab_OnPointerClick_Postfix(InventoryItem item, int button)
 			{
-				if (item.item.GetTechType() == TechType.Beacon && button == 2)
+				if (Main.config.renameBeaconsKey == default && item.item.GetTechType() == TechType.Beacon && button == 2)
 					renameBeacon(item.item.GetComponent<Beacon>());
 			}
 		}

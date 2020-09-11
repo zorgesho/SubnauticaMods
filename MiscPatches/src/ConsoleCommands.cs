@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text;
 using System.Collections;
 
@@ -6,6 +7,7 @@ using UWE;
 using UnityEngine;
 
 using Common;
+using Common.Reflection;
 
 namespace MiscPatches
 {
@@ -18,6 +20,31 @@ namespace MiscPatches
 
 			"Inventory items:".log();
 			Inventory.main.container.ForEach(item => $"item: {item.item.GetTechName()}".onScreen().log());
+		}
+
+		public void print_mod_console_commands(string modID = "")
+		{
+			foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+			{
+				string fullname = assembly.FullName.ToLower();
+				string name = fullname.Replace(".consolecommands", "");
+
+				if (fullname == name || !name.Contains(modID))
+					continue;
+
+				foreach (var type in assembly.GetTypes())
+				{
+					$"<color=yellow>{type.FullName.Replace(".CommandProxy", "")}</color>".onScreen();
+
+					var methods = type.methods().
+						Where(method => !method.Name.Contains("<") && method.Name.Contains("OnConsoleCommand_")).
+						Select(method => method.Name.Replace("OnConsoleCommand_", "")).
+						ToList();
+
+					methods.Sort();
+					string.Join(modID == ""? "; ": "\n", methods).onScreen();
+				}
+			}
 		}
 
 		[Command(combineArgs = true, caseSensitive = true)]
@@ -45,7 +72,7 @@ namespace MiscPatches
 		public void spawnresource(string prefab)
 		{
 			// if parameter is prefabID
-			if (UWE.PrefabDatabase.TryGetPrefabFilename(prefab, out string prefabPath))
+			if (PrefabDatabase.TryGetPrefabFilename(prefab, out string prefabPath))
 				prefab = prefabPath;
 
 			Utils.CreatePrefab(Resources.Load<GameObject>(prefab));

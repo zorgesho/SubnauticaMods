@@ -61,9 +61,6 @@ namespace MiscPatches
 			[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 			public readonly bool ingameMenuPause = true;
 
-			[Options.Field("Show save slot ID", "Show save slot ID on the load buttons\nReload in order to apply")]
-			public readonly bool showSaveSlotID = true;
-
 			[Options.Field("Override initial equipment", "Used for creative mode only")]
 			[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 			public readonly bool overrideInitialEquipment = true;

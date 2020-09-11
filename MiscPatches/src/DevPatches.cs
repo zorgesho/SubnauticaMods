@@ -4,7 +4,6 @@ using System.Reflection.Emit;
 
 using Harmony;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 using Common;
@@ -157,20 +156,6 @@ namespace MiscPatches
 		static bool Prepare() => !Main.config.dbg.ingameMenuPause;
 
 		static bool Prefix(string userId) => userId != "IngameMenu";
-	}
-
-	// add game slot info to the load buttons
-	[HarmonyPatch(typeof(MainMenuLoadPanel), "UpdateLoadButtonState")]
-	static class MainMenuLoadPanel_UpdateLoadButtonState_Patch
-	{
-		static bool Prepare() => Main.config.dbg.showSaveSlotID;
-
-		static void Postfix(MainMenuLoadButton lb)
-		{
-			string textPath = (Mod.isBranchStable? "": "SaveDetails/") + "SaveGameLength";
-			if (lb.load.getChild(textPath)?.GetComponent<Text>() is Text text)
-				text.text += $" | {lb.saveGame}";
-		}
 	}
 
 	// change initial equipment in creative mode

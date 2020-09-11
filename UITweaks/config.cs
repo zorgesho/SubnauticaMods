@@ -78,12 +78,19 @@ namespace UITweaks
 		[Field.Action(typeof(UpdateOptionalPatches))] // TODO use FinalizeAction
 		public readonly bool hideMessagesWhileLoading = true;
 
+		[Options.Field] // TODO
+		[Field.Action(typeof(UpdateOptionalPatches))] // TODO use FinalizeAction
+		public readonly bool renameBeacons = true;
+
 		public readonly bool showToolbarHotkeys = true;
 	}
 
 	class L10n: LanguageHelper
 	{
-		public static readonly string ids_changeAmount = "change amount";
-		public static readonly string ids_clearNotifications = "clear notifications";
+		public static readonly string ids_bulkCraftChangeAmount = "change amount";
+		public static readonly string ids_PDAClearNotifications = "clear notifications";
+
+		public static readonly string ids_beaconName = "Name";
+		public static readonly string ids_beaconRename = "rename";
 	}
 }

@@ -80,7 +80,7 @@ namespace UITweaks
 				if (group != NMGroup.Undefined && NotificationManager.main.GetCount(group) > 0)
 				{
 					string nextline = $"\n<size={tooltipSmallTextSizeSpacing}>\n</size>";
-					string hint = $"{Strings.Mouse.rightButton} - <color=#00ffffff>{L10n.str("ids_clearNotifications")}</color>";
+					string hint = $"{Strings.Mouse.rightButton} - <color=#00ffffff>{L10n.str(L10n.ids_PDAClearNotifications)}</color>";
 					tooltip += $"{nextline}<size={tooltipSmallTextSize}>{hint}</size>";
 				}
 			}

@@ -27,7 +27,7 @@ namespace UITweaks
 		static PowerRelay currentPowerRelay;
 
 		static string _writeAction(string key) =>
-			$"\n<size=20><color=#ffffffff>{key}</color> - <color=#00ffffff>{L10n.str(L10n.ids_changeAmount)}</color></size>";
+			$"\n<size=20><color=#ffffffff>{key}</color> - <color=#00ffffff>{L10n.str(L10n.ids_bulkCraftChangeAmount)}</color></size>";
 
 		static readonly string[] actions =
 		{

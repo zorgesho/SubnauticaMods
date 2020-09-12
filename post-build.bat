@@ -18,7 +18,7 @@ echo %2.pdb > ..\.pdb-ignore
 echo %1 | findstr /c:"publish" 1>nul && copy nul %5%tmp_info_file% > nul
 
 :: renaming mod.SN.json/mod.BZ.json to mod.json if any
-if exist mod.*.json move mod.*.json mod.json
+if exist mod.*.json move mod.*.json mod.json > nul
 
 echo =====
 xcopy %5*.* %qmods_path%\%2\ /e /y /exclude:..\.pdb-ignore

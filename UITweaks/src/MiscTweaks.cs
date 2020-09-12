@@ -44,7 +44,7 @@ namespace UITweaks
 
 		// add game slot info to the load buttons
 		[OptionalPatch, HarmonyPatch(typeof(MainMenuLoadPanel), "UpdateLoadButtonState")]
-		static class MainMenuLoadPanel_UpdateLoadButtonState_Patch
+		public static class MainMenuLoadPanel_UpdateLoadButtonState_Patch
 		{
 			static bool Prepare() => Main.config.showSaveSlotID;
 

@@ -9,21 +9,30 @@ using Common.Configuration;
 
 namespace UITweaks
 {
+#if DEBUG
 	[Field.BindConsole("ui")]
+#endif
 	class ModConfig: Config
 	{
+		[Options.Hideable(typeof(Hider), "bulk")]
+		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 		public class BulkCrafting
 		{
-			[Options.Field] // TODO name & tooltip
-			[Field.Action(typeof(UpdateOptionalPatches))] // TODO use FinalizeAction
+			class Hider: Options.Components.Hider.Simple
+			{ public Hider(): base("bulk", () => Main.config.bulkCrafting.enabled) {} }
+
+			[Options.Field("Bulk crafting", "Ability to change the craft amount for the item using mouse wheel on the crafting tooltip")]
+			[Field.Action(typeof(Hider))]
+			[Options.Hideable(typeof(Options.Components.Hider.Ignore), "")]
 			public readonly bool enabled = true;
 
-			[Field.Action(typeof(UpdateOptionalPatches))]
+			[Options.Field("\tChange craft duration", "Increase the duration for crafting the items based on the craft amount")]
 			public readonly bool changeCraftDuration = true;
 
+			[Options.Field("\tChange power consumption", "Increase the power consumption for crafting the items based on the craft amount")]
 			public readonly bool changePowerConsumption = true;
 
-			[Field.Action(typeof(UpdateOptionalPatches))]
+			[Options.Field("\tFaster animations for the items", "Ingredients for crafting and crafted items will be fly from/to inventory faster, based on the craft amount")]
 			public readonly bool inventoryItemsFasterAnim = true;
 		}
 		public readonly BulkCrafting bulkCrafting = new BulkCrafting();
@@ -34,24 +43,24 @@ namespace UITweaks
 			class Hider: Options.Components.Hider.Simple
 			{ public Hider(): base("pda", () => Main.config.pdaTweaks.enabled) {} }
 
-			[Options.Field] // TODO name & tooltip
+			[Options.Field("PDA tweaks")]
 			[Field.Action(typeof(Hider))]
-			[Field.Action(typeof(UpdateOptionalPatches))] // TODO use FinalizeAction
+			[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 			[Options.Hideable(typeof(Options.Components.Hider.Ignore), "")]
 			public readonly bool enabled = true;
 
-			[Options.Field] // TODO name & tooltip
+			[Options.Field("\tToggles for beacons", "Additional buttons in the Beacon Manager for toggling beacons and signals based on their color")]
+			[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
+			public readonly bool pingTogglesEnabled = true;
+
+			[Options.Field("\tAllow to clear notifications", "Notifications on the PDA tabs can be cleared with right mouse click")]
 			public readonly bool allowClearNotifications = true;
 
-			[Options.Field] // TODO name & tooltip
-			public readonly bool showItemCount = true;
-
-			[Options.Field] // TODO name & tooltip
+			[Options.Field("\tTab hotkeys", "Switch between the tabs in the PDA with 1-6 keys (or custom keys)")]
 			public readonly bool tabHotkeysEnabled = true;
 
-			[Options.Field] // TODO name & tooltip
-			[Field.Action(typeof(UpdateOptionalPatches))] // TODO use FinalizeAction
-			public readonly bool pingTogglesEnabled = true;
+			[Options.Field("\tShow item count", "Show number of items for the each tab on the tab tooltip")]
+			public readonly bool showItemCount = true;
 
 			[Field.Reloadable]
 			[NoInnerFieldsAttrProcessing]
@@ -67,31 +76,31 @@ namespace UITweaks
 		}
 		public readonly PDATweaks pdaTweaks = new PDATweaks();
 
-		[Options.Field]
-		[Field.Action(typeof(UpdateOptionalPatches))] // TODO use FinalizeAction
-		public readonly bool builderMenuTabHotkeysEnabled = true;
-
-		[Options.Field("Show save slot ID", "Show save slot ID on the load buttons")] // TODO
-		[Field.Action(typeof(UpdateOptionalPatches))] // TODO use FinalizeAction
-		public readonly bool showSaveSlotID = true;
-
-		[Options.Field] // TODO
-		[Field.Action(typeof(UpdateOptionalPatches))] // TODO use FinalizeAction
-		public readonly bool hideMessagesWhileLoading = true;
-
 		class HideRenameBeacons: Options.Components.Hider.IVisibilityChecker
 		{ public bool visible => !Main.config.oldRenameBeaconsModActive; }
-
-		[Options.Field] // TODO
-		[Options.Hideable(typeof(HideRenameBeacons))]
-		[Field.Action(typeof(UpdateOptionalPatches))] // TODO use FinalizeAction
-		public bool renameBeacons = true;
 
 		[NonSerialized]
 		bool oldRenameBeaconsModActive = false;
 
+		[Options.Field("Rename beacons in the inventory", "Use middle mouse button (or custom hotkey) to rename beacons that are in the inventory")]
+		[Options.Hideable(typeof(HideRenameBeacons))]
+		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
+		public bool renameBeacons = true;
+
+		[Options.Field("Hotkeys for builder menu tabs", "Switch between the tabs in the builder menu with 1-5 keys")]
+		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
+		public readonly bool builderMenuTabHotkeysEnabled = true;
+
+		[Options.Field("Show save slot ID", "Show save slot ID on the load buttons")]
+		[Field.Action(typeof(UpdateOptionalPatches), typeof(MiscTweaks.MainMenuLoadPanel_UpdateLoadButtonState_Patch))]
+		public readonly bool showSaveSlotID = true;
+
+		[Options.Field("Hide messages while loading", "Don't show messages that are added during loading the game")]
+		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
+		public readonly bool hideMessagesWhileLoading = true;
+
 		public readonly KeyCode renameBeaconsKey = KeyCode.None; // using middle mouse button by default
-		public readonly bool showToolbarHotkeys = true;
+		public readonly bool showToolbarHotkeys = false;
 
 		protected override void onLoad()
 		{

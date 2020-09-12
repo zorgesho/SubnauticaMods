@@ -8,5 +8,7 @@
   "Enable": true,
   "Game": "Subnautica",
   "AssemblyName": "UITweaks.dll",
-  "EntryMethod": "UITweaks.Main.patch"
+  "EntryMethod": "UITweaks.Main.patch",
+  "UpdateCheck": true,
+  "VersionURL": "https://raw.githubusercontent.com/zorgesho/SubnauticaMods/master/UITweaks/mod.SN.json"
 }

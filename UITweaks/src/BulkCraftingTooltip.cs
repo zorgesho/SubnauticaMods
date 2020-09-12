@@ -32,12 +32,12 @@ namespace UITweaks
 		static readonly string[] actions =
 		{
 			"",
-			_writeAction(Strings.Mouse.scrollUp + "/" + Strings.Mouse.scrollDown),
 			_writeAction(Strings.Mouse.scrollUp),
-			_writeAction(Strings.Mouse.scrollDown)
+			_writeAction(Strings.Mouse.scrollDown),
+			_writeAction(Strings.Mouse.scrollUp + "/" + Strings.Mouse.scrollDown)
 		};
 
-		enum AmountActionHint { None = 0, Both = 1, Increase = 2, Decrease = 3 } // used as index for actions array
+		enum AmountActionHint { None = 0, Increase = 1, Decrease = 2, Both = 3 } // used as index for actions array
 
 		class BulkCraftingInitedTag: MonoBehaviour {}
 
@@ -137,8 +137,11 @@ namespace UITweaks
 
 		static void setActionText(AmountActionHint hintType)
 		{
-			if (text)
-				text.text = actions[(int)hintType];
+			if (!text)
+				return;
+
+			text.text = actions[(int)hintType];
+			text.gameObject.SetActive(hintType != AmountActionHint.None);
 		}
 
 
@@ -182,6 +185,8 @@ namespace UITweaks
 				return Main.config.bulkCrafting.enabled;
 			}
 
+			static CraftTree.Type currentTreeType;
+
 			// prevents SMLHelper from restoring techdata to original state
 			[HarmonyPrefix, HarmonyHelper.Patch("SMLHelper.V2.Patchers.CraftDataPatcher, SMLHelper", "NeedsPatchingCheckPrefix")]
 			static bool SMLPatchCheck(TechType techType) => currentTechType != techType || !CraftData.techData.ContainsKey(techType);
@@ -200,14 +205,18 @@ namespace UITweaks
 			}
 
 			[HarmonyPrefix, HarmonyPatch(typeof(uGUI_CraftingMenu), "Open")]
-			static void getPowerRelay(ITreeActionReceiver receiver)
+			static void openCraftingMenu(CraftTree.Type treeType, ITreeActionReceiver receiver)
 			{
+				currentTreeType = treeType;
 				currentPowerRelay = Main.config.bulkCrafting.changePowerConsumption? (receiver as GhostCrafter)?.powerRelay: null;
 			}
 
 			[HarmonyPrefix, HarmonyPatch(typeof(TooltipFactory), "Recipe")]
 			static void updateRecipe(TechType techType)
 			{
+				if (currentTreeType == CraftTree.Type.Constructor)
+					return;
+
 				if (techType != currentTechType)
 					reset();
 
@@ -219,7 +228,7 @@ namespace UITweaks
 			}
 
 			[HarmonyPostfix, HarmonyPatch(typeof(uGUI_Tooltip), "Rebuild")]
-			static void rebuildTooltip(uGUI_Tooltip __instance, CanvasUpdate executing)
+			static void rebuildTooltip(uGUI_Tooltip __instance, CanvasUpdate executing) // TODO BRANCH_EXP: most of this code is unneeded on exp branch
 			{
 				const float tooltipOffsetX = 30f;
 

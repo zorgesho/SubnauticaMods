@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
-#if BRANCH_EXP
 using System.Runtime.CompilerServices;
-#endif
 
 using Harmony;
 
@@ -22,9 +20,8 @@ namespace Common.Harmony
 		{
 			None = 0,
 			PatchOnce = 1, // need to check before patching if already patched by the same method
-#if BRANCH_EXP
 			PatchIteratorMethod = 2, // if target method is iterator, we will patch its MoveNext method
-#endif // no StateMachineAttribute in .NET 4.0
+			CanBeAbsent = 4, // don't throw assert if target method is not found
 		}
 
 		// for use with patch classes
@@ -82,10 +79,10 @@ namespace Common.Harmony
 				{
 					type ??= Type.GetType(typeName);
 					var targetMethod = type?.method(methodName, methodParams);
-#if BRANCH_EXP
+
 					if (options.HasFlag(PatchOptions.PatchIteratorMethod) && targetMethod != null)
 						targetMethod = targetMethod.getAttr<StateMachineAttribute>()?.StateMachineType.method("MoveNext");
-#endif
+
 					return targetMethod;
 				}
 			}
@@ -147,7 +144,10 @@ namespace Common.Harmony
 				if (PatchAttribute.merge(method.getAttrs<PatchAttribute>()) is PatchAttribute patchAttr)
 				{
 					var targetMethod = patchAttr.targetMethod;
-					Debug.assert(targetMethod != null, _error(PatchesValidator.getFullName(patchAttr)));
+					Debug.assert(patchAttr.options.HasFlag(PatchOptions.CanBeAbsent) || targetMethod != null, _error(PatchesValidator.getFullName(patchAttr)));
+
+					if (targetMethod == null)
+						return null;
 
 					bool patchOnce = patchAttr.options.HasFlag(PatchOptions.PatchOnce);
 					return patchOnce && isPatchedBy(targetMethod, method, true)? null: new[] { targetMethod };

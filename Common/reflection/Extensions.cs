@@ -71,6 +71,9 @@ namespace Common.Reflection
 
 		public static object getFieldValue(this object obj, string fieldName) => obj.GetType().field(fieldName)?.GetValue(obj);
 		public static T getFieldValue<T>(this object obj, string fieldName) => obj.getFieldValue(fieldName).cast<T>();
+
+		public static object getPropertyValue(this object obj, string propertyName) => obj.GetType().property(propertyName)?.GetValue(obj);
+		public static T getPropertyValue<T>(this object obj, string propertyName) => obj.getPropertyValue(propertyName).cast<T>();
 	}
 
 

@@ -56,7 +56,7 @@ namespace Common
  
 			static void dump(GameObject go, string indent)
 			{
-				output.AppendLine($"{indent}object: {go.name} active:{go.activeSelf}");
+				output.AppendLine($"{indent}object: {go.name} activeS/activeH:{go.activeSelf}/{go.activeInHierarchy}");
  
 				foreach (var cmp in go.GetComponents<Component>())
 					dump(cmp, indent + "\t");
@@ -68,7 +68,7 @@ namespace Common
 			static void dump(Component cmp, string indent)
 			{
 				static void _sort<T>(List<T> list) where T: MemberInfo => list.Sort((m1, m2) => m1.Name.CompareTo(m2.Name));
-				static string _formatValue(object value) => value?.ToString().Replace('\n', ' ').Replace('\t', ' ').Trim() ?? "";
+				static string _formatValue(object value) => value?.ToString().Replace('\r', ' ').Replace('\n', ' ').Replace('\t', ' ').Trim() ?? "";
 
 				Type cmpType = cmp.GetType();
 				output.AppendLine($"{indent}component: {cmpType}");

@@ -25,7 +25,7 @@ namespace Common.Reflection
 		public object invoke(object obj)
 		{
 			Debug.assert(method != null);
-			return method.IsStatic? method?.Invoke(null, new object[] { obj }): method?.Invoke(obj, null);
+			return method.IsStatic? method?.Invoke(null, new[] { obj }): method?.Invoke(obj, null);
 		}
 
 		public object invoke(object obj, params object[] parameters)

@@ -101,34 +101,25 @@ namespace MiscPatches
 	{
 		static bool prepare() => Main.config.dbg.fastStart.enabled;
 
-		[HarmonyPatch(typeof(MainGameController), "Start")]
-#if BRANCH_STABLE
-		[HarmonyTranspiler]
-		static IEnumerable<CodeInstruction> fastStartPatch(IEnumerable<CodeInstruction> cins) =>
-			CIHelper.ciReplace(cins, ci => ci.isOp(OpCodes.Call),
+		[HarmonyTranspiler, HarmonyPatch(typeof(MainGameController), "Start")]
+		static IEnumerable<CodeInstruction> fastStartPatch(IEnumerable<CodeInstruction> cins)
+		{
+			return CIHelper.ciReplace(cins, ci => ci.isOp(OpCodes.Call),
 				OpCodes.Pop, CIHelper.emitCall<System.Func<IEnumerator>>(_startGame));
-#elif BRANCH_EXP
-		[HarmonyPrefix]
-		static bool fastStartPatch(MainGameController __instance, ref IEnumerator __result)
-		{
-			MainGameController.instance = __instance;
-			__result = _startGame();
-			return false;
-		}
-#endif
-		static IEnumerator _startGame()
-		{
-			Physics.autoSyncTransforms = Physics2D.autoSimulation = false;
 
+			static IEnumerator _startGame()
+			{
+				Physics.autoSyncTransforms = Physics2D.autoSimulation = false;
 #if BRANCH_STABLE
-			yield return SceneManager.LoadSceneAsync("Essentials", LoadSceneMode.Additive);
+				yield return SceneManager.LoadSceneAsync("Essentials", LoadSceneMode.Additive);
 #elif BRANCH_EXP
-			yield return AddressablesUtility.LoadSceneAsync("Essentials", LoadSceneMode.Additive);
+				yield return AddressablesUtility.LoadSceneAsync("Essentials", LoadSceneMode.Additive);
 #endif
-			Application.backgroundLoadingPriority = ThreadPriority.Normal;
+				Application.backgroundLoadingPriority = ThreadPriority.Normal;
 
-			foreach (var cmd in Main.config.dbg.fastStart.commandsAfterLoad)
-				DevConsole.SendConsoleCommand(cmd);
+				foreach (var cmd in Main.config.dbg.fastStart.commandsAfterLoad)
+					DevConsole.SendConsoleCommand(cmd);
+			}
 		}
 
 		[HarmonyPrefix, HarmonyPatch(typeof(LightmappedPrefabs), "Awake")]

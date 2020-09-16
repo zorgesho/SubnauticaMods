@@ -79,20 +79,21 @@ namespace ConsoleImproved
 				}
 			}
 
-			public void dumpprefab(string techType)
+			public void dumpprefab(string techTypeStr)
 			{
-				if (techType == "all")
-					StartCoroutine(_dumpAllPrefabs());
-				else
-					CraftHelper.Utils.getPrefab(techType.convert<TechType>())?.dump(techType);
+				StartCoroutine(techTypeStr == "all"? _dumpAllPrefabs(): _dumpPrefab(techTypeStr.convert<TechType>()));
+
+				static IEnumerator _dumpPrefab(TechType techType)
+				{
+					var task = PrefabUtils.getPrefabAsync(techType);
+					yield return task;
+					task.GetResult()?.dump(techType.AsString());
+				}
 
 				static IEnumerator _dumpAllPrefabs()
 				{
 					foreach (TechType techType in Enum.GetValues(typeof(TechType)))
-					{
-						CraftHelper.Utils.getPrefab(techType)?.dump(techType.AsString());
-						yield return null;
-					}
+						yield return _dumpPrefab(techType);
 
 					"Dump complete".onScreen();
 				}

@@ -1,11 +1,9 @@
-﻿using UnityEngine;
-using SMLHelper.V2.Crafting;
-
+﻿using SMLHelper.V2.Crafting;
 using Common.Crafting;
 
 namespace HabitatPlatform
 {
-	class MapRoomCameraCharge: CraftableObject
+	class MapRoomCameraCharge: PoolCraftableObject
 	{
 		protected override TechData getTechData()
 		{
@@ -26,6 +24,6 @@ namespace HabitatPlatform
 			setTechTypeForUnlock(TechType.MapRoomCamera);
 		}
 
-		public override GameObject getGameObject() => CraftHelper.Utils.prefabCopy(TechType.MapRoomCamera);
+		protected override void initPrefabPool() => addPrefabToPool(TechType.MapRoomCamera);
 	}
 }

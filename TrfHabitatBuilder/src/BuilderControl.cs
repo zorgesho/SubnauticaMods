@@ -1,6 +1,7 @@
 ﻿//#define DBG_CPOINTS
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
@@ -193,10 +194,10 @@ namespace TrfHabitatBuilder
 
 		bool inited = false;
 
-		public void init()
+		IEnumerator init()
 		{
 			if (inited || !(inited = true))
-				return;
+				yield break;
 
 			AnimationHelper.init();
 
@@ -204,7 +205,11 @@ namespace TrfHabitatBuilder
 			//cbeams[1] = new ConstructionBeam(builderTool.beamRight, builderTool.nozzleRight);
 
 			GameObject beamsRoot = gameObject.getChild("terraformer_anim/Terraformer_Export_Skele/root_jnt/body_jnt/head_jnt");
-			GameObject beamPrefab = CraftHelper.Utils.getPrefab(TechType.Builder).getChild("builder/builder_FP/Root/r_nozzle_root/r_nozzle/R_laser/beamRight");
+
+			var task = PrefabUtils.getPrefabAsync(TechType.Builder);
+			yield return task;
+
+			GameObject beamPrefab = task.GetResult().getChild("builder/builder_FP/Root/r_nozzle_root/r_nozzle/R_laser/beamRight");
 
 			cbeams[0] = new ConstructionBeam(beamsRoot, beamPrefab, "Left", new Vector3(-0.1813f, -0.007f, 0.06f));
 			cbeams[1] = new ConstructionBeam(beamsRoot, beamPrefab, "Right", new Vector3(0.1813f, -0.007f, 0.06f));
@@ -218,12 +223,11 @@ namespace TrfHabitatBuilder
 		{
 			builderTool = gameObject.GetComponent<BuilderTool>();
 			animator = builderTool.animator;
-
-			init();
 		}
 
-		void Start()
+		IEnumerator Start()
 		{
+			yield return init();
 			builderTool.UpdateText();
 		}
 

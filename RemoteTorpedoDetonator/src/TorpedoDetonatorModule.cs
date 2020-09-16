@@ -1,11 +1,9 @@
-﻿using UnityEngine;
-using SMLHelper.V2.Crafting;
-
+﻿using SMLHelper.V2.Crafting;
 using Common.Crafting;
 
 namespace RemoteTorpedoDetonator
 {
-	class TorpedoDetonatorModule: CraftableObject
+	class TorpedoDetonatorModule: PoolCraftableObject
 	{
 		public static new TechType TechType { get; private set; } = 0;
 
@@ -15,7 +13,7 @@ namespace RemoteTorpedoDetonator
 			new Ingredient(TechType.Magnetite, 1)
 		)	{ craftAmount = 1};
 
-		public override GameObject getGameObject() => CraftHelper.Utils.prefabCopy(TechType.VehicleArmorPlating);
+		protected override void initPrefabPool() => addPrefabToPool(TechType.VehicleArmorPlating);
 
 		public override void patch()
 		{

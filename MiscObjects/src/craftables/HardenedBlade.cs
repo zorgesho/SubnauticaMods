@@ -5,7 +5,7 @@ using Common.Crafting;
 
 namespace MiscObjects
 {
-	class DiamondBlade: CraftableObject
+	class DiamondBlade: PoolCraftableObject
 	{
 		protected override TechData getTechData() => new TechData
 		(
@@ -13,11 +13,11 @@ namespace MiscObjects
 			new Ingredient(TechType.Diamond, 2)
 		)	{ craftAmount = 1 };
 
-		public override GameObject getGameObject()
-		{
-			GameObject prefab = CraftHelper.Utils.prefabCopy("WorldEntities/Tools/DiamondBlade");
-			prefab.GetComponent<Knife>().bleederDamage = 30f;
+		protected override void initPrefabPool() => addPrefabToPool("WorldEntities/Tools/DiamondBlade");
 
+		protected override GameObject getGameObject(GameObject prefab)
+		{
+			prefab.GetComponent<Knife>().bleederDamage = 30f;
 			return prefab;
 		}
 

@@ -7,7 +7,7 @@ using Common.Crafting;
 namespace OxygenRefill
 {
 	[CraftHelper.PatchFirst]
-	class OxygenRefillStation: CraftableObject
+	class OxygenRefillStation: PoolCraftableObject
 	{
 		public static ModCraftTreeRoot treeRootNode { get; private set; }
 		CraftTree.Type treeType;
@@ -26,10 +26,10 @@ namespace OxygenRefill
 			unlockOnStart();
 		}
 
-		public override GameObject getGameObject()
-		{
-			GameObject prefab = CraftHelper.Utils.prefabCopy(TechType.Workbench);
+		protected override void initPrefabPool() => addPrefabToPool(TechType.Workbench);
 
+		protected override GameObject getGameObject(GameObject prefab)
+		{
 			GhostCrafter crafter = prefab.GetComponent<Workbench>();
 			crafter.craftTree = treeType;
 			crafter.handOverText = L10n.str("ids_UseStation");
@@ -71,7 +71,7 @@ namespace OxygenRefill
 
 		public override GameObject getGameObject()
 		{
-			GameObject prefab = CraftHelper.Utils.prefabCopy(tankType);
+			GameObject prefab = PrefabUtils.getPrefabCopy(tankType); // TODO: async way
 			prefab.AddComponent<RefillOxygen>();
 
 			return prefab; // using this as exact prefab, so no need in LinkedItems

@@ -7,7 +7,7 @@ using Common.Crafting;
 
 namespace MiscObjects
 {
-	class StorageLabCounter: CraftableObject
+	class StorageLabCounter: PoolCraftableObject
 	{
 		class L10n: LanguageHelper
 		{
@@ -32,12 +32,19 @@ namespace MiscObjects
 			setTechTypeForUnlock(TechType.LabCounter);
 		}
 
-		public override GameObject getGameObject()
+		protected override void initPrefabPool()
 		{
-			GameObject prefab = CraftHelper.Utils.prefabCopy(TechType.LabCounter);
+			addPrefabToPool(TechType.LabCounter);
+			addPrefabToPool(TechType.SmallLocker, false);
+		}
+
+		protected override GameObject getGameObject(GameObject[] prefabs)
+		{
+			var prefab = prefabs[0];
 			prefab.AddComponent<TechTag>(); // just in case
 
-			CraftHelper.Utils.addStorageToPrefab(prefab, 7, 4, L10n.str("ids_OpenDrawers"), L10n.str("ids_DrawersInv"));
+			Utils.addStorageToPrefab(prefab, prefabs[1]);
+			PrefabUtils.initStorage(prefab, 7, 4, L10n.str("ids_OpenDrawers"), L10n.str("ids_DrawersInv"));
 
 			return prefab;
 		}

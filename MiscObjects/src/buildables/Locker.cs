@@ -6,7 +6,7 @@ using Common.Crafting;
 
 namespace MiscObjects
 {
-	class MetalLocker: CraftableObject
+	class MetalLocker: PoolCraftableObject
 	{
 		class L10n: LanguageHelper
 		{
@@ -27,19 +27,25 @@ namespace MiscObjects
 			unlockOnStart();
 		}
 
-		public override GameObject getGameObject()
+		protected override void initPrefabPool()
 		{
-			var prefab = CraftHelper.Utils.prefabCopy("Submarine/Build/submarine_locker_04");
-			var model = prefab.FindChild("submarine_locker_04");
+			addPrefabToPool("Submarine/Build/submarine_locker_04");
+			addPrefabToPool(TechType.SmallLocker, false);
+		}
 
-			var door = prefab.FindChild("submarine_locker_03_door_01");
+		protected override GameObject getGameObject(GameObject[] prefabs)
+		{
+			var prefab = prefabs[0];
+			var model = prefab.getChild("submarine_locker_04");
+
+			var door = prefab.getChild("submarine_locker_03_door_01");
 			door.setParent(model, false);
 			door.destroyComponentInChildren<BoxCollider>();
 
 			prefab.AddComponent<TechTag>(); // just in case
 			prefab.destroyComponent<Rigidbody>();
 
-			var constructable = CraftHelper.Utils.initConstructable(prefab, model);
+			var constructable = PrefabUtils.initConstructable(prefab, model);
 			constructable.allowedInBase = true;
 			constructable.allowedInSub = true;
 			constructable.allowedOnGround = true;
@@ -47,7 +53,8 @@ namespace MiscObjects
 			constructable.forceUpright = true;
 			constructable.placeDefaultDistance = 3f;
 
-			CraftHelper.Utils.addStorageToPrefab(prefab, 4, 8, L10n.str("ids_OpenLocker"), L10n.str("ids_LockerInv"));
+			Utils.addStorageToPrefab(prefab, prefabs[1]);
+			PrefabUtils.initStorage(prefab, 4, 8, L10n.str("ids_OpenLocker"), L10n.str("ids_LockerInv"));
 
 			return prefab;
 		}

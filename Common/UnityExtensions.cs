@@ -21,9 +21,6 @@ namespace Common
 		public static T ensureComponent<T>(this GameObject go) where T: Component => go.ensureComponent(typeof(T)) as T;
 		public static Component ensureComponent(this GameObject go, Type type) => go.GetComponent(type) ?? go.AddComponent(type);
 
-		[Obsolete]
-		public static void setParent(this GameObject go, GameObject parent, bool _) => go.setParent(parent);
-
 		public static void setParent(this GameObject go, GameObject parent, Vector3? position = null, Quaternion? rotation = null, Vector3? scale = null)
 		{
 			go.transform.SetParent(parent.transform, false);

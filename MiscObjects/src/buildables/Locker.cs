@@ -39,7 +39,7 @@ namespace MiscObjects
 			var model = prefab.getChild("submarine_locker_04");
 
 			var door = prefab.getChild("submarine_locker_03_door_01");
-			door.setParent(model, false);
+			door.setParent(model);
 			door.destroyComponentInChildren<BoxCollider>();
 
 			prefab.AddComponent<TechTag>(); // just in case

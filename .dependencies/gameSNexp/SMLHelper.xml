@@ -6326,7 +6326,7 @@
         <member name="P:SMLHelper.V2.Options.ModSliderOption.Step">
             <summary>
             The step value of the <see cref="T:SMLHelper.V2.Options.ModSliderOption"/>.
-            Defaults to 0.05f same as default code.
+            Defaults to 0f for compatibility with older mods.
             </summary>
         </member>
         <member name="P:SMLHelper.V2.Options.ModSliderOption.ValueFormat">

@@ -6,7 +6,7 @@ using Common.Crafting;
 
 namespace FloatingCargoCrate
 {
-	class FloatingCargoCrate: CraftableObject
+	class FloatingCargoCrate: PoolCraftableObject
 	{
 		public static new TechType TechType { get; private set; } = 0;
 
@@ -25,16 +25,18 @@ namespace FloatingCargoCrate
 			setTechTypeForUnlock(TechType.AirBladder);
 		}
 
-		public override GameObject getGameObject()
+		protected override void initPrefabPool()
 		{
-			var prefab = CraftHelper.Utils.prefabCopy("WorldEntities/tools/smallstorage");
+			addPrefabToPool(TechType.SmallStorage);
+			addPrefabToPool("WorldEntities/Doodads/Debris/Wrecks/Decoration/" + Main.config.crateModelName, false);
+		}
+
+		protected override GameObject getGameObject(GameObject[] prefabs)
+		{
+			var prefab = prefabs[0];
 			var model = prefab.getChild("3rd_person_model");
 
-			string crateModelName = "Starship_cargo" + ((Main.config.cargoModelType == 2)? "_02": "");
-			var prefabCargo = Resources.Load<GameObject>("WorldEntities/Doodads/Debris/Wrecks/Decoration/" + crateModelName);
-			var modelCargo = Object.Instantiate(prefabCargo.getChild(crateModelName));
-
-			modelCargo.transform.parent = model.transform;
+			var modelCargo = Object.Instantiate(prefabs[1].getChild(Main.config.crateModelName), model.transform);
 			modelCargo.transform.localScale *= 2.1f;
 
 			model.GetComponentInChildren<Animator>().enabled = false;
@@ -55,13 +57,8 @@ namespace FloatingCargoCrate
 			prefab.destroyComponentInChildren<SmallStorage>();
 
 
-			StorageContainer storageContainer = prefab.GetComponentInChildren<StorageContainer>();
+			var storageContainer = PrefabUtils.initStorage(prefab, Main.config.storageWidth, Main.config.storageHeight, L10n.str(L10n.ids_hoverText), L10n.str(L10n.ids_storageLabel));
 			storageContainer.modelSizeRadius *= 3f;
-			storageContainer.hoverText = L10n.str(L10n.ids_hoverText);
-			storageContainer.storageLabel = L10n.str(L10n.ids_storageLabel);
-			storageContainer.width  = Main.config.storageWidth;
-			storageContainer.height = Main.config.storageHeight;
-			storageContainer.preventDeconstructionIfNotEmpty = true;
 			storageContainer.enabled = false; // disable until fully constructed
 
 
@@ -83,7 +80,7 @@ namespace FloatingCargoCrate
 			prefab.GetComponent<SkyApplier>().renderers = new[] { model.GetComponentInChildren<Renderer>(), modelCargo.GetComponent<Renderer>() };
 
 
-			var constructable = CraftHelper.Utils.initConstructable(prefab, model);
+			var constructable = PrefabUtils.initConstructable(prefab, model);
 			constructable.allowedOutside = true;
 			constructable.forceUpright = true;
 

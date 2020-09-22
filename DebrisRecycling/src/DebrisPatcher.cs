@@ -13,7 +13,7 @@ namespace DebrisRecycling
 			if (Main.config.deconstructValidStaticObjects)
 				return true;
 
-			return gameObject.getComponentInHierarchy<Rigidbody>(true, false)?.isKinematic == false;
+			return gameObject.GetComponentInChildren<Rigidbody>()?.isKinematic == false;
 		}
 
 		public void OnConstructedChanged(bool constructed) => DebrisTracker.untrack(gameObject);
@@ -88,7 +88,7 @@ namespace DebrisRecycling
 			if (targetList == null)
 				return;
 
-			var prefabID = go.getComponentInHierarchy<PrefabIdentifier>(false);
+			var prefabID = go.GetComponentInParent<PrefabIdentifier>();
 
 			if (prefabID == null || isValidPrefab(prefabID.ClassId))
 				return;
@@ -118,19 +118,19 @@ namespace DebrisRecycling
 		static bool isValidForPatching(GameObject go)
 		{
 			// checking both DebrisDeconstructable and Constructable because we can delete Constructable later in special processing
-			if (!go || go.getComponentInHierarchy<DebrisDeconstructable>(false) || go.getComponentInHierarchy<Constructable>(false))
+			if (!go || go.GetComponentInParent<DebrisDeconstructable>() || go.GetComponentInParent<Constructable>())
 				return false;
 
 			if (Main.config.patchStaticObjects)
 				return true;
 
-			return go.getComponentInHierarchy<Rigidbody>(false)?.isKinematic == false; // and if object movable
+			return go.GetComponentInParent<Rigidbody>()?.isKinematic == false; // and if object movable
 		}
 
 
 		static void tryPatchObject(GameObject go)
 		{
-			var prefabID = go.getComponentInHierarchy<PrefabIdentifier>(false);
+			var prefabID = go.GetComponentInParent<PrefabIdentifier>();
 
 			if (prefabID && validPrefabs.TryGetValue(prefabID.ClassId, out int resourcesCount))
 			{

@@ -19,7 +19,7 @@ namespace FloatingCargoCrate
 			readonly Animator animator;
 			readonly Transform pillowTransform;
 
-			readonly int animHash = Animator.StringToHash("open/close.deploy");
+			static readonly int animHash = Animator.StringToHash("open/close.deploy");
 
 			public AnimFixer(GameObject model)
 			{
@@ -82,12 +82,6 @@ namespace FloatingCargoCrate
 
 		void Awake()
 		{
-			if (LargeWorldStreamer.main?.globalRoot == null) // that's probably prefab that loaded early
-			{
-				gameObject.SetActive(false);
-				return;
-			}
-
 			rigidbody = gameObject.GetComponent<Rigidbody>();
 			rigidbody.isKinematic = true; // switch physics off by default
 
@@ -108,8 +102,7 @@ namespace FloatingCargoCrate
 
 		void Update()
 		{
-			if (gameObject.transform.position.y > -4500) // if this is prefab in SMLHelper then do not change visibility
-				updateDistanceFromCam();
+			updateDistanceFromCam();
 
 			if (Main.config.experimentalFeaturesOn && !rigidbody.isKinematic && Time.time > timeNextPhysicsChange)
 			{

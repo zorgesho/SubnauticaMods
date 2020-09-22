@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+
+using UnityEngine;
 using SMLHelper.V2.Crafting;
 using SMLHelper.V2.Handlers;
 
@@ -19,7 +21,7 @@ namespace DebrisRecycling
 
 
 	[CraftHelper.PatchFirst]
-	class ScrapMetalSmall: CraftableObject
+	class ScrapMetalSmall: PoolCraftableObject
 	{
 		public static new TechType TechType { get; private set; } = 0;
 
@@ -31,21 +33,22 @@ namespace DebrisRecycling
 			useTextFrom(descriptionFrom: TechType.ScrapMetal);
 		}
 
-		public override GameObject getGameObject()
+		protected override void initPrefabPool()
 		{
-			GameObject prefab = CraftHelper.Utils.prefabCopy(TechType.Titanium);
+			addPrefabToPool(TechType.Titanium);
+			addPrefabToPool(TechType.ScrapMetal, false);
+		}
+
+		protected override GameObject getGameObject(GameObject[] prefabs)
+		{
+			var prefab = prefabs[0];
 
 			prefab.destroyComponent<ResourceTracker>();
+			prefab.destroyChild("model/Titanium_small");
 
 			int modelType = Random.value < 0.5f? 1: 2;
-
-			GameObject prefabMetal = CraftHelper.Utils.getPrefab(TechType.ScrapMetal);
-			GameObject modelMetal = Object.Instantiate(prefabMetal.getChild((modelType == 1? "Model/Metal_wreckage_03_11": "Model/Metal_wreckage_03_10")));
-
-			prefab.destroyChild("model/Titanium_small");
-			modelMetal.transform.parent = prefab.getChild("model").transform;
-			modelMetal.transform.localPosition = Vector3.zero;
-			modelMetal.transform.localEulerAngles = new Vector3(-90f, 0f, 0f);
+			var wreckage = prefabs[1].getChild(modelType == 1? "Model/Metal_wreckage_03_11": "Model/Metal_wreckage_03_10");
+			Object.Instantiate(wreckage, prefab.getChild("model").transform, Vector3.zero, Quaternion.Euler(-90f, 0f, 0f), true);
 
 			GameObject collision = prefab.getChild("collision");
 			collision.destroyComponent<SphereCollider>();
@@ -66,6 +69,8 @@ namespace DebrisRecycling
 		readonly TechType sourceTech;
 		readonly int sourceCount, resultCount;
 
+		static readonly bool bulkCrafting = Mod.isModEnabled("UITweaks") && !Main.config.craftConfig._noBulk;
+
 		public TitaniumFromScrap(TechType sourceTech, int sourceCount, int resultCount): base(nameof(TitaniumFromScrap) + resultCount)
 		{
 			this.sourceTech  = sourceTech;
@@ -73,7 +78,8 @@ namespace DebrisRecycling
 			this.resultCount = resultCount;
 		}
 
-		public override GameObject getGameObject() => CraftHelper.Utils.prefabCopy(TechType.Titanium);
+		public override GameObject getGameObject() => PrefabUtils.getPrefabCopy(TechType.Titanium);
+		public override IEnumerator getGameObjectAsync(IOut<GameObject> gameObject) => PrefabUtils.getPrefabCopyAsync(TechType.Titanium, gameObject);
 
 		protected override TechData getTechData()
 		{
@@ -85,17 +91,22 @@ namespace DebrisRecycling
 
 		public override void patch()
 		{
-			if (Main.config.craftConfig.dynamicTitaniumRecipe)
+			if (Main.config.craftConfig.dynamicTitaniumRecipe || (sourceCount > 1 && bulkCrafting))
 				return;
 
-			initNodes();
+			if (!bulkCrafting)
+				initNodes();
 
-			register($"Titanium (x{resultCount})", "", TechType.Titanium);
+			register("Titanium" + (bulkCrafting? "": $" (x{resultCount})"), "", TechType.Titanium);
 			useTextFrom(descriptionFrom: TechType.Titanium);
 
 			setCraftingTime(0.7f * resultCount);
-			addCraftingNodeTo(CraftTree.Type.Fabricator, "Resources/Titanium");
 			unlockOnStart();
+
+			if (bulkCrafting)
+				addCraftingNodeTo(CraftTree.Type.Fabricator, "Resources/BasicMaterials", TechType.Titanium);
+			else
+				addCraftingNodeTo(CraftTree.Type.Fabricator, "Resources/Titanium");
 		}
 
 		static bool nodesInited = false;
@@ -114,6 +125,4 @@ namespace DebrisRecycling
 	// for CraftHelper patchAll
 	class T1: TitaniumFromScrap  { public T1(): base(ScrapMetalSmall.TechType, 1, 1 * Main.config.craftConfig.titaniumPerSmallScrap) {} }
 	class T5: TitaniumFromScrap  { public T5(): base(ScrapMetalSmall.TechType, 5, 5 * Main.config.craftConfig.titaniumPerSmallScrap) {} }
-	//class T10: TitaniumFromScrap { public T10(): base(ScrapMetalSmall.TechType, 10, 10) {} }
-	//class T20: TitaniumFromScrap { public T20(): base(TechType.ScrapMetal, 5, 20) {} }
 }

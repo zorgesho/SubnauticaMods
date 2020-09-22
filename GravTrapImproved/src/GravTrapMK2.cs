@@ -5,7 +5,7 @@ using Common.Crafting;
 
 namespace GravTrapImproved
 {
-	class GravTrapMK2: CraftableObject
+	class GravTrapMK2: PoolCraftableObject
 	{
 		public class Tag: MonoBehaviour {} // just to distinguish between vanilla gravtrap and upgraded
 
@@ -19,12 +19,11 @@ namespace GravTrapImproved
 			new Ingredient(TechType.AdvancedWiringKit, 2)
 		)	{ craftAmount = 1 };
 
-		public override GameObject getGameObject()
+		protected override void initPrefabPool() => addPrefabToPool(TechType.Gravsphere);
+
+		protected override GameObject getGameObject(GameObject prefab)
 		{
-			var prefab = CraftHelper.Utils.prefabCopy(TechType.Gravsphere);
-
-			CraftHelper.Utils.initVFXFab(prefab, posOffset: new Vector3(0f, 0.2f, 0f), scaleFactor: 0.7f);
-
+			PrefabUtils.initVFXFab(prefab, posOffset: new Vector3(0f, 0.2f, 0f), scaleFactor: 0.7f);
 			prefab.AddComponent<Tag>();
 
 			return prefab;

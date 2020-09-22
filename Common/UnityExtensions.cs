@@ -21,9 +21,6 @@ namespace Common
 		public static T ensureComponent<T>(this GameObject go) where T: Component => go.ensureComponent(typeof(T)) as T;
 		public static Component ensureComponent(this GameObject go, Type type) => go.GetComponent(type) ?? go.AddComponent(type);
 
-		[Obsolete]
-		public static void setParent(this GameObject go, GameObject parent, bool _) => go.setParent(parent);
-
 		public static void setParent(this GameObject go, GameObject parent, Vector3? position = null, Quaternion? rotation = null, Vector3? scale = null)
 		{
 			go.transform.SetParent(parent.transform, false);
@@ -34,19 +31,6 @@ namespace Common
 		}
 
 		public static GameObject getChild(this GameObject go, string name) => go.transform.Find(name)?.gameObject;
-
-		public static T getComponentInHierarchy<T>(this GameObject go, bool checkChildren = true, bool checkParent = true) where T: Component
-		{
-			T cmp = go.GetComponent<T>();
-
-			if (checkChildren && !cmp)
-				cmp = go.GetComponentInChildren<T>();
-
-			if (checkParent && !cmp)
-				cmp = go.GetComponentInParent<T>();
-
-			return cmp;
-		}
 
 
 		static void _destroy(this Object obj, bool immediate)

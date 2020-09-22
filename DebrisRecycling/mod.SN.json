@@ -1,0 +1,14 @@
+{
+  "Id": "DebrisRecycling",
+  "DisplayName": "Debris Recycling",
+  "Author": "zorgesho",
+  "Version": "1.2.0",
+  "Dependencies": [ "SMLHelper" ],
+  "VersionDependencies": { "SMLHelper": "2.9.0" },
+  "Enable": true,
+  "Game": "Subnautica",
+  "AssemblyName": "DebrisRecycling.dll",
+  "EntryMethod": "DebrisRecycling.Main.patch",
+  "UpdateCheck": true,
+  "VersionURL": "https://raw.githubusercontent.com/zorgesho/SubnauticaMods/master/DebrisRecycling/mod.SN.json"
+}

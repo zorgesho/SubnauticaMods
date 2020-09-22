@@ -109,7 +109,7 @@
     <Compile Include="src\SonarModule.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="mod.json">
+    <None Include="mod.SN.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

@@ -1,11 +1,9 @@
-﻿using UnityEngine;
-using SMLHelper.V2.Crafting;
-
+﻿using SMLHelper.V2.Crafting;
 using Common.Crafting;
 
 namespace PrawnSuitJetUpgrade
 {
-	class PrawnThrustersOptimizer: CraftableObject
+	class PrawnThrustersOptimizer: PoolCraftableObject
 	{
 		public static new TechType TechType { get; private set; } = 0;
 
@@ -17,7 +15,7 @@ namespace PrawnSuitJetUpgrade
 			new Ingredient(TechType.Polyaniline, 1)
 		)	{ craftAmount = 1 };
 
-		public override GameObject getGameObject() => CraftHelper.Utils.prefabCopy(TechType.VehicleArmorPlating);
+		protected override void initPrefabPool() => addPrefabToPool(TechType.VehicleArmorPlating);
 
 		public override void patch()
 		{

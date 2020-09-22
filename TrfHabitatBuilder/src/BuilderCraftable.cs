@@ -7,20 +7,26 @@ using Common.Crafting;
 
 namespace TrfHabitatBuilder
 {
-	class TrfBuilder: CraftableObject
+	class TrfBuilder: PoolCraftableObject
 	{
 		public static new TechType TechType { get; private set; } = 0;
 
-		public override GameObject getGameObject()
+		protected override void initPrefabPool()
 		{
-			GameObject prefab = CraftHelper.Utils.prefabCopy(TechType.Terraformer);
+			addPrefabToPool(TechType.Terraformer);
+			addPrefabToPool(TechType.Builder, false);
+		}
+
+		protected override GameObject getGameObject(GameObject[] prefabs)
+		{
+			var prefab = prefabs[0];
 
 			Terraformer trfCmp = prefab.GetComponent<Terraformer>();
 			BuilderTool bldCmp = prefab.AddComponent<BuilderTool>();
 
 			bldCmp.copyFieldsFrom(trfCmp, "rightHandIKTarget", "leftHandIKTarget", "ikAimRightArm", "ikAimLeftArm", "mainCollider", "pickupable", "useLeftAimTargetOnPlayer", "drawSound");
 			bldCmp.buildSound = trfCmp.placeLoopSound;
-			bldCmp.completeSound = CraftHelper.Utils.getPrefab(TechType.Builder).GetComponent<BuilderTool>().completeSound;
+			bldCmp.completeSound = prefabs[1].GetComponent<BuilderTool>().completeSound;
 
 			Object.DestroyImmediate(trfCmp);
 
@@ -29,10 +35,7 @@ namespace TrfHabitatBuilder
 
 			prefab.AddComponent<TrfBuilderControl>();
 
-			CraftHelper.Utils.initVFXFab(prefab,
-				eulerOffset: new Vector3(-10f, 90f, 0f),
-				posOffset: new Vector3(-0.4f, 0.11f, 0f),
-				localMaxY: 0.24f);
+			PrefabUtils.initVFXFab(prefab, eulerOffset: new Vector3(-10f, 90f, 0f), posOffset: new Vector3(-0.4f, 0.11f, 0f), localMaxY: 0.24f);
 
 			return prefab;
 		}

@@ -32,19 +32,6 @@ namespace Common
 
 		public static GameObject getChild(this GameObject go, string name) => go.transform.Find(name)?.gameObject;
 
-		public static T getComponentInHierarchy<T>(this GameObject go, bool checkChildren = true, bool checkParent = true) where T: Component
-		{
-			T cmp = go.GetComponent<T>();
-
-			if (checkChildren && !cmp)
-				cmp = go.GetComponentInChildren<T>();
-
-			if (checkParent && !cmp)
-				cmp = go.GetComponentInParent<T>();
-
-			return cmp;
-		}
-
 
 		static void _destroy(this Object obj, bool immediate)
 		{

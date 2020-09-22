@@ -45,6 +45,8 @@ namespace DebrisRecycling
 
 			public readonly int titaniumPerBigScrap = 4;
 			public readonly int titaniumPerSmallScrap = 1;
+
+			public readonly bool _noBulk = false; // just in case UITweaks is installed, but bulk mode is disabled
 		}
 		public readonly CraftConfig craftConfig = new CraftConfig();
 

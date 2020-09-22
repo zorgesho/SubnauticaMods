@@ -69,6 +69,8 @@ namespace DebrisRecycling
 		readonly TechType sourceTech;
 		readonly int sourceCount, resultCount;
 
+		static readonly bool bulkCrafting = Mod.isModEnabled("UITweaks") && !Main.config.craftConfig._noBulk;
+
 		public TitaniumFromScrap(TechType sourceTech, int sourceCount, int resultCount): base(nameof(TitaniumFromScrap) + resultCount)
 		{
 			this.sourceTech  = sourceTech;
@@ -89,17 +91,22 @@ namespace DebrisRecycling
 
 		public override void patch()
 		{
-			if (Main.config.craftConfig.dynamicTitaniumRecipe)
+			if (Main.config.craftConfig.dynamicTitaniumRecipe || (sourceCount > 1 && bulkCrafting))
 				return;
 
-			initNodes();
+			if (!bulkCrafting)
+				initNodes();
 
-			register($"Titanium (x{resultCount})", "", TechType.Titanium);
+			register("Titanium" + (bulkCrafting? "": $" (x{resultCount})"), "", TechType.Titanium);
 			useTextFrom(descriptionFrom: TechType.Titanium);
 
 			setCraftingTime(0.7f * resultCount);
-			addCraftingNodeTo(CraftTree.Type.Fabricator, "Resources/Titanium");
 			unlockOnStart();
+
+			if (bulkCrafting)
+				addCraftingNodeTo(CraftTree.Type.Fabricator, "Resources/BasicMaterials", TechType.Titanium);
+			else
+				addCraftingNodeTo(CraftTree.Type.Fabricator, "Resources/Titanium");
 		}
 
 		static bool nodesInited = false;
@@ -118,6 +125,4 @@ namespace DebrisRecycling
 	// for CraftHelper patchAll
 	class T1: TitaniumFromScrap  { public T1(): base(ScrapMetalSmall.TechType, 1, 1 * Main.config.craftConfig.titaniumPerSmallScrap) {} }
 	class T5: TitaniumFromScrap  { public T5(): base(ScrapMetalSmall.TechType, 5, 5 * Main.config.craftConfig.titaniumPerSmallScrap) {} }
-	//class T10: TitaniumFromScrap { public T10(): base(ScrapMetalSmall.TechType, 10, 10) {} }
-	//class T20: TitaniumFromScrap { public T20(): base(TechType.ScrapMetal, 5, 20) {} }
 }

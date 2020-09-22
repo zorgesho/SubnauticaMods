@@ -1,0 +1,14 @@
+{
+  "Id": "PrawnSuitJetUpgrade",
+  "DisplayName": "Prawn Suit Jet Upgrade",
+  "Author": "zorgesho",
+  "Version": "1.1.0",
+  "Dependencies": [ "SMLHelper" ],
+  "VersionDependencies": { "SMLHelper": "2.9.0" },
+  "Enable": true,
+  "Game": "Subnautica",
+  "AssemblyName": "PrawnSuitJetUpgrade.dll",
+  "EntryMethod": "PrawnSuitJetUpgrade.Main.patch",
+  "UpdateCheck": true,
+  "VersionURL": "https://raw.githubusercontent.com/zorgesho/SubnauticaMods/master/PrawnSuitJetUpgrade/mod.SN.json"
+}

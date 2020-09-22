@@ -1,0 +1,14 @@
+{
+  "Id": "RemoteTorpedoDetonator",
+  "DisplayName": "Remote Torpedo Detonator",
+  "Author": "zorgesho",
+  "Version": "1.1.0",
+  "Dependencies": [ "SMLHelper" ],
+  "VersionDependencies": { "SMLHelper": "2.9.0" },
+  "Enable": true,
+  "Game": "Subnautica",
+  "AssemblyName": "RemoteTorpedoDetonator.dll",
+  "EntryMethod": "RemoteTorpedoDetonator.Main.patch",
+  "UpdateCheck": true,
+  "VersionURL": "https://raw.githubusercontent.com/zorgesho/SubnauticaMods/master/RemoteTorpedoDetonator/mod.SN.json"
+}

@@ -24,7 +24,7 @@ namespace RemoteTorpedoDetonator
 			Player.main.playerModeChanged.AddHandler(gameObject, new Event<Player.Mode>.HandleFunction(onPlayerModeChanged));
 		}
 
-		void OnDestroy() => Player.main.playerModeChanged.RemoveHandler(gameObject, onPlayerModeChanged);
+		void OnDestroy() => Player.main?.playerModeChanged.RemoveHandler(gameObject, onPlayerModeChanged);
 
 		public void checkEnabled() =>
 			enabled = vehicle && Player.main.getVehicle() == vehicle && vehicle.modules.GetCount(TorpedoDetonatorModule.TechType) > 0;

@@ -67,7 +67,7 @@ namespace GravTrapImproved
 				if (!__instance.player.IsFreeToInteract() || !AvatarInputHandler.main.IsEnabled())
 					return;
 
-				if (__instance.GetTool() is PlayerTool tool && tool.pickupable.GetTechType().isGravTrap())
+				if (__instance.GetTool() is PlayerTool tool && tool.pickupable?.GetTechType().isGravTrap() == true)
 					HandReticle.main.SetUseTextRaw(tool.GetCustomUseText(), GravTrapObjectsType.getFrom(tool.gameObject).techTypeListName);
 			}
 

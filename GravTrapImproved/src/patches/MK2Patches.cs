@@ -13,7 +13,7 @@ namespace GravTrapImproved
 	[PatchClass]
 	static class GravTrapMK2Patches
 	{
-		static bool prepare() => Main.config.mk2Enabled;
+		static bool prepare() => Main.config.mk2.enabled;
 
 		public static void updateRange(Gravsphere gravsphere)
 		{

@@ -1,0 +1,14 @@
+{
+  "Id": "TrfHabitatBuilder",
+  "DisplayName": "Habitat Builder",
+  "Author": "zorgesho",
+  "Version": "1.2.0",
+  "Dependencies": [ "SMLHelper" ],
+  "VersionDependencies": { "SMLHelper": "2.9.0" },
+  "Enable": true,
+  "Game": "Subnautica",
+  "AssemblyName": "TrfHabitatBuilder.dll",
+  "EntryMethod": "TrfHabitatBuilder.Main.patch",
+  "UpdateCheck": true,
+  "VersionURL": "https://raw.githubusercontent.com/zorgesho/SubnauticaMods/master/TrfHabitatBuilder/mod.SN.json"
+}

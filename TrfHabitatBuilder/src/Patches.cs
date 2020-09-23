@@ -57,6 +57,46 @@ namespace TrfHabitatBuilder
 		}
 	}
 
+	[OptionalPatch, PatchClass]
+	static class LockedTabsPatches
+	{
+		static bool prepare() => Main.config.limitBlueprints && Main.config.tabLockFix;
+
+		// locking tabs for hotkeys
+		[HarmonyPrefix, HarmonyPatch(typeof(uGUI_BuilderMenu), "SetCurrentTab")]
+		static bool uGUI_BuilderMenu_SetCurrentTab_Prefix(int index)
+		{
+			return !Main.config.lockedTabs.get(GameUtils.getHeldToolType()).Contains(index);
+		}
+
+		// locking tabs for gamepad
+		[HarmonyPrefix, HarmonyPatch(typeof(uGUI_BuilderMenu), "OnButtonDown")]
+		static bool uGUI_BuilderMenu_OnButtonDown_Prefix(uGUI_BuilderMenu __instance, GameInput.Button button)
+		{
+			int dir = button switch
+			{
+				GameInput.Button.UIPrevTab => -1,
+				GameInput.Button.UINextTab => +1,
+				_ => 0
+			};
+
+			if (dir == 0)
+				return true;
+
+			int nextTab = __instance.TabOpen;
+			var list = Main.config.lockedTabs.get(GameUtils.getHeldToolType());
+
+			do
+			{
+				nextTab = (__instance.TabCount + nextTab + dir) % __instance.TabCount;
+			}
+			while (list.Contains(nextTab));
+
+			__instance.SetCurrentTab(nextTab);
+			return false;
+		}
+	}
+
 	// patch for locking tabs in the builder menu based on helded builder
 	[OptionalPatch, HarmonyPatch(typeof(uGUI_BuilderMenu), "Show")]
 	static class uGUIBuilderMenu_Show_Patch
@@ -104,7 +144,6 @@ namespace TrfHabitatBuilder
 				uGUI_BuilderMenu.singleton.UpdateItems();
 		}
 	}
-
 
 	// patch for locking blueprints based on helded builder
 	[OptionalPatch, HarmonyPatch(typeof(uGUI_BuilderMenu), "UpdateItems")]

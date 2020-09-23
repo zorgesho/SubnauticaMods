@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
+using System.Collections.Generic;
+
 using Common.Configuration;
 
 namespace TrfHabitatBuilder
@@ -13,7 +15,9 @@ namespace TrfHabitatBuilder
 
 		[Field.BindConsole("trf_hb")]
 		[Field.Action(typeof(UpdateBuilderPanel))]
-		public readonly bool limitBlueprints = false;
+		public bool limitBlueprints = false;
+
+		public readonly bool tabLockFix = true;
 
 		public class LockedTabs
 		{
@@ -39,6 +43,14 @@ namespace TrfHabitatBuilder
 			public List<TechType> get(TechType builderType) => builderType == TechType.Builder? vanillaBuilder: trfBuilder;
 		}
 		public LockedBlueprints lockedBlueprints = new LockedBlueprints();
+
+		protected override void onLoad()
+		{
+			static bool _checkList(List<int> list) => Enumerable.Range(0, 5).Any(i => !list.Contains(i));
+
+			if (!_checkList(lockedTabs.trfBuilder) || !_checkList(lockedTabs.vanillaBuilder)) // just in case
+				limitBlueprints = false;
+		}
 
 #if DEBUG
 		[Field.BindConsole]

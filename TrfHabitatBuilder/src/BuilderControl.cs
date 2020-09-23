@@ -248,7 +248,7 @@ namespace TrfHabitatBuilder
 		public void updateBeams()
 		{
 			int animHash = animator.GetCurrentAnimatorStateInfo(0).fullPathHash;
-			animator.speed = AnimationHelper.getAnimSpeed(animHash);								$"anim: {animator.GetCurrentAnimatorClipInfo(0)[0].clip.name}\tspeed: {animator.speed}".onScreen("anim info");
+			animator.speed = AnimationHelper.getAnimSpeed(animHash);							$"anim: {animator.GetCurrentAnimatorClipInfo(0)[0].clip.name}\tspeed: {animator.speed}".onScreen("anim info").logDbg();
 
 			bool isConstructing = builderTool.constructable != null;
 			if (builderTool.isConstructing != isConstructing)

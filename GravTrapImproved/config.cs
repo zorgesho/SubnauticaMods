@@ -10,10 +10,21 @@ namespace GravTrapImproved
 		public readonly bool useWheelScroll = true;
 		public readonly bool useWheelClick = false;
 
-		public readonly bool mk2Enabled = true;
+#if DEBUG
+		[Field.BindConsole("gt_mk2")]
+#endif
+		public class MK2Props
+		{
+			public readonly bool enabled = true;
 
-		[Field.Range(0, 30)]
-		public readonly int mk2FragmentCountToUnlock = 4; // unlock with vanilla gravtrap if zero
+			public readonly float dmgMod = 0.5f;
+			public readonly float heatDmgMod = 0.2f;
+			public readonly float acidDmgMod = 0.5f;
+
+			[Field.Range(0, 30)]
+			public readonly int fragmentCountToUnlock = 4; // unlock with vanilla gravtrap if zero
+		}
+		public MK2Props mk2 = new MK2Props();
 
 #if !DEBUG
 		[Field.Range(12, 1000)]
@@ -44,7 +55,7 @@ namespace GravTrapImproved
 	class L10n: LanguageHelper
 	{
 		public const string ids_GravTrapMK2 = "Grav trap MK2";
-		public const string ids_GravTrapMK2Description = "More powerful model with increased range and ability to attract more objects simultaneously.";
+		public const string ids_GravTrapMK2Description = "More powerful and durable model with increased range and ability to attract more objects simultaneously.";
 		public const string ids_GravTrapMenu = "Grav Trap Upgrades";
 
 		public static readonly string ids_objectsType = "Objects type: ";

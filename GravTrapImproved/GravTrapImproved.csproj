@@ -121,7 +121,7 @@
     <Compile Include="src\patches\MiscPatches.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="mod.json">
+    <None Include="mod.SN.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

@@ -22,6 +22,11 @@ namespace MiscPatches
 			Inventory.main.container.ForEach(item => $"item: {item.item.GetTechName()}".onScreen().log());
 		}
 
+		public void showhead(bool val)
+		{
+			Player.main.SetHeadVisible(val);
+		}
+
 		public void print_mod_console_commands(string modID = "")
 		{
 			foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())

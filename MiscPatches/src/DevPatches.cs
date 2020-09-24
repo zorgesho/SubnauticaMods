@@ -57,8 +57,8 @@ namespace MiscPatches
 	}
 
 	// keep particles alive on pause
-	[HarmonyPatch(typeof(VFXController), "SpawnFX")]
-	static class VFXController_SpawnFX_Patch
+	[HarmonyPatch(typeof(VFXDestroyAfterSeconds), "OnEnable")]
+	static class VFXDestroyAfterSeconds_OnEnable_Patch
 	{
 		static bool Prepare() => Main.config.dbg.keepParticleSystemsAlive;
 
@@ -68,11 +68,7 @@ namespace MiscPatches
 				Object.FindObjectsOfType<VFXDestroyAfterSeconds>().forEach(vfx => vfx.lifeTime = 0f);
 		}
 
-		static void Postfix(VFXController __instance, int i)
-		{
-			if (__instance.emitters[i].instanceGO.GetComponent<VFXDestroyAfterSeconds>() is VFXDestroyAfterSeconds vfx)
-				vfx.lifeTime = float.PositiveInfinity;
-		}
+		static void Postfix(VFXDestroyAfterSeconds __instance) => __instance.lifeTime = float.PositiveInfinity;
 	}
 
 

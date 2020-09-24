@@ -72,8 +72,8 @@ namespace MiscPatches
 			[Field.Action(typeof(UpdateOptionalPatches))]
 			public readonly bool propulsionCannonIgnoreLimits = false;
 
-			[Field.Action(typeof(VFXController_SpawnFX_Patch.Purge))]
 			[Field.Action(typeof(UpdateOptionalPatches))]
+			[Field.Action(typeof(VFXDestroyAfterSeconds_OnEnable_Patch.Purge))]
 			public readonly bool keepParticleSystemsAlive = false;
 
 			[Options.Field("Scanner room cheat")]

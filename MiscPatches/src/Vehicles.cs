@@ -9,6 +9,7 @@ using UnityEngine.Events;
 
 using Common;
 using Common.Harmony;
+using Common.Reflection;
 
 namespace MiscPatches
 {
@@ -165,6 +166,123 @@ namespace MiscPatches
 		{
 			if (__instance.pilotId != null && UniqueIdentifier.TryGetIdentifier(__instance.pilotId, out UniqueIdentifier pilotID))
 				__instance.EnterVehicle(pilotID.GetComponent<Player>(), true, false);
+		}
+	}
+
+	// hiding torpedoes from the tubes when they depleted
+	// using torpedoes from lower storages (same torpedo type)
+	[OptionalPatch, PatchClass]
+	static class SeamothTorpedoesPatches
+	{
+		static bool prepare() => Main.config.gameplayPatches;
+
+		static readonly string[] torpedoModels =
+		{
+			"Submersible_seaMoth_torpedo_silo_L1_geo1/Submersible_seaMoth_torpedo_L2_geo",
+			"Submersible_seaMoth_torpedo_silo_R2_geo/Submersible_seaMoth_torpedo_R2_geo",
+			"Submersible_seaMoth_torpedo_silo_L1_geo/Submersible_seaMoth_torpedo_L1_geo",
+			"Submersible_seaMoth_torpedo_silo_R1_geo/Submersible_seaMoth_torpedo_R1_geo"
+		};
+
+		static void setTorpedoVisible(this SeaMoth seamoth, int slotID, bool visible) =>
+			seamoth.gameObject.getChild("Model/Submersible_SeaMoth_extras/Submersible_seaMoth_geo/" + torpedoModels[slotID]).SetActive(visible);
+
+		static int getSlotByTorpedoContainer(this SeaMoth seamoth, ItemsContainer container) =>
+			Enumerable.Range(0, 4).Where(slotID => seamoth.GetStorageInSlot(slotID, TechType.SeamothTorpedoModule) == container).DefaultIfEmpty(-1).First();
+
+		static void updateTorpedoesVisibility(this SeaMoth seamoth)
+		{
+			if (!seamoth)
+				return;
+
+			for (int i = 0; i < 4; i++)
+				if (seamoth.GetStorageInSlot(i, TechType.SeamothTorpedoModule) is ItemsContainer storage)
+					seamoth.setTorpedoVisible(i, storage._items.Count > 0);
+		}
+
+		static int storageSlotOffset = -1; // for SlotExtender mod
+
+		static ItemsContainer getStorageInSlot(this SeaMoth seamoth, int slotID)
+		{
+			if (storageSlotOffset == -1)
+				storageSlotOffset = Type.GetType("SlotExtender.Configuration.SEConfig, SlotExtender")?.field("STORAGE_SLOTS_OFFSET").GetValue(null).convert<int>() ?? 0;
+
+			var storage = seamoth.GetStorageInSlot(slotID, TechType.VehicleStorageModule);
+
+			if (storage == null && storageSlotOffset > 0)
+				storage = seamoth.GetStorageInSlot(slotID + storageSlotOffset, TechType.VehicleStorageModule);
+
+			return storage;
+		}
+
+		[HarmonyPostfix, HarmonyPatch(typeof(Vehicle), "TorpedoShot")]
+		static void Vehicle_TorpedoShot_Postfix(ItemsContainer container, TorpedoType torpedoType, bool __result)
+		{
+			if (!__result || !(container.tr.GetComponentInParent<SeaMoth>() is SeaMoth seamoth))
+				return;
+
+			int torpedoSlotID = seamoth.getSlotByTorpedoContainer(container);
+			Common.Debug.assert(torpedoSlotID != -1);
+
+			var storage = seamoth.getStorageInSlot((torpedoSlotID == 0 || torpedoSlotID == 2)? 0: 1); // using only lower storages
+			var itemList = storage?.GetItems(torpedoType.techType); // using same torpedo type
+
+			if (itemList?.Count > 0)
+			{
+				var item = itemList[0];
+				storage.RemoveItem(item.item);
+				container.AddItem(item.item);
+			}
+
+			seamoth.setTorpedoVisible(torpedoSlotID, container._items.Count > 0);
+		}
+
+		// patches for showing/hiding torpedoes during storage operations
+		static readonly EventWrapper onAddItem = typeof(ItemsContainer).evnt("onAddItem").wrap();
+		static readonly EventWrapper onRemoveItem = typeof(ItemsContainer).evnt("onRemoveItem").wrap();
+
+		static SeaMoth currentSeamoth;
+
+		static void handleStorageEvents(bool handle)
+		{
+			static void _updateStorage(InventoryItem _) => updateTorpedoesVisibility(currentSeamoth);
+
+			if (!currentSeamoth)
+				return;
+
+			for (int i = 0; i < 4; i++)
+			{
+				if (!(currentSeamoth.GetStorageInSlot(i, TechType.SeamothTorpedoModule) is ItemsContainer storage))
+					continue;
+
+				if (handle)
+				{
+					onAddItem.add<OnAddItem>(storage, _updateStorage);
+					onRemoveItem.add<OnRemoveItem>(storage, _updateStorage);
+				}
+				else
+				{
+					onAddItem.remove<OnAddItem>(storage, _updateStorage);
+					onRemoveItem.remove<OnRemoveItem>(storage, _updateStorage);
+				}
+			}
+		}
+
+		[HarmonyPostfix, HarmonyPatch(typeof(SeaMoth), "OpenTorpedoStorage")]
+		static void SeaMoth_OpenTorpedoStorage_Postfix(SeaMoth __instance)
+		{
+			currentSeamoth = __instance;
+			handleStorageEvents(true);
+		}
+
+		[HarmonyPostfix, HarmonyPatch(typeof(Inventory), "ClearUsedStorage")]
+		static void Inventory_ClearUsedStorage_Postfix()
+		{
+			if (!currentSeamoth)
+				return;
+
+			handleStorageEvents(false);
+			currentSeamoth = null;
 		}
 	}
 }

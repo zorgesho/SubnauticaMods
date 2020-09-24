@@ -1,0 +1,14 @@
+{
+  "Id": "WarningsDisabler",
+  "DisplayName": "Warnings Disabler",
+  "Author": "zorgesho",
+  "Version": "1.2.1",
+  "Dependencies": [ "SMLHelper" ],
+  "VersionDependencies": { "SMLHelper": "2.6.0" },
+  "Enable": true,
+  "Game": "Subnautica",
+  "AssemblyName": "WarningsDisabler.dll",
+  "EntryMethod": "WarningsDisabler.Main.patch",
+  "UpdateCheck": true,
+  "VersionURL": "https://raw.githubusercontent.com/zorgesho/SubnauticaMods/master/WarningsDisabler/mod.SN.json"
+}

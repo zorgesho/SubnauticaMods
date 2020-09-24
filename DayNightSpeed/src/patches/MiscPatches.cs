@@ -42,6 +42,16 @@ namespace DayNightSpeed
 		}
 	}
 
+	// fixing stillsuit water capture speed
+	[HarmonyPatch(typeof(Stillsuit), "UpdateEquipped")]
+	static class Stillsuit_UpdateEquipped_Patch
+	{
+		static CIEnumerable Transpiler(CIEnumerable cins) =>
+			cins.ciInsert(ci => ci.isLDC(100f),
+				_codeForCfgVar(nameof(ModConfig.dayNightSpeed)), OpCodes.Mul,
+				_codeForCfgVar(nameof(ModConfig.speedStillsuitWater)), OpCodes.Mul);
+	}
+
 	// fixing maproom scan times
 	[HarmonyPatch(typeof(MapRoomFunctionality), "GetScanInterval")]
 	static class MapRoomFunctionality_GetScanInterval_Patch

@@ -25,7 +25,7 @@ namespace DayNightSpeed
 
 	// modifying creature grow and breed time (breed time is half of grow time)
 	[OptionalPatch, PatchClass]
-	static class WaterParkCreaturePatches
+	static class WaterParkCreaturePatch
 	{
 		static bool prepare() => Main.config.useAuxSpeeds && Main.config.speedCreaturesGrow != 1.0f;
 
@@ -57,6 +57,33 @@ namespace DayNightSpeed
 			if (!__instance.initialized)
 				__instance.fruitSpawnInterval /= Main.config.speedPlantsGrow;
 		}
+	}
+
+	// modifying food decay time
+	[OptionalPatch, PatchClass]
+	static class FoodDecayPatch
+	{
+		static bool prepare() => Main.config.speedFoodDecay != 1.0f;
+
+		[HarmonyTranspiler]
+		[HarmonyPatch(typeof(Eatable), "GetFoodValue")]
+		[HarmonyPatch(typeof(Eatable), "GetWaterValue")]
+		static CIEnumerable Eatable_GetFoodWaterValue_Transpiler(CIEnumerable cins) =>
+			cins.ciInsert(ci => ci.isOp(OpCodes.Mul), _codeForCfgVar(nameof(ModConfig.speedFoodDecay)), OpCodes.Mul);
+	}
+
+	// modifying water/salt filtering time
+	[OptionalPatch, PatchClass]
+	static class FiltrationMachinePatch
+	{
+		static bool prepare() => Main.config.speedFiltrationMachine != 1.0f;
+
+		[HarmonyTranspiler]
+		[HarmonyPatch(typeof(FiltrationMachine), "OnHover")] // fix on hover info
+		[HarmonyPatch(typeof(FiltrationMachine), "TryFilterSalt")]
+		[HarmonyPatch(typeof(FiltrationMachine), "TryFilterWater")]
+		static CIEnumerable FiltrationMachine_Transpiler(CIEnumerable cins) =>
+			cins.ciInsert(ci => ci.isLDC(420f) || ci.isLDC(840f), +1, 0, _codeForCfgVar(nameof(ModConfig.speedFiltrationMachine)), OpCodes.Div);
 	}
 
 	// modifying medkit autocraft time

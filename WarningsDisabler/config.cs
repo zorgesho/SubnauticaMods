@@ -39,7 +39,7 @@ namespace WarningsDisabler
 			class L10n: LanguageHelper
 			{
 				public static readonly string ids_thisMessage  = "This message is {0}:";
-				public static readonly string ids_thisMessages = "This messages are {0}:";
+				public static readonly string ids_theseMessages = "These messages are {0}:";
 				public static readonly string ids_enabled  = "<color=#00ff00ff>enabled</color>";
 				public static readonly string ids_disabled = "<color=#ffff00ff>disabled</color>";
 			}
@@ -50,7 +50,7 @@ namespace WarningsDisabler
 				{
 					StringBuilder sb = new StringBuilder();
 
-					string title = L10n.str(msgList.messages.Count == 1? "ids_thisMessage": "ids_thisMessages");
+					string title = L10n.str(msgList.messages.Count == 1? "ids_thisMessage": "ids_theseMessages");
 					title = title.format(L10n.str(msgList.enabled? "ids_enabled": "ids_disabled"));
 
 					sb.AppendLine("<size=20><color=#ffffffff>" + title + "</color></size>");

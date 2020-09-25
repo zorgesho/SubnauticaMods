@@ -19,7 +19,7 @@ namespace HabitatPlatform
 
 			Transform foundation = __instance.SpawnPiece(Base.Piece.Foundation, cell);
 			foundation.tag = "MainPieceGeometry";
-			foundation.GetAllComponentsInChildren<MeshRenderer>()?.ForEach(mesh => mesh.enabled = false);
+			foundation.GetComponentsInChildren<MeshRenderer>()?.ForEach(mesh => mesh.enabled = false);
 
 			return false;
 		}

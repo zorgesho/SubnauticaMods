@@ -2,6 +2,7 @@
 
 using UnityEngine;
 using SMLHelper.V2.Crafting;
+using SMLHelper.V2.Handlers;
 
 using Common;
 using Common.Crafting;
@@ -15,7 +16,7 @@ namespace HabitatPlatform
 		public static new TechType TechType { get; private set; } = 0;
 
 		const float dx = 0.024f, dy = 0.030f;
-		public static readonly Vector3[] engineOffsets = new[]
+		public static readonly Vector3[] engineOffsets =
 		{
 			new Vector3( dx, -dy, 0f),
 			new Vector3( dx,  dy, 0f),
@@ -23,16 +24,26 @@ namespace HabitatPlatform
 			new Vector3(-dx, -dy, 0f)
 		};
 
-		protected override TechData getTechData() => new TechData(new Ingredient(TechType.Titanium, 1));
+		protected override TechData getTechData() => new TechData
+		(
+			new Ingredient(TechType.TitaniumIngot, 2),
+			new Ingredient(TechType.ComputerChip, 1),
+			new Ingredient(TechType.Lead, 4)
+		);
 
 		public override void patch()
 		{
-			TechType = register();
+			CraftTreeHandler.RemoveNode(CraftTree.Type.Constructor, "Rocket", "RocketBase");
+			CraftTreeHandler.RemoveNode(CraftTree.Type.Constructor, "Rocket");
+			CraftTreeHandler.AddTabNode(CraftTree.Type.Constructor, "Platforms", L10n.str(L10n.ids_platformsNode), SpriteManager.Get(TechType.RocketBase), "");
+			CraftTreeHandler.AddCraftingNode(CraftTree.Type.Constructor, TechType.RocketBase, "Platforms");
+
+			TechType = register(L10n.ids_HPName, L10n.ids_HPDesc);
 
 			addToGroup(TechGroup.Constructor, TechCategory.Constructor);
-			addCraftingNodeTo(CraftTree.Type.Constructor, "");
+			addCraftingNodeTo(CraftTree.Type.Constructor, "Platforms");
 
-			unlockOnStart();
+			setTechTypeForUnlock(TechType.RocketBase);
 		}
 
 		protected override void initPrefabPool() => addPrefabToPool(TechType.RocketBase);
@@ -65,13 +76,14 @@ namespace HabitatPlatform
 			prefab.destroyChildren("AudioHolder", "AtmosphereVolume", "EndSequence", "SkyBaseGlass", "SkyBaseInterior");
 
 			prefab.destroyComponent<Rocket>();
+			prefab.destroyComponent<GameInfoIcon>();
 			prefab.destroyComponent<PingInstance>();
 			prefab.destroyComponent<RocketPreflightCheckManager>();
 			prefab.destroyComponentInChildren<RocketConstructor>();
 
 			// changing lightmap for the bottom (because of moved engines)
 			Texture2D lightmap = AssetsHelper.loadTexture("platform_lightmap");
-			foreach (var rend in prefab.GetAllComponentsInChildren<Renderer>())
+			foreach (var rend in prefab.GetComponentsInChildren<Renderer>())
 				foreach (var m in rend.materials)
 					if (m.GetTexture("_Lightmap")?.name == "Rocketship_exterior_platform_lightmap")
 						m.SetTexture("_Lightmap", lightmap);

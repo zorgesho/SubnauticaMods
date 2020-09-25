@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 
 using UnityEngine;
+using UnityEngine.UI;
 
 using Common;
 using Common.Crafting;
@@ -151,16 +152,23 @@ namespace HabitatPlatform
 		{																										"PlatformInitializer: processing child objects".logDbg();
 			gameObject.getChild("Base/RocketConstructorPlatform").SetActive(true); // to enable colliders for terminal
 
-			// disabling terminal screen
+			// disabling building and customization screens
 			var guiScreen = gameObject.getChild("Base/BuildTerminal/GUIScreen").GetComponent<uGUI_RocketBuildScreen>();
 			guiScreen.buildScreen.SetActive(false);
 			guiScreen.customizeScreen.SetActive(false);
-			guiScreen.buildAnimationScreen.SetActive(false);
+
+			// adding temporary text to the terminal
+			guiScreen.buildAnimationScreen.SetActive(true);
+			guiScreen.buildAnimationScreen.GetComponentsInChildren<Image>().forEach(image => image.enabled = false);
+
+			var screen = guiScreen.buildAnimationScreen.GetComponent<uGUI_BuildBotScreen>();
+			screen.enabled = false;
+			screen.constructingText.text = L10n.str(L10n.ids_terminalText);
 
 			// ignoring plaform colliders for builder so they don't interfere with foundations
 			GameObject collisions = gameObject.getChild("Base/BaseCollisions");
-			for (int i = 0; i < collisions.transform.childCount; i++)
-				CollidersPatch.addIgnored(collisions.transform.GetChild(i).GetComponents<Collider>());
+			foreach (Transform child in collisions.transform)
+				CollidersPatch.addIgnored(child.GetComponents<Collider>());
 
 			// ignoring colliders for outer ladders
 			GameObject ladders = gameObject.getChild("Base/Triggers");

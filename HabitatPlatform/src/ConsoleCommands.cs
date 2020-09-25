@@ -13,16 +13,27 @@ namespace HabitatPlatform
 	{
 		GameObject _findPlatform() => UnityHelper.findNearestToCam<HabitatPlatform.Tag>()?.gameObject;
 
-		public void hbpl_platform_move(float dx, float dy)
+		public void hbpl_move(float dx, float dy)
 		{
 			if (_findPlatform() is GameObject platform)
 				platform.transform.position += Main.config.stepMove * (dx * platform.transform.right - dy * platform.transform.forward);
 		}
 
-		public void hbpl_platform_rotate(float angle)
+		public void hbpl_rotate(float angle)
 		{
 			if (_findPlatform() is GameObject platform)
 				platform.transform.rotation *= Quaternion.AngleAxis(Main.config.stepRotate * angle, Vector3.up);
+		}
+
+		public void hbpl_warp(float? x, float? y)
+		{
+			const float distance = 50f;
+
+			if (_findPlatform() is GameObject platform)
+			{
+				Vector3 pos = MainCamera.camera.transform.position + distance * MainCamera.camera.transform.forward;
+				platform.transform.position = new Vector3(x ?? pos.x, platform.transform.position.y, y ?? pos.z);
+			}
 		}
 
 		#region debug console commands

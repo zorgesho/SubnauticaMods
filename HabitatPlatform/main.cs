@@ -12,6 +12,7 @@ namespace HabitatPlatform
 		{
 			HarmonyHelper.patchAll(true);
 			CraftHelper.patchAll();
+			LanguageHelper.init();
 
 			PersistentConsoleCommands.register<ConsoleCommands>();
 		}

@@ -18,7 +18,7 @@ namespace HabitatPlatform
 			if (!Main.config.chargeCameras)
 				return;
 
-			register("Charge camera drone", "Charge and repair camera drone.", TechType.MapRoomCamera);
+			register(L10n.ids_ChargeCamera, L10n.ids_ChargeCameraDesc, TechType.MapRoomCamera);
 
 			addCraftingNodeTo(CraftTree.Type.MapRoom, "", TechType.MapRoomCamera);
 			setTechTypeForUnlock(TechType.MapRoomCamera);

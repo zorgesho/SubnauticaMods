@@ -1,0 +1,14 @@
+{
+  "Id": "HabitatPlatform",
+  "DisplayName": "Habitat Platform",
+  "Author": "zorgesho",
+  "Version": "1.0.0",
+  "Dependencies": [ "SMLHelper" ],
+  "VersionDependencies": { "SMLHelper": "2.9.0" },
+  "Enable": true,
+  "Game": "Subnautica",
+  "AssemblyName": "HabitatPlatform.dll",
+  "EntryMethod": "HabitatPlatform.Main.patch",
+  "UpdateCheck": true,
+  "VersionURL": "https://raw.githubusercontent.com/zorgesho/SubnauticaMods/master/HabitatPlatform/mod.SN.json"
+}

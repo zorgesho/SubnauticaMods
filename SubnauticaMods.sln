@@ -53,6 +53,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteTorpedoDetonator", "R
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DebrisRecycling", "DebrisRecycling\DebrisRecycling.csproj", "{B574E84F-E5BF-4E99-ABAC-3698B6643E5A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HabitatPlatform", "HabitatPlatform\HabitatPlatform.csproj", "{C504563A-B554-4A91-AE30-14CFCD626007}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "misc", "misc", "{7B8B7765-2191-43CD-ABE0-89BBEF79CFC2}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
@@ -122,6 +124,10 @@ Global
 		Common\Common.Config\Common.Config.projitems*{c049d169-7634-404a-9121-0436a68fa319}*SharedItemsImports = 4
 		Common\Common.GameSerialization\Common.GameSerialization.projitems*{c049d169-7634-404a-9121-0436a68fa319}*SharedItemsImports = 4
 		Common\Common.projitems*{c049d169-7634-404a-9121-0436a68fa319}*SharedItemsImports = 4
+		Common\Common.AssetsHelper\Common.AssetsHelper.projitems*{c504563a-b554-4a91-ae30-14cfcd626007}*SharedItemsImports = 4
+		Common\Common.Config\Common.Config.projitems*{c504563a-b554-4a91-ae30-14cfcd626007}*SharedItemsImports = 4
+		Common\Common.CraftHelper\Common.CraftHelper.projitems*{c504563a-b554-4a91-ae30-14cfcd626007}*SharedItemsImports = 4
+		Common\Common.projitems*{c504563a-b554-4a91-ae30-14cfcd626007}*SharedItemsImports = 4
 		Common\Common.Config.Options\Common.Config.Options.projitems*{cb025d20-0b16-4e80-95e6-3c3fc77935fb}*SharedItemsImports = 4
 		Common\Common.Config\Common.Config.projitems*{cb025d20-0b16-4e80-95e6-3c3fc77935fb}*SharedItemsImports = 4
 		Common\Common.projitems*{cb025d20-0b16-4e80-95e6-3c3fc77935fb}*SharedItemsImports = 4
@@ -294,6 +300,16 @@ Global
 		{B574E84F-E5BF-4E99-ABAC-3698B6643E5A}.SNexp.dev|Any CPU.Build.0 = SNexp.dev|Any CPU
 		{B574E84F-E5BF-4E99-ABAC-3698B6643E5A}.SNexp.testbuild|Any CPU.ActiveCfg = SNexp.testbuild|Any CPU
 		{B574E84F-E5BF-4E99-ABAC-3698B6643E5A}.SNexp.testbuild|Any CPU.Build.0 = SNexp.testbuild|Any CPU
+		{C504563A-B554-4A91-AE30-14CFCD626007}.SN.dev|Any CPU.ActiveCfg = SN.dev|Any CPU
+		{C504563A-B554-4A91-AE30-14CFCD626007}.SN.dev|Any CPU.Build.0 = SN.dev|Any CPU
+		{C504563A-B554-4A91-AE30-14CFCD626007}.SN.publish|Any CPU.ActiveCfg = SN.publish|Any CPU
+		{C504563A-B554-4A91-AE30-14CFCD626007}.SN.publish|Any CPU.Build.0 = SN.publish|Any CPU
+		{C504563A-B554-4A91-AE30-14CFCD626007}.SN.testbuild|Any CPU.ActiveCfg = SN.testbuild|Any CPU
+		{C504563A-B554-4A91-AE30-14CFCD626007}.SN.testbuild|Any CPU.Build.0 = SN.testbuild|Any CPU
+		{C504563A-B554-4A91-AE30-14CFCD626007}.SNexp.dev|Any CPU.ActiveCfg = SNexp.dev|Any CPU
+		{C504563A-B554-4A91-AE30-14CFCD626007}.SNexp.dev|Any CPU.Build.0 = SNexp.dev|Any CPU
+		{C504563A-B554-4A91-AE30-14CFCD626007}.SNexp.testbuild|Any CPU.ActiveCfg = SNexp.testbuild|Any CPU
+		{C504563A-B554-4A91-AE30-14CFCD626007}.SNexp.testbuild|Any CPU.Build.0 = SNexp.testbuild|Any CPU
 		{C049D169-7634-404A-9121-0436A68FA319}.SN.dev|Any CPU.ActiveCfg = SN.dev|Any CPU
 		{C049D169-7634-404A-9121-0436A68FA319}.SN.dev|Any CPU.Build.0 = SN.dev|Any CPU
 		{C049D169-7634-404A-9121-0436A68FA319}.SN.publish|Any CPU.ActiveCfg = SN.publish|Any CPU
@@ -332,6 +348,7 @@ Global
 		{BFB9336C-F678-4AF1-8B10-0BDDCD3AEAC8} = {ED942635-A471-4B33-8140-3F453A4A0869}
 		{1C1E62E2-282E-48EE-BF91-54A1E0180B96} = {C49BC122-0A68-48A8-8EA3-737FB7553D8B}
 		{B574E84F-E5BF-4E99-ABAC-3698B6643E5A} = {C49BC122-0A68-48A8-8EA3-737FB7553D8B}
+		{C504563A-B554-4A91-AE30-14CFCD626007} = {C49BC122-0A68-48A8-8EA3-737FB7553D8B}
 		{C049D169-7634-404A-9121-0436A68FA319} = {C49BC122-0A68-48A8-8EA3-737FB7553D8B}
 		{ED942635-A471-4B33-8140-3F453A4A0869} = {C49BC122-0A68-48A8-8EA3-737FB7553D8B}
 	EndGlobalSection

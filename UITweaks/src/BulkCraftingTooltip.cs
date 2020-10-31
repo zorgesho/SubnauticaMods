@@ -260,39 +260,12 @@ namespace UITweaks
 			static bool _isAmountChanged(TechType techType) =>
 				techType == currentTechType && currentCraftAmount > 1;
 
-			[OptionalPatch, PatchClass]
-			static class CraftDurationPatches
+			[HarmonyPriority(Priority.HigherThanNormal)] // just in case
+			[HarmonyPrefix, HarmonyHelper.Patch(typeof(Crafter), "Craft")]
+			static void craftFixDuration(TechType techType, ref float duration)
 			{
-				static bool prepare() => CrafterPatches.prepare() && Main.config.bulkCrafting.changeCraftDuration;
-
-				static void fixCraftDuration(TechType techType, ref float duration)
-				{
-					if (_isAmountChanged(techType))
-						duration *= currentCraftAmount;
-				}
-
-				[HarmonyPriority(Priority.HigherThanNormal)] // just in case
-				[HarmonyPrefix, HarmonyHelper.Patch(typeof(Crafter), "Craft")]
-				static void fixCraftDuration_Vanilla(TechType techType, ref float duration) => fixCraftDuration(techType, ref duration);
-
-				// compatibility patches for EasyCraft mod for fixing craft duration
-				[HarmonyHelper.Patch(HarmonyHelper.PatchOptions.CanBeAbsent)]
-				[HarmonyPrefix, HarmonyHelper.Patch("EasyCraft.GhostCrafter_Craft_Patch, EasyCraft", "Prefix")]
-				static void fixCraftDuration_EasyCraft(TechType techType, ref float duration) => fixCraftDuration(techType, ref duration);
-
-				// EasyCraft clamps duration to 20 sec, we set it to 5 min
-				[HarmonyHelper.Patch(HarmonyHelper.PatchOptions.CanBeAbsent)]
-				[HarmonyTranspiler, HarmonyHelper.Patch("EasyCraft.Main, EasyCraft", "GhostCraft")]
-				static CIEnumerable extendDurationClamp(CIEnumerable cins)
-				{
-					var list = cins.ToList();
-					int i = list.ciFindIndexForLast(ci => ci.isLDC(20f));
-
-					if (i != -1)
-						list[i].operand = 300f;
-
-					return cins;
-				}
+				if (Main.config.bulkCrafting.changeCraftDuration && _isAmountChanged(techType))
+					duration *= currentCraftAmount;
 			}
 
 			[HarmonyPrefix, HarmonyPatch(typeof(CrafterLogic), "Craft")]

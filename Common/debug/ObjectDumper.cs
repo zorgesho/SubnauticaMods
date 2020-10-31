@@ -70,6 +70,12 @@ namespace Common
 				static void _sort<T>(List<T> list) where T: MemberInfo => list.Sort((m1, m2) => m1.Name.CompareTo(m2.Name));
 				static string _formatValue(object value) => value?.ToString().Replace('\r', ' ').Replace('\n', ' ').Replace('\t', ' ').Trim() ?? "";
 
+				if (cmp == null) // it happens sometimes for some reason
+				{
+					output.AppendLine($"{indent}component: NULL");
+					return;
+				}
+
 				Type cmpType = cmp.GetType();
 				output.AppendLine($"{indent}component: {cmpType}");
 

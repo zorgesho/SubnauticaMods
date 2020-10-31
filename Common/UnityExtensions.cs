@@ -78,6 +78,10 @@ namespace Common
 	{
 		public static Vector2 setX(this Vector2 vec, float val) { vec.x = val; return vec; }
 		public static Vector2 setY(this Vector2 vec, float val) { vec.y = val; return vec; }
+
+		public static Vector3 setX(this Vector3 vec, float val) { vec.x = val; return vec; }
+		public static Vector3 setY(this Vector3 vec, float val) { vec.y = val; return vec; }
+		public static Vector3 setZ(this Vector3 vec, float val) { vec.z = val; return vec; }
 	}
 
 

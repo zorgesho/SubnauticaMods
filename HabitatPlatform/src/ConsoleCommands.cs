@@ -11,6 +11,8 @@ namespace HabitatPlatform
 {
 	class ConsoleCommands: PersistentConsoleCommands
 	{
+		const float defPosY = -0.0465f;
+
 		GameObject _findPlatform() => UnityHelper.findNearestToCam<HabitatPlatform.Tag>()?.gameObject;
 
 		public void hbpl_move(float dx, float dy)
@@ -23,6 +25,15 @@ namespace HabitatPlatform
 		{
 			if (_findPlatform() is GameObject platform)
 				platform.transform.rotation *= Quaternion.AngleAxis(Main.config.stepRotate * angle, Vector3.up);
+		}
+
+		public void hbpl_reset_angles()
+		{
+			if (_findPlatform() is GameObject platform)
+			{
+				platform.transform.rotation = Quaternion.identity;
+				platform.transform.position = platform.transform.position.setY(defPosY);
+			}
 		}
 
 		public void hbpl_warp(float? x, float? y)
@@ -126,6 +137,12 @@ namespace HabitatPlatform
 				baseGo.transform.localPosition += new Vector3(dx, dy, dz) * Main.config.stepMove;
 				_printVec(baseGo.transform.localPosition, "foundation pos");
 			}
+		}
+
+		public void hbpl_printpos()
+		{
+			if (_findPlatform() is GameObject platform)
+				_printVec(platform.transform.position, "platform pos");
 		}
 
 		public void hbpl_toggle_foundations()

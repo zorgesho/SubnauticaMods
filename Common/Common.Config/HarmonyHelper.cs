@@ -94,9 +94,9 @@ namespace Common.Harmony
 			yield return new CodeInstruction(LdcOpCode.get<T>(), val);
 			yield return new CodeInstruction(OpCodes.Br_S, lb2);
 
-			yield return new CodeInstruction(OpCodes.Call, mainConfig) { labels = new List<Label>{lb1} };
+			yield return new CodeInstruction(OpCodes.Call, mainConfig) { labels = { lb1 } };
 			yield return cfgVarCI;
-			yield return new CodeInstruction(OpCodes.Nop) { labels = new List<Label>{lb2} };
+			yield return new CodeInstruction(OpCodes.Nop) { labels = { lb2 } };
 		}
 	}
 }

@@ -63,7 +63,7 @@ namespace Common.Configuration
 				Formatting = Formatting.Indented,
 				ContractResolver = new ConfigContractResolver(),
 				ObjectCreationHandling = ObjectCreationHandling.Replace,
-				Converters = new List<JsonConverter> { new StringEnumConverter(), new JsonConverters.KeyWithModifier() }
+				Converters = { new StringEnumConverter(), new JsonConverters.KeyWithModifier() }
 			};
 
 			if (configType.getAttr<SerializerSettingsAttribute>() is SerializerSettingsAttribute settingsAttr)

@@ -149,8 +149,10 @@ namespace Common.Harmony
 					if (targetMethod == null)
 						return null;
 
-					bool patchOnce = patchAttr.options.HasFlag(PatchOptions.PatchOnce);
-					return patchOnce && isPatchedBy(targetMethod, method, true)? null: new[] { targetMethod };
+					if (patchAttr.options.HasFlag(PatchOptions.PatchOnce) && isPatchedBy(targetMethod, method, true))
+						return null;
+
+					return new[] { targetMethod };
 				}
 
 				return null;

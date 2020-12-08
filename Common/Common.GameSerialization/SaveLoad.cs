@@ -58,7 +58,8 @@ namespace Common.GameSerialization
 
 		public static bool load<T>(string id, out T saveData)
 		{
-			return !(saveData = load<T>(id)).Equals(default);
+			saveData = load<T>(id);
+			return !saveData.Equals(default);
 		}
 
 		static string getPath(string id) => Path.Combine(Paths.savesPath, id + ".json");

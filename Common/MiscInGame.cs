@@ -4,6 +4,12 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
+#if GAME_SN
+	using Sprite = Atlas.Sprite;
+#elif GAME_BZ
+	using Sprite = UnityEngine.Sprite;
+#endif
+
 namespace Common
 {
 	static partial class StringExtensions
@@ -48,7 +54,7 @@ namespace Common
 
 	static partial class SpriteHelper // extended in other Common projects
 	{
-		public static Atlas.Sprite getSprite(object spriteID)
+		public static Sprite getSprite(object spriteID)
 		{
 			$"TechSpriteHelper.getSprite({spriteID.GetType()}) is not implemented!".logError();
 			return SpriteManager.defaultSprite;

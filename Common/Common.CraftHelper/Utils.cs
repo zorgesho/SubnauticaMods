@@ -27,9 +27,9 @@ namespace Common.Crafting
 		#region sync 'getPrefab' methods
 		public static GameObject getPrefab(TechType techType)
 		{																												$"PrefabUtils: getPrefab(TechType.{techType})".logDbg();
-#if BRANCH_STABLE
+#if GAME_SN && BRANCH_STABLE
 			return CraftData.GetPrefabForTechType(techType);
-#elif BRANCH_EXP
+#else
 			Debug.assert(false, "Not implemented!");
 			return null;
 #endif
@@ -37,9 +37,9 @@ namespace Common.Crafting
 
 		public static GameObject getPrefab(string filename)
 		{																												$"PrefabUtils: getPrefab(\"{filename}\")".logDbg();
-#if BRANCH_STABLE
+#if GAME_SN && BRANCH_STABLE
 			return Resources.Load<GameObject>(filename);
-#elif BRANCH_EXP
+#else
 			Debug.assert(false, "Not implemented!");
 			return null;
 #endif

@@ -8,6 +8,14 @@ using SMLHelper.V2.Assets;
 using SMLHelper.V2.Crafting;
 using SMLHelper.V2.Handlers;
 
+#if GAME_SN
+	using Sprite = Atlas.Sprite;
+	using RecipeData = SMLHelper.V2.Crafting.TechData;
+#elif GAME_BZ
+	using Sprite = UnityEngine.Sprite;
+	using RecipeData = SMLHelper.V2.Crafting.RecipeData;
+#endif
+
 namespace Common.Crafting
 {
 	using Reflection;
@@ -24,7 +32,7 @@ namespace Common.Crafting
 		public virtual GameObject getGameObject() => null;
 		public virtual IEnumerator getGameObjectAsync(IOut<GameObject> result) => null;
 
-		protected abstract TechData getTechData();
+		protected abstract RecipeData getTechData();
 
 		public sealed override GameObject GetGameObject()
 		{
@@ -41,8 +49,8 @@ namespace Common.Crafting
 		{
 			PrefabHandler.RegisterPrefab(this);
 
-			if (getTechData() is TechData techData)
-				CraftDataHandler.SetTechData(TechType, techData);
+			if (getTechData() is RecipeData recipeData)
+				CraftDataHandler.SetTechData(TechType, recipeData);
 		}
 
 		protected void useExactPrefab()
@@ -58,7 +66,7 @@ namespace Common.Crafting
 			registerPrefabAndTechData();
 		}
 
-		protected TechType register() =>  // just for convenience during development
+		protected TechType register() => // just for convenience during development
 			register(ClassID, ClassID);
 
 		protected TechType register(string name, string description) => // using external sprite
@@ -67,7 +75,7 @@ namespace Common.Crafting
 		protected TechType register(string name, string description, TechType spriteTechType) => // using sprite for another techtype
 			register(name, description, SpriteHelper.getSprite(spriteTechType));
 
-		protected TechType register(string name, string description, Atlas.Sprite sprite)
+		protected TechType register(string name, string description, Sprite sprite)
 		{
 			TechType = TechTypeHandler.AddTechType(ClassID, name, description, sprite, false);
 

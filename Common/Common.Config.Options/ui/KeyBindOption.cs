@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if GAME_SN
+using System;
 
 using UnityEngine;
 using UnityEngine.Events;
@@ -120,3 +121,4 @@ namespace Common.Configuration
  		}
 	}
 }
+#endif // GAME_SN

@@ -14,6 +14,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)CraftNodesCustomOrder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PrefabDatabasePatcher.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SpriteHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TechInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UnlockTechHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utils.cs" />
   </ItemGroup>

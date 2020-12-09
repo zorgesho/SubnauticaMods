@@ -30,7 +30,6 @@ namespace Common.Crafting
 #if GAME_SN && BRANCH_STABLE
 			return CraftData.GetPrefabForTechType(techType);
 #else
-			Debug.assert(false, "Not implemented!");
 			return null;
 #endif
 		}
@@ -40,7 +39,6 @@ namespace Common.Crafting
 #if GAME_SN && BRANCH_STABLE
 			return Resources.Load<GameObject>(filename);
 #else
-			Debug.assert(false, "Not implemented!");
 			return null;
 #endif
 		}

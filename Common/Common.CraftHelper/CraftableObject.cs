@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -10,10 +11,10 @@ using SMLHelper.V2.Handlers;
 
 #if GAME_SN
 	using Sprite = Atlas.Sprite;
-	using RecipeData = SMLHelper.V2.Crafting.TechData;
+	using _TechInfo = SMLHelper.V2.Crafting.TechData;
 #elif GAME_BZ
 	using Sprite = UnityEngine.Sprite;
-	using RecipeData = SMLHelper.V2.Crafting.RecipeData;
+	using _TechInfo = SMLHelper.V2.Crafting.RecipeData;
 #endif
 
 namespace Common.Crafting
@@ -32,7 +33,10 @@ namespace Common.Crafting
 		public virtual GameObject getGameObject() => null;
 		public virtual IEnumerator getGameObjectAsync(IOut<GameObject> result) => null;
 
-		protected abstract RecipeData getTechData();
+		[Obsolete("Use getTechInfo() instead")]
+		protected virtual _TechInfo getTechData() => getTechInfo();
+
+		protected virtual TechInfo getTechInfo() => null; // TODO: make abstract after removing getTechData, remove using _TechInfo
 
 		public sealed override GameObject GetGameObject()
 		{
@@ -45,12 +49,12 @@ namespace Common.Crafting
 			return isUsingExactPrefab? null: getGameObjectAsync(result);
 		}
 
-		void registerPrefabAndTechData()
+		void registerPrefabAndTechInfo()
 		{
 			PrefabHandler.RegisterPrefab(this);
 
-			if (getTechData() is RecipeData recipeData)
-				CraftDataHandler.SetTechData(TechType, recipeData);
+			if (getTechInfo() is TechInfo techInfo)
+				CraftDataHandler.SetTechData(TechType, techInfo);
 		}
 
 		protected void useExactPrefab()
@@ -63,7 +67,7 @@ namespace Common.Crafting
 		protected void register(TechType techType) // for already existing techtypes
 		{
 			TechType = techType;
-			registerPrefabAndTechData();
+			registerPrefabAndTechInfo();
 		}
 
 		protected TechType register() => // just for convenience during development
@@ -79,7 +83,7 @@ namespace Common.Crafting
 		{
 			TechType = TechTypeHandler.AddTechType(ClassID, name, description, sprite, false);
 
-			registerPrefabAndTechData();
+			registerPrefabAndTechInfo();
 
 			return TechType;
 		}

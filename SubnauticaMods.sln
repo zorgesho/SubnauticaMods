@@ -202,9 +202,12 @@ Global
 		SNexp.testbuild|Any CPU = SNexp.testbuild|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{93C2CDD8-5D48-451F-A5C1-35A0B48DDBE6}.BZ.dev|Any CPU.ActiveCfg = SN.dev|Any CPU
-		{93C2CDD8-5D48-451F-A5C1-35A0B48DDBE6}.BZ.publish|Any CPU.ActiveCfg = SN.publish|Any CPU
-		{93C2CDD8-5D48-451F-A5C1-35A0B48DDBE6}.BZ.testbuild|Any CPU.ActiveCfg = SN.testbuild|Any CPU
+		{93C2CDD8-5D48-451F-A5C1-35A0B48DDBE6}.BZ.dev|Any CPU.ActiveCfg = BZ.dev|Any CPU
+		{93C2CDD8-5D48-451F-A5C1-35A0B48DDBE6}.BZ.dev|Any CPU.Build.0 = BZ.dev|Any CPU
+		{93C2CDD8-5D48-451F-A5C1-35A0B48DDBE6}.BZ.publish|Any CPU.ActiveCfg = BZ.publish|Any CPU
+		{93C2CDD8-5D48-451F-A5C1-35A0B48DDBE6}.BZ.publish|Any CPU.Build.0 = BZ.publish|Any CPU
+		{93C2CDD8-5D48-451F-A5C1-35A0B48DDBE6}.BZ.testbuild|Any CPU.ActiveCfg = BZ.testbuild|Any CPU
+		{93C2CDD8-5D48-451F-A5C1-35A0B48DDBE6}.BZ.testbuild|Any CPU.Build.0 = BZ.testbuild|Any CPU
 		{93C2CDD8-5D48-451F-A5C1-35A0B48DDBE6}.BZexp.dev|Any CPU.ActiveCfg = SNexp.dev|Any CPU
 		{93C2CDD8-5D48-451F-A5C1-35A0B48DDBE6}.BZexp.testbuild|Any CPU.ActiveCfg = SNexp.testbuild|Any CPU
 		{93C2CDD8-5D48-451F-A5C1-35A0B48DDBE6}.SN.dev|Any CPU.ActiveCfg = SN.dev|Any CPU

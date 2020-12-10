@@ -34,6 +34,7 @@ namespace ConsoleImproved
 		[Field.Range(min: 0)]
 		public readonly int maxListSize = 0; // 0 for max available
 
+#if GAME_SN
 		[Field.Action(typeof(ErrorMessageSettings.RefreshSettings))]
 		[Options.Hideable(typeof(Hider), "msgs")]
 		public class MessagesSettings
@@ -147,5 +148,6 @@ namespace ConsoleImproved
 			public float timeInvisible = 0.1f;
 		}
 		public MessagesSettings msgsSettings = new MessagesSettings();
+#endif // GAME_SN
 	}
 }

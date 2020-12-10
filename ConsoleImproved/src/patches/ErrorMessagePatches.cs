@@ -7,12 +7,14 @@ using Harmony;
 using UnityEngine;
 using UnityEngine.UI;
 
+using Common;
 using Common.Harmony;
 using Common.Reflection;
 using Common.Configuration;
 
 namespace ConsoleImproved
 {
+#if GAME_SN
 	[HarmonyPatch(typeof(ErrorMessage), "Awake")]
 	static class ErrorMessageSettings
 	{
@@ -109,6 +111,7 @@ namespace ConsoleImproved
 			return (int)((ErrorMessage.main.messageCanvas.rect.height + lastMsgPos) / messageSlotHeight);
 		}
 	}
+#endif // GAME_SN
 
 	// don't clear onscreen messages while console is open
 	[OptionalPatch, HarmonyPatch(typeof(ErrorMessage), "OnUpdate")]
@@ -131,12 +134,16 @@ namespace ConsoleImproved
 					OpCodes.Brtrue_S, label);
 			}
 
-			MethodInfo CanvasRenderer_SetAlpha = typeof(CanvasRenderer).method("SetAlpha");
-			MethodInfo Transform_setLocalPosition = typeof(Transform).method("set_localPosition");
+#if GAME_SN
+			MethodInfo setAlpha = typeof(CanvasRenderer).method("SetAlpha");
+#elif GAME_BZ
+			MethodInfo setAlpha = typeof(TMProExtensions).method("SetAlpha");
+#endif
+			MethodInfo setLocalPosition = typeof(Transform).method("set_localPosition");
 
 			int[] i = list.ciFindIndexes(ci => ci.isLDC(7f), // -2, jump index
-										 ci => ci.isOp(OpCodes.Callvirt, Transform_setLocalPosition), // +1, inject index
-										 ci => ci.isOp(OpCodes.Callvirt, CanvasRenderer_SetAlpha)); // +1, jump index
+										 ci => ci.isOp(OpCodes.Callvirt, setLocalPosition), // +1, inject index
+										 ci => ci.isOp(Mod.Consts.isGameSN? OpCodes.Callvirt: OpCodes.Call, setAlpha)); // +1, jump index
 			if (i == null)
 				return cins;
 

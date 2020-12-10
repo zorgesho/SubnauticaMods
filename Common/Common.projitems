@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)ConsoleCommands.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ModConsts.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)debug\MaterialDumper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)debug\ObjectDumper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)debug\Misc.cs" />

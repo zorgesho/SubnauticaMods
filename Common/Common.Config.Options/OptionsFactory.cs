@@ -8,17 +8,17 @@ namespace Common.Configuration
 
 	partial class Options
 	{
+		public interface ICreator
+		{
+			ModOption create(Config.Field cfgField);
+		}
+		public interface IModifier
+		{
+			void process(ModOption option);
+		}
+
 		static partial class Factory
 		{
-			interface ICreator
-			{
-				ModOption create(Config.Field cfgField);
-			}
-			interface IModifier
-			{
-				void process(ModOption option);
-			}
-
 			static readonly List<ICreator>  creators  = _getList<ICreator>();
 			static readonly List<IModifier> modifiers = _getList<IModifier>();
 
@@ -26,6 +26,8 @@ namespace Common.Configuration
 															Where(type => !type.IsInterface && typeof(I).IsAssignableFrom(type)).
 															Select(Activator.CreateInstance).Cast<I>().
 															ToList();
+
+			public static void add(ICreator creator) => creators.Add(creator);
 
 			// create mod option based on underlying type and attributes of cfgField
 			public static ModOption create(Config.Field cfgField)

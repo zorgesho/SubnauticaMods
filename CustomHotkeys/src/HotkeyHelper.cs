@@ -18,7 +18,7 @@ namespace CustomHotkeys
 	{
 		abstract class Hotkey
 		{
-			protected Hotkey(InputHelper.KeyWithModifier key, bool up, bool held)
+			protected Hotkey(KeyWithModifier key, bool up, bool held)
 			{
 				this.key = key;
 
@@ -28,7 +28,7 @@ namespace CustomHotkeys
 
 			readonly GameInput.InputStateFlags targetState = GameInput.InputStateFlags.Down;
 
-			public InputHelper.KeyWithModifier key
+			public KeyWithModifier key
 			{
 				get => _key;
 				set
@@ -44,7 +44,7 @@ namespace CustomHotkeys
 						isJustModifier = modIndexes.contains(keyInputIndex);
 				}
 			}
-			InputHelper.KeyWithModifier _key;
+			KeyWithModifier _key;
 
 			int keyInputIndex, modInputIndex;
 			bool isJustModifier = false; // is hotkey is just one modifier
@@ -63,7 +63,7 @@ namespace CustomHotkeys
 				if (GameInput.inputs.Count == 0)
 					return null;
 
-				return InputHelper.KeyWithModifier.modifiers.Select(keyCode => getInputIndex(keyCode)).ToArray();
+				return KeyWithModifier.modifiers.Select(keyCode => getInputIndex(keyCode)).ToArray();
 			}
 
 			bool getModState() // check that only necessary modifier is held down
@@ -115,7 +115,7 @@ namespace CustomHotkeys
 		{
 			readonly string[] commands;
 
-			public HotkeyCommand(InputHelper.KeyWithModifier key, bool up, bool held, string[] commands):
+			public HotkeyCommand(KeyWithModifier key, bool up, bool held, string[] commands):
 				base(key, up, held) => this.commands = commands;
 
 			protected override void runCmd() => CommandRunner.run(commands);
@@ -126,7 +126,7 @@ namespace CustomHotkeys
 			int index;
 			readonly string[][] commands;
 
-			public HotkeySwitch(InputHelper.KeyWithModifier key, bool up, bool held, string[][] commands):
+			public HotkeySwitch(KeyWithModifier key, bool up, bool held, string[][] commands):
 				base(key, up, held) => this.commands = commands;
 
 			protected override void runCmd() => CommandRunner.run(commands[index++ % commands.Length]);

@@ -31,6 +31,8 @@ namespace Common.Configuration
 			public bool verboseErrors = false;
 			public bool ignoreNullValues = false;
 			public bool ignoreDefaultValues = false;
+
+			public Type[] converters = null;
 		}
 
 		class ConfigContractResolver: DefaultContractResolver
@@ -63,7 +65,7 @@ namespace Common.Configuration
 				Formatting = Formatting.Indented,
 				ContractResolver = new ConfigContractResolver(),
 				ObjectCreationHandling = ObjectCreationHandling.Replace,
-				Converters = { new StringEnumConverter(), new JsonConverters.KeyWithModifier() }
+				Converters = { new StringEnumConverter() }
 			};
 
 			if (configType.getAttr<SerializerSettingsAttribute>() is SerializerSettingsAttribute settingsAttr)
@@ -73,6 +75,15 @@ namespace Common.Configuration
 
 				if (settingsAttr.verboseErrors)
 					settings.Error = (_, args) => $"<color=red>{args.ErrorContext.Error.Message}</color>".onScreen(); // TODO make more general
+
+				if (settingsAttr.converters != null)
+				{
+					foreach (var type in settingsAttr.converters)
+					{
+						Debug.assert(typeof(JsonConverter).IsAssignableFrom(type));
+						settings.Converters.Add(Activator.CreateInstance(type) as JsonConverter);
+					}
+				}
 			}
 
 			return settings;
@@ -83,21 +94,5 @@ namespace Common.Configuration
 		string serialize() => JsonConvert.SerializeObject(this, srzSettings ??= _initSerializer(GetType()));
 
 		static Config deserialize(string text, Type configType) => JsonConvert.DeserializeObject(text, configType, _initSerializer(configType)) as Config;
-
-
-		class JsonConverters
-		{
-			public class KeyWithModifier: JsonConverter
-			{
-				public override bool CanConvert(Type objectType) =>
-					objectType == typeof(InputHelper.KeyWithModifier);
-
-				public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer) =>
-					writer.WriteValue(value.ToString());
-
-				public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer) =>
-					(InputHelper.KeyWithModifier)(reader.Value as string);
-			}
-		}
 	}
 }

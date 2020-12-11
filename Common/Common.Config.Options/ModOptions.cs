@@ -41,6 +41,11 @@ namespace Common.Configuration
 			instance.modOptions.Add(option);
 		}
 
+		public static void addNewOptionType(ICreator creator)
+		{
+			Factory.add(creator);
+		}
+
 		public static void remove(ModOption option)
 		{
 			Debug.assert(instance != null);

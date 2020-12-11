@@ -119,7 +119,7 @@ namespace CustomHotkeys
 		}
 
 		// if we press key while binding in options menu, ignore its 'Up' & 'Held' events
-		[HarmonyPatch(typeof(GameInput), Mod.isBranchStable? "UpdateKeyInputs": "GetInputState")]
+		[HarmonyPatch(typeof(GameInput), Mod.Consts.isBranchStable? "UpdateKeyInputs": "GetInputState")]
 		static class GameInput_UpdateKeyState_Patch
 		{
 			static CIEnumerable Transpiler(CIEnumerable cins, ILGenerator ilg)

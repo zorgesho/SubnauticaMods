@@ -15,7 +15,7 @@ namespace CustomHotkeys
 	{
 		[Options.Field("Enable developer tools hotkeys", "Use <b>F1</b>, <b>F3</b> and <b>F6</b> for vanilla developer tools (you can reassign those tools to the other hotkeys)")]
 		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
-		public readonly bool enableDevToolsHotkeys = !Mod.isDevBuild;
+		public readonly bool enableDevToolsHotkeys = !Mod.Consts.isDevBuild;
 
 		class OnlyInMainMenu: Options.Components.Hider.IVisibilityChecker
 		{ public bool visible => Options.mode == Options.Mode.MainMenu; }
@@ -24,7 +24,7 @@ namespace CustomHotkeys
 		[Options.Hideable(typeof(OnlyInMainMenu))]
 		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 		[Options.FinalizeAction(typeof(FeedbackCollectorPatch.SettingChanged))]
-		public readonly bool enableFeedback = !Mod.isDevBuild;
+		public readonly bool enableFeedback = !Mod.Consts.isDevBuild;
 
 		public class HotkeyHider: Field.IAction
 		{ public void action() => Options.Components.Hider.refresh("hotkeys"); }
@@ -58,7 +58,7 @@ namespace CustomHotkeys
 	}
 
 
-	[SerializerSettings(ignoreNullValues = true, verboseErrors = true)]
+	[SerializerSettings(ignoreNullValues = true, verboseErrors = true, converters = new[] { typeof(KWM_JsonConverter) })]
 	class HKConfig: Config
 	{
 		[NonSerialized, NoInnerFieldsAttrProcessing]
@@ -108,7 +108,7 @@ namespace CustomHotkeys
 					if (hidden)
 						label = $"<color=silver>{label}</color>";
 
-					var option = new Options.KeyWModBindOption(cfgField, label);
+					var option = new KeyWModBindOption(cfgField, label);
 
 					var tooltip = "<color=white><b>Command: </b></color>";
 					tooltip += hotkey.command.Replace(";", "<color=orange><b>;</b></color>").Replace("|", "<color=yellow><b>|</b></color>");
@@ -134,7 +134,7 @@ namespace CustomHotkeys
 
 			[Field.Action(typeof(UpdateBinds))]
 			[Field.Action(typeof(ModConfig.HotkeyHider))]
-			public InputHelper.KeyWithModifier key;
+			public KeyWithModifier key;
 
 			public string command;
 			public Mode? mode; // nullable so it can be ignored by serializer
@@ -166,8 +166,8 @@ namespace CustomHotkeys
 			new Hotkey { command = "showmodoptions", label = "Open mod options", key = KeyCode.F3 },
 			new Hotkey { command = "pincfgvars all | pincfgvars", label = "Toggle cfgvars", key = KeyCode.F2 },
 
-			new Hotkey { command = "togglemod autoload", label = "Toggle AutoLoad", key = new InputHelper.KeyWithModifier(KeyCode.F12, KeyCode.LeftControl) },
-			new Hotkey { command = "togglecfgvar misc.dbg.faststart.enabled", label = "Toggle Fast Start", key = new InputHelper.KeyWithModifier(KeyCode.F12, KeyCode.LeftAlt) },
+			new Hotkey { command = "togglemod autoload", label = "Toggle AutoLoad", key = new KeyWithModifier(KeyCode.F12, KeyCode.LeftControl) },
+			new Hotkey { command = "togglecfgvar misc.dbg.faststart.enabled", label = "Toggle Fast Start", key = new KeyWithModifier(KeyCode.F12, KeyCode.LeftAlt) },
 			new Hotkey { command = "devtools_hidegui mask; fov 5 | fov 60; devtools_hidegui none", label = "Zoom in", key = KeyCode.V, mode = Hotkey.Mode.PressRelease },
 			new Hotkey { command = "warpforward 1", key = KeyCode.UpArrow, mode = Hotkey.Mode.Hold, label = "Warp forward" },
 #else

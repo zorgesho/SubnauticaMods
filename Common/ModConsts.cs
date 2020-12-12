@@ -40,6 +40,12 @@ namespace Common
 #else
 				false;
 #endif
+			public const bool isGameSNStable =
+#if GAME_SN && BRANCH_STABLE
+				true;
+#else
+				false;
+#endif
 
 			public const bool isGameBZ =
 #if GAME_BZ

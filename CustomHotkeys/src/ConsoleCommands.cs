@@ -194,7 +194,11 @@ namespace CustomHotkeys
 				var techType = data[i].convert<TechType>();
 				if (techType != default && getItemFromInventory(techType) is InventoryItem item)
 				{
+#if GAME_SN
 					Inventory.main.UseItem(item);
+#elif GAME_BZ
+					Inventory.main.UseItemAction(item);
+#endif
 					break;
 				}
 			}

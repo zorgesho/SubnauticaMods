@@ -37,7 +37,9 @@ namespace CustomHotkeys
 		[Field.Action(typeof(HotkeyHider))]
 		public readonly bool showHidden = false;
 
+#if GAME_SN // BZ is using right click for that
 		public readonly bool easyBindRemove = true;
+#endif
 		public readonly bool addConsoleCommands = true;
 
 		class OpenConfig: Field.IAction
@@ -174,7 +176,7 @@ namespace CustomHotkeys
 			new Hotkey { command = "autoforward", label = "Autoforward", key = KeyCode.LeftAlt },
 			new Hotkey { command = "useitem firstaidkit", label = "Use medkit", key = KeyCode.H },
 			new Hotkey { command = "vehicle_enter", label = "Enter nearby vehicle", key = KeyCode.E },
-			new Hotkey { command = "showmodoptions", label = "Open mod options", key = new InputHelper.KeyWithModifier(KeyCode.O, KeyCode.RightAlt) },
+			new Hotkey { command = "showmodoptions", label = "Open mod options", key = new KeyWithModifier(KeyCode.O, KeyCode.RightAlt) },
 #endif
 
 #if GENERATE_SAMPLE_CONFIG

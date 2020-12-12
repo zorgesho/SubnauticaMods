@@ -5,16 +5,18 @@ using System.Collections.Generic;
 
 using Harmony;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 using Common;
 using Common.Harmony;
 using Common.Reflection;
 using Common.Configuration;
 
+#if GAME_SN
+using UnityEngine.EventSystems;
+#endif
+
 namespace CustomHotkeys
 {
-	using Debug = Common.Debug;
 	using CIEnumerable = IEnumerable<CodeInstruction>;
 
 	[OptionalPatch, PatchClass]
@@ -68,6 +70,7 @@ namespace CustomHotkeys
 	// patches for removing bindings and blocking 'Up' event after binding
 	static class BindingPatches
 	{
+#if GAME_SN
 		class BindCheckPointer: MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 		{
 			public static GameObject hoveredObject { get; private set; }
@@ -87,7 +90,7 @@ namespace CustomHotkeys
 			static void Postfix(uGUI_Binding __instance) =>
 				__instance.gameObject.ensureComponent<BindCheckPointer>();
 		}
-
+#endif
 		static int lastBindedIndex = -1;
 
 		[HarmonyPatch(typeof(uGUI_Binding), "Update")]
@@ -102,35 +105,50 @@ namespace CustomHotkeys
 				// saving binded keycode to check later in GameInput.UpdateKeyInputs patch
 				var GameInput_ClearInput = typeof(GameInput).method("ClearInput");
 				CIHelper.ciInsert(list, ci => ci.isOp(OpCodes.Call, GameInput_ClearInput), CIHelper.emitCall<Action>(saveLastBind));
-
+#if GAME_SN
 				if (Main.config.easyBindRemove)
 				{
 					var toReplace = typeof(EventSystem).method("get_current");
 					int index = list.FindIndex(ci => ci.isOp(OpCodes.Call, toReplace));
-					Debug.assert(index != -1);
+					Common.Debug.assert(index != -1);
 
 					var get_hoveredObject = typeof(BindCheckPointer).method("get_" + nameof(BindCheckPointer.hoveredObject));
 					list.RemoveRange(index, 2);
 					list.Insert(index, new CodeInstruction(OpCodes.Call, get_hoveredObject));
 				}
-
+#endif
 				return list;
 			}
 		}
 
+#if GAME_BZ
+		[HarmonyPatch(typeof(uGUI_Binding), "RefreshValue")]
+		static class uGUIBinding_RefreshValue_Patch
+		{
+			static bool Prefix(uGUI_Binding __instance)
+			{
+				if (!__instance.gameObject.GetComponent<KeyWModBindOption.Tag>())
+					return true;
+
+				__instance.currentText.text = (__instance.active || __instance.value == null)? "": __instance.value;
+				__instance.UpdateState();
+				return false;
+			}
+		}
+#endif
 		// if we press key while binding in options menu, ignore its 'Up' & 'Held' events
-		[HarmonyPatch(typeof(GameInput), Mod.Consts.isBranchStable? "UpdateKeyInputs": "GetInputState")]
+		[HarmonyPatch(typeof(GameInput), Mod.Consts.isGameSNStable? "UpdateKeyInputs": "GetInputState")]
 		static class GameInput_UpdateKeyState_Patch
 		{
 			static CIEnumerable Transpiler(CIEnumerable cins, ILGenerator ilg)
 			{
 				var list = cins.ToList();
 				var field_lastBindedIndex = typeof(BindingPatches).field(nameof(lastBindedIndex));
-#if BRANCH_STABLE
+#if GAME_SN && BRANCH_STABLE
 				var Input_GetKey = typeof(Input).method("GetKey", typeof(KeyCode));
 				var cinsCompare = CIHelper.toCIList(OpCodes.Ldloc_S, 4,
 													OpCodes.Ldsfld, field_lastBindedIndex);
-#elif BRANCH_EXP
+#else
 				object Input_GetKey = null; // exp branch uses InputUtils, but we don't really need to check method in GetInputState
 				var cinsCompare = CIHelper.toCIList(OpCodes.Ldarg_1, CIHelper.emitCall<Func<KeyCode>>(_lastBindedKeyCode));
 

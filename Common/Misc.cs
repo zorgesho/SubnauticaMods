@@ -47,7 +47,7 @@ namespace Common
 
 		public static T[] append<T>(this T[] array1, T[] array2)
 		{
-			if (array1 != null && (array2 == null || array2.Length == 0))
+			if (array1 != null && array2.isNullOrEmpty())
 				return array1;
 
 			if (array1 == null)

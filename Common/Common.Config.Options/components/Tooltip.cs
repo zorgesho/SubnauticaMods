@@ -1,5 +1,8 @@
 ﻿using System;
+
+#if GAME_SN
 using System.Collections.Generic;
+#endif
 
 using UnityEngine;
 

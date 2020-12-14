@@ -91,20 +91,23 @@ namespace Common.Harmony
 			type.methods(ReflectionHelper.bfAll ^ BindingFlags.Instance).forEach(method => checkPatches(method));
 		}
 
-		static void checkPatches(MemberInfo member)
+		static void checkPatches(Type type)
 		{
-			member.getAttrs<HarmonyPatch>().Where(patch => patch.info.getTargetMethod() == null).
-											forEach(patch => _error(getFullName(patch.info)));
+			type.getAttrs<HarmonyPatch>().Where(patch => patch.info.getTargetMethod() == null).
+										  forEach(patch => _error(type, getFullName(patch.info)));
+		}
 
-			var patchAttr = HarmonyHelper.PatchAttribute.merge(member.getAttrs<HarmonyHelper.PatchAttribute>());
+		static void checkPatches(MethodInfo method)
+		{
+			var patchAttr = HarmonyHelper.PatchAttribute.merge(method.getAttrs<HarmonyHelper.PatchAttribute>());
 			if (patchAttr != null && !patchAttr.options.HasFlag(HarmonyHelper.PatchOptions.CanBeAbsent) && patchAttr.targetMethod == null)
-				_error(getFullName(patchAttr));
+				_error(method, getFullName(patchAttr));
+		}
 
-			void _error(string method)
-			{
-				testPassed = false;
-				$"PatchesValidator: target method for {member.fullName()} is not found! ({method})".logError();
-			}
+		static void _error(MemberInfo member, string method)
+		{
+			testPassed = false;
+			$"PatchesValidator: target method for {member.fullName()} is not found! ({method})".logError();
 		}
 	}
 

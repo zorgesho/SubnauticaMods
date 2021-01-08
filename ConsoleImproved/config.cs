@@ -34,7 +34,6 @@ namespace ConsoleImproved
 		[Field.Range(min: 0)]
 		public readonly int maxListSize = 0; // 0 for max available
 
-#if GAME_SN
 		[Field.Action(typeof(ErrorMessageSettings.RefreshSettings))]
 		[Options.Hideable(typeof(Hider), "msgs")]
 		public class MessagesSettings
@@ -79,22 +78,22 @@ namespace ConsoleImproved
 			[Field.Action(typeof(SampleMessage))]
 			[Options.Hideable(typeof(ButtonHider), "msgs")]
 			int _;
-
+#if GAME_SN
 			[Options.Field("Font size")]
 			[Field.Range(1, 60)]
 			[Options.Slider(defaultValue: 18, minValue: 10, maxValue: 40)]
 			public int fontSize = 18;
-
+#endif
 			[Options.Field("Offset", "Offset from the top left corner")]
 			[Field.Range(-10f, 500f)]
 			[Options.Slider(defaultValue: 140f, minValue: 5f, maxValue: 200f)]
 			public float offset = 140f;
-
+#if GAME_SN
 			[Options.Field("Message width", "Text width relative to the screen width")] 
 			[Field.Range(0f, 1920f)]
 			[Options.Slider(defaultValue: 500f, minValue: 200f, customValueType: typeof(Options.Components.SliderValue.RangePercent))]
 			public float textWidth = 500f;
-
+#endif
 			class DelaySliderValue: Options.Components.SliderValue.Nonlinear
 			{ DelaySliderValue() => addValueInfo(0.5f, 10.0f, "{0:F1} s", "{0:F0} s"); }
 
@@ -103,7 +102,7 @@ namespace ConsoleImproved
 			[Field.Action(typeof(ErrorMessageSettings.RefreshTimeDelaySetting))]
 			[Options.Slider(defaultValue: 5f, maxValue: 60f, customValueType: typeof(DelaySliderValue))]
 			public float timeDelay = 5f;
-
+#if GAME_SN
 			[Options.Field("Line spacing", "Spacing between messages and between lines in multiline messages")]
 			[Options.Hideable(typeof(SimpleSetting))]
 			[Options.ChoiceMaster(0, nameof(messageSpacing), 10f, nameof(textLineSpacing), 1.2f)]
@@ -111,7 +110,7 @@ namespace ConsoleImproved
 			[Options.ChoiceMaster(2, nameof(messageSpacing), -5f, nameof(textLineSpacing), 0.75f)]
 			[Options.Choice("Default", "Tight", "Compact")]
 			readonly int _spacing = 0;
-
+#endif
 			[Options.Field("Animations speed", "Speed of fade out and fly animations")]
 			[Options.Hideable(typeof(SimpleSetting))]
 			[Options.ChoiceMaster(0, nameof(timeFly), 0.30f, nameof(timeFadeOut), 0.6f)]
@@ -125,13 +124,13 @@ namespace ConsoleImproved
 			[Options.Hideable(typeof(DetailedSetting))]
 			[Options.Slider(defaultValue: 10f, minValue: -5f, maxValue: 15f, valueFormat: "{0:F1}")]
 			public float messageSpacing = 10f;
-
+#if GAME_SN
 			[Options.Field("Spacing between lines", "Spacing between lines in multiline messages (a value of 1 will produce normal line spacing)")]
 			[Field.Range(0f, 2f)]
 			[Options.Hideable(typeof(DetailedSetting))]
 			[Options.Slider(defaultValue: 1.2f, minValue: 0.5f, maxValue: 1.5f, valueFormat: "{0:F2}")]
 			public float textLineSpacing = 1.2f;
-
+#endif
 			[Options.Field("Fly animation duration")]
 			[Field.Range(0.01f, 2f)]
 			[Options.Hideable(typeof(DetailedSetting))]
@@ -148,6 +147,5 @@ namespace ConsoleImproved
 			public float timeInvisible = 0.1f;
 		}
 		public MessagesSettings msgsSettings = new MessagesSettings();
-#endif // GAME_SN
 	}
 }

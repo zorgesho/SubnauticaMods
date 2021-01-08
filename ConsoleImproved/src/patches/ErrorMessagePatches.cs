@@ -14,7 +14,6 @@ using Common.Configuration;
 
 namespace ConsoleImproved
 {
-#if GAME_SN
 	[HarmonyPatch(typeof(ErrorMessage), "Awake")]
 	static class ErrorMessageSettings
 	{
@@ -45,10 +44,11 @@ namespace ConsoleImproved
 				timeDelay = em.timeDelay,
 				timeFadeOut = em.timeFadeOut,
 				timeInvisible = em.timeInvisible,
-
+#if GAME_SN
 				fontSize = em.prefabMessage.fontSize,
 				textLineSpacing = em.prefabMessage.lineSpacing,
 				textWidth = em.prefabMessage.rectTransform.sizeDelta.x
+#endif
 			};
 
 			if (Main.config.msgsSettings.customize)
@@ -66,7 +66,7 @@ namespace ConsoleImproved
 			em.timeDelay = settings.timeDelay;
 			em.timeFadeOut = settings.timeFadeOut;
 			em.timeInvisible = settings.timeInvisible;
-
+#if GAME_SN
 			var texts = new List<Text>(em.pool);
 			em.messages.ForEach(message => texts.Add(message.entry));
 			texts.Add(em.prefabMessage);
@@ -80,6 +80,7 @@ namespace ConsoleImproved
 				text.rectTransform.sizeDelta = new Vector2(settings.textWidth, 0f);
 				text.fontSize = settings.fontSize;
 			}
+#endif
 		}
 
 		public static float messageSlotHeight
@@ -104,14 +105,22 @@ namespace ConsoleImproved
 		// get max message slots with current settings
 		public static int getSlotCount(bool freeSlots)
 		{
+			static float _getYPos()
+			{
+#if GAME_SN
+				return ErrorMessage.main.GetYPos();
+#elif GAME_BZ
+				return ErrorMessage.main.GetYPos(-1, 1.0f);
+#endif
+			}
+
 			if (!ErrorMessage.main)
 				return -1;
 
-			float lastMsgPos = freeSlots? ErrorMessage.main.GetYPos(): 0f;
+			float lastMsgPos = freeSlots? _getYPos(): 0f;
 			return (int)((ErrorMessage.main.messageCanvas.rect.height + lastMsgPos) / messageSlotHeight);
 		}
 	}
-#endif // GAME_SN
 
 	// don't clear onscreen messages while console is open
 	[OptionalPatch, HarmonyPatch(typeof(ErrorMessage), "OnUpdate")]

@@ -77,7 +77,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\BZ.dev\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;GAME_BZ;BRANCH_STABLE</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;GAME_BZ;BRANCH_STABLE;LOAD_CONFIG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>

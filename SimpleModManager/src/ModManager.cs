@@ -2,12 +2,12 @@
 using System.IO;
 using System.Collections.Generic;
 
-#if BRANCH_EXP
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-#else
+#if GAME_SN && BRANCH_STABLE
 using Oculus.Newtonsoft.Json;
 using Oculus.Newtonsoft.Json.Linq;
+#else
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 #endif
 
 using Common;
@@ -18,7 +18,9 @@ namespace SimpleModManager
 {
 	static class ModManager
 	{
-		static readonly List<Tuple<string, Config.Field>> modToggleFields = new List<Tuple<string, Config.Field>>();
+		// used for console commands
+		// we using list instead of dictionary because console commands can be used with partial mod name
+		static readonly List<(string modName, Config.Field toggleField)> modToggleFields = new List<(string, Config.Field)>();
 
 		class ConsoleCommands: PersistentConsoleCommands
 		{
@@ -28,14 +30,14 @@ namespace SimpleModManager
 
 			void setModEnabled(string modName, bool? enabled)
 			{
-				var mod = modToggleFields.Find(mod => mod.Item1.Contains(modName));
+				var mod = modToggleFields.Find(mod => mod.modName.Contains(modName));
 
-				if (mod == null)
+				if (mod == default)
 					return;
 
-				bool enable = enabled ?? !mod.Item2.value.cast<bool>();
-				mod.Item2.value = enable;
-				$"{(enable? "<color=lime>enabled</color>": "<color=red>disabled</color>")}".onScreen(mod.Item1);
+				bool enable = enabled ?? !mod.toggleField.value.cast<bool>();
+				mod.toggleField.value = enable;
+				$"{(enable? "<color=lime>enabled</color>": "<color=red>disabled</color>")}".onScreen(mod.modName);
 			}
 		}
 
@@ -95,7 +97,7 @@ namespace SimpleModManager
 
 					Options.add(option);
 
-					modToggleFields.Add(Tuple.Create(modJson.Property("Id").Value.ToString().ToLower(), cfgField));
+					modToggleFields.Add((modJson.Property("Id").Value.ToString().ToLower(), cfgField));
 
 					return true;
 				}

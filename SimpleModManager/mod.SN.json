@@ -1,0 +1,12 @@
+{
+  "Id": "SimpleModManager",
+  "DisplayName": "Simple Mod Manager",
+  "Author": "zorgesho",
+  "Version": "1.0.0",
+  "Dependencies": [ "SMLHelper" ],
+  "VersionDependencies": { "SMLHelper": "2.6.0" },
+  "Enable": true,
+  "Game": "Subnautica",
+  "AssemblyName": "SimpleModManager.dll",
+  "EntryMethod": "SimpleModManager.Main.patch"
+}

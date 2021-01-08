@@ -140,9 +140,6 @@ Global
 		Common\Common.Config.Options\Common.Config.Options.projitems*{8ecfbd17-d9c6-4fa2-92e2-fb76f71aa316}*SharedItemsImports = 4
 		Common\Common.Config\Common.Config.projitems*{8ecfbd17-d9c6-4fa2-92e2-fb76f71aa316}*SharedItemsImports = 4
 		Common\Common.projitems*{8ecfbd17-d9c6-4fa2-92e2-fb76f71aa316}*SharedItemsImports = 4
-		Common\Common.Config.Options\Common.Config.Options.projitems*{93c2cdd8-5d48-451f-a5c1-35a0b48ddbe6}*SharedItemsImports = 4
-		Common\Common.Config\Common.Config.projitems*{93c2cdd8-5d48-451f-a5c1-35a0b48ddbe6}*SharedItemsImports = 4
-		Common\Common.projitems*{93c2cdd8-5d48-451f-a5c1-35a0b48ddbe6}*SharedItemsImports = 4
 		Common\Common.AssetsHelper\Common.AssetsHelper.projitems*{9e3d5f87-c19e-482b-ac15-7e56deed70fa}*SharedItemsImports = 4
 		Common\Common.Config\Common.Config.projitems*{9e3d5f87-c19e-482b-ac15-7e56deed70fa}*SharedItemsImports = 4
 		Common\Common.CraftHelper\Common.CraftHelper.projitems*{9e3d5f87-c19e-482b-ac15-7e56deed70fa}*SharedItemsImports = 4
@@ -549,9 +546,12 @@ Global
 		{EBFA5C5C-995C-4E6D-9F6E-C9C33F864EF6}.SN.testbuild|Any CPU.Build.0 = SN.testbuild|Any CPU
 		{EBFA5C5C-995C-4E6D-9F6E-C9C33F864EF6}.SNexp.dev|Any CPU.ActiveCfg = SNexp.dev|Any CPU
 		{EBFA5C5C-995C-4E6D-9F6E-C9C33F864EF6}.SNexp.testbuild|Any CPU.ActiveCfg = SNexp.testbuild|Any CPU
-		{C3985FBE-6652-4230-934F-0C931F448DC2}.BZ.dev|Any CPU.ActiveCfg = SN.dev|Any CPU
-		{C3985FBE-6652-4230-934F-0C931F448DC2}.BZ.publish|Any CPU.ActiveCfg = SN.publish|Any CPU
-		{C3985FBE-6652-4230-934F-0C931F448DC2}.BZ.testbuild|Any CPU.ActiveCfg = SN.testbuild|Any CPU
+		{C3985FBE-6652-4230-934F-0C931F448DC2}.BZ.dev|Any CPU.ActiveCfg = BZ.dev|Any CPU
+		{C3985FBE-6652-4230-934F-0C931F448DC2}.BZ.dev|Any CPU.Build.0 = BZ.dev|Any CPU
+		{C3985FBE-6652-4230-934F-0C931F448DC2}.BZ.publish|Any CPU.ActiveCfg = BZ.publish|Any CPU
+		{C3985FBE-6652-4230-934F-0C931F448DC2}.BZ.publish|Any CPU.Build.0 = BZ.publish|Any CPU
+		{C3985FBE-6652-4230-934F-0C931F448DC2}.BZ.testbuild|Any CPU.ActiveCfg = BZ.testbuild|Any CPU
+		{C3985FBE-6652-4230-934F-0C931F448DC2}.BZ.testbuild|Any CPU.Build.0 = BZ.testbuild|Any CPU
 		{C3985FBE-6652-4230-934F-0C931F448DC2}.BZexp.dev|Any CPU.ActiveCfg = SNexp.dev|Any CPU
 		{C3985FBE-6652-4230-934F-0C931F448DC2}.BZexp.testbuild|Any CPU.ActiveCfg = SNexp.testbuild|Any CPU
 		{C3985FBE-6652-4230-934F-0C931F448DC2}.SN.dev|Any CPU.ActiveCfg = SN.dev|Any CPU

@@ -60,13 +60,25 @@ namespace Common.Configuration
 			public override void addOption(Options options)
 			{
 				float value = cfgField.value.convert<float>();
-				options.AddSliderOption(id, label, Math.Min(min, value), Math.Max(max, value), value, defaultValue, valueFormat);
+				string format = Mod.Consts.isGameSN? valueFormat: (valueFormat ?? "{0:F0}");
+
+				options.AddSliderOption(id, label, Math.Min(min, value), Math.Max(max, value), value, defaultValue, format, Mod.Consts.isGameSN? 0f: 0.001f);
 			}
 
 			public override void onValueChange(EventArgs e)
 			{
 				cfgField.value = (e as SliderChangedEventArgs)?.Value;
 			}
+#if GAME_BZ // fix for bug with tooltips on sliders
+			static readonly Type textMeshProUGUI = Type.GetType("TMPro.TextMeshProUGUI, Unity.TextMeshPro");
+			static readonly PropertyWrapper raycastTarget = textMeshProUGUI.property("raycastTarget").wrap();
+
+			public override void onGameObjectChange(UnityEngine.GameObject go)
+			{
+				raycastTarget.set(go.getChild("Slider/Caption").GetComponent(textMeshProUGUI), true);
+				base.onGameObjectChange(go);
+			}
+#endif
 		}
 	}
 }

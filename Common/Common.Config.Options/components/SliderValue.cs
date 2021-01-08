@@ -41,7 +41,9 @@ namespace Common.Configuration
 					public void handle(GameObject gameObject)
 					{
 						GameObject slider = gameObject.transform.Find("Slider").gameObject;
-
+#if GAME_BZ
+						slider.destroyComponent<ModSliderOption.SliderValue>(); // SMLHelper for BZ adds this component for any slider :(
+#endif
 						Component valueType = slider.AddComponent(valueCmpType);
 						(valueType as ModSliderOption.SliderValue).ValueFormat = valueFormat;
 						(valueType as IConfigFieldInfo)?.setConfigField(parentOption.cfgField);
@@ -73,7 +75,9 @@ namespace Common.Configuration
 					}
 
 					static readonly PropertyWrapper sliderValue = Type.GetType("UnityEngine.UI.Slider, UnityEngine.UI").property("value").wrap();
-					static readonly PropertyWrapper text = Type.GetType("UnityEngine.UI.Text, UnityEngine.UI").property("text").wrap();
+					static readonly PropertyWrapper text =
+						Type.GetType(Mod.Consts.isGameSN? "UnityEngine.UI.Text, UnityEngine.UI": "TMPro.TextMeshProUGUI, Unity.TextMeshPro").property("text").wrap();
+
 					object _slider, _label;
 
 					protected override void UpdateLabel()

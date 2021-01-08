@@ -80,6 +80,10 @@ namespace MiscPatches
 			[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 			public readonly bool scannerRoomCheat = false;
 
+			[Options.Field("Show mouse raycast result")]
+			[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
+			public readonly bool showRaycastResult = false;
+
 			public class FastStart
 			{
 				class Hider: Options.Components.Hider.Simple

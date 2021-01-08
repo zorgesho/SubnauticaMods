@@ -1,22 +1,27 @@
-﻿using System.Collections;
+﻿using System;
+using System.Text;
+using System.Collections;
 using System.Collections.Generic;
 using System.Reflection.Emit;
 
 using Harmony;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
 using Common;
 using Common.Harmony;
+using Common.Reflection;
 using Common.Configuration;
 
 #if BRANCH_EXP
 using System.Linq;
-using Common.Reflection;
 #endif
 
 namespace MiscPatches
 {
+	using Object = UnityEngine.Object;
+
 	// for testing loot spawning (Main.config.loolSpawnRerollCount for control)
 	[OptionalPatch, HarmonyPatch(typeof(CellManager), "GetPrefabForSlot")]
 	static class CellManager_GetPrefabForSlot_Patch
@@ -172,15 +177,19 @@ namespace MiscPatches
 		}
 
 		[HarmonyPrefix]
+#if GAME_SN
 		[HarmonyPatch(typeof(GameAnalytics), "Send", typeof(GameAnalytics.EventInfo), typeof(string))]
+#elif GAME_BZ
+		[HarmonyPatch(typeof(GameAnalytics), "Send", typeof(GameAnalytics.EventInfo), typeof(bool), typeof(string))]
+#endif
 		static bool GameAnalytics_Send_Prefix() => false;
 
-#if BRANCH_STABLE
+#if GAME_SN && BRANCH_STABLE
 		[HarmonyPostfix, HarmonyPatch(typeof(MonitorLauncher), "Awake")] // fix for exception at startup
 		static void MonitorLauncher_Awake_Prefix(MonitorLauncher __instance) => Object.Destroy(__instance);
 #endif
 
-#if BRANCH_EXP // fix for exception in exp branch because SentrySDK is deleted by QMM
+#if GAME_SN && BRANCH_EXP // fix for exception in exp branch because SentrySDK is deleted by QMM
 		[HarmonyTranspiler]
 		[HarmonyHelper.Patch(typeof(SystemsSpawner), "SetupSingleton")]
 		[HarmonyHelper.Patch(HarmonyHelper.PatchOptions.PatchIteratorMethod)]
@@ -195,5 +204,29 @@ namespace MiscPatches
 			return i == null? cins: list.ciRemoveRange(i[0] - 2, i[1] - 1);
 		}
 #endif
+	}
+
+	[OptionalPatch, HarmonyPatch(typeof(FPSInputModule), "GetMousePointerEventData", new Type[] {})]
+	static class FPSInputModule_GetMousePointerEventData_Patch
+	{
+		static bool Prepare() => Main.config.dbg.showRaycastResult;
+
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins)
+		{
+			static void _printRaycastResults(List<RaycastResult> list)
+			{
+				var sb = new StringBuilder("\n");
+
+				list.ForEach(raycast => sb.AppendLine(raycast.gameObject.name));
+				sb.ToString().onScreen("raycast result");
+			}
+
+			var raycastAll = typeof(EventSystem).method("RaycastAll");
+
+			return cins.ciInsert(ci => ci.isOp(OpCodes.Callvirt, raycastAll),
+				OpCodes.Ldarg_0,
+				OpCodes.Ldfld, typeof(BaseInputModule).field("m_RaycastResultCache"),
+				CIHelper.emitCall<Action<List<RaycastResult>>>(_printRaycastResults));
+		}
 	}
 }

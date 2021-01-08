@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if GAME_SN
+using System;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Collections.Generic;
@@ -286,3 +287,4 @@ namespace MiscPatches
 		}
 	}
 }
+#endif

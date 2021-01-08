@@ -1,4 +1,5 @@
-﻿using Harmony;
+﻿#if GAME_SN
+using Harmony;
 using UnityEngine;
 
 namespace MiscPatches
@@ -69,3 +70,4 @@ namespace MiscPatches
 		}
 	}
 }
+#endif

@@ -55,7 +55,11 @@ namespace MiscPatches
 		[Command(combineArgs = true, caseSensitive = true)]
 		public void subtitles(string message)
 		{
+#if GAME_SN
 			Subtitles.main.Add(message);
+#elif GAME_BZ
+			Subtitles.Add(message);
+#endif
 		}
 
 		public void vehiclehealth(float healthPercent)
@@ -143,6 +147,7 @@ namespace MiscPatches
 		}
 #pragma warning restore CS0618
 
+#if GAME_SN
 		public void game_load(int slotID = -1)
 		{
 			if (!uGUI_MainMenu.main)
@@ -174,7 +179,7 @@ namespace MiscPatches
 			if (gameinfoToLoad != null)
 				CoroutineHost.StartCoroutine(uGUI_MainMenu.main.LoadGameAsync(slotToLoad, gameinfoToLoad.changeSet, gameinfoToLoad.gameMode));
 		}
-
+#endif
 		public void game_quit(bool quitToDesktop = false)
 		{
 			if (uGUI_MainMenu.main && quitToDesktop)
@@ -202,7 +207,11 @@ namespace MiscPatches
 
 			public static GameObject findTarget()
 			{
+#if GAME_SN
 				Targeting.GetTarget(Player.main.gameObject, 10f, out GameObject target, out float num, null);
+#elif GAME_BZ
+				Targeting.GetTarget(Player.main.gameObject, 10f, out GameObject target, out float num);
+#endif
 				moveTarget = target?.GetComponentInParent<Constructable>()?.gameObject;
 				lastTargetActionTime = Time.time;
 

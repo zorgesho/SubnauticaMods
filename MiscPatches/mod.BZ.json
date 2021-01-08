@@ -3,9 +3,9 @@
   "DisplayName": "Misc Patches",
   "Author": "zorgesho",
   "Version": "1.0.0",
-  "Dependencies": ["SMLHelper"],
+  "Dependencies": [ "SMLHelper" ],
   "Enable": true,
-  "Game": "Subnautica",
+  "Game": "BelowZero",
   "AssemblyName": "MiscPatches.dll",
   "EntryMethod": "MiscPatches.Main.patch"
 }

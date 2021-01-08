@@ -3,7 +3,7 @@
   "DisplayName": "Misc Prototypes",
   "Author": "zorgesho",
   "Version": "1.0.0",
-  "Dependencies": ["SMLHelper"],
+  "Dependencies": [ "SMLHelper" ],
   "Enable": true,
   "Game": "Subnautica",
   "AssemblyName": "MiscPrototypes.dll",

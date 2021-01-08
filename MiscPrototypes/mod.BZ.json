@@ -1,0 +1,11 @@
+{
+  "Id": "MiscPrototypes",
+  "DisplayName": "Misc Prototypes",
+  "Author": "zorgesho",
+  "Version": "1.0.0",
+  "Dependencies": [ "SMLHelper" ],
+  "Enable": true,
+  "Game": "BelowZero",
+  "AssemblyName": "MiscPrototypes.dll",
+  "EntryMethod": "MiscPrototypes.Main.patch"
+}

@@ -1,14 +1,24 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using System.Collections;
-
-using UnityEngine;
+using System.Collections.Generic;
 
 using Common;
+using Common.Reflection;
 
 namespace MiscPrototypes
 {
 	class TestConsoleCommands: PersistentConsoleCommands
 	{
+		void debug_raycasters()
+		{
+			var raycasterManager = Type.GetType("UnityEngine.EventSystems.RaycasterManager, UnityEngine.UI");
+			var raycasterList = raycasterManager.field("s_Raycasters");
+
+			foreach (var raycaster in raycasterList.GetValue(null) as List<UnityEngine.EventSystems.BaseRaycaster>)
+				raycaster.ToString().log();
+		}
+
 		void debug_gameinput(bool enable = false)
 		{
 			StopAllCoroutines();
@@ -26,11 +36,6 @@ namespace MiscPrototypes
 					sb.AppendLine($"movedir: {GameInput.GetMoveDirection()}");
 					sb.AppendLine($"playercontroller: {Player.main?.playerController.inputEnabled}");
 					sb.AppendLine($"fpsmod lock: {FPSInputModule.current.lockMovement}");
-
-					foreach (var mod in InputHelper.KeyWithModifier.modifiers)
-					{
-						sb.AppendLine($"{mod}: down: {Input.GetKeyDown(mod)} up: {Input.GetKeyUp(mod)} held: {Input.GetKey(mod)}");
-					}
 
 					sb.ToString().onScreen("gameinput");
 					yield return null;

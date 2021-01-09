@@ -48,7 +48,7 @@ namespace UITweaks
 
 			tooltip.gameObject.AddComponent<BulkCraftingInitedTag>();
 
-			var textGO = tooltip.gameObject.getChild(Mod.isBranchStable? "Text": "Container/Text");
+			var textGO = tooltip.gameObject.getChild(Mod.Consts.isBranchStable? "Text": "Container/Text");
 			var textGOBottom = UnityEngine.Object.Instantiate(textGO, textGO.transform.parent);
 			textGOBottom.name = "BottomText";
 
@@ -295,7 +295,7 @@ namespace UITweaks
 			static void reset(CrafterLogic __instance) => crafterCache.Remove(__instance);
 
 			[HarmonyTranspiler]
-			[HarmonyHelper.Patch(typeof(CrafterLogic), Mod.isBranchStable? "TryPickup": "TryPickupAsync")]
+			[HarmonyHelper.Patch(typeof(CrafterLogic), Mod.Consts.isBranchStable? "TryPickup": "TryPickupAsync")]
 #if BRANCH_EXP
 			[HarmonyHelper.Patch(HarmonyHelper.PatchOptions.PatchIteratorMethod)]
 #endif
@@ -309,7 +309,7 @@ namespace UITweaks
 
 				return index == -1? cins:
 					list.ciInsert(index + 2,
-						Mod.isBranchStable? OpCodes.Ldarg_0: OpCodes.Ldloc_1,
+						Mod.Consts.isBranchStable? OpCodes.Ldarg_0: OpCodes.Ldloc_1,
 						CIHelper.emitCall<Action<CrafterLogic>>(_changeLinkedItemsAmount));
 
 				static void _changeLinkedItemsAmount(CrafterLogic instance)

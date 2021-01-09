@@ -1,23 +1,7 @@
-﻿using System;
-
-namespace Common
+﻿namespace Common
 {
 	static partial class Mod
 	{
-		[Obsolete]
-		public const bool isDevBuild =
-#if DEBUG
-			true;
-#else
-			false;
-#endif
-		[Obsolete]
-		public const bool isBranchStable =
-#if BRANCH_STABLE
-			true;
-#else
-			false;
-#endif
 		public static class Consts
 		{
 			public const bool isDevBuild =

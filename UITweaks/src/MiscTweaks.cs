@@ -50,7 +50,7 @@ namespace UITweaks
 
 			static void Postfix(MainMenuLoadButton lb)
 			{
-				string textPath = (Mod.isBranchStable? "": "SaveDetails/") + "SaveGameLength";
+				string textPath = (Mod.Consts.isBranchStable? "": "SaveDetails/") + "SaveGameLength";
 				if (lb.load.getChild(textPath)?.GetComponent<Text>() is Text text)
 					text.text += $" | {lb.saveGame}";
 			}

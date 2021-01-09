@@ -1,16 +1,15 @@
-﻿using SMLHelper.V2.Crafting;
-using Common.Crafting;
+﻿using Common.Crafting;
 
 namespace HabitatPlatform
 {
 	class MapRoomCameraCharge: PoolCraftableObject
 	{
-		protected override TechData getTechData()
+		protected override TechInfo getTechInfo()
 		{
-			var techData = new TechData(new Ingredient(TechType.MapRoomCamera, 1));
-			techData.LinkedItems.Add(TechType.MapRoomCamera);
+			var techInfo = new TechInfo(new TechInfo.Ing(TechType.MapRoomCamera));
+			techInfo.linkedItems.Add(TechType.MapRoomCamera);
 
-			return techData;
+			return techInfo;
 		}
 
 		public override void patch()

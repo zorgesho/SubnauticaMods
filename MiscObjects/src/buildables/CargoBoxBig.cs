@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using SMLHelper.V2.Crafting;
 
 using Common;
 using Common.Crafting;
@@ -8,7 +7,7 @@ namespace MiscObjects
 {
 	class CargoBoxBig: PoolCraftableObject
 	{
-		protected override TechData getTechData() => new TechData(new Ingredient(TechType.Titanium, 4));
+		protected override TechInfo getTechInfo() => new TechInfo(new TechInfo.Ing(TechType.Titanium, 4));
 
 		public override void patch()
 		{

@@ -174,7 +174,7 @@ namespace MiscPrototypes
 	{
 		public class Tag: MonoBehaviour {}
 
-		protected override TechData getTechData() => new TechData(new Ingredient(TechType.Titanium, 2));
+		protected override TechInfo getTechInfo() => new TechInfo(new TechInfo.Ing(TechType.Titanium, 2));
 
 		public override void patch()
 		{

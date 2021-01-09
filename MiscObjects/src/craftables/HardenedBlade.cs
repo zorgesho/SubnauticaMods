@@ -1,17 +1,15 @@
 ﻿using UnityEngine;
-using SMLHelper.V2.Crafting;
-
 using Common.Crafting;
 
 namespace MiscObjects
 {
 	class DiamondBlade: PoolCraftableObject
 	{
-		protected override TechData getTechData() => new TechData
+		protected override TechInfo getTechInfo() => new TechInfo
 		(
-			new Ingredient(TechType.Knife, 1),
-			new Ingredient(TechType.Diamond, 2)
-		)	{ craftAmount = 1 };
+			new TechInfo.Ing(TechType.Knife),
+			new TechInfo.Ing(TechType.Diamond, 2)
+		);
 
 		protected override void initPrefabPool() => addPrefabToPool("WorldEntities/Tools/DiamondBlade");
 

@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using SMLHelper.V2.Crafting;
 
 using Common;
 using Common.Crafting;
@@ -10,12 +9,12 @@ namespace FloatingCargoCrate
 	{
 		public static new TechType TechType { get; private set; } = 0;
 
-		protected override TechData getTechData() => new TechData
+		protected override TechInfo getTechInfo() => new TechInfo
 		(
-			new Ingredient(TechType.Titanium, Main.config.cheapBlueprint? 3: 6),
-			new Ingredient(TechType.Silicone, Main.config.cheapBlueprint? 1: 2),
-			new Ingredient(TechType.AirBladder, Main.config.cheapBlueprint? 1: 2)
-		)	{ craftAmount = 1 };
+			new TechInfo.Ing(TechType.Titanium, Main.config.cheapBlueprint? 3: 6),
+			new TechInfo.Ing(TechType.Silicone, Main.config.cheapBlueprint? 1: 2),
+			new TechInfo.Ing(TechType.AirBladder, Main.config.cheapBlueprint? 1: 2)
+		);
 
 		public override void patch()
 		{

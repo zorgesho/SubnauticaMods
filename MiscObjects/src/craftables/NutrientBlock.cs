@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using SMLHelper.V2.Crafting;
 
 using Common;
 using Common.Crafting;
@@ -8,13 +7,13 @@ namespace MiscObjects
 {
 	class NutrientBlockCraftable: PoolCraftableObject
 	{
-		protected override TechData getTechData() => new TechData
+		protected override TechInfo getTechInfo() => new TechInfo
 		(
-			new Ingredient(TechType.CuredPeeper, 1),
-			new Ingredient(TechType.CuredReginald, 1),
-			new Ingredient(TechType.PurpleVegetable, 2),
-			new Ingredient(TechType.CreepvinePiece, 2)
-		)	{ craftAmount = 1};
+			new TechInfo.Ing(TechType.CuredPeeper),
+			new TechInfo.Ing(TechType.CuredReginald),
+			new TechInfo.Ing(TechType.PurpleVegetable, 2),
+			new TechInfo.Ing(TechType.CreepvinePiece, 2)
+		);
 
 		protected override void initPrefabPool() => addPrefabToPool(TechType.NutrientBlock);
 

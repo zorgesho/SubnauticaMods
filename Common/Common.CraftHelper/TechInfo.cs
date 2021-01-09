@@ -15,8 +15,8 @@ namespace Common.Crafting
 	{
 		public class Ing
 		{
-			public TechType techType;
-			public int amount;
+			public readonly TechType techType;
+			public readonly int amount;
 
 			public Ing(TechType techType, int amount = 1)
 			{
@@ -26,8 +26,8 @@ namespace Common.Crafting
 		}
 
 		public int craftAmount = 1;
-		public List<Ing> ingredients = new List<Ing>();
-		public List<TechType> linkedItems = new List<TechType>();
+		public readonly List<Ing> ingredients = new List<Ing>();
+		public readonly List<TechType> linkedItems = new List<TechType>();
 
 		public TechInfo(params Ing[] ingredients) => ingredients.forEach(ing => this.ingredients.Add(ing));
 

@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 
 using UnityEngine;
-using SMLHelper.V2.Crafting;
 using SMLHelper.V2.Handlers;
 
 using Common;
@@ -24,11 +23,11 @@ namespace HabitatPlatform
 			new Vector3(-dx, -dy, 0f)
 		};
 
-		protected override TechData getTechData() => new TechData
+		protected override TechInfo getTechInfo() => new TechInfo
 		(
-			new Ingredient(TechType.TitaniumIngot, 2),
-			new Ingredient(TechType.ComputerChip, 1),
-			new Ingredient(TechType.Lead, 4)
+			new TechInfo.Ing(TechType.TitaniumIngot, 2),
+			new TechInfo.Ing(TechType.ComputerChip),
+			new TechInfo.Ing(TechType.Lead, 4)
 		);
 
 		public override void patch()

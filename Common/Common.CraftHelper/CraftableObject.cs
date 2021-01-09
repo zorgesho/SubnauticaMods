@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -11,10 +10,8 @@ using SMLHelper.V2.Handlers;
 
 #if GAME_SN
 	using Sprite = Atlas.Sprite;
-	using _TechInfo = SMLHelper.V2.Crafting.TechData;
 #elif GAME_BZ
 	using Sprite = UnityEngine.Sprite;
-	using _TechInfo = SMLHelper.V2.Crafting.RecipeData;
 #endif
 
 namespace Common.Crafting
@@ -33,10 +30,7 @@ namespace Common.Crafting
 		public virtual GameObject getGameObject() => null;
 		public virtual IEnumerator getGameObjectAsync(IOut<GameObject> result) => null;
 
-		[Obsolete("Use getTechInfo() instead")]
-		protected virtual _TechInfo getTechData() => getTechInfo();
-
-		protected virtual TechInfo getTechInfo() => null; // TODO: make abstract after removing getTechData, remove using _TechInfo
+		protected abstract TechInfo getTechInfo();
 
 		public sealed override GameObject GetGameObject()
 		{

@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using SMLHelper.V2.Crafting;
 using SMLHelper.V2.Handlers;
 
 using Common;
@@ -40,12 +39,12 @@ namespace TrfHabitatBuilder
 			return prefab;
 		}
 
-		protected override TechData getTechData() => new TechData
+		protected override TechInfo getTechInfo() => new TechInfo
 		(
-			new Ingredient(TechType.ComputerChip, 1),
-			new Ingredient(TechType.WiringKit, 1),
-			new Ingredient(TechType.Battery, 1)
-		)	{ craftAmount = 1};
+			new TechInfo.Ing(TechType.ComputerChip),
+			new TechInfo.Ing(TechType.WiringKit),
+			new TechInfo.Ing(TechType.Battery)
+		);
 
 		public override void patch()
 		{

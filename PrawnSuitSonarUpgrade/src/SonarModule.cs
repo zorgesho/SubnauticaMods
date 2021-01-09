@@ -1,5 +1,4 @@
-﻿using SMLHelper.V2.Crafting;
-using Common.Crafting;
+﻿using Common.Crafting;
 
 namespace PrawnSuitSonarUpgrade
 {
@@ -7,12 +6,12 @@ namespace PrawnSuitSonarUpgrade
 	{
 		public static new TechType TechType { get; private set; } = 0;
 
-		protected override TechData getTechData() => new TechData
+		protected override TechInfo getTechInfo() => new TechInfo
 		(
-			new Ingredient(TechType.SeamothSonarModule, 1),
-			new Ingredient(TechType.WiringKit, 1),
-			new Ingredient(TechType.ComputerChip, 1)
-		)	{ craftAmount = 1};
+			new TechInfo.Ing(TechType.SeamothSonarModule),
+			new TechInfo.Ing(TechType.WiringKit),
+			new TechInfo.Ing(TechType.ComputerChip)
+		);
 
 		protected override void initPrefabPool() => addPrefabToPool(TechType.VehicleArmorPlating);
 

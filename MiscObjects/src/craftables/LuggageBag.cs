@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using SMLHelper.V2.Crafting;
 
 using Common;
 using Common.Crafting;
@@ -8,11 +7,11 @@ namespace MiscObjects
 {
 	class LuggageBag: PoolCraftableObject
 	{
-		protected override TechData getTechData() => new TechData
+		protected override TechInfo getTechInfo() => new TechInfo
 		(
-			new Ingredient(TechType.FiberMesh, 2),
-			new Ingredient(TechType.Silicone, 1)
-		)	{ craftAmount = 1};
+			new TechInfo.Ing(TechType.FiberMesh, 2),
+			new TechInfo.Ing(TechType.Silicone)
+		);
 
 		protected override void initPrefabPool() => addPrefabToPool("WorldEntities/Doodads/Debris/Wrecks/Decoration/docking_luggage_01_bag4");
 

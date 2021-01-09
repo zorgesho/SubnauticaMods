@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using SMLHelper.V2.Crafting;
 using SMLHelper.V2.Handlers;
 
 using Common;
@@ -18,7 +17,7 @@ namespace MiscObjects
 			public static string ids_OpenDrawers = "Open drawers";
 		}
 
-		protected override TechData getTechData() => new TechData(new Ingredient(TechType.Titanium, 4));
+		protected override TechInfo getTechInfo() => new TechInfo(new TechInfo.Ing(TechType.Titanium, 4));
 
 		public override void patch()
 		{

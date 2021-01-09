@@ -12,10 +12,10 @@ namespace OxygenRefill
 		public static ModCraftTreeRoot treeRootNode { get; private set; }
 		CraftTree.Type treeType;
 
-		protected override TechData getTechData() => new TechData
+		protected override TechInfo getTechInfo() => new TechInfo // TODO: ingredients
 		(
-			new Ingredient(TechType.AdvancedWiringKit, 1)
-		)	{ craftAmount = 1 };
+			new TechInfo.Ing(TechType.AdvancedWiringKit)
+		);
 
 		public override void patch()
 		{
@@ -63,7 +63,7 @@ namespace OxygenRefill
 		readonly float craftingTime;
 		readonly TechType tankType;
 
-		public TankRefill(TechType tankType, float craftingTime): base(tankType.AsString() + "_Refill")
+		public TankRefill(TechType tankType, float craftingTime): base($"{tankType}_Refill")
 		{
 			this.tankType = tankType;
 			this.craftingTime = craftingTime;
@@ -77,7 +77,7 @@ namespace OxygenRefill
 			return prefab; // using this as exact prefab, so no need in LinkedItems
 		}
 
-		protected override TechData getTechData() => new TechData(new Ingredient(tankType, 1)) { craftAmount = 1 };
+		protected override TechInfo getTechInfo() => new TechInfo(new TechInfo.Ing(tankType));
 
 		public override void patch()
 		{

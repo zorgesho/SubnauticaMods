@@ -88,7 +88,7 @@ namespace CustomHotkeys
 			addBindOptions();
 
 			if (resetOptionsPanel)
-				Options.resetPanel();
+				Options.Utils.resetPanel();
 		}
 
 		void addBindOptions()

@@ -28,5 +28,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)ui\BaseOption.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)utils\OptionsWatcher.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)utils\InterleavedParams.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)utils\Utils.cs" />
   </ItemGroup>
 </Project>

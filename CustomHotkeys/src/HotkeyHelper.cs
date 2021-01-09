@@ -138,13 +138,13 @@ namespace CustomHotkeys
 			const char switchSeparator = '|';
 			const char commandSeparator = ';';
 
-			static List<Tuple<Hotkey, HKConfig.Hotkey>> keysInfo;
+			static List<(Hotkey, HKConfig.Hotkey)> keysInfo;
 
 			public static void updateBinds() => keysInfo.ForEach(info => info.Item1.key = info.Item2.key);
 
 			public static List<Hotkey> create(List<HKConfig.Hotkey> keys)
 			{
-				keysInfo = keys.Select(hk => Tuple.Create(create(hk), hk)).ToList();
+				keysInfo = keys.Select(hk => (create(hk), hk)).ToList();
 				return keysInfo.Select(hk => hk.Item1).ToList();
 			}
 

@@ -50,22 +50,21 @@ namespace DebrisRecycling
 		}
 
 
-		static int lastScrapCount = 0; // scrapCount * 100 + smallScrapCount;
+		static (int scrapCount, int smallScrapCount) lastScrapCount; // scrap count in the inventory
 
 		static float extraPowerConsumption = 0f;
 		static PowerRelay currentPowerRelay = null;
 
-		static void getScrapCount(out int scrapCount, out int smallScrapCount)
+		static (int scrapCount, int smallScrapCount) getScrapCount()
 		{
-			scrapCount = Inventory.main.GetPickupCount(TechType.ScrapMetal);
-			smallScrapCount = Inventory.main.GetPickupCount(ScrapMetalSmall.TechType);
+			return (Inventory.main.GetPickupCount(TechType.ScrapMetal), Inventory.main.GetPickupCount(ScrapMetalSmall.TechType));
 		}
 
-		// how much titanium can we craft from scrap in inventory
+		// how much titanium can we craft from scrap in the inventory
 		static int getCraftAmount(int scrapCount = 0, int smallScrapCount = 0)
 		{
 			if (scrapCount == 0 && smallScrapCount == 0)
-				getScrapCount(out scrapCount, out smallScrapCount);
+				(scrapCount, smallScrapCount) = getScrapCount();
 
 			return scrapCount * Main.config.craftConfig.titaniumPerBigScrap + smallScrapCount * Main.config.craftConfig.titaniumPerSmallScrap;
 		}
@@ -99,24 +98,23 @@ namespace DebrisRecycling
 
 		static void updateTitaniumRecipe()
 		{
-			getScrapCount(out int scrapCount, out int smallScrapCount);
+			var scrapCount = getScrapCount();
 
-			int sum = scrapCount * 100 + smallScrapCount;
-			if (lastScrapCount != sum)
+			if (lastScrapCount != scrapCount)
 			{
-				lastScrapCount = sum;
-				setTitaniumRecipe((lastScrapCount == 0? 1: scrapCount), smallScrapCount);
+				lastScrapCount = scrapCount;
+				setTitaniumRecipe(lastScrapCount == default? 1: scrapCount.scrapCount, scrapCount.smallScrapCount);
 			}
 		}
 
 		// reset recipe to default (if we have just small pieces of scrap in inventory, set recipe to "smallscrap => 1 titanium")
 		static void resetTitaniumRecipe()
 		{
-			if (lastScrapCount == 0)
+			if (lastScrapCount == default)
 				return;
 
-			lastScrapCount = 0;
-			getScrapCount(out int scrapCount, out int smallScrapCount);
+			lastScrapCount = default;
+			var (scrapCount, smallScrapCount) = getScrapCount();
 
 			if (scrapCount == 0 && smallScrapCount > 0)
 				setTitaniumRecipe(0, 1);

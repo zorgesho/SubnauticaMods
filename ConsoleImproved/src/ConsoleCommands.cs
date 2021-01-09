@@ -166,7 +166,7 @@ namespace ConsoleImproved
 				static IEnumerator _printCfgVars(string prefix)
 				{
 					var varNames = cfgVarsCache.findByPrefix(prefix).Select(name => name.Trim()).ToList();
-					var prevValues = new Dictionary<string, Tuple<object, float>>(); // key: var name, value: item1 - var value, item2 - last change time
+					var prevValues = new Dictionary<string, (object varValue, float lastChangeTime)>(); // key: var name
 					var sb = new StringBuilder();
 
 					while (true)
@@ -181,19 +181,19 @@ namespace ConsoleImproved
 
 							if (prevValues.TryGetValue(varName, out var prevValue))
 							{
-								if (!Equals(prevValue.Item1, varValue))
+								if (!Equals(prevValue.varValue, varValue))
 								{
-									prevValues[varName] = Tuple.Create(varValue, Time.realtimeSinceStartup);
+									prevValues[varName] = (varValue, Time.realtimeSinceStartup);
 									changeColor = true;
 								}
 								else
 								{
-									changeColor = Time.realtimeSinceStartup - prevValue.Item2 < varColorChangeTime;
+									changeColor = Time.realtimeSinceStartup - prevValue.lastChangeTime < varColorChangeTime;
 								}
 							}
 							else
 							{
-								prevValues[varName] = Tuple.Create(varValue, 0f);
+								prevValues[varName] = (varValue, 0f);
 							}
 
 							sb.AppendLine($"{(changeColor?"<color=magenta>":"")}{varName} = {varValue ?? "<color=red>[null]</color>"}{(changeColor?"</color>":"")}");

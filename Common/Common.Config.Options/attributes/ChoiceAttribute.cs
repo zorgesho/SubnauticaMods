@@ -57,20 +57,20 @@ namespace Common.Configuration
 			public readonly object choiceValue;
 			readonly object[] interleavedParams;
 
-			public List<Tuple<string, object>> dependants
+			public List<(string, object)> dependants
 			{
 				get
 				{
 					if (_dependants == null)
 					{
 						InterleavedParams.split(interleavedParams, out string[] fields, out object[] values);
-						_dependants = Enumerable.Range(0, fields.Length).Select(i => Tuple.Create(fields[i], values[i])).ToList();
+						_dependants = Enumerable.Range(0, fields.Length).Select(i => (fields[i], values[i])).ToList();
 					}
 
 					return _dependants;
 				}
 			}
-			List<Tuple<string, object>> _dependants;
+			List<(string, object)> _dependants;
 
 			public ChoiceMasterAttribute(object choiceValue, params object[] interleavedParams)
 			{

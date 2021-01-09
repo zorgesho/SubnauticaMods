@@ -95,11 +95,10 @@ namespace Common.Configuration
 				// breaks slider to several linear intervals
 				public class Nonlinear: ModSliderOption.SliderValue
 				{
-					readonly List<Tuple<float, float>> sliderToDisplay = new List<Tuple<float, float>>();
-					readonly List<Tuple<float, float>> displayToSlider = new List<Tuple<float, float>>();
+					readonly List<(float, float)> sliderToDisplay = new List<(float, float)>();
+					readonly List<(float, float)> displayToSlider = new List<(float, float)>();
 
-					// Item1: sliderValue; Item2: formatBefore; Item3: formatAfter
-					readonly List<Tuple<float, string, string>> valueFormats = new List<Tuple<float, string, string>>();
+					readonly List<(float sliderValue, string formatBefore, string formatAfter)> valueFormats = new List<(float, string, string)>();
 
 					public override float ValueWidth => 0f;
 
@@ -112,7 +111,7 @@ namespace Common.Configuration
 
 						sliderToDisplay.Sort((x, y) => Math.Sign(x.Item1 - y.Item1));
 						displayToSlider.Sort((x, y) => Math.Sign(x.Item1 - y.Item1));
-						valueFormats.Sort((x, y) => Math.Sign(x.Item1 - y.Item1));
+						valueFormats.Sort((x, y) => Math.Sign(x.sliderValue - y.sliderValue));
 					}
 
 					public override float ConvertToSliderValue(float value)
@@ -122,14 +121,14 @@ namespace Common.Configuration
 
 					public override float ConvertToDisplayValue(float value)
 					{
-						int index = valueFormats.FindIndex(1, info => value <= info.Item1);
+						int index = valueFormats.FindIndex(1, info => value <= info.sliderValue);
 						if (index > 0)
-							ValueFormat = valueFormats[index].Item2 ?? valueFormats[index - 1].Item3 ?? ValueFormat;
+							ValueFormat = valueFormats[index].formatBefore ?? valueFormats[index - 1].formatAfter ?? ValueFormat;
 
 						return convertValue(value, sliderToDisplay);
 					}
 
-					float convertValue(float value, List<Tuple<float, float>> valueInfo)
+					float convertValue(float value, List<(float, float)> valueInfo)
 					{
 						float _convert(float fromLeft, float fromRight, float toLeft, float toRight) =>
 							toLeft + (toRight - toLeft) / (fromRight - fromLeft) * (value - fromLeft); // zero ?
@@ -142,10 +141,10 @@ namespace Common.Configuration
 					// formatBefore: value format for items lesser than sliderValue; formatAfter: for items greater than sliderValue
 					protected void addValueInfo(float sliderValue, float displayValue, string formatBefore = null, string formatAfter = null)
 					{
-						sliderToDisplay.Add(Tuple.Create(sliderValue, displayValue));
-						displayToSlider.Add(Tuple.Create(displayValue, sliderValue));
+						sliderToDisplay.Add((sliderValue, displayValue));
+						displayToSlider.Add((displayValue, sliderValue));
 
-						valueFormats.Add(Tuple.Create(sliderValue, formatBefore, formatAfter));
+						valueFormats.Add((sliderValue, formatBefore, formatAfter));
 					}
 				}
 			}

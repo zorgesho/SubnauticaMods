@@ -9,8 +9,13 @@ namespace MiscObjects
 	{
 		protected override TechInfo getTechInfo() => new TechInfo
 		(
+#if GAME_SN
 			new TechInfo.Ing(TechType.CuredPeeper),
 			new TechInfo.Ing(TechType.CuredReginald),
+#elif GAME_BZ
+			new TechInfo.Ing(TechType.CuredArcticPeeper, 2), // TODO: ingredients?
+			new TechInfo.Ing(TechType.SmallMaroonPlantFruit),
+#endif
 			new TechInfo.Ing(TechType.PurpleVegetable, 2),
 			new TechInfo.Ing(TechType.CreepvinePiece, 2)
 		);
@@ -35,9 +40,12 @@ namespace MiscObjects
 		public override void patch()
 		{
 			register("Craftable nutrient block", "Nutrient block cooked from local ingridients. Less nutritious and more salty than original.");
-
+#if GAME_SN
 			addToGroup(TechGroup.Survival, TechCategory.CookedFood);
-			addCraftingNodeTo(CraftTree.Type.Fabricator, "Survival");
+#elif GAME_BZ
+			addToGroup(TechGroup.Survival, TechCategory.FoodAndDrinks);
+#endif
+			addCraftingNodeTo(CraftTree.Type.Fabricator, "Survival" + (Mod.Consts.isGameSN? "": "/CookedFood"));
 			setTechTypeForUnlock(TechType.PurpleVegetable);
 		}
 	}

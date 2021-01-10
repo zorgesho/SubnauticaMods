@@ -23,7 +23,7 @@ namespace MiscObjects
 		{
 			register(L10n.ids_CounterItem, L10n.ids_CounterItemDesc, TechType.LabCounter);
 
-			addToGroup(TechGroup.Miscellaneous, TechCategory.Misc, TechType.CoffeeVendingMachine);
+			addToGroup(TechGroup.Miscellaneous, TechCategory.Misc, TechType.LabCounter);
 
 			if (Main.config.removeVanillaCounter)
 				CraftDataHandler.RemoveFromGroup(TechGroup.Miscellaneous, TechCategory.Misc, TechType.LabCounter);

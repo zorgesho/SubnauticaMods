@@ -1,0 +1,11 @@
+{
+  "Id": "MiscObjects",
+  "DisplayName": "Misc Objects",
+  "Author": "zorgesho",
+  "Version": "1.0.0",
+  "Dependencies": [ "SMLHelper" ],
+  "Enable": true,
+  "Game": "Subnautica",
+  "AssemblyName": "MiscObjects.dll",
+  "EntryMethod": "MiscObjects.Main.patch"
+}

@@ -12,14 +12,17 @@ namespace MiscObjects
 		public override void patch()
 		{
 			register("Big cargo box", "Cargo box for outside.", SpriteHelper.getSprite(nameof(CargoBox)));
-
+#if GAME_SN
 			addToGroup(TechGroup.ExteriorModules, TechCategory.ExteriorOther, TechType.FarmingTray);
+#elif GAME_BZ
+			addToGroup(TechGroup.ExteriorModules, TechCategory.ExteriorModule, TechType.FarmingTray);
+#endif
 			unlockOnStart();
 		}
 
 		protected override void initPrefabPool()
 		{
-			addPrefabToPool("WorldEntities/Doodads/Debris/Wrecks/Decoration/Starship_cargo");
+			addPrefabToPool($"WorldEntities/{(Mod.Consts.isGameSN? "Doodads/Debris/Wrecks/Decoration": "Alterra/Base")}/Starship_cargo");
 			addPrefabToPool(TechType.SmallLocker, false);
 		}
 
@@ -40,8 +43,9 @@ namespace MiscObjects
 
 			Utils.addStorageToPrefab(prefab, prefabs[1]);
 			PrefabUtils.initStorage(prefab, 8, 8, L10n.str(L10n.ids_OpenBox), L10n.str(L10n.ids_BoxInv));
-			prefab.GetComponent<StorageContainer>().modelSizeRadius *= 3f;
-
+#if GAME_SN
+			prefab.GetComponent<StorageContainer>().modelSizeRadius *= 3f; // TODO: ???
+#endif
 			return prefab;
 		}
 	}

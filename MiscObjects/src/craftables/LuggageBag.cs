@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿#if GAME_SN
+using UnityEngine;
 
 using Common;
 using Common.Crafting;
@@ -33,3 +34,4 @@ namespace MiscObjects
 		}
 	}
 }
+#endif

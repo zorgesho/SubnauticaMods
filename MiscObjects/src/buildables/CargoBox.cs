@@ -19,7 +19,7 @@ namespace MiscObjects
 
 		protected override void initPrefabPool()
 		{
-			addPrefabToPool("WorldEntities/Doodads/Debris/Wrecks/Decoration/Starship_cargo");
+			addPrefabToPool($"WorldEntities/{(Mod.Consts.isGameSN? "Doodads/Debris/Wrecks/Decoration": "Alterra/Base")}/Starship_cargo");
 			addPrefabToPool(TechType.SmallLocker, false);
 		}
 

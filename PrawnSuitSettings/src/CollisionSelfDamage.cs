@@ -11,23 +11,24 @@ namespace PrawnSuitSettings
 	static class CollisionSelfDamage
 	{
 		public class SettingChanged: Config.Field.IAction
-		{
-			public void action() => Object.FindObjectsOfType<Exosuit>()?.forEach(ex => refresh(ex));
-		}
+		{ public void action() => Object.FindObjectsOfType<Exosuit>()?.forEach(ex => refresh(ex)); }
 
 		static void refresh(Exosuit exosuit)
 		{
-			if (exosuit == null)
+			if (!exosuit)
 				return;
 
-			DealDamageOnImpact damage = exosuit.GetComponent<DealDamageOnImpact>();
+			var damage = exosuit.GetComponent<DealDamageOnImpact>();
 
 			damage.mirroredSelfDamage = Main.config.collisionSelfDamage.enabled;
 			damage.speedMinimumForSelfDamage = Main.config.collisionSelfDamage.speedMinimumForDamage;
 
-			int armorCount = exosuit.modules.GetCount(TechType.VehicleArmorPlating);
-			damage.mirroredSelfDamageFraction =
-				Main.config.collisionSelfDamage.mirroredSelfDamageFraction * Mathf.Pow(0.5f, armorCount);
+#if GAME_SN // BZ doesn't have TechType.VehicleArmorPlating
+			float damageReduction = Mathf.Pow(0.5f, exosuit.modules.GetCount(TechType.VehicleArmorPlating));
+#elif GAME_BZ
+			float damageReduction = 1.0f;
+#endif
+			damage.mirroredSelfDamageFraction = Main.config.collisionSelfDamage.mirroredSelfDamageFraction * damageReduction;
 
 			$"CollisionSelfDamage: {damage.mirroredSelfDamage} {damage.speedMinimumForSelfDamage} {damage.mirroredSelfDamageFraction}".logDbg();
 		}
@@ -39,13 +40,14 @@ namespace PrawnSuitSettings
 
 			[HarmonyPostfix, HarmonyPatch(typeof(Exosuit), "Start")]
 			static void Exosuit_Start_Postfix(Exosuit __instance) => refresh(__instance);
-
+#if GAME_SN
 			[HarmonyPostfix, HarmonyPatch(typeof(Exosuit), "OnUpgradeModuleChange")]
 			static void Exosuit_OnUpgradeModuleChange_Postfix(Exosuit __instance, TechType techType)
 			{
 				if (techType == TechType.VehicleArmorPlating)
 					refresh(__instance);
 			}
+#endif
 		}
 	}
 }

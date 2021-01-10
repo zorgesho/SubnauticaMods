@@ -11,21 +11,29 @@ namespace PrawnSuitSettings
 	static class ArmsEnergyUsage
 	{
 		public class SettingChanged: Config.Field.IAction
+		{ public void action() => refresh(); }
+
+		static void setEnergyCost(TechType techType, float energyCost)
 		{
-			public void action() => refresh();
+#if GAME_SN
+			CraftData.energyCost[techType] = energyCost;
+#elif GAME_BZ
+			if (TechData.TryGetValue(techType, out JsonValue value)) // TODO: check for BZ
+				value.SetDouble(energyCost);
+#endif
 		}
 
 		public static void refresh()
 		{																													$"ArmsEnergyUsage: {Main.config.armsEnergyUsage.enabled}".logDbg();
 			float grapplingArmEnergyCost = Main.config.armsEnergyUsage.enabled? Main.config.armsEnergyUsage.grapplingArmShoot: 0f;
 
-			CraftData.energyCost[TechType.ExosuitGrapplingArmModule] = grapplingArmEnergyCost;
+			setEnergyCost(TechType.ExosuitGrapplingArmModule, grapplingArmEnergyCost);
 
 			if (TechTypeHandler.TryGetModdedTechType("GrapplingArmUpgradeModule", out TechType upgradedGrapplingArm))
-				CraftData.energyCost[upgradedGrapplingArm] = grapplingArmEnergyCost;
+				setEnergyCost(upgradedGrapplingArm, grapplingArmEnergyCost);
 
-			CraftData.energyCost[TechType.ExosuitTorpedoArmModule] = Main.config.armsEnergyUsage.enabled? Main.config.armsEnergyUsage.torpedoArm: 0f;
-			CraftData.energyCost[TechType.ExosuitClawArmModule] = Main.config.armsEnergyUsage.enabled? Main.config.armsEnergyUsage.clawArm: 0.1f;
+			setEnergyCost(TechType.ExosuitTorpedoArmModule, Main.config.armsEnergyUsage.enabled? Main.config.armsEnergyUsage.torpedoArm: 0f);
+			setEnergyCost(TechType.ExosuitClawArmModule, Main.config.armsEnergyUsage.enabled? Main.config.armsEnergyUsage.clawArm: 0.1f);
 		}
 
 		static bool consumeArmEnergy(MonoBehaviour exosuitArm, float energyPerSec)

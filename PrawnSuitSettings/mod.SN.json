@@ -3,10 +3,12 @@
   "DisplayName": "Prawn Suit Settings",
   "Author": "zorgesho",
   "Version": "1.1.0",
-  "Dependencies": ["SMLHelper"],
+  "Dependencies": [ "SMLHelper" ],
   "VersionDependencies": { "SMLHelper": "2.6.0" },
   "Enable": true,
   "Game": "Subnautica",
   "AssemblyName": "PrawnSuitSettings.dll",
-  "EntryMethod": "PrawnSuitSettings.Main.patch"
+  "EntryMethod": "PrawnSuitSettings.Main.patch",
+  "UpdateCheck": true,
+  "VersionURL": "https://raw.githubusercontent.com/zorgesho/SubnauticaMods/master/PrawnSuitSettings/mod.SN.json"
 }

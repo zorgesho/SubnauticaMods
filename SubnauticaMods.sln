@@ -322,9 +322,12 @@ Global
 		{CB025D20-0B16-4E80-95E6-3C3FC77935FB}.SNexp.dev|Any CPU.Build.0 = SNexp.dev|Any CPU
 		{CB025D20-0B16-4E80-95E6-3C3FC77935FB}.SNexp.testbuild|Any CPU.ActiveCfg = SNexp.testbuild|Any CPU
 		{CB025D20-0B16-4E80-95E6-3C3FC77935FB}.SNexp.testbuild|Any CPU.Build.0 = SNexp.testbuild|Any CPU
-		{8ECFBD17-D9C6-4FA2-92E2-FB76F71AA316}.BZ.dev|Any CPU.ActiveCfg = SN.dev|Any CPU
-		{8ECFBD17-D9C6-4FA2-92E2-FB76F71AA316}.BZ.publish|Any CPU.ActiveCfg = SN.publish|Any CPU
-		{8ECFBD17-D9C6-4FA2-92E2-FB76F71AA316}.BZ.testbuild|Any CPU.ActiveCfg = SN.testbuild|Any CPU
+		{8ECFBD17-D9C6-4FA2-92E2-FB76F71AA316}.BZ.dev|Any CPU.ActiveCfg = BZ.dev|Any CPU
+		{8ECFBD17-D9C6-4FA2-92E2-FB76F71AA316}.BZ.dev|Any CPU.Build.0 = BZ.dev|Any CPU
+		{8ECFBD17-D9C6-4FA2-92E2-FB76F71AA316}.BZ.publish|Any CPU.ActiveCfg = BZ.publish|Any CPU
+		{8ECFBD17-D9C6-4FA2-92E2-FB76F71AA316}.BZ.publish|Any CPU.Build.0 = BZ.publish|Any CPU
+		{8ECFBD17-D9C6-4FA2-92E2-FB76F71AA316}.BZ.testbuild|Any CPU.ActiveCfg = BZ.testbuild|Any CPU
+		{8ECFBD17-D9C6-4FA2-92E2-FB76F71AA316}.BZ.testbuild|Any CPU.Build.0 = BZ.testbuild|Any CPU
 		{8ECFBD17-D9C6-4FA2-92E2-FB76F71AA316}.BZexp.dev|Any CPU.ActiveCfg = SNexp.dev|Any CPU
 		{8ECFBD17-D9C6-4FA2-92E2-FB76F71AA316}.BZexp.testbuild|Any CPU.ActiveCfg = SNexp.testbuild|Any CPU
 		{8ECFBD17-D9C6-4FA2-92E2-FB76F71AA316}.SN.dev|Any CPU.ActiveCfg = SN.dev|Any CPU

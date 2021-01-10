@@ -1,4 +1,5 @@
-﻿using Common.Crafting;
+﻿using Common;
+using Common.Crafting;
 
 namespace PrawnSuitSonarUpgrade
 {
@@ -8,22 +9,31 @@ namespace PrawnSuitSonarUpgrade
 
 		protected override TechInfo getTechInfo() => new TechInfo
 		(
+#if GAME_SN
 			new TechInfo.Ing(TechType.SeamothSonarModule),
 			new TechInfo.Ing(TechType.WiringKit),
 			new TechInfo.Ing(TechType.ComputerChip)
+#elif GAME_BZ
+			new TechInfo.Ing(TechType.CopperWire),
+			new TechInfo.Ing(TechType.Magnetite, 2)
+#endif
 		);
 
-		protected override void initPrefabPool() => addPrefabToPool(TechType.VehicleArmorPlating);
+		protected override void initPrefabPool() => addPrefabToPool(TechType.ExosuitJetUpgradeModule);
 
 		public override void patch()
 		{
-			TechType = register("Prawn suit sonar", "Seamoth sonar modified to use on prawn suit.", TechType.SeamothSonarModule);
-
+			TechType = register("Prawn suit sonar", Mod.Consts.isGameSN? "Seamoth sonar modified to use on prawn suit.": "Prawn suit sonar (TODO)");
+#if GAME_SN
 			addToGroup(TechGroup.Workbench, TechCategory.Workbench);
 			addCraftingNodeTo(CraftTree.Type.Workbench, "ExosuitMenu");
-			setEquipmentType(EquipmentType.ExosuitModule, QuickSlotType.SelectableChargeable);
-
 			setTechTypeForUnlock(TechType.SeamothSonarModule);
+#elif GAME_BZ
+			addToGroup(TechGroup.VehicleUpgrades, TechCategory.VehicleUpgrades, TechType.ExosuitJetUpgradeModule);
+			addCraftingNodeTo(CraftTree.Type.Fabricator, "Upgrades/ExosuitUpgrades", TechType.ExosuitJetUpgradeModule);
+			unlockOnStart(); // TODO
+#endif
+			setEquipmentType(EquipmentType.ExosuitModule, QuickSlotType.SelectableChargeable);
 		}
 	}
 }

@@ -186,6 +186,7 @@ Global
 		Common\Common.Config\Common.Config.projitems*{ec26571a-5a2b-4b0b-9431-93f9b6e639d4}*SharedItemsImports = 4
 		Common\Common.CraftHelper\Common.CraftHelper.projitems*{ec26571a-5a2b-4b0b-9431-93f9b6e639d4}*SharedItemsImports = 4
 		Common\Common.projitems*{ec26571a-5a2b-4b0b-9431-93f9b6e639d4}*SharedItemsImports = 4
+		Common\Common.AssetsHelper\Common.AssetsHelper.projitems*{f93d86ee-3055-407b-8af2-5f2a06319af8}*SharedItemsImports = 4
 		Common\Common.CraftHelper\Common.CraftHelper.projitems*{f93d86ee-3055-407b-8af2-5f2a06319af8}*SharedItemsImports = 4
 		Common\Common.projitems*{f93d86ee-3055-407b-8af2-5f2a06319af8}*SharedItemsImports = 4
 	EndGlobalSection
@@ -351,9 +352,12 @@ Global
 		{83C36088-5678-4A99-91D6-D5751E789482}.SNexp.dev|Any CPU.Build.0 = SNexp.dev|Any CPU
 		{83C36088-5678-4A99-91D6-D5751E789482}.SNexp.testbuild|Any CPU.ActiveCfg = SNexp.testbuild|Any CPU
 		{83C36088-5678-4A99-91D6-D5751E789482}.SNexp.testbuild|Any CPU.Build.0 = SNexp.testbuild|Any CPU
-		{F93D86EE-3055-407B-8AF2-5F2A06319AF8}.BZ.dev|Any CPU.ActiveCfg = SN.dev|Any CPU
-		{F93D86EE-3055-407B-8AF2-5F2A06319AF8}.BZ.publish|Any CPU.ActiveCfg = SN.publish|Any CPU
-		{F93D86EE-3055-407B-8AF2-5F2A06319AF8}.BZ.testbuild|Any CPU.ActiveCfg = SN.testbuild|Any CPU
+		{F93D86EE-3055-407B-8AF2-5F2A06319AF8}.BZ.dev|Any CPU.ActiveCfg = BZ.dev|Any CPU
+		{F93D86EE-3055-407B-8AF2-5F2A06319AF8}.BZ.dev|Any CPU.Build.0 = BZ.dev|Any CPU
+		{F93D86EE-3055-407B-8AF2-5F2A06319AF8}.BZ.publish|Any CPU.ActiveCfg = BZ.publish|Any CPU
+		{F93D86EE-3055-407B-8AF2-5F2A06319AF8}.BZ.publish|Any CPU.Build.0 = BZ.publish|Any CPU
+		{F93D86EE-3055-407B-8AF2-5F2A06319AF8}.BZ.testbuild|Any CPU.ActiveCfg = BZ.testbuild|Any CPU
+		{F93D86EE-3055-407B-8AF2-5F2A06319AF8}.BZ.testbuild|Any CPU.Build.0 = BZ.testbuild|Any CPU
 		{F93D86EE-3055-407B-8AF2-5F2A06319AF8}.BZexp.dev|Any CPU.ActiveCfg = SNexp.dev|Any CPU
 		{F93D86EE-3055-407B-8AF2-5F2A06319AF8}.BZexp.testbuild|Any CPU.ActiveCfg = SNexp.testbuild|Any CPU
 		{F93D86EE-3055-407B-8AF2-5F2A06319AF8}.SN.dev|Any CPU.ActiveCfg = SN.dev|Any CPU

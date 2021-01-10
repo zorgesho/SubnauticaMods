@@ -1,0 +1,14 @@
+{
+  "Id": "PrawnSuitSonarUpgrade",
+  "DisplayName": "Prawn Suit Sonar Upgrade",
+  "Author": "zorgesho",
+  "Version": "1.1.0",
+  "Dependencies": [ "SMLHelper" ],
+  "VersionDependencies": { "SMLHelper": "2.9.0" },
+  "Enable": true,
+  "Game": "BelowZero",
+  "AssemblyName": "PrawnSuitSonarUpgrade.dll",
+  "EntryMethod": "PrawnSuitSonarUpgrade.Main.patch",
+  "UpdateCheck": true,
+  "VersionURL": "https://raw.githubusercontent.com/zorgesho/SubnauticaMods/master/PrawnSuitSonarUpgrade/mod.BZ.json"
+}

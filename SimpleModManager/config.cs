@@ -3,8 +3,11 @@
 namespace SimpleModManager
 {
 	[Options.Name("Mod Manager")]
+	[Options.CustomOrder(modIDBefore)]
 	class ModConfig: Config
 	{
+		public const string modIDBefore = "SMLHelper";
+
 		class ShowHiddenMods: Field.IAction
 		{ public void action() => Options.Components.Hider.setVisible("hidden-mod", Main.config.showHiddenMods); }
 
@@ -22,7 +25,7 @@ namespace SimpleModManager
 		public readonly string[] blacklist = new[]
 		{
 			"SimpleModManager",
-			"Modding Helper",
+			"SMLHelper",
 			"ConsoleImproved",
 			"CustomHotkeys"
 		};

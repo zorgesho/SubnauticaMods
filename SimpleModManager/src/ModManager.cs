@@ -80,10 +80,11 @@ namespace SimpleModManager
 				{
 					modJson = JsonConvert.DeserializeObject(File.ReadAllText(modJsonPath)) as JObject;
 					enabled = modJson.Property("Enable").Value.ToObject<bool>();
+					string modID = modJson.Property("Id").Value.ToString();
 
 					string dir = Path.GetDirectoryName(modJsonPath);
 					bool hidden = (new DirectoryInfo(dir).Attributes & FileAttributes.Hidden) != 0;
-					bool blacklisted = Main.config.blacklist.findIndex(str => dir.EndsWith(str)) != -1;
+					bool blacklisted = Main.config.blacklist.contains(modID);
 
 					var cfgField = new Field(this, nameof(enabled));
 
@@ -95,9 +96,12 @@ namespace SimpleModManager
 					if (hidden)		 option.addHandler(new Options.Components.Hider.Add(new HideHidden(), "hidden-mod"));
 					if (blacklisted) option.addHandler(new Options.Components.Hider.Add(new HideBlacklisted(), "blacklist-mod"));
 
+					option.addHandler(new Options.Components.Tooltip.Add($"Version: {modJson.Property("Version").Value}"));
+					option.addHandler(new Options.CustomOrderHandler(ModConfig.modIDBefore));
+
 					Options.add(option);
 
-					modToggleFields.Add((modJson.Property("Id").Value.ToString().ToLower(), cfgField));
+					modToggleFields.Add((modID.ToLower(), cfgField));
 
 					return true;
 				}

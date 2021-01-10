@@ -1,7 +1,7 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Reflection;
 using System.Collections.Generic;
 
@@ -29,7 +29,7 @@ namespace Common
 
 			filename ??= go.name.Replace("(Clone)", "").ToLower();
 #if DEBUG
-			Directory.CreateDirectory(pathForDumps);
+			System.IO.Directory.CreateDirectory(pathForDumps);
 			filename = pathForDumps + filename;
 #endif
 			ObjectDumper.dump(go, true, true).saveToFile(filename + ".yml");
@@ -39,6 +39,7 @@ namespace Common
 		static class ObjectDumper
 		{
 			static readonly StringBuilder output = new StringBuilder();
+			static readonly Regex regex = new Regex("[\\r\\n\\t\0]", RegexOptions.Compiled);
 
 			static bool dumpProperties;
 			static bool dumpFields;
@@ -68,7 +69,7 @@ namespace Common
 			static void dump(Component cmp, string indent)
 			{
 				static void _sort<T>(List<T> list) where T: MemberInfo => list.Sort((m1, m2) => m1.Name.CompareTo(m2.Name));
-				static string _formatValue(object value) => value?.ToString().Replace('\r', ' ').Replace('\n', ' ').Replace('\t', ' ').Trim() ?? "";
+				static string _formatValue(object value) => value != null? regex.Replace(value.ToString(), " ").Trim(): "";
 
 				if (cmp == null) // it happens sometimes for some reason
 				{

@@ -9,9 +9,7 @@ using Common.Configuration;
 
 namespace UITweaks
 {
-#if DEBUG
 	[Field.BindConsole("ui")]
-#endif
 	class ModConfig: Config
 	{
 		[Options.Hideable(typeof(Hider), "bulk")]
@@ -99,6 +97,16 @@ namespace UITweaks
 		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 		public readonly bool hideMessagesWhileLoading = true;
 
+		class SetOptionsSpacing: Field.IAction
+		{ public void action() => Options.Utils.setOptionsSpacing(Main.config.optionsSpacing); }
+
+		const float defaultSpacing = 15f;
+
+		[Options.Field("Options spacing", "Vertical spacing between options in the 'Mods' options tab")]
+		[Field.Action(typeof(SetOptionsSpacing))]
+		[Options.Choice("Default", defaultSpacing, "Tight", 10f, "Compact", 5f)]
+		readonly float optionsSpacing = defaultSpacing;
+
 		public readonly KeyCode renameBeaconsKey = KeyCode.None; // using middle mouse button by default
 		public readonly bool showToolbarHotkeys = false;
 
@@ -110,6 +118,9 @@ namespace UITweaks
 				renameBeacons = false;
 				Mod.addCriticalMessage(L10n.str(L10n.ids_modMerged), color: "yellow");
 			}
+
+			if (optionsSpacing != defaultSpacing)
+				Options.Utils.setOptionsSpacing(optionsSpacing);
 		}
 	}
 

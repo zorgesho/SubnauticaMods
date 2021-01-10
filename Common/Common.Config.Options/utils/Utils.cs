@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections;
 
+using Harmony;
 using SMLHelper.V2.Options;
 
 namespace Common.Configuration
 {
+	using Harmony;
 	using Reflection;
 
 	partial class Options: ModOptions
@@ -68,6 +70,36 @@ namespace Common.Configuration
 
 				index = (index >= 0)? Math.Min(index, instance.modOptions.Count): Math.Max(0, instance.modOptions.Count + index);
 				UIUtils.ScrollToShowItemInCenter(instance.modOptions[index].gameObject.transform);
+			}
+
+			static readonly Type typeVerticalLayoutGroup = Type.GetType("UnityEngine.UI.VerticalLayoutGroup, UnityEngine.UI");
+			static readonly PropertyWrapper propSpacing = typeVerticalLayoutGroup.property("spacing").wrap();
+
+			static bool patched = false;
+			static float optionsSpacing;
+
+			// set vertical spacing in pixels between options in the 'Mods' tab
+			public static void setOptionsSpacing(float spacing)
+			{
+				if (!patched && (patched = true))
+					HarmonyHelper.patch();
+
+				optionsSpacing = spacing;
+
+				if (optionsPanel)
+					_setSpacing(spacing);
+			}
+
+			[HarmonyPostfix, HarmonyPatch(typeof(uGUI_TabbedControlsPanel), "SetVisibleTab")]
+			static void uGUITabbedControlsPanel_SetVisibleTab_Postfix(int tabIndex)
+			{
+				if (tabIndex == modsTabIndex)
+					_setSpacing(optionsSpacing);
+			}
+
+			static void _setSpacing(float spacing)
+			{
+				propSpacing.set(modOptionsTab.container.GetComponent(typeVerticalLayoutGroup), spacing);
 			}
 		}
 	}

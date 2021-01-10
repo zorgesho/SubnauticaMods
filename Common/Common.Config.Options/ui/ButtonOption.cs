@@ -44,7 +44,7 @@ namespace Common.Configuration
 				UnityEngine.Object.DestroyImmediate(go);
 				optionsPanel.AddButton(modsTabIndex, label, new UnityAction(onClick));
 
-				var transform = optionsPanel.tabs[modsTabIndex].container.transform;
+				var transform = modOptionsTab.container.transform;
 				var newGO = transform.GetChild(transform.childCount - 1).gameObject;
 				base.onGameObjectChange(newGO);
 			}

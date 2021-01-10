@@ -24,6 +24,7 @@ namespace Common.Configuration
 		}
 		static int modsTabIndex = -1;
 		static uGUI_OptionsPanel optionsPanel;
+		static uGUI_TabbedControlsPanel.Tab modOptionsTab => optionsPanel.tabs[modsTabIndex];
 
 		readonly List<ModOption> modOptions = new List<ModOption>();
 
@@ -78,8 +79,8 @@ namespace Common.Configuration
 
 		public override void BuildModOptions()
 		{
-			modOptions.ForEach(o => o.addOption(this));
 			updatePanelInfo();
+			modOptions.ForEach(o => o.addOption(this));
 		}
 
 		void updatePanelInfo()

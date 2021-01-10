@@ -13,7 +13,6 @@ namespace Common.Configuration
 		{
 			static readonly Type typeScrollRect = Type.GetType("UnityEngine.UI.ScrollRect, UnityEngine.UI");
 			static readonly PropertyWrapper propScrollPos = typeScrollRect.property("verticalNormalizedPosition").wrap();
-			static readonly MethodWrapper mtdSelectableSelect = Type.GetType("UnityEngine.UI.Selectable, UnityEngine.UI").method("Select").wrap();
 
 			// recreates all ui controls in the options panel
 			// keeps selected tab and scroll position
@@ -36,6 +35,8 @@ namespace Common.Configuration
 				propScrollPos.set(scroll, scrollPos);
 			}
 
+			static readonly MethodWrapper mtdSelectableSelect = Type.GetType("UnityEngine.UI.Selectable, UnityEngine.UI").method("Select").wrap();
+
 			// open options menu and switch to the 'Mods' tab
 			public static void open()
 			{
@@ -54,7 +55,7 @@ namespace Common.Configuration
 				static IEnumerator _selectModsTab()
 				{
 					yield return null;
-					mtdSelectableSelect.invoke(optionsPanel.tabs[modsTabIndex].getFieldValue("tabButton"));
+					mtdSelectableSelect.invoke(modOptionsTab.getFieldValue("tabButton"));
 				}
 			}
 

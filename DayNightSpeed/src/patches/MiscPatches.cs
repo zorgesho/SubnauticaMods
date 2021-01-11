@@ -42,6 +42,7 @@ namespace DayNightSpeed
 		}
 	}
 
+#if GAME_SN
 	// fixing stillsuit water capture speed
 	[HarmonyPatch(typeof(Stillsuit), "UpdateEquipped")]
 	static class Stillsuit_UpdateEquipped_Patch
@@ -51,6 +52,7 @@ namespace DayNightSpeed
 				_codeForCfgVar(nameof(ModConfig.dayNightSpeed)), OpCodes.Mul,
 				_codeForCfgVar(nameof(ModConfig.speedStillsuitWater)), OpCodes.Mul);
 	}
+#endif
 
 	// fixing maproom scan times
 	[HarmonyPatch(typeof(MapRoomFunctionality), "GetScanInterval")]
@@ -84,6 +86,7 @@ namespace DayNightSpeed
 			cins.ciInsert(ci => ci.isLDC(500f), _dnsClamped01.ci, OpCodes.Div);
 	}
 
+#if GAME_SN // TODO: fix for BZ
 	// fixed lifetime for current
 	[HarmonyPatch(typeof(WorldForces), "AddCurrent")]
 	static class WorldForces_AddCurrent_Patch
@@ -91,6 +94,7 @@ namespace DayNightSpeed
 		static CIEnumerable Transpiler(CIEnumerable cins) =>
 			cins.ciInsert(ci => ci.isOp(OpCodes.Ldarg_S, (byte)5), _dnsClamped01.ci, OpCodes.Mul);
 	}
+#endif
 
 	// fixes for explosions and currents
 	[HarmonyPatch(typeof(WorldForces), "DoFixedUpdate")]
@@ -107,6 +111,7 @@ namespace DayNightSpeed
 		}
 	}
 
+#if GAME_SN
 	// peeper enzyme recharging interval, just use speed setting at the moment of start
 	[HarmonyPatch(typeof(Peeper), "Start")]
 	static class Peeper_Start_Patch
@@ -120,4 +125,5 @@ namespace DayNightSpeed
 			__instance.rechargeInterval = rechargeIntervalInitial * Main.config.dayNightSpeed;
 		}
 	}
+#endif
 }

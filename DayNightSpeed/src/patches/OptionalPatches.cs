@@ -23,6 +23,7 @@ namespace DayNightSpeed
 			cins.ciInsert(ci => ci.isLDC(1f), _codeForCfgVar(nameof(ModConfig.speedEggsHatching)), OpCodes.Div);
 	}
 
+#if GAME_SN // TODO: fix for BZ
 	// modifying creature grow and breed time (breed time is half of grow time)
 	[OptionalPatch, PatchClass]
 	static class WaterParkCreaturePatch
@@ -40,6 +41,7 @@ namespace DayNightSpeed
 				_codeForCfgVar(nameof(ModConfig.speedCreaturesGrow)), OpCodes.Div);
 		}
 	}
+#endif
 
 	// modifying plants grow time and fruits grow time (on lantern tree)
 	[OptionalPatch, PatchClass]
@@ -129,7 +131,7 @@ namespace DayNightSpeed
 		{
 			if (Main.config.dbgCfg.showWaterParkCreatures)
 			{
-				$"age: {__instance.age} canBreed: {__instance.canBreed} matureTime: {__instance.matureTime} isMature: {__instance.isMature}".
+				$"age: {__instance.age} canBreed: {__instance.GetCanBreed()} matureTime: {__instance.matureTime} isMature: {__instance.isMature}".
 					onScreen($"waterpark {__instance.name} {__instance.GetHashCode()}");
 			}
 		}

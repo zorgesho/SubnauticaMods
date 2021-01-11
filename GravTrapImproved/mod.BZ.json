@@ -1,0 +1,14 @@
+{
+  "Id": "GravTrapImproved",
+  "DisplayName": "Grav Trap Improved",
+  "Author": "zorgesho",
+  "Version": "2.1.0",
+  "Dependencies": [ "SMLHelper" ],
+  "VersionDependencies": { "SMLHelper": "2.9.0" },
+  "Enable": true,
+  "Game": "BelowZero",
+  "AssemblyName": "GravTrapImproved.dll",
+  "EntryMethod": "GravTrapImproved.Main.patch",
+  "UpdateCheck": true,
+  "VersionURL": "https://raw.githubusercontent.com/zorgesho/SubnauticaMods/master/GravTrapImproved/mod.BZ.json"
+}

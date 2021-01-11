@@ -72,5 +72,20 @@ namespace Common
 
 		public static void clearScreenMessages() => // expire all messages except QMM main menu messages
 			ErrorMessage.main?.messages.Where(m => m.timeEnd - Time.time < 1e3f).forEach(m => m.timeEnd = Time.time - 1f);
+
+		public static void setText(this HandReticle hand, string textUse = null, string textUseSubscript = null, string textHand = null, string textHandSubscript = null)
+		{
+#if GAME_SN
+			if (textUse != null)			hand.useText1 = textUse;
+			if (textHand != null)			hand.interactText1 = textHand;
+			if (textUseSubscript != null)	hand.useText2 = textUseSubscript;
+			if (textHandSubscript != null)	hand.interactText2 = textHandSubscript;
+#elif GAME_BZ
+			if (textUse != null)			hand.textUse = textUse;
+			if (textHand != null)			hand.textHand = textHand;
+			if (textUseSubscript != null)	hand.textUseSubscript = textUseSubscript;
+			if (textHandSubscript != null)	hand.textHand = textHandSubscript;
+#endif
+		}
 	}
 }

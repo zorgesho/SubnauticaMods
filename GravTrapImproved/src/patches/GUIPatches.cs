@@ -68,14 +68,14 @@ namespace GravTrapImproved
 					return;
 
 				if (__instance.GetTool() is PlayerTool tool && tool.pickupable?.GetTechType().isGravTrap() == true)
-					HandReticle.main.SetUseTextRaw(tool.GetCustomUseText(), GravTrapObjectsType.getFrom(tool.gameObject).techTypeListName);
+					HandReticle.main.setText(textUse: tool.GetCustomUseText(), textUseSubscript: GravTrapObjectsType.getFrom(tool.gameObject).techTypeListName);
 			}
 
 			[HarmonyPostfix, HarmonyPatch(typeof(Pickupable), "OnHandHover")]
 			static void Pickupable_OnHandHover_Postfix(Pickupable __instance)
 			{
 				if (__instance.GetTechType().isGravTrap())
-					HandReticle.main.interactText2 = GravTrapObjectsType.getFrom(__instance.gameObject).techTypeListName;
+					HandReticle.main.setText(textUseSubscript: GravTrapObjectsType.getFrom(__instance.gameObject).techTypeListName);
 			}
 		}
 	}

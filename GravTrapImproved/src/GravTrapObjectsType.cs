@@ -101,23 +101,25 @@ namespace GravTrapImproved
 
 				obj.transform.Find("models").localPosition = Vector3.zero;
 			}
-
+#if GAME_SN
 			if (GetComponent<GravTrapMK2.Tag>() && obj.GetComponent<GasPod>() is GasPod gasPod)
 			{
 				gasPod.grabbedByPropCannon = added;
 				if (!added)
 					gasPod.PrepareDetonationTime();
 			}
+#endif
 		}
 
 		TechType getObjectTechType(GameObject obj)
 		{
+#if GAME_SN
 			if (obj.GetComponentInParent<SinkingGroundChunk>() || obj.name.Contains("TreaderShale"))
 				return TechType.ShaleChunk;
 
 			if (obj.GetComponent<GasPod>() is GasPod gasPod)
 				return gasPod.detonated? TechType.None: TechType.GasPod;
-
+#endif
 			return CraftData.GetTechType(obj);
 		}
 

@@ -106,14 +106,14 @@ namespace MiscPatches
 		static IEnumerable<CodeInstruction> fastStartPatch(IEnumerable<CodeInstruction> cins)
 		{
 			return CIHelper.ciReplace(cins, ci => ci.isOp(OpCodes.Call),
-				OpCodes.Pop, CIHelper.emitCall<System.Func<IEnumerator>>(_startGame));
+				OpCodes.Pop, CIHelper.emitCall<Func<IEnumerator>>(_startGame));
 
 			static IEnumerator _startGame()
 			{
 				Physics.autoSyncTransforms = Physics2D.autoSimulation = false;
-#if BRANCH_STABLE
+#if BRANCH_STABLE && GAME_SN
 				yield return SceneManager.LoadSceneAsync("Essentials", LoadSceneMode.Additive);
-#elif BRANCH_EXP
+#else
 				yield return AddressablesUtility.LoadSceneAsync("Essentials", LoadSceneMode.Additive);
 #endif
 				Application.backgroundLoadingPriority = ThreadPriority.Normal;
@@ -122,7 +122,7 @@ namespace MiscPatches
 					DevConsole.SendConsoleCommand(cmd);
 			}
 		}
-
+#if GAME_SN
 		[HarmonyPrefix, HarmonyPatch(typeof(LightmappedPrefabs), "Awake")]
 		static bool LightmappedPrefabs_Awake_Prefix(LightmappedPrefabs __instance)
 		{
@@ -136,9 +136,15 @@ namespace MiscPatches
 
 			return Main.config.dbg.fastStart.loadEscapePod;
 		}
+#endif
+		[HarmonyPrefix]
+		[HarmonyPatch(typeof(PlayerWorldArrows), "ArrowUpdate")]
+		[HarmonyPatch(typeof(TemperatureDamage), "OnCollisionStay")]
+		[HarmonyPatch(typeof(uGUI_OptionsPanel), "SyncTerrainChangeRequiresRestartText")]
+		static bool methodDisabler() => false;
 
-		[HarmonyPrefix, HarmonyPatch(typeof(uGUI_OptionsPanel), "SyncTerrainChangeRequiresRestartText")]
-		static bool ModOptionsPanelFix() => false;
+		[HarmonyPrefix, HarmonyPatch(typeof(Pickupable), "Activate")]
+		static void Pickupable_Activate_Prefix(ref bool registerEntity) => registerEntity = false;
 	}
 
 	// pause in ingame menu

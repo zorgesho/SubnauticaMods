@@ -1,5 +1,4 @@
-﻿#if GAME_SN
-using System;
+﻿using System;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Collections.Generic;
@@ -39,7 +38,7 @@ namespace MiscPatches
 			}));
 	}
 
-
+#if GAME_SN
 	[PatchClass]
 	static class PrawnSuitLightsToggle // mostly from RandyKnapp's PrawnSuitLightSwitch mod
 	{
@@ -69,6 +68,7 @@ namespace MiscPatches
 			}
 		}
 	}
+#endif
 
 	// vehicle will take random additional damage if its health is too low
 	[PatchClass]
@@ -95,7 +95,11 @@ namespace MiscPatches
 			}
 
 			bool isCanTakeDamage() =>
-				(!vehicle || (!vehicle.GetRecentlyUndocked() && !vehicle.docked && !vehicle.precursorOutOfWater && !vehicle.IsInsideAquarium()));
+				!vehicle || (!vehicle.GetRecentlyUndocked() &&
+#if GAME_SN
+				!vehicle.precursorOutOfWater &&
+#endif
+				!vehicle.docked && !vehicle.IsInsideAquarium());
 
 			void healthUpdate()
 			{
@@ -113,6 +117,7 @@ namespace MiscPatches
 		}
 	}
 
+#if GAME_SN
 	// Hide extra quick slots in vehicles
 	// Modules installed in these slots working as usual
 	// Intended for passive modules, issues with selectable modules
@@ -286,5 +291,5 @@ namespace MiscPatches
 			currentSeamoth = null;
 		}
 	}
-}
 #endif
+}

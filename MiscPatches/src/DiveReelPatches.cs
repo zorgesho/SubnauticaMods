@@ -1,6 +1,7 @@
-﻿#if GAME_SN
-using Harmony;
+﻿using Harmony;
 using UnityEngine;
+
+using Common;
 
 namespace MiscPatches
 {
@@ -25,11 +26,9 @@ namespace MiscPatches
 
 		static bool Prefix(DiveReel __instance)
 		{
-			Targeting.GetTarget(Player.main.gameObject, 2f, out GameObject gameObject, out float num, null);
-
-			if (gameObject)
+			if (GameUtils.getTarget(2f) is GameObject gameObject)
 			{
-				DiveReelNode reelNode = gameObject.GetComponent<DiveReelNode>();
+				var reelNode = gameObject.GetComponent<DiveReelNode>();
 
 				if (reelNode && reelNode.firstArrow)
 				{
@@ -43,9 +42,12 @@ namespace MiscPatches
 
 		static void removeDiveReelNode(DiveReel reel, DiveReelNode node)
 		{
+#if GAME_SN
 			reel.nodes.Remove(node.gameObject);
+#elif GAME_BZ
+			reel.nodes.Remove(node);
+#endif
 			node.DestroySelf(0.1f);
-
 			recalcNodes(reel);
 		}
 
@@ -70,4 +72,3 @@ namespace MiscPatches
 		}
 	}
 }
-#endif

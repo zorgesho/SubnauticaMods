@@ -49,12 +49,8 @@ namespace MiscPatches
 
 		static void Postfix(StringBuilder sb, TechType techType, GameObject obj)
 		{
-			if (techType == TechType.Flare)
-			{
-				var flare = obj.GetComponent<Flare>();
-				if (flare.hasBeenThrown)
-					TooltipFactory.WriteDescription(sb, "[lighted]");
-			}
+			if (techType == TechType.Flare && obj.GetComponent<Flare>().hasBeenThrown)
+				TooltipFactory.WriteDescription(sb, "[lighted]");
 		}
 	}
 
@@ -66,12 +62,14 @@ namespace MiscPatches
 
 		static bool Prepare() => Main.config.gameplayPatches;
 
-		static void Postfix(CreatureDeath __instance) =>
+		static void Postfix(CreatureDeath __instance)
+		{
 			__instance.gameObject.callAfterDelay(timeToStopAnimator, new UnityAction(() =>
 			{
 				if (__instance.gameObject.GetComponentInChildren<Animator>() is Animator animator)
 					animator.enabled = false;
 			}));
+		}
 	}
 
 	// we can kill HangingStingers now

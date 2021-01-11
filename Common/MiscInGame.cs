@@ -73,6 +73,16 @@ namespace Common
 		public static void clearScreenMessages() => // expire all messages except QMM main menu messages
 			ErrorMessage.main?.messages.Where(m => m.timeEnd - Time.time < 1e3f).forEach(m => m.timeEnd = Time.time - 1f);
 
+		public static GameObject getTarget(float maxDistance)
+		{
+#if GAME_SN
+			Targeting.GetTarget(Player.main.gameObject, maxDistance, out GameObject result, out _, null);
+#elif GAME_BZ
+			Targeting.GetTarget(Player.main.gameObject, maxDistance, out GameObject result, out _);
+#endif
+			return result;
+		}
+
 		public static void setText(this HandReticle hand, string textUse = null, string textUseSubscript = null, string textHand = null, string textHandSubscript = null)
 		{
 #if GAME_SN

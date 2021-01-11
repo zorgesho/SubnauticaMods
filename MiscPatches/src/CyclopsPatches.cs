@@ -1,4 +1,5 @@
-﻿using Harmony;
+﻿#if GAME_SN
+using Harmony;
 using UnityEngine.Events;
 
 using Common;
@@ -48,3 +49,4 @@ namespace MiscPatches
 		}
 	}
 }
+#endif

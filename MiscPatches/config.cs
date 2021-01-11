@@ -5,6 +5,9 @@ using Common.Configuration;
 
 namespace MiscPatches
 {
+#if DEBUG
+	[Options.CustomOrder("QM")]
+#endif
 	[Field.BindConsole("misc")]
 	class ModConfig: Config
 	{
@@ -86,20 +89,25 @@ namespace MiscPatches
 
 			public class FastStart
 			{
+#if GAME_SN
 				class Hider: Options.Components.Hider.Simple
-				{ public Hider(): base("fast", () => Main.config.dbg.fastStart.enabled) {} }
+				{ public Hider(): base("loadEscapePod", () => Main.config.dbg.fastStart.enabled) {} }
 
-				[Options.Field("Fast start")]
 				[Field.Action(typeof(Hider))]
+#endif
+				[Options.Field("Fast start")]
 				[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 				public readonly bool enabled = false;
-
+#if GAME_SN
 				[Options.Field("\tLoad escape pod")]
-				[Options.Hideable(typeof(Hider), "fast")]
+				[Options.Hideable(typeof(Hider))]
 				public readonly bool loadEscapePod = false;
-
+#endif
 				public readonly string[] commandsAfterLoad =
 				{
+#if GAME_BZ
+					"day"
+#endif
 				};
 			}
 			public readonly FastStart fastStart = new FastStart();

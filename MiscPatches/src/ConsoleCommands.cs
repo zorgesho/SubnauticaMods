@@ -147,7 +147,6 @@ namespace MiscPatches
 		}
 #pragma warning restore CS0618
 
-#if GAME_SN
 		public void game_load(int slotID = -1)
 		{
 			if (!uGUI_MainMenu.main)
@@ -177,9 +176,13 @@ namespace MiscPatches
 			}
 
 			if (gameinfoToLoad != null)
+#if GAME_SN
 				CoroutineHost.StartCoroutine(uGUI_MainMenu.main.LoadGameAsync(slotToLoad, gameinfoToLoad.changeSet, gameinfoToLoad.gameMode));
-		}
+#elif GAME_BZ
+				CoroutineHost.StartCoroutine(uGUI_MainMenu.main.LoadGameAsync(slotToLoad, "", gameinfoToLoad.changeSet, gameinfoToLoad.gameMode, 2));
 #endif
+		}
+
 		public void game_quit(bool quitToDesktop = false)
 		{
 			if (uGUI_MainMenu.main && quitToDesktop)
@@ -207,12 +210,7 @@ namespace MiscPatches
 
 			public static GameObject findTarget()
 			{
-#if GAME_SN
-				Targeting.GetTarget(Player.main.gameObject, 10f, out GameObject target, out float num, null);
-#elif GAME_BZ
-				Targeting.GetTarget(Player.main.gameObject, 10f, out GameObject target, out float num);
-#endif
-				moveTarget = target?.GetComponentInParent<Constructable>()?.gameObject;
+				moveTarget = GameUtils.getTarget(10f)?.GetComponentInParent<Constructable>()?.gameObject;
 				lastTargetActionTime = Time.time;
 
 				return moveTarget;

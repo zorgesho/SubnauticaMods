@@ -118,12 +118,13 @@ namespace UITweaks
 					removeNotifications(getGroupByTabIndex(index));
 			}
 
+#if GAME_SN // TODO: fix for BZ
 			[HarmonyPostfix, HarmonyPatch(typeof(uGUI_PDA), "GetToolbarTooltip")]
 			static void getTooltip(int index, ref string tooltipText)
 			{
 				modifyTooltip(index, ref tooltipText);
 			}
-
+#endif
 			[HarmonyPostfix, HarmonyPatch(typeof(uGUI_PDA), "OnOpenPDA")]
 			static void openPDA()
 			{

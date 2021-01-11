@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 using UnityEngine;
 
@@ -74,14 +73,16 @@ namespace UITweaks
 		}
 		public readonly PDATweaks pdaTweaks = new PDATweaks();
 
+#if GAME_SN
 		class HideRenameBeacons: Options.Components.Hider.IVisibilityChecker
 		{ public bool visible => !Main.config.oldRenameBeaconsModActive; }
 
-		[NonSerialized]
+		[System.NonSerialized]
 		bool oldRenameBeaconsModActive = false;
 
-		[Options.Field("Rename beacons in the inventory", "Use middle mouse button (or custom hotkey) to rename beacons that are in the inventory")]
 		[Options.Hideable(typeof(HideRenameBeacons))]
+#endif
+		[Options.Field("Rename beacons in the inventory", "Use middle mouse button (or custom hotkey) to rename beacons that are in the inventory")]
 		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 		public bool renameBeacons = true;
 
@@ -112,13 +113,14 @@ namespace UITweaks
 
 		protected override void onLoad()
 		{
+#if GAME_SN
 			if (Mod.isModEnabled("RenameBeacons"))
 			{
 				oldRenameBeaconsModActive = true;
 				renameBeacons = false;
 				Mod.addCriticalMessage(L10n.str(L10n.ids_modMerged), color: "yellow");
 			}
-
+#endif
 			if (optionsSpacing != defaultSpacing)
 				Options.Utils.setOptionsSpacing(optionsSpacing);
 		}
@@ -132,6 +134,8 @@ namespace UITweaks
 		public static readonly string ids_beaconName = "Name";
 		public static readonly string ids_beaconRename = "rename";
 
+#if GAME_SN
 		public static readonly string ids_modMerged = "<b>RenameBeacons</b> mod is now merged into <b>UI Tweaks</b> mod, you can safely delete it.";
+#endif
 	}
 }

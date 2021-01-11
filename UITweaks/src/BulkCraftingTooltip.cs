@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if GAME_SN // TODO: fix for BZ
+using System;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Collections.Generic;
@@ -355,3 +356,4 @@ namespace UITweaks
 		}
 	}
 }
+#endif

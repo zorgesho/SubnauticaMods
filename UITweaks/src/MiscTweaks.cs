@@ -16,13 +16,14 @@ namespace UITweaks
 		{
 			static bool prepare() => Main.config.builderMenuTabHotkeysEnabled;
 
+#if GAME_SN // TODO: fix for BZ
 			[HarmonyPostfix, HarmonyPatch(typeof(uGUI_BuilderMenu), "GetToolbarTooltip")]
 			static void modifyTooltip(int index, ref string tooltipText)
 			{
 				if (Main.config.showToolbarHotkeys)
 					tooltipText = $"<size=25><color=#ADF8FFFF>{index + 1}</color> - </size>{tooltipText}";
 			}
-
+#endif
 			[HarmonyPostfix, HarmonyPatch(typeof(uGUI_BuilderMenu), "Open")]
 			static void openMenu()
 			{
@@ -50,7 +51,7 @@ namespace UITweaks
 
 			static void Postfix(MainMenuLoadButton lb)
 			{
-				string textPath = (Mod.Consts.isBranchStable? "": "SaveDetails/") + "SaveGameLength";
+				string textPath = (Mod.Consts.isBranchStable? "": "SaveDetails/") + "SaveGameLength"; // TODO: fix for BZ
 				if (lb.load.getChild(textPath)?.GetComponent<Text>() is Text text)
 					text.text += $" | {lb.saveGame}";
 			}

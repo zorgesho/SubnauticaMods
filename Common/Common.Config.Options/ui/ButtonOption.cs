@@ -56,7 +56,7 @@ namespace Common.Configuration
 
 			void onClick()
 			{
-				cfgField.value = (cfgField.value as int?) + 1; // cfgField will run attached actions when we change its value
+				cfgField.value = cfgField.value.cast<int>() + 1; // cfgField will run attached actions when we change its value
 
 				setSelectedGameObject.invoke(currentEventSystem.get(), null); // so button don't stays pressed after click
 			}

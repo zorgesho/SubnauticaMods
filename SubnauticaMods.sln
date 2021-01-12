@@ -47,8 +47,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DayNightSpeed", "DayNightSp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloatingCargoCrate", "FloatingCargoCrate\FloatingCargoCrate.csproj", "{9E3D5F87-C19E-482B-AC15-7E56DEED70FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VehicleCameraDrone", "VehicleCameraDrone\VehicleCameraDrone.csproj", "{83158211-2490-4CDC-86DD-D865E9394ED9}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeamothStorageSlots", "SeamothStorageSlots\SeamothStorageSlots.csproj", "{BFB9336C-F678-4AF1-8B10-0BDDCD3AEAC8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteTorpedoDetonator", "RemoteTorpedoDetonator\RemoteTorpedoDetonator.csproj", "{1C1E62E2-282E-48EE-BF91-54A1E0180B96}"
@@ -66,8 +64,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiscPrototypes", "MiscPrototypes\MiscPrototypes.csproj", "{5322339C-9933-4FB2-A04A-495718A3F66B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OxygenRefill", "OxygenRefill\OxygenRefill.csproj", "{B3E130A4-0598-40A5-8D01-543D18743A6F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fatigue", "Fatigue\Fatigue.csproj", "{EBFA5C5C-995C-4E6D-9F6E-C9C33F864EF6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "misc", "misc", "{7B8B7765-2191-43CD-ABE0-89BBEF79CFC2}"
 	ProjectSection(SolutionItems) = preProject
@@ -132,7 +128,6 @@ Global
 		Common\Common.GameSerialization\Common.GameSerialization.projitems*{655a27d7-f0e2-480c-b875-96312b41ef0f}*SharedItemsImports = 4
 		Common\Common.projitems*{655a27d7-f0e2-480c-b875-96312b41ef0f}*SharedItemsImports = 4
 		Common\Common.AssetsHelper\Common.AssetsHelper.projitems*{7575770c-9962-4bd2-bbbe-e440b9437c03}*SharedItemsImports = 13
-		Common\Common.projitems*{83158211-2490-4cdc-86dd-d865e9394ed9}*SharedItemsImports = 4
 		Common\Common.AssetsHelper\Common.AssetsHelper.projitems*{83c36088-5678-4a99-91d6-d5751e789482}*SharedItemsImports = 4
 		Common\Common.Config\Common.Config.projitems*{83c36088-5678-4a99-91d6-d5751e789482}*SharedItemsImports = 4
 		Common\Common.CraftHelper\Common.CraftHelper.projitems*{83c36088-5678-4a99-91d6-d5751e789482}*SharedItemsImports = 4
@@ -179,9 +174,6 @@ Global
 		Common\Common.CraftHelper\Common.CraftHelper.projitems*{e30903df-6f81-41bc-ada2-9f50188aaff5}*SharedItemsImports = 13
 		Common\Common.Config\Common.Config.projitems*{e808117c-7abe-4140-a1d3-fea6b1e2f7f0}*SharedItemsImports = 4
 		Common\Common.projitems*{e808117c-7abe-4140-a1d3-fea6b1e2f7f0}*SharedItemsImports = 4
-		Common\Common.AssetsHelper\Common.AssetsHelper.projitems*{ebfa5c5c-995c-4e6d-9f6e-c9c33f864ef6}*SharedItemsImports = 4
-		Common\Common.Config\Common.Config.projitems*{ebfa5c5c-995c-4e6d-9f6e-c9c33f864ef6}*SharedItemsImports = 4
-		Common\Common.projitems*{ebfa5c5c-995c-4e6d-9f6e-c9c33f864ef6}*SharedItemsImports = 4
 		Common\Common.AssetsHelper\Common.AssetsHelper.projitems*{ec26571a-5a2b-4b0b-9431-93f9b6e639d4}*SharedItemsImports = 4
 		Common\Common.Config\Common.Config.projitems*{ec26571a-5a2b-4b0b-9431-93f9b6e639d4}*SharedItemsImports = 4
 		Common\Common.CraftHelper\Common.CraftHelper.projitems*{ec26571a-5a2b-4b0b-9431-93f9b6e639d4}*SharedItemsImports = 4
@@ -427,17 +419,6 @@ Global
 		{9E3D5F87-C19E-482B-AC15-7E56DEED70FA}.SNexp.dev|Any CPU.Build.0 = SNexp.dev|Any CPU
 		{9E3D5F87-C19E-482B-AC15-7E56DEED70FA}.SNexp.testbuild|Any CPU.ActiveCfg = SNexp.testbuild|Any CPU
 		{9E3D5F87-C19E-482B-AC15-7E56DEED70FA}.SNexp.testbuild|Any CPU.Build.0 = SNexp.testbuild|Any CPU
-		{83158211-2490-4CDC-86DD-D865E9394ED9}.BZ.dev|Any CPU.ActiveCfg = SN.dev|Any CPU
-		{83158211-2490-4CDC-86DD-D865E9394ED9}.BZ.publish|Any CPU.ActiveCfg = SN.publish|Any CPU
-		{83158211-2490-4CDC-86DD-D865E9394ED9}.BZ.testbuild|Any CPU.ActiveCfg = SN.testbuild|Any CPU
-		{83158211-2490-4CDC-86DD-D865E9394ED9}.BZexp.dev|Any CPU.ActiveCfg = SNexp.dev|Any CPU
-		{83158211-2490-4CDC-86DD-D865E9394ED9}.BZexp.testbuild|Any CPU.ActiveCfg = SN.testbuild|Any CPU
-		{83158211-2490-4CDC-86DD-D865E9394ED9}.SN.dev|Any CPU.ActiveCfg = SN.dev|Any CPU
-		{83158211-2490-4CDC-86DD-D865E9394ED9}.SN.publish|Any CPU.ActiveCfg = SN.publish|Any CPU
-		{83158211-2490-4CDC-86DD-D865E9394ED9}.SN.testbuild|Any CPU.ActiveCfg = SN.testbuild|Any CPU
-		{83158211-2490-4CDC-86DD-D865E9394ED9}.SN.testbuild|Any CPU.Build.0 = SN.testbuild|Any CPU
-		{83158211-2490-4CDC-86DD-D865E9394ED9}.SNexp.dev|Any CPU.ActiveCfg = SNexp.dev|Any CPU
-		{83158211-2490-4CDC-86DD-D865E9394ED9}.SNexp.testbuild|Any CPU.ActiveCfg = SN.testbuild|Any CPU
 		{BFB9336C-F678-4AF1-8B10-0BDDCD3AEAC8}.BZ.dev|Any CPU.ActiveCfg = SN.dev|Any CPU
 		{BFB9336C-F678-4AF1-8B10-0BDDCD3AEAC8}.BZ.publish|Any CPU.ActiveCfg = SN.publish|Any CPU
 		{BFB9336C-F678-4AF1-8B10-0BDDCD3AEAC8}.BZ.testbuild|Any CPU.ActiveCfg = SN.testbuild|Any CPU
@@ -560,17 +541,6 @@ Global
 		{B3E130A4-0598-40A5-8D01-543D18743A6F}.SNexp.dev|Any CPU.Build.0 = SNexp.dev|Any CPU
 		{B3E130A4-0598-40A5-8D01-543D18743A6F}.SNexp.testbuild|Any CPU.ActiveCfg = SNexp.testbuild|Any CPU
 		{B3E130A4-0598-40A5-8D01-543D18743A6F}.SNexp.testbuild|Any CPU.Build.0 = SNexp.testbuild|Any CPU
-		{EBFA5C5C-995C-4E6D-9F6E-C9C33F864EF6}.BZ.dev|Any CPU.ActiveCfg = SN.dev|Any CPU
-		{EBFA5C5C-995C-4E6D-9F6E-C9C33F864EF6}.BZ.publish|Any CPU.ActiveCfg = SN.publish|Any CPU
-		{EBFA5C5C-995C-4E6D-9F6E-C9C33F864EF6}.BZ.testbuild|Any CPU.ActiveCfg = SN.testbuild|Any CPU
-		{EBFA5C5C-995C-4E6D-9F6E-C9C33F864EF6}.BZexp.dev|Any CPU.ActiveCfg = SNexp.dev|Any CPU
-		{EBFA5C5C-995C-4E6D-9F6E-C9C33F864EF6}.BZexp.testbuild|Any CPU.ActiveCfg = SNexp.testbuild|Any CPU
-		{EBFA5C5C-995C-4E6D-9F6E-C9C33F864EF6}.SN.dev|Any CPU.ActiveCfg = SN.dev|Any CPU
-		{EBFA5C5C-995C-4E6D-9F6E-C9C33F864EF6}.SN.publish|Any CPU.ActiveCfg = SN.publish|Any CPU
-		{EBFA5C5C-995C-4E6D-9F6E-C9C33F864EF6}.SN.testbuild|Any CPU.ActiveCfg = SN.testbuild|Any CPU
-		{EBFA5C5C-995C-4E6D-9F6E-C9C33F864EF6}.SN.testbuild|Any CPU.Build.0 = SN.testbuild|Any CPU
-		{EBFA5C5C-995C-4E6D-9F6E-C9C33F864EF6}.SNexp.dev|Any CPU.ActiveCfg = SNexp.dev|Any CPU
-		{EBFA5C5C-995C-4E6D-9F6E-C9C33F864EF6}.SNexp.testbuild|Any CPU.ActiveCfg = SNexp.testbuild|Any CPU
 		{C3985FBE-6652-4230-934F-0C931F448DC2}.BZ.dev|Any CPU.ActiveCfg = BZ.dev|Any CPU
 		{C3985FBE-6652-4230-934F-0C931F448DC2}.BZ.dev|Any CPU.Build.0 = BZ.dev|Any CPU
 		{C3985FBE-6652-4230-934F-0C931F448DC2}.BZ.publish|Any CPU.ActiveCfg = BZ.publish|Any CPU
@@ -632,14 +602,12 @@ Global
 		{2EF87EAC-0967-4C91-B79D-B52FC6F32739} = {C49BC122-0A68-48A8-8EA3-737FB7553D8B}
 		{655A27D7-F0E2-480C-B875-96312B41EF0F} = {C49BC122-0A68-48A8-8EA3-737FB7553D8B}
 		{9E3D5F87-C19E-482B-AC15-7E56DEED70FA} = {C49BC122-0A68-48A8-8EA3-737FB7553D8B}
-		{83158211-2490-4CDC-86DD-D865E9394ED9} = {51F4A336-ADD0-4AD9-BBCF-336DAAB8EF4D}
 		{BFB9336C-F678-4AF1-8B10-0BDDCD3AEAC8} = {ED942635-A471-4B33-8140-3F453A4A0869}
 		{1C1E62E2-282E-48EE-BF91-54A1E0180B96} = {C49BC122-0A68-48A8-8EA3-737FB7553D8B}
 		{B574E84F-E5BF-4E99-ABAC-3698B6643E5A} = {C49BC122-0A68-48A8-8EA3-737FB7553D8B}
 		{C504563A-B554-4A91-AE30-14CFCD626007} = {C49BC122-0A68-48A8-8EA3-737FB7553D8B}
 		{5322339C-9933-4FB2-A04A-495718A3F66B} = {51F4A336-ADD0-4AD9-BBCF-336DAAB8EF4D}
 		{B3E130A4-0598-40A5-8D01-543D18743A6F} = {51F4A336-ADD0-4AD9-BBCF-336DAAB8EF4D}
-		{EBFA5C5C-995C-4E6D-9F6E-C9C33F864EF6} = {51F4A336-ADD0-4AD9-BBCF-336DAAB8EF4D}
 		{A9265C46-2A40-4E3D-A4FB-7F3DCDA6AFD9} = {7B8B7765-2191-43CD-ABE0-89BBEF79CFC2}
 		{1832033A-214B-48C2-89BA-EEA25FC69B19} = {7B8B7765-2191-43CD-ABE0-89BBEF79CFC2}
 		{C049D169-7634-404A-9121-0436A68FA319} = {C49BC122-0A68-48A8-8EA3-737FB7553D8B}

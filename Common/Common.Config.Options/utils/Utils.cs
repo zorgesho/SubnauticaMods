@@ -72,9 +72,6 @@ namespace Common.Configuration
 				UIUtils.ScrollToShowItemInCenter(instance.modOptions[index].gameObject.transform);
 			}
 
-			static readonly Type typeVerticalLayoutGroup = Type.GetType("UnityEngine.UI.VerticalLayoutGroup, UnityEngine.UI");
-			static readonly PropertyWrapper propSpacing = typeVerticalLayoutGroup.property("spacing").wrap();
-
 			static bool patched = false;
 			static float optionsSpacing;
 
@@ -97,10 +94,10 @@ namespace Common.Configuration
 					_setSpacing(optionsSpacing);
 			}
 
-			static void _setSpacing(float spacing)
-			{
-				propSpacing.set(modOptionsTab.container.GetComponent(typeVerticalLayoutGroup), spacing);
-			}
+			static readonly Type typeVerticalLayoutGroup = Type.GetType("UnityEngine.UI.VerticalLayoutGroup, UnityEngine.UI");
+			static readonly PropertyWrapper propSpacing = typeVerticalLayoutGroup.property("spacing").wrap();
+
+			static void _setSpacing(float spacing) => propSpacing.set(modOptionsTab.container.GetComponent(typeVerticalLayoutGroup), spacing);
 		}
 	}
 }

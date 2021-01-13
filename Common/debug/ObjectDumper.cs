@@ -39,7 +39,15 @@ namespace Common
 		static class ObjectDumper
 		{
 			static readonly StringBuilder output = new StringBuilder();
-			static readonly Regex regex = new Regex("[\\r\\n\\t\0]", RegexOptions.Compiled);
+			static readonly Regex sanitizer = new Regex("[\\r\\n\\t\0]", RegexOptions.Compiled);
+
+			static readonly Type[] dumpTypes = new[] // dump these non-Component types too
+			{
+				typeof(Sprite),
+				typeof(Texture2D),
+				typeof(Material),
+				Type.GetType("UnityEngine.UIVertex, UnityEngine.TextRenderingModule")
+			};
 
 			static bool dumpProperties;
 			static bool dumpFields;
@@ -54,64 +62,83 @@ namespace Common
 
 				return output.ToString();
 			}
- 
+
 			static void dump(GameObject go, string indent)
 			{
-				output.AppendLine($"{indent}object: {go.name} activeS/activeH:{go.activeSelf}/{go.activeInHierarchy}");
- 
+				output.AppendLine($"{indent}gameobject: {go.name} activeS/activeH:{go.activeSelf}/{go.activeInHierarchy}");
+
 				foreach (var cmp in go.GetComponents<Component>())
-					dump(cmp, indent + "\t");
+					dump(cmp, indent + "\t", "component");
 
 				foreach (Transform child in go.transform)
 					dump(child.gameObject, indent + "\t");
 			}
- 
-			static void dump(Component cmp, string indent)
-			{
-				static void _sort<T>(List<T> list) where T: MemberInfo => list.Sort((m1, m2) => m1.Name.CompareTo(m2.Name));
-				static string _formatValue(object value) => value != null? regex.Replace(value.ToString(), " ").Trim(): "";
 
-				if (cmp == null) // it happens sometimes for some reason
+			static void dump(object obj, string indent, string title = null)
+			{
+				if (obj == null) // it happens sometimes for some reason
 				{
-					output.AppendLine($"{indent}component: NULL");
+					output.AppendLine($"{indent}{title ?? ""}: NULL");
 					return;
 				}
 
-				Type cmpType = cmp.GetType();
-				output.AppendLine($"{indent}component: {cmpType}");
+				Type objType = obj.GetType();
+
+				if (title != null)
+					output.AppendLine($"{indent}{title}: {objType}");
 
 				try
 				{
 					if (dumpProperties)
 					{
-						var properties = cmpType.properties().ToList();
+						var properties = objType.properties(ReflectionHelper.bfAll ^ BindingFlags.Static).ToList();
 						if (properties.Count > 0)
 						{
 							_sort(properties);
 							output.AppendLine($"{indent}\tPROPERTIES:");
 
 							foreach (var prop in properties)
-							{
 								if (prop.GetGetMethod() != null)
-									output.AppendLine($"{indent}\t{prop.Name}: \"{_formatValue(prop.GetValue(cmp, null))}\"");
-							}
+									_dumpValue(prop.Name, prop.GetValue(obj, null), indent);
 						}
 					}
 
 					if (dumpFields)
 					{
-						var fields = cmpType.fields().ToList();
+						var fields = objType.fields(ReflectionHelper.bfAll ^ BindingFlags.Static).ToList();
 						if (fields.Count > 0)
 						{
 							_sort(fields);
 							output.AppendLine($"{indent}\tFIELDS:");
 
 							foreach (var field in fields)
-								output.AppendLine($"{indent}\t{field.Name}: \"{_formatValue(field.GetValue(cmp))}\"");
+								_dumpValue(field.Name, field.GetValue(obj), indent);
 						}
 					}
 				}
 				catch (Exception e) { Log.msg(e); }
+
+				static void _sort<T>(List<T> list) where T: MemberInfo => list.Sort((m1, m2) => m1.Name.CompareTo(m2.Name));
+
+				static void _dumpValue(string name, object value, string indent)
+				{
+					string sanitized = value != null? sanitizer.Replace(value.ToString(), " ").Trim(): "";
+					output.AppendLine($"{indent}\t{name}: \"{sanitized}\"");
+
+					if (value == null)
+						return;
+
+					if (dumpTypes.contains(value.GetType()))
+						dump(value, indent + "\t");
+
+					if (value.GetType().IsArray)
+					{
+						var array = value as Array;
+
+						for (int i = 0; i < array.Length; i++)
+							_dumpValue($"[{i}]", array.GetValue(i), indent + "\t");
+					}
+				}
 			}
 		}
 	}

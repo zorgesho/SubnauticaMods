@@ -45,8 +45,11 @@ namespace Common
 		public static void destroyChildren(this GameObject go, params string[] children) =>
 			children.forEach(name => go.destroyChild(name, true));
 
+		public static void destroyComponent(this GameObject go, Type componentType, bool immediate = true) =>
+			go.GetComponent(componentType)?._destroy(immediate);
+
 		public static void destroyComponent<T>(this GameObject go, bool immediate = true) where T: Component =>
-			go.GetComponent<T>()?._destroy(immediate);
+			destroyComponent(go, typeof(T), immediate);
 
 		public static void destroyComponentInChildren<T>(this GameObject go, bool immediate = true) where T: Component =>
 			go.GetComponentInChildren<T>()?._destroy(immediate);

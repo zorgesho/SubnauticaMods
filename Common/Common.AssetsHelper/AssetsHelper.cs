@@ -10,6 +10,7 @@ namespace Common
 	static class AssetsHelper
 	{
 		public static Sprite loadSprite(string textureName) => textureToSprite(loadTexture(textureName));
+		public static Sprite loadSprite(string textureName, float pixelsPerUnit, float border) => textureToSprite(loadTexture(textureName), pixelsPerUnit, border);
 
 		public static Texture2D loadTexture(string textureName) => loadAsset<Texture2D>(textureName) ?? loadTextureFromFile(Paths.assetsPath + textureName);
 
@@ -44,17 +45,24 @@ namespace Common
 		static Sprite textureToSprite(Texture2D tex) =>
 			tex == null? null: Sprite.Create(tex, new Rect(0f, 0f, tex.width, tex.height), new Vector2(0.5f, 0.5f));
 
+		static Sprite textureToSprite(Texture2D tex, float pixelsPerUnit, float border) =>
+			tex == null? null: Sprite.Create(tex, new Rect(0f, 0f, tex.width, tex.height), new Vector2(0.5f, 0.5f), pixelsPerUnit, 0, SpriteMeshType.Tight, new Vector4(border, border, border, border));
+
 		static Texture2D loadTextureFromFile(string textureFilePath)
 		{																								$"AssetHelper: trying to load texture from file '{textureFilePath}'".logDbg();
 			if (Path.GetExtension(textureFilePath) == "")
 			{
-				textureFilePath += ".png";																$"AssetHelper: adding extension to filename ({textureFilePath})'".logDbg();
+				var files = Directory.GetFiles(Path.GetDirectoryName(textureFilePath), Path.GetFileName(textureFilePath) + ".*");
+				Debug.assert(files.isNullOrEmpty() || files.Length == 1);
+
+				if (!files.isNullOrEmpty())
+					textureFilePath = files[0];
 			}
 
 			if (!File.Exists(textureFilePath))
 				return null;
 
-			Texture2D tex = new Texture2D(2, 2);
+			var tex = new Texture2D(2, 2);
 			return tex.LoadImage(File.ReadAllBytes(textureFilePath))? tex: null;
 		}
 	}

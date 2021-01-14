@@ -49,16 +49,11 @@ namespace Common.Configuration
 				base.onGameObjectChange(newGO);
 			}
 
-			// using reflection to avoid including UnityEngine.UI in all projects
-			static readonly Type eventSystem = Type.GetType("UnityEngine.EventSystems.EventSystem, UnityEngine.UI");
-			static readonly PropertyWrapper currentEventSystem = eventSystem.property("current").wrap();
-			static readonly MethodWrapper setSelectedGameObject = eventSystem.method("SetSelectedGameObject", typeof(GameObject)).wrap();
-
 			void onClick()
 			{
 				cfgField.value = cfgField.value.cast<int>() + 1; // cfgField will run attached actions when we change its value
 
-				setSelectedGameObject.invoke(currentEventSystem.get(), null); // so button don't stays pressed after click
+				UnityHelper.clearSelectedUIObject();
 			}
 		}
 	}

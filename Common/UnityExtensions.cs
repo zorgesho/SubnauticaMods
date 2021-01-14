@@ -75,7 +75,7 @@ namespace Common
 	}
 
 
-	static class VectorExtension
+	static class StructsExtension
 	{
 		public static Vector2 setX(this Vector2 vec, float val) { vec.x = val; return vec; }
 		public static Vector2 setY(this Vector2 vec, float val) { vec.y = val; return vec; }
@@ -83,6 +83,8 @@ namespace Common
 		public static Vector3 setX(this Vector3 vec, float val) { vec.x = val; return vec; }
 		public static Vector3 setY(this Vector3 vec, float val) { vec.y = val; return vec; }
 		public static Vector3 setZ(this Vector3 vec, float val) { vec.z = val; return vec; }
+
+		public static Color setA(this Color color, float val) { color.a = val; return color; }
 	}
 
 
@@ -100,6 +102,17 @@ namespace Common
 			var obj = createPersistentGameObject(name);
 			obj.AddComponent<T>();
 			return obj;
+		}
+
+		// using reflection to avoid including UnityEngine.UI in all projects
+		static readonly Type eventSystem = Type.GetType("UnityEngine.EventSystems.EventSystem, UnityEngine.UI");
+		static readonly PropertyWrapper currentEventSystem = eventSystem.property("current").wrap();
+		static readonly MethodWrapper setSelectedGameObject = eventSystem.method("SetSelectedGameObject", typeof(GameObject)).wrap();
+
+		// unselects currently selected object (needed for buttons)
+		public static void clearSelectedUIObject()
+		{
+			setSelectedGameObject.invoke(currentEventSystem.get(), null);
 		}
 
 		public static C findNearestToCam<C>() where C: Component =>

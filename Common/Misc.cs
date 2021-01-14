@@ -82,16 +82,7 @@ namespace Common
 
 		static string formatFileName(string filename)
 		{
-			if (filename.isNullOrEmpty())
-				return filename;
-
-			if (Path.GetExtension(filename) == "")
-				filename += ".txt";
-
-			if (!Path.IsPathRooted(filename))
-				filename = Paths.modRootPath + filename;
-
-			return filename;
+			return filename.isNullOrEmpty()? filename: Paths.makeRootPath(Paths.ensureExtension(filename, "txt"));
 		}
 
 		public static void saveToFile(this string s, string localPath)

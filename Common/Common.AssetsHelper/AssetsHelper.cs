@@ -12,7 +12,13 @@ namespace Common
 		public static Sprite loadSprite(string textureName) => textureToSprite(loadTexture(textureName));
 		public static Sprite loadSprite(string textureName, float pixelsPerUnit, float border) => textureToSprite(loadTexture(textureName), pixelsPerUnit, border);
 
-		public static Texture2D loadTexture(string textureName) => loadAsset<Texture2D>(textureName) ?? loadTextureFromFile(Paths.assetsPath + textureName);
+		public static Texture2D loadTexture(string textureName)
+		{
+			return loadAsset<Texture2D>(textureName) ??
+				   loadTextureFromFile(Paths.assetsPath + textureName) ??
+				   loadTextureFromFile(Paths.modRootPath + textureName) ??
+				   loadTextureFromFile(textureName);
+		}
 
 		public static GameObject loadPrefab(string prefabName) => loadAsset<GameObject>(prefabName);
 
@@ -50,9 +56,14 @@ namespace Common
 
 		static Texture2D loadTextureFromFile(string textureFilePath)
 		{																								$"AssetHelper: trying to load texture from file '{textureFilePath}'".logDbg();
-			if (Path.GetExtension(textureFilePath) == "")
+			if (!Path.HasExtension(textureFilePath))
 			{
-				var files = Directory.GetFiles(Path.GetDirectoryName(textureFilePath), Path.GetFileName(textureFilePath) + ".*");
+				var dir = Path.GetDirectoryName(textureFilePath);
+
+				if (!Directory.Exists(dir))
+					return null;
+
+				var files = Directory.GetFiles(dir, Path.GetFileName(textureFilePath) + ".*");
 				Debug.assert(files.isNullOrEmpty() || files.Length == 1);
 
 				if (!files.isNullOrEmpty())

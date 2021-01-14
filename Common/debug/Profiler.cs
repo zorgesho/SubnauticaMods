@@ -26,13 +26,7 @@ namespace Common
 
 			static string formatFileName(string filename)
 			{
-				if (filename.isNullOrEmpty())
-					return filename;
-
-				if (Path.GetExtension(filename) == "")
-					filename += ".prf";
-
-				return Paths.modRootPath + filename;
+				return filename.isNullOrEmpty()? filename: Paths.modRootPath + Paths.ensureExtension(filename, "prf");
 			}
 
 			public Profiler(string message, string filename)

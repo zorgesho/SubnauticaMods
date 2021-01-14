@@ -43,7 +43,10 @@ namespace Common.Configuration
 			Debug.assert(typeof(Config).IsAssignableFrom(configType), $"{configType}");
 
 			Config config;
-			string configPath = loadPath.isNullOrEmpty()? null: (Path.IsPathRooted(loadPath)? loadPath: Paths.modRootPath + loadPath);
+
+			string configPath = loadPath.isNullOrEmpty()? null: Paths.makeRootPath(loadPath);
+			configPath = Paths.ensureExtension(configPath, "json");
+			Paths.ensurePath(configPath);
 
 			try
 			{
@@ -83,7 +86,7 @@ namespace Common.Configuration
 
 		public void save(string savePath = null)
 		{
-			string path = savePath ?? configPath;
+			string path = Paths.ensureExtension(savePath, "json") ?? configPath;
 			if (path == null)
 				return;
 

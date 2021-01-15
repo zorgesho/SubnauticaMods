@@ -36,8 +36,12 @@ namespace Common.Configuration
 
 				public void process(object config, FieldInfo field)
 				{
-					if (field.FieldType.IsPrimitive && (addPrivateFields || field.IsPublic) && (ignoreSkipAttr || !field.checkAttr<SkipAttribute>()))
+					if ((field.FieldType.IsPrimitive || field.FieldType.IsEnum) &&
+						(addPrivateFields || field.IsPublic) &&
+						(ignoreSkipAttr || !field.checkAttr<SkipAttribute>()))
+					{
 						CfgVarBinder.addField(new FieldRanged(config, field, rootConfig), varNamespace);
+					}
 
 					if (_isInnerFieldsProcessable(field))
 						process(field.GetValue(config));

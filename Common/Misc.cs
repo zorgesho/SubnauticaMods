@@ -60,6 +60,19 @@ namespace Common
 
 			return newArray;
 		}
+
+		public static T[] subArray<T>(this T[] array, int indexBegin, int indexEnd = -1)
+		{
+			try
+			{
+				int length = (indexEnd == -1? array.Length - 1: indexEnd) - indexBegin + 1;
+				T[] newArray = new T[length];
+
+				Array.Copy(array, indexBegin, newArray, 0, length);
+				return newArray;
+			}
+			catch(Exception e) { Log.msg(e); return null; }
+		}
 	}
 
 

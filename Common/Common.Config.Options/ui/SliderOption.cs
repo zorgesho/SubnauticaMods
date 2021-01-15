@@ -9,6 +9,7 @@ namespace Common.Configuration
 	{
 		partial class Factory
 		{
+			[FactoryPriority(FactoryPriority.LowerThanNormal)]
 			class SliderOptionCreator: ICreator
 			{
 				public ModOption create(Config.Field cfgField)

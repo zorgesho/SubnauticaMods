@@ -18,7 +18,7 @@ namespace Common.Configuration
 			{
 				public ModOption create(Config.Field cfgField)
 				{
-					if (cfgField.type.IsEnum && cfgField.type != typeof(UnityEngine.KeyCode)) // add choice option for enum
+					if (cfgField.type.IsEnum) // add choice option for enum
 					{
 						var names  = Enum.GetNames(cfgField.type).Select(name => name.Replace('_', ' ')).ToArray();
 						var values = Enum.GetValues(cfgField.type).OfType<object>().ToArray();

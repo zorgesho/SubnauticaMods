@@ -3,8 +3,8 @@
 using UnityEngine;
 
 using Common;
-using Common.Harmony;
 using Common.Configuration;
+using Common.Configuration.Actions;
 
 namespace UITweaks
 {

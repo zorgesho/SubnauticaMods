@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 
-using Common.Harmony;
 using Common.Configuration;
+using Common.Configuration.Actions;
 
 namespace MiscPatches
 {

@@ -19,6 +19,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Config.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HarmonyHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mod.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Actions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)utils\CfgVarBinder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)utils\ConfigReloader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)utils\FieldRanged.cs" />

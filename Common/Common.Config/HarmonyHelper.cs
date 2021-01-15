@@ -15,20 +15,6 @@ namespace Common.Harmony
 	using CIEnumerable = IEnumerable<CodeInstruction>;
 	using CIList = List<CodeInstruction>;
 
-	class UpdateOptionalPatches: Config.Field.IAction, Config.Field.IActionArgs
-	{
-		object[] args;
-		public void setArgs(object[] args) => this.args = args;
-
-		public void action()
-		{
-			if (args.isNullOrEmpty())
-				OptionalPatches.update();
-			else
-				args.forEach(arg => OptionalPatches.update(arg as Type));
-		}
-	}
-
 	static partial class CIHelper // additional transpiler stuff to work with config
 	{
 		// for using in transpiler helper functions

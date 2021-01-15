@@ -23,17 +23,6 @@ namespace CustomHotkeys
 	{
 		static MethodWrapper<AddKeybindOption> Options_AddKeybindOption = null;
 
-		public class Creator: Options.ICreator
-		{
-			public Options.ModOption create(Config.Field cfgField)
-			{
-				if (cfgField.type == typeof(KeyWithModifier))
-					return new KeyWModBindOption(cfgField, cfgField.getAttr<Options.FieldAttribute>()?.label);
-
-				return null;
-			}
-		}
-
 #if GAME_BZ
 		public class Tag: MonoBehaviour {}
 #endif

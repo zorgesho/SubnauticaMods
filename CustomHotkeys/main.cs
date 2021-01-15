@@ -17,8 +17,6 @@ namespace CustomHotkeys
 
 			if (config.addConsoleCommands)
 				PersistentConsoleCommands.register<ConsoleCommands>();
-
-			Options.addNewOptionType(new KeyWModBindOption.Creator());
 		}
 	}
 }

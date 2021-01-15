@@ -45,8 +45,6 @@ namespace Common.Configuration
 					Select(Activator.CreateInstance).Cast<I>().
 					ToList();
 
-			public static void add(ICreator creator) => creators.Add(creator);
-
 			// create mod option based on underlying type and attributes of cfgField
 			public static ModOption create(Config.Field cfgField)
 			{

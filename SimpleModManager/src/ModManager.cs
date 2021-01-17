@@ -13,6 +13,7 @@ using Newtonsoft.Json.Linq;
 using Common;
 using Common.Reflection;
 using Common.Configuration;
+using Common.Configuration.Actions;
 
 namespace SimpleModManager
 {
@@ -49,16 +50,8 @@ namespace SimpleModManager
 			class HideBlacklisted: Options.Components.Hider.IVisibilityChecker
 			{ public bool visible => Main.config.showBlacklistedMods; }
 
-			[Field.Action(typeof(ModToggled))]
+			[Field.Action(typeof(CallMethod), nameof(updateMod))]
 			bool enabled = true;
-
-			class ModToggled: Field.IAction, IRootConfigInfo
-			{
-				ModToggle config;
-				public void setRootConfig(Config config) => this.config = config as ModToggle;
-
-				public void action() => config.updateMod();
-			}
 
 			void updateMod()
 			{

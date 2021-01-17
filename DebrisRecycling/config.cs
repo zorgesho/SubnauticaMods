@@ -8,6 +8,7 @@ using UnityEngine;
 using Common;
 using Common.Reflection;
 using Common.Configuration;
+using Common.Configuration.Actions;
 
 namespace DebrisRecycling
 {
@@ -91,10 +92,9 @@ namespace DebrisRecycling
 	{
 		public class PrefabList
 		{
-			class RefreshPrefabs: Field.IAction
-			{ public void action() => DebrisPatcher.refreshValidPrefabs(Options.mode == Options.Mode.IngameMenu); }
+			void refreshPrefabs() => DebrisPatcher.refreshValidPrefabs(Options.mode == Options.Mode.IngameMenu);
 
-			[Options.FinalizeAction(typeof(RefreshPrefabs))]
+			[Options.FinalizeAction(typeof(CallMethod), nameof(refreshPrefabs))]
 			public bool enabled = true;
 
 			[NoInnerFieldsAttrProcessing]

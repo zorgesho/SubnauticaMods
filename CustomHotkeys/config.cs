@@ -146,18 +146,10 @@ namespace CustomHotkeys
 #pragma warning restore
 		}
 
-		class HotkeyListChanged: Field.IAction, IRootConfigInfo
-		{
-			HKConfig hkConfig;
-			public void setRootConfig(Config config) => hkConfig = config as HKConfig;
-
-			public void action() => hkConfig.refreshHotkeyList();
-		}
-
 		class AddHotkeysAttribute: Attribute, IRootConfigInfo
 		{ public void setRootConfig(Config config) => (config as HKConfig).refreshHotkeyList(false); }
 
-		[Field.Action(typeof(HotkeyListChanged))]
+		[Field.Action(typeof(CallMethod), nameof(refreshHotkeyList), true)]
 		[AddHotkeys, Field.Reloadable, NoInnerFieldsAttrProcessing]
 		public readonly List<Hotkey> hotkeys = new List<Hotkey>()
 		{

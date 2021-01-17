@@ -98,15 +98,13 @@ namespace UITweaks
 		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 		public readonly bool hideMessagesWhileLoading = true;
 
-		class SetOptionsSpacing: Field.IAction
-		{ public void action() => Options.Utils.setOptionsSpacing(Main.config.optionsSpacing); }
-
 		const float defaultSpacing = 15f;
 
 		[Options.Field("Options spacing", "Vertical spacing between options in the 'Mods' options tab")]
-		[Field.Action(typeof(SetOptionsSpacing))]
+		[Field.Action(typeof(CallMethod), nameof(setOptionsSpacing))]
 		[Options.Choice("Default", defaultSpacing, "Tight", 10f, "Compact", 5f)]
 		readonly float optionsSpacing = defaultSpacing;
+		void setOptionsSpacing() => Options.Utils.setOptionsSpacing(optionsSpacing);
 
 		public readonly KeyCode renameBeaconsKey = KeyCode.None; // using middle mouse button by default
 		public readonly bool showToolbarHotkeys = false;

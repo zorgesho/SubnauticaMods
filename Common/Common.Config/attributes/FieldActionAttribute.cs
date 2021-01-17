@@ -14,6 +14,7 @@ namespace Common.Configuration
 			public interface IActionArgs
 			{
 				void setArgs(object[] args);
+				object[] getArgs();
 			}
 
 			[AttributeUsage(AttributeTargets.Class | AttributeTargets.Field, AllowMultiple = true)]

@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 
 using UnityEngine;
-using SMLHelper.V2.Crafting;
 using SMLHelper.V2.Handlers;
 
 using Common;
@@ -13,7 +12,7 @@ namespace DebrisRecycling
 	{
 		public static new TechType TechType { get; private set; } = 0;
 
-		protected override TechData getTechData()  => null;
+		protected override TechInfo getTechInfo()  => null;
 		public override GameObject getGameObject() => null;
 
 		public override void patch() => TechType = register(L10n.ids_salvageableDebris, "", TechType.ScrapMetal);
@@ -25,7 +24,7 @@ namespace DebrisRecycling
 	{
 		public static new TechType TechType { get; private set; } = 0;
 
-		protected override TechData getTechData() => null;
+		protected override TechInfo getTechInfo() => null;
 
 		public override void patch()
 		{
@@ -81,12 +80,12 @@ namespace DebrisRecycling
 		public override GameObject getGameObject() => PrefabUtils.getPrefabCopy(TechType.Titanium);
 		public override IEnumerator getGameObjectAsync(IOut<GameObject> gameObject) => PrefabUtils.getPrefabCopyAsync(TechType.Titanium, gameObject);
 
-		protected override TechData getTechData()
+		protected override TechInfo getTechInfo()
 		{
-			var techData = new TechData(new Ingredient(sourceTech, sourceCount));
-			techData.LinkedItems.add(TechType.Titanium, resultCount);
+			var techInfo = new TechInfo(new TechInfo.Ing(sourceTech, sourceCount));
+			techInfo.linkedItems.add(TechType.Titanium, resultCount);
 
-			return techData;
+			return techInfo;
 		}
 
 		public override void patch()

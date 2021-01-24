@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 
 using UnityEngine;
 
@@ -9,9 +10,18 @@ namespace Common
 
 	static class AssetsHelper
 	{
-		public static Sprite loadSprite(string textureName) => textureToSprite(loadTexture(textureName));
+		const string assetsExt = ".assets";
 
-		public static Texture2D loadTexture(string textureName) => loadAsset<Texture2D>(textureName) ?? loadTextureFromFile(Paths.assetsPath + textureName);
+		public static Sprite loadSprite(string textureName) => textureToSprite(loadTexture(textureName));
+		public static Sprite loadSprite(string textureName, float pixelsPerUnit, float border) => textureToSprite(loadTexture(textureName), pixelsPerUnit, border);
+
+		public static Texture2D loadTexture(string textureName)
+		{
+			return loadAsset<Texture2D>(textureName) ??
+				   loadTextureFromFile(Paths.assetsPath + textureName) ??
+				   loadTextureFromFile(Paths.modRootPath + textureName) ??
+				   loadTextureFromFile(textureName);
+		}
 
 		public static GameObject loadPrefab(string prefabName) => loadAsset<GameObject>(prefabName);
 
@@ -21,7 +31,7 @@ namespace Common
 
 		static AssetsHelper()
 		{
-			string bundlePath = Paths.assetsPath + Mod.id + ".assets";
+			string bundlePath = Paths.assetsPath + Mod.id + assetsExt;
 
 			if (File.Exists(bundlePath))
 			{
@@ -44,17 +54,25 @@ namespace Common
 		static Sprite textureToSprite(Texture2D tex) =>
 			tex == null? null: Sprite.Create(tex, new Rect(0f, 0f, tex.width, tex.height), new Vector2(0.5f, 0.5f));
 
+		static Sprite textureToSprite(Texture2D tex, float pixelsPerUnit, float border) =>
+			tex == null? null: Sprite.Create(tex, new Rect(0f, 0f, tex.width, tex.height), new Vector2(0.5f, 0.5f), pixelsPerUnit, 0, SpriteMeshType.Tight, new Vector4(border, border, border, border));
+
 		static Texture2D loadTextureFromFile(string textureFilePath)
 		{																								$"AssetHelper: trying to load texture from file '{textureFilePath}'".logDbg();
-			if (Path.GetExtension(textureFilePath) == "")
+			if (!Path.HasExtension(textureFilePath))
 			{
-				textureFilePath += ".png";																$"AssetHelper: adding extension to filename ({textureFilePath})'".logDbg();
+				var dir = Path.GetDirectoryName(textureFilePath);
+
+				if (!Directory.Exists(dir))
+					return null;
+
+				textureFilePath = Directory.GetFiles(dir, Path.GetFileName(textureFilePath) + ".*").Where(path => Path.GetExtension(path) != assetsExt).FirstOrDefault();
 			}
 
 			if (!File.Exists(textureFilePath))
 				return null;
 
-			Texture2D tex = new Texture2D(2, 2);
+			var tex = new Texture2D(2, 2);
 			return tex.LoadImage(File.ReadAllBytes(textureFilePath))? tex: null;
 		}
 	}

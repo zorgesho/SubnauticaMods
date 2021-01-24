@@ -1,6 +1,4 @@
 ﻿using UnityEngine;
-using SMLHelper.V2.Crafting;
-
 using Common.Crafting;
 
 namespace GravTrapImproved
@@ -27,14 +25,14 @@ namespace GravTrapImproved
 
 		public static new TechType TechType { get; private set; } = 0;
 
-		protected override TechData getTechData() => new TechData
+		protected override TechInfo getTechInfo() => new TechInfo
 		(
-			new Ingredient(TechType.Gravsphere, 1),
-			new Ingredient(TechType.Titanium, 2),
-			new Ingredient(TechType.PowerCell, 1),
-			new Ingredient(TechType.Aerogel, 1),
-			new Ingredient(TechType.AdvancedWiringKit, 2)
-		)	{ craftAmount = 1 };
+			new TechInfo.Ing(TechType.Gravsphere),
+			new TechInfo.Ing(TechType.Titanium, 2),
+			new TechInfo.Ing(TechType.PowerCell),
+			new TechInfo.Ing(TechType.Aerogel),
+			new TechInfo.Ing(TechType.AdvancedWiringKit, 2)
+		);
 
 		protected override void initPrefabPool() => addPrefabToPool(TechType.Gravsphere);
 

@@ -147,22 +147,31 @@ namespace WarningsDisabler
 		[AddMessages("Welcome messages")]
 		readonly Messages welcomeMessages = new Messages
 		(
+#if GAME_SN
 			"CyclopsWelcomeAboard",				// "CYCLOPS: Welcome aboard captain. All systems online."
 			"CyclopsWelcomeAboardAttention",	// "CYCLOPS: Welcome aboard captain. Some systems require attention."
 			"SeamothWelcomeAboard",				// "Seamoth: Welcome aboard captain."
 			"SeamothWelcomeNoPower",			// "Seamoth: Warning: Emergency power only. Oxygen production offline."
+#endif
 			"ExosuitWelcomeAboard",				// "PRAWN: Welcome aboard captain."
 			"ExosuitWelcomeNoPower",			// "PRAWN: Warning: Emergency power only. Oxygen production offline."
 			"BaseWelcomeAboard"					// "HABITAT: Welcome aboard captain."
 			//"BaseWelcomeNoPower"				//  Moved to powerWarnings list
 		);
 
+#if GAME_SN
 		[AddMessages("Stillsuit equip message")]
 		readonly Messages stillsuitMessage = new Messages
 		(
 			"StillsuitEquipped"
 		);
+#endif
 
+#if GAME_BZ
+		[Options.Field("Disclaimers", "Show disclaimers on startup and on the 'Play' button")]
+		[Options.FinalizeAction(typeof(Common.Harmony.UpdateOptionalPatches))]
+		public readonly bool showDisclaimers = true;
+#endif
 		[AddMessages("Custom messages")]
 		readonly Messages customMessages = new Messages { enabled = false };
 

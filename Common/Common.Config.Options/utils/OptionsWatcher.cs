@@ -13,8 +13,24 @@ namespace Common.Configuration.Utils
 	{
 		class ActionComparer: IEqualityComparer<Config.Field.IAction>
 		{
-			public bool Equals(Config.Field.IAction x, Config.Field.IAction y) =>
-				object.Equals(x, y) || Equals(x.GetType(), y.GetType());
+			public bool Equals(Config.Field.IAction x, Config.Field.IAction y)
+			{
+				if (!object.Equals(x, y) && !Equals(x.GetType(), y.GetType()))
+					return false;
+
+				// if types are equal we try to compare action parameters
+				if ((x as Config.Field.IActionArgs)?.getArgs() is object[] argsX && (y as Config.Field.IActionArgs)?.getArgs() is object[] argsY)
+				{
+					if (argsX.Length != argsY.Length)
+						return false;
+
+					for (int i = 0; i < argsX.Length; i++)
+						if (!Equals(argsX[i], argsY[i]))
+							return false;
+				}
+
+				return true;
+			}
 
 			public int GetHashCode(Config.Field.IAction obj) => obj.GetType().GetHashCode();
 		}

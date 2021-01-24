@@ -244,7 +244,7 @@ namespace Common.Harmony
 		#region label clipboard
 		public static class LabelClipboard
 		{
-			public static bool __enabled; // will autoenable after ci operation
+			public static bool __enabled = true; // will autoenable after ci operation
 
 			static List<Label> labels;
 

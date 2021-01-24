@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Diagnostics;
 
 namespace Common
@@ -24,23 +23,14 @@ namespace Common
 			readonly Stopwatch stopwatch = null;
 			readonly long mem = GC.GetTotalMemory(false);
 
-			static string formatFileName(string filename)
-			{
-				if (filename.isNullOrEmpty())
-					return filename;
-
-				if (Path.GetExtension(filename) == "")
-					filename += ".prf";
-
-				return Paths.modRootPath + filename;
-			}
+			static string _formatFileName(string filename) => Paths.formatFileName(filename, "prf");
 
 			public Profiler(string message, string filename)
 			{
 				profilerCount++;
 
 				this.message = message;
-				this.filename = formatFileName(filename);
+				this.filename = _formatFileName(filename);
 
 				stopwatch = Stopwatch.StartNew();
 			}
@@ -73,7 +63,7 @@ namespace Common
 				res.log();
 
 				if (filename != null)
-					res.appendToFile(formatFileName(filename));
+					res.appendToFile(_formatFileName(filename));
 			}
 #else
 			public Profiler(string _0, string _1) {}

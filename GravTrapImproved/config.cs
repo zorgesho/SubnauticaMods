@@ -97,20 +97,16 @@ namespace GravTrapImproved
 			new TechTypeList
 			(
 				"Creatures",
-
+#if GAME_SN
 				TechType.Biter,
-				TechType.Bladderfish,
 				TechType.Bleeder,
-				TechType.Boomerang,
 				TechType.CaveCrawler,
 				TechType.CrabSquid,
-				TechType.Crash,
 				TechType.Eyeye,
 				TechType.GarryFish,
 				TechType.GhostRayBlue,
 				TechType.GhostRayRed,
 				TechType.HoleFish,
-				TechType.Hoopfish,
 				TechType.Hoverfish,
 				TechType.Jellyray,
 				TechType.Jumper,
@@ -119,29 +115,56 @@ namespace GravTrapImproved
 				TechType.Mesmer,
 				TechType.Oculus,
 				TechType.Peeper,
-				TechType.PrecursorDroid,
 				TechType.RabbitRay,
 				TechType.Reginald,
-				TechType.Skyray,
 				TechType.Spadefish,
-				TechType.Stalker
+				TechType.Stalker,
+#elif GAME_BZ
+				TechType.ArcticPeeper,
+				TechType.ArrowRay,
+				TechType.FeatherFish,
+				TechType.FeatherFishRed,
+				TechType.SeaMonkeyBaby,
+				TechType.SpinnerFish,
+				TechType.Symbiote,
+				TechType.Triops,
+				TechType.DiscusFish,
+				TechType.Pinnacarid,
+				TechType.ArcticRay,
+				TechType.NootFish,
+				TechType.SeaMonkey,
+				TechType.Brinewing,
+#endif
+				TechType.Bladderfish,
+				TechType.Boomerang,
+				TechType.Crash,
+				TechType.Hoopfish,
+				TechType.PrecursorDroid,
+				TechType.Skyray
 			),
 			new TechTypeList
 			(
 				"Resources",
-
+#if GAME_SN
+				TechType.Bleach,
+				TechType.GasPod,
+				TechType.SandstoneChunk,
+				TechType.ShaleChunk,
+#elif GAME_BZ
+				TechType.BreakableGold,
+				TechType.BreakableLead,
+				TechType.BreakableSilver,
+#endif
 				TechType.Aerogel,
 				TechType.AluminumOxide,
 				TechType.AramidFibers,
 				TechType.Benzene,
-				TechType.Bleach,
 				TechType.ComputerChip,
 				TechType.Copper,
 				TechType.DepletedReactorRod,
 				TechType.Diamond,
 				TechType.EnameledGlass,
 				TechType.FiberMesh,
-				TechType.GasPod,
 				TechType.Glass,
 				TechType.Gold,
 				TechType.HydrochloricAcid,
@@ -159,9 +182,7 @@ namespace GravTrapImproved
 				TechType.Quartz,
 				TechType.ReactorRod,
 				TechType.Salt,
-				TechType.SandstoneChunk,
 				TechType.ScrapMetal,
-				TechType.ShaleChunk,
 				TechType.Silicone,
 				TechType.Silver,
 				TechType.Sulphur,
@@ -172,7 +193,7 @@ namespace GravTrapImproved
 			new TechTypeList
 			(
 				"Eggs",
-
+#if GAME_SN
 				TechType.BonesharkEgg,
 				TechType.BonesharkEggUndiscovered,
 				TechType.CrabsnakeEgg,
@@ -199,26 +220,59 @@ namespace GravTrapImproved
 				TechType.ReefbackEggUndiscovered,
 				TechType.SandsharkEgg,
 				TechType.SandsharkEggUndiscovered,
-				TechType.ShockerEgg,
-				TechType.ShockerEggUndiscovered,
 				TechType.SpadefishEgg,
 				TechType.SpadefishEggUndiscovered,
 				TechType.StalkerEgg,
-				TechType.StalkerEggUndiscovered
+				TechType.StalkerEggUndiscovered,
+#elif GAME_BZ
+				TechType.SeaMonkeyEgg,
+				TechType.ArcticRayEgg,
+				TechType.ArcticRayEggUndiscovered,
+				TechType.BruteSharkEgg,
+				TechType.BruteSharkEggUndiscovered,
+				TechType.LilyPaddlerEgg,
+				TechType.LilyPaddlerEggUndiscovered,
+				TechType.PinnacaridEgg,
+				TechType.PinnacaridEggUndiscovered,
+				TechType.SquidSharkEgg,
+				TechType.SquidSharkEggUndiscovered,
+				TechType.TitanHolefishEgg,
+				TechType.TitanHolefishEggUndiscovered,
+				TechType.TrivalveBlueEgg,
+				TechType.TrivalveBlueEggUndiscovered,
+				TechType.TrivalveYellowEgg,
+				TechType.TrivalveYellowEggUndiscovered,
+				TechType.BrinewingEgg,
+				TechType.BrinewingEggUndiscovered,
+				TechType.CryptosuchusEgg,
+				TechType.CryptosuchusEggUndiscovered,
+				TechType.GlowWhaleEgg,
+				TechType.GlowWhaleEggUndiscovered,
+				TechType.JellyfishEgg,
+				TechType.JellyfishEggUndiscovered,
+				TechType.PenguinEgg,
+				TechType.PenguinEggUndiscovered,
+				TechType.RockPuncherEgg,
+				TechType.RockPuncherEggUndiscovered,
+#endif
+				TechType.GenericEgg,
+				TechType.ShockerEgg,
+				TechType.ShockerEggUndiscovered
 			),
 #if DEBUG
 			new TechTypeList
 			(
 				"Test",
-
+#if GAME_SN
 				TechType.StalkerTooth,
-				TechType.Flare,
-				TechType.Beacon,
 				TechType.TimeCapsule,
 				TechType.GasPod,
+#endif
+				TechType.Flare,
+				TechType.Beacon,
 				TechType.Gravsphere
 			)
-#endif
+#endif // DEBUG
 		};
 	}
 }

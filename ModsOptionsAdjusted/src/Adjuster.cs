@@ -17,12 +17,12 @@ namespace ModsOptionsAdjusted
 	[PatchClass]
 	static class ModOptionsAdjuster
 	{
-		static readonly Tuple<string, Type>[] optionTypes =
+		static readonly (string optionName, Type adjusterType)[] optionTypes =
 		{
-			Tuple.Create("uGUI_ToggleOption",  typeof(AdjustToggleOption)),
-			Tuple.Create("uGUI_SliderOption",  typeof(AdjustSliderOption)),
-			Tuple.Create("uGUI_ChoiceOption",  typeof(AdjustChoiceOption)),
-			Tuple.Create("uGUI_BindingOption", typeof(AdjustBindingOption))
+			("uGUI_ToggleOption",  typeof(AdjustToggleOption)),
+			("uGUI_SliderOption",  typeof(AdjustSliderOption)),
+			("uGUI_ChoiceOption",  typeof(AdjustChoiceOption)),
+			("uGUI_BindingOption", typeof(AdjustBindingOption))
 		};
 
 		[HarmonyPostfix, HarmonyPatch(typeof(uGUI_TabbedControlsPanel), "AddItem", typeof(int), typeof(GameObject))]
@@ -31,11 +31,11 @@ namespace ModsOptionsAdjusted
 			if (__result == null || tabIndex != OptionsPanelInfo.modsTabIndex)
 				return;
 
-			foreach (var type in optionTypes)
+			foreach (var (optionName, adjusterType) in optionTypes)
 			{
-				if (__result.name.Contains(type.Item1))
+				if (__result.name.Contains(optionName))
 				{
-					__result.ensureComponent(type.Item2);
+					__result.ensureComponent(adjusterType);
 					break;
 				}
 			}

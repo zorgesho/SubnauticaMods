@@ -1,0 +1,14 @@
+{
+  "Id": "DayNightSpeed",
+  "DisplayName": "Day/Night Speed",
+  "Author": "zorgesho",
+  "Version": "1.3.0",
+  "Dependencies": [ "SMLHelper" ],
+  "VersionDependencies": { "SMLHelper": "2.6.0" },
+  "Enable": true,
+  "Game": "BelowZero",
+  "AssemblyName": "DayNightSpeed.dll",
+  "EntryMethod": "DayNightSpeed.Main.patch",
+  "UpdateCheck": true,
+  "VersionURL": "https://raw.githubusercontent.com/zorgesho/SubnauticaMods/master/DayNightSpeed/mod.BZ.json"
+}

@@ -4,12 +4,12 @@ using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
 
-#if BRANCH_EXP
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-#else
+#if GAME_SN && BRANCH_STABLE
 using Oculus.Newtonsoft.Json;
 using Oculus.Newtonsoft.Json.Serialization;
+#else
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 #endif
 
 namespace Common.GameSerialization
@@ -37,7 +37,7 @@ namespace Common.GameSerialization
 
 		static readonly JsonSerializerSettings srzSettings = new JsonSerializerSettings()
 		{
-			Formatting = Mod.isDevBuild? Formatting.Indented: Formatting.None,
+			Formatting = Mod.Consts.isDevBuild? Formatting.Indented: Formatting.None,
 			ContractResolver = new SaveContractResolver()
 		};
 
@@ -58,7 +58,8 @@ namespace Common.GameSerialization
 
 		public static bool load<T>(string id, out T saveData)
 		{
-			return !(saveData = load<T>(id)).Equals(default);
+			saveData = load<T>(id);
+			return !saveData.Equals(default);
 		}
 
 		static string getPath(string id) => Path.Combine(Paths.savesPath, id + ".json");

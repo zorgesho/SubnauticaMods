@@ -28,30 +28,41 @@ namespace WarningsDisabler
 	[PatchClass]
 	static class OxygenWarnings
 	{
-		static int hintMessageHash = 0;
-
 		// for hiding popup message when changing option in game
 		public class HideOxygenHint: Config.Field.IAction
 		{
 			public void action()
 			{
-				if (Main.config.oxygenWarningsEnabled)
-					return;
-
-				uGUI_PopupMessage popup = Hint.main?.message;
-
-				if (popup && popup.isShowingMessage && popup.messageHash == hintMessageHash)
-					popup.Hide();
+				if (!Main.config.oxygenWarningsEnabled)
+					Hint.main?.message.Hide();
 			}
 		}
-
-		// to make sure we hide proper popup
-		[HarmonyPostfix, HarmonyPatch(typeof(HintSwimToSurface), "OnLanguageChanged")]
-		static void HSTS_OnLanguageChanged_Postfix(HintSwimToSurface __instance) => hintMessageHash = __instance.messageHash;
 
 		[HarmonyPrefix]
 		[HarmonyPatch(typeof(LowOxygenAlert), "Update")]
 		[HarmonyPatch(typeof(HintSwimToSurface), "Update")]
 		static bool OxygenAlert_Prefix() => Main.config.oxygenWarningsEnabled;
 	}
+
+#if GAME_BZ
+	[OptionalPatch, PatchClass]
+	static class DisclaimerPatches
+	{
+		static bool prepare() => !Main.config.showDisclaimers;
+
+		[HarmonyPrefix, HarmonyPatch(typeof(EarlyAccessDisclaimer), "OnEnable")]
+		static bool EarlyAccessDisclaimer_OnEnable_Prefix(EarlyAccessDisclaimer __instance)
+		{
+			UnityEngine.Object.Destroy(__instance.gameObject);
+			return false;
+		}
+
+		[HarmonyPrefix, HarmonyPatch(typeof(uGUI_MainMenu), "OnButtonLoad")]
+		static bool uGUIMainMenu_OnButtonLoad_Prefix(uGUI_MainMenu __instance)
+		{
+			__instance.rightSide.OpenGroup("SavedGames");
+			return false;
+		}
+	}
+#endif
 }

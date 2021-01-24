@@ -93,7 +93,7 @@ namespace CustomHotkeys
 
 		public void showmodoptions()
 		{
-			Options.open();
+			Options.Utils.open();
 		}
 
 		public void wait(float secs)
@@ -106,13 +106,13 @@ namespace CustomHotkeys
 		{
 			Main.hkConfig.addHotkey(new HKConfig.Hotkey() { command = command, label = "", mode = HKConfig.Hotkey.Mode.Press });
 
-			Options.open();
+			Options.Utils.open();
 			StartCoroutine(_scroll());
 
 			static IEnumerator _scroll()
 			{
 				yield return null;
-				Options.scrollToShowOption(-1);
+				Options.Utils.scrollToShowOption(-1);
 			}
 		}
 
@@ -194,7 +194,11 @@ namespace CustomHotkeys
 				var techType = data[i].convert<TechType>();
 				if (techType != default && getItemFromInventory(techType) is InventoryItem item)
 				{
+#if GAME_SN
 					Inventory.main.UseItem(item);
+#elif GAME_BZ
+					Inventory.main.UseItemAction(item);
+#endif
 					break;
 				}
 			}

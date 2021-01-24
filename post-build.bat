@@ -4,13 +4,14 @@
 :: %4 $(TargetPath)
 :: %5 $(TargetDir)
 
+echo %1 | findstr /c:"testbuild" 1>nul && goto :eof
+
 :: name is also in the Mod.cs
 set tmp_info_file="run the game to generate configs"
 
-set qmods_path="c:\games\subnautica\QMods"
+echo %1 | findstr /c:"SN" 1>nul && set qmods_path="c:\games\subnautica\QMods"
+echo %1 | findstr /c:"BZ" 1>nul && set qmods_path="c:\games\subnautica.bz\QMods"
 if not exist %qmods_path% goto :eof
-
-echo %1 | findstr /c:"testbuild" 1>nul && goto :eof
 
 echo %2.pdb > ..\.pdb-ignore
 

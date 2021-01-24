@@ -1,7 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-
 using UnityEngine;
+
+#if GAME_SN
+using System.Collections.Generic;
+#endif
 
 namespace Common.Configuration
 {
@@ -137,9 +139,12 @@ namespace Common.Configuration
 				protected string _tooltip;
 
 				protected virtual string getTooltip() => tooltip;
-
+#if GAME_SN
 				public void GetTooltip(out string tooltipText, List<TooltipIcon> _) => tooltipText = getTooltip();
-
+#elif GAME_BZ
+				public void GetTooltip(TooltipData tooltip) { tooltip.prefix.Append(getTooltip()); }
+				public bool showTooltipOnDrag => false;
+#endif
 				static readonly Type layoutElementType = Type.GetType("UnityEngine.UI.LayoutElement, UnityEngine.UI");
 				void Start()
 				{

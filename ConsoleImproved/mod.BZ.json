@@ -1,0 +1,14 @@
+{
+  "Id": "ConsoleImproved",
+  "DisplayName": "Console Improved",
+  "Author": "zorgesho",
+  "Version": "1.1.0",
+  "Dependencies": [ "SMLHelper" ],
+  "VersionDependencies": { "SMLHelper": "2.6.0" },
+  "Enable": true,
+  "Game": "BelowZero",
+  "AssemblyName": "ConsoleImproved.dll",
+  "EntryMethod": "ConsoleImproved.Main.patch",
+  "UpdateCheck": true,
+  "VersionURL": "https://raw.githubusercontent.com/zorgesho/SubnauticaMods/master/ConsoleImproved/mod.BZ.json"
+}

@@ -44,7 +44,9 @@ namespace DayNightSpeed
 			transpiler_dnsClamped01(cins, nameof(ModConfig.auxSpeedPowerCharge));
 
 		[HarmonyTranspiler] // power consuming
+#if GAME_SN
 		[HarmonyPatch(typeof(BaseRoot), "ConsumePower")]
+#endif
 		[HarmonyPatch(typeof(ToggleLights), "UpdateLightEnergy")]
 		[HarmonyPatch(typeof(FiltrationMachine), "UpdateFiltering")]
 		static CIEnumerable transpiler_dnsClamped01_consume(CIEnumerable cins) =>

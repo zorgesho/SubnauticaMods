@@ -21,8 +21,10 @@ namespace Common
 		static class PersistentScreenMessages
 		{
 			static bool patched = false;
+
 			static readonly FieldInfo messageEntry = typeof(ErrorMessage._Message).field("entry");
-			static readonly PropertyWrapper text = Type.GetType("UnityEngine.UI.Text, UnityEngine.UI").property("text").wrap();
+			static readonly PropertyWrapper text =
+				Type.GetType(Mod.Consts.isGameSN? "UnityEngine.UI.Text, UnityEngine.UI": "TMPro.TextMeshProUGUI, Unity.TextMeshPro").property("text").wrap();
 
 			public static void patch()
 			{

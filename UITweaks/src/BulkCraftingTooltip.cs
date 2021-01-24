@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if GAME_SN // TODO: fix for BZ
+using System;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Collections.Generic;
@@ -48,7 +49,7 @@ namespace UITweaks
 
 			tooltip.gameObject.AddComponent<BulkCraftingInitedTag>();
 
-			var textGO = tooltip.gameObject.getChild(Mod.isBranchStable? "Text": "Container/Text");
+			var textGO = tooltip.gameObject.getChild(Mod.Consts.isBranchStable? "Text": "Container/Text");
 			var textGOBottom = UnityEngine.Object.Instantiate(textGO, textGO.transform.parent);
 			textGOBottom.name = "BottomText";
 
@@ -260,39 +261,12 @@ namespace UITweaks
 			static bool _isAmountChanged(TechType techType) =>
 				techType == currentTechType && currentCraftAmount > 1;
 
-			[OptionalPatch, PatchClass]
-			static class CraftDurationPatches
+			[HarmonyPriority(Priority.HigherThanNormal)] // just in case
+			[HarmonyPrefix, HarmonyHelper.Patch(typeof(Crafter), "Craft")]
+			static void craftFixDuration(TechType techType, ref float duration)
 			{
-				static bool prepare() => CrafterPatches.prepare() && Main.config.bulkCrafting.changeCraftDuration;
-
-				static void fixCraftDuration(TechType techType, ref float duration)
-				{
-					if (_isAmountChanged(techType))
-						duration *= currentCraftAmount;
-				}
-
-				[HarmonyPriority(Priority.HigherThanNormal)] // just in case
-				[HarmonyPrefix, HarmonyHelper.Patch(typeof(Crafter), "Craft")]
-				static void fixCraftDuration_Vanilla(TechType techType, ref float duration) => fixCraftDuration(techType, ref duration);
-
-				// compatibility patches for EasyCraft mod for fixing craft duration
-				[HarmonyHelper.Patch(HarmonyHelper.PatchOptions.CanBeAbsent)]
-				[HarmonyPrefix, HarmonyHelper.Patch("EasyCraft.GhostCrafter_Craft_Patch, EasyCraft", "Prefix")]
-				static void fixCraftDuration_EasyCraft(TechType techType, ref float duration) => fixCraftDuration(techType, ref duration);
-
-				// EasyCraft clamps duration to 20 sec, we set it to 5 min
-				[HarmonyHelper.Patch(HarmonyHelper.PatchOptions.CanBeAbsent)]
-				[HarmonyTranspiler, HarmonyHelper.Patch("EasyCraft.Main, EasyCraft", "GhostCraft")]
-				static CIEnumerable extendDurationClamp(CIEnumerable cins)
-				{
-					var list = cins.ToList();
-					int i = list.ciFindIndexForLast(ci => ci.isLDC(20f));
-
-					if (i != -1)
-						list[i].operand = 300f;
-
-					return cins;
-				}
+				if (Main.config.bulkCrafting.changeCraftDuration && _isAmountChanged(techType))
+					duration *= currentCraftAmount;
 			}
 
 			[HarmonyPrefix, HarmonyPatch(typeof(CrafterLogic), "Craft")]
@@ -322,7 +296,7 @@ namespace UITweaks
 			static void reset(CrafterLogic __instance) => crafterCache.Remove(__instance);
 
 			[HarmonyTranspiler]
-			[HarmonyHelper.Patch(typeof(CrafterLogic), Mod.isBranchStable? "TryPickup": "TryPickupAsync")]
+			[HarmonyHelper.Patch(typeof(CrafterLogic), Mod.Consts.isBranchStable? "TryPickup": "TryPickupAsync")]
 #if BRANCH_EXP
 			[HarmonyHelper.Patch(HarmonyHelper.PatchOptions.PatchIteratorMethod)]
 #endif
@@ -336,7 +310,7 @@ namespace UITweaks
 
 				return index == -1? cins:
 					list.ciInsert(index + 2,
-						Mod.isBranchStable? OpCodes.Ldarg_0: OpCodes.Ldloc_1,
+						Mod.Consts.isBranchStable? OpCodes.Ldarg_0: OpCodes.Ldloc_1,
 						CIHelper.emitCall<Action<CrafterLogic>>(_changeLinkedItemsAmount));
 
 				static void _changeLinkedItemsAmount(CrafterLogic instance)
@@ -382,3 +356,4 @@ namespace UITweaks
 		}
 	}
 }
+#endif

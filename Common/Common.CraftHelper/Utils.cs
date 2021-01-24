@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections;
-#if BRANCH_STABLE
-using System.IO;
-#endif
 
 using UWE;
 using UnityEngine;
 using SMLHelper.V2.Assets;
+
+#if BRANCH_STABLE
+using System.IO;
+#endif
 
 namespace Common.Crafting
 {
@@ -27,20 +28,18 @@ namespace Common.Crafting
 		#region sync 'getPrefab' methods
 		public static GameObject getPrefab(TechType techType)
 		{																												$"PrefabUtils: getPrefab(TechType.{techType})".logDbg();
-#if BRANCH_STABLE
+#if GAME_SN && BRANCH_STABLE
 			return CraftData.GetPrefabForTechType(techType);
-#elif BRANCH_EXP
-			Debug.assert(false, "Not implemented!");
+#else
 			return null;
 #endif
 		}
 
 		public static GameObject getPrefab(string filename)
 		{																												$"PrefabUtils: getPrefab(\"{filename}\")".logDbg();
-#if BRANCH_STABLE
+#if GAME_SN && BRANCH_STABLE
 			return Resources.Load<GameObject>(filename);
-#elif BRANCH_EXP
-			Debug.assert(false, "Not implemented!");
+#else
 			return null;
 #endif
 		}

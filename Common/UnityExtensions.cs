@@ -2,8 +2,6 @@
 using System.Linq;
 using System.Reflection;
 using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 using UnityEngine;
 using UnityEngine.Events;
@@ -47,8 +45,11 @@ namespace Common
 		public static void destroyChildren(this GameObject go, params string[] children) =>
 			children.forEach(name => go.destroyChild(name, true));
 
+		public static void destroyComponent(this GameObject go, Type componentType, bool immediate = true) =>
+			go.GetComponent(componentType)?._destroy(immediate);
+
 		public static void destroyComponent<T>(this GameObject go, bool immediate = true) where T: Component =>
-			go.GetComponent<T>()?._destroy(immediate);
+			destroyComponent(go, typeof(T), immediate);
 
 		public static void destroyComponentInChildren<T>(this GameObject go, bool immediate = true) where T: Component =>
 			go.GetComponentInChildren<T>()?._destroy(immediate);
@@ -74,10 +75,16 @@ namespace Common
 	}
 
 
-	static class VectorExtension
+	static class StructsExtension
 	{
 		public static Vector2 setX(this Vector2 vec, float val) { vec.x = val; return vec; }
 		public static Vector2 setY(this Vector2 vec, float val) { vec.y = val; return vec; }
+
+		public static Vector3 setX(this Vector3 vec, float val) { vec.x = val; return vec; }
+		public static Vector3 setY(this Vector3 vec, float val) { vec.y = val; return vec; }
+		public static Vector3 setZ(this Vector3 vec, float val) { vec.z = val; return vec; }
+
+		public static Color setA(this Color color, float val) { color.a = val; return color; }
 	}
 
 
@@ -95,6 +102,17 @@ namespace Common
 			var obj = createPersistentGameObject(name);
 			obj.AddComponent<T>();
 			return obj;
+		}
+
+		// using reflection to avoid including UnityEngine.UI in all projects
+		static readonly Type eventSystem = Type.GetType("UnityEngine.EventSystems.EventSystem, UnityEngine.UI");
+		static readonly PropertyWrapper currentEventSystem = eventSystem.property("current").wrap();
+		static readonly MethodWrapper setSelectedGameObject = eventSystem.method("SetSelectedGameObject", typeof(GameObject)).wrap();
+
+		// unselects currently selected object (needed for buttons)
+		public static void clearSelectedUIObject()
+		{
+			setSelectedGameObject.invoke(currentEventSystem.get(), null);
 		}
 
 		public static C findNearestToCam<C>() where C: Component =>
@@ -135,74 +153,6 @@ namespace Common
 
 	static class InputHelper
 	{
-		public struct KeyWithModifier
-		{
-			public readonly KeyCode modifier, key;
-
-			public KeyWithModifier(KeyCode key1, KeyCode key2 = KeyCode.None)
-			{
-				if (key1 == KeyCode.None || key2 == KeyCode.None) // if only one key defined treat it like a normal key
-				{
-					modifier = KeyCode.None;
-					key = key1 == KeyCode.None? key2: key1;
-					return;
-				}
-
-				bool isKey1Mod = isModifier(key1);
-				bool isKey2Mod = isModifier(key2);
-
-				if (isKey1Mod && !isKey2Mod)
-				{
-					modifier = key1;
-					key = key2;
-				}
-				else if (!isKey1Mod && isKey2Mod)
-				{
-					modifier = key2;
-					key = key1;
-				}
-				else // if both keys are modifiers or non-modifiers then use only first key
-				{
-					modifier = KeyCode.None;
-					key = key1;
-				}
-			}
-
-			static readonly HashSet<KeyCode> _modifiers = new HashSet<KeyCode>()
-			{
-				KeyCode.LeftAlt, KeyCode.RightAlt,
-				KeyCode.LeftShift, KeyCode.RightShift,
-				KeyCode.LeftControl, KeyCode.RightControl
-			};
-
-			public static bool isModifier(KeyCode keyCode) => _modifiers.Contains(keyCode);
-			public static ReadOnlyCollection<KeyCode> modifiers => _modifiers.ToList().AsReadOnly();
-
-			public static implicit operator KeyWithModifier(KeyCode keyCode) => new KeyWithModifier(keyCode);
-
-			public static bool operator ==(KeyWithModifier key1, KeyWithModifier key2) => key1.key == key2.key && key1.modifier == key2.modifier;
-			public static bool operator !=(KeyWithModifier key1, KeyWithModifier key2) => !(key1 == key2);
-
-			public override int  GetHashCode() => ((int)modifier & 0xFFF) << 12 | ((int)key & 0xFFF);
-			public override bool Equals(object obj) => obj is KeyWithModifier key && this == key;
-
-			public override string ToString() => this == default? "": (modifier == KeyCode.None? $"{key}": $"{modifier}+{key}");
-
-			public static explicit operator KeyWithModifier(string str)
-			{
-				if (str.isNullOrEmpty())
-					return default;
-
-				try
-				{
-					var keys = str.Split('+');
-					return new KeyWithModifier(keys[0].convert<KeyCode>(), keys.Length == 2? keys[1].convert<KeyCode>(): KeyCode.None);
-				}
-				catch (Exception e) { Log.msg(e); return default; }
-			}
-		}
-
-
 		public static float getMouseWheelValue() => getAxis? getAxis.invoke("Mouse ScrollWheel"): 0f;
 
 		static readonly MethodWrapper<Func<string, float>> getAxis =

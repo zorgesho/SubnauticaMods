@@ -15,20 +15,6 @@ namespace Common.Harmony
 	using CIEnumerable = IEnumerable<CodeInstruction>;
 	using CIList = List<CodeInstruction>;
 
-	class UpdateOptionalPatches: Config.Field.IAction, Config.Field.IActionArgs
-	{
-		object[] args;
-		public void setArgs(object[] args) => this.args = args;
-
-		public void action()
-		{
-			if (args.isNullOrEmpty())
-				OptionalPatches.update();
-			else
-				args.forEach(arg => OptionalPatches.update(arg as Type));
-		}
-	}
-
 	static partial class CIHelper // additional transpiler stuff to work with config
 	{
 		// for using in transpiler helper functions
@@ -94,9 +80,9 @@ namespace Common.Harmony
 			yield return new CodeInstruction(LdcOpCode.get<T>(), val);
 			yield return new CodeInstruction(OpCodes.Br_S, lb2);
 
-			yield return new CodeInstruction(OpCodes.Call, mainConfig) { labels = new List<Label>{lb1} };
+			yield return new CodeInstruction(OpCodes.Call, mainConfig) { labels = { lb1 } };
 			yield return cfgVarCI;
-			yield return new CodeInstruction(OpCodes.Nop) { labels = new List<Label>{lb2} };
+			yield return new CodeInstruction(OpCodes.Nop) { labels = { lb2 } };
 		}
 	}
 }

@@ -1,16 +1,17 @@
-﻿#if DEBUG
+﻿using UnityEngine;
+using Common;
+
+#if DEBUG
 using System.Linq;
 using System.Collections;
 #endif
-
-using UnityEngine;
-
-using Common;
 
 namespace HabitatPlatform
 {
 	class ConsoleCommands: PersistentConsoleCommands
 	{
+		const float defPosY = -0.0465f;
+
 		GameObject _findPlatform() => UnityHelper.findNearestToCam<HabitatPlatform.Tag>()?.gameObject;
 
 		public void hbpl_move(float dx, float dy)
@@ -23,6 +24,15 @@ namespace HabitatPlatform
 		{
 			if (_findPlatform() is GameObject platform)
 				platform.transform.rotation *= Quaternion.AngleAxis(Main.config.stepRotate * angle, Vector3.up);
+		}
+
+		public void hbpl_reset_angles()
+		{
+			if (_findPlatform() is GameObject platform)
+			{
+				platform.transform.rotation = Quaternion.identity;
+				platform.transform.position = platform.transform.position.setY(defPosY);
+			}
 		}
 
 		public void hbpl_warp(float? x, float? y)
@@ -128,6 +138,12 @@ namespace HabitatPlatform
 			}
 		}
 
+		public void hbpl_printpos()
+		{
+			if (_findPlatform() is GameObject platform)
+				_printVec(platform.transform.position, "platform pos");
+		}
+
 		public void hbpl_toggle_foundations()
 		{
 			_findPlatform()?.GetComponentsInChildren<BaseFoundationPiece>().
@@ -135,7 +151,7 @@ namespace HabitatPlatform
 							 SelectMany(models => models.GetComponentsInChildren<Renderer>()).
 							 ForEach(rend => rend.enabled = !rend.enabled);
 		}
-#endif
+#endif // DEBUG
 	#endregion
 	}
 }

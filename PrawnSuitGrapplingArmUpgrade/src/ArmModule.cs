@@ -1,6 +1,4 @@
 ﻿using UnityEngine;
-using SMLHelper.V2.Crafting;
-
 using Common.Crafting;
 
 namespace PrawnSuitGrapplingArmUpgrade
@@ -11,14 +9,14 @@ namespace PrawnSuitGrapplingArmUpgrade
 	{
 		public static new TechType TechType { get; private set; } = 0;
 
-		protected override TechData getTechData() => new TechData
+		protected override TechInfo getTechInfo() => new TechInfo
 		(
-			new Ingredient(TechType.ExosuitGrapplingArmModule, 1),
-			new Ingredient(TechType.Polyaniline, 2),
-			new Ingredient(TechType.Lithium, 2),
-			new Ingredient(TechType.AramidFibers, 1),
-			new Ingredient(TechType.AluminumOxide, 1)
-		)	{ craftAmount = 1};
+			new TechInfo.Ing(TechType.ExosuitGrapplingArmModule),
+			new TechInfo.Ing(TechType.Polyaniline, 2),
+			new TechInfo.Ing(TechType.Lithium, 2),
+			new TechInfo.Ing(TechType.AramidFibers),
+			new TechInfo.Ing(TechType.AluminumOxide)
+		);
 
 		protected override void initPrefabPool() => addPrefabToPool(TechType.ExosuitGrapplingArmModule);
 

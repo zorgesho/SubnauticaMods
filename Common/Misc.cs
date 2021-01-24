@@ -47,7 +47,7 @@ namespace Common
 
 		public static T[] append<T>(this T[] array1, T[] array2)
 		{
-			if (array1 != null && (array2 == null || array2.Length == 0))
+			if (array1 != null && array2.isNullOrEmpty())
 				return array1;
 
 			if (array1 == null)
@@ -59,6 +59,19 @@ namespace Common
 			array2.CopyTo(newArray, array1.Length);
 
 			return newArray;
+		}
+
+		public static T[] subArray<T>(this T[] array, int indexBegin, int indexEnd = -1)
+		{
+			try
+			{
+				int length = (indexEnd == -1? array.Length - 1: indexEnd) - indexBegin + 1;
+				T[] newArray = new T[length];
+
+				Array.Copy(array, indexBegin, newArray, 0, length);
+				return newArray;
+			}
+			catch (Exception e) { Log.msg(e); return null; }
 		}
 	}
 
@@ -80,31 +93,19 @@ namespace Common
 			return s.Remove(length / 2, s.Length - length + 3).Insert(length / 2, "...");
 		}
 
-		static string formatFileName(string filename)
-		{
-			if (filename.isNullOrEmpty())
-				return filename;
-
-			if (Path.GetExtension(filename) == "")
-				filename += ".txt";
-
-			if (!Path.IsPathRooted(filename))
-				filename = Paths.modRootPath + filename;
-
-			return filename;
-		}
-
 		public static void saveToFile(this string s, string localPath)
 		{
-			try { File.WriteAllText(formatFileName(localPath), s); }
+			try { File.WriteAllText(_formatFileName(localPath), s); }
 			catch (Exception e) { Log.msg(e); }
 		}
 
 		public static void appendToFile(this string s, string localPath)
 		{
-			try { File.AppendAllText(formatFileName(localPath), s + Environment.NewLine); }
+			try { File.AppendAllText(_formatFileName(localPath), s + Environment.NewLine); }
 			catch (Exception e) { Log.msg(e); }
 		}
+
+		static string _formatFileName(string filename) => Paths.formatFileName(filename, "txt");
 	}
 
 

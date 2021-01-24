@@ -43,7 +43,9 @@ namespace Common.Configuration
 			Debug.assert(typeof(Config).IsAssignableFrom(configType), $"{configType}");
 
 			Config config;
-			string configPath = loadPath.isNullOrEmpty()? null: (Path.IsPathRooted(loadPath)? loadPath: Paths.modRootPath + loadPath);
+
+			string configPath = Paths.formatFileName(loadPath, "json", true);
+			Paths.ensurePath(configPath);
 
 			try
 			{

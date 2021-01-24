@@ -9,4 +9,10 @@
   <PropertyGroup Condition="$(Configuration.Contains('SNexp.'))">
     <ProjectDependencies>..\.dependencies\gameSNexp</ProjectDependencies>
   </PropertyGroup>
+  <PropertyGroup Condition="$(Configuration.Contains('BZ.'))">
+    <ProjectDependencies>..\.dependencies\gameBZ</ProjectDependencies>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(Configuration.Contains('BZexp.'))">
+    <ProjectDependencies>..\.dependencies\gameBZexp</ProjectDependencies>
+  </PropertyGroup>
 </Project>

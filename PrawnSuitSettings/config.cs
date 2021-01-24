@@ -1,5 +1,5 @@
-﻿using Common.Harmony;
-using Common.Configuration;
+﻿using Common.Configuration;
+using Common.Configuration.Actions;
 
 namespace PrawnSuitSettings
 {

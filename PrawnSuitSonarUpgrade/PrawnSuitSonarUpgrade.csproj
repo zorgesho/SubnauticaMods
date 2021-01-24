@@ -73,6 +73,42 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>8.0</LangVersion>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'BZ.dev|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\BZ.dev\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;GAME_BZ;BRANCH_STABLE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>8.0</LangVersion>
+    <NoWarn>IDE0051</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'BZ.publish|AnyCPU'">
+    <OutputPath>bin\BZ.publish\</OutputPath>
+    <DefineConstants>GAME_BZ;BRANCH_STABLE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>8.0</LangVersion>
+    <Optimize>true</Optimize>
+    <NoWarn>IDE0051</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'BZ.testbuild|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\BZ.testbuild\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;GAME_BZ;BRANCH_STABLE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>8.0</LangVersion>
+    <NoWarn>IDE0051</NoWarn>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony-1.2.0.1">
       <HintPath>$(ProjectDependencies)\0Harmony-1.2.0.1.dll</HintPath>
@@ -100,6 +136,10 @@
       <HintPath>$(ProjectDependencies)\UnityEngine.CoreModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.ImageConversionModule">
+      <HintPath>$(ProjectDependencies)\UnityEngine.ImageConversionModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\Patches.cs" />
@@ -109,13 +149,21 @@
     <Compile Include="src\SonarModule.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="mod.SN.json">
+    <None Include="mod.BZ.json" Condition="$(Configuration.Contains('BZ'))">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="mod.SN.json" Condition="$(Configuration.Contains('SN'))">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="assets\prawnsonarmodule.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <Import Project="..\Common\Common.projitems" Label="Shared" />
   <Import Project="..\Common\Common.CraftHelper\Common.CraftHelper.projitems" Label="Shared" />
+  <Import Project="..\Common\Common.AssetsHelper\Common.AssetsHelper.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>$(SolutionDir)post-build.bat $(ConfigurationName) $(ProjectName) $(ProjectDir) $(TargetPath) $(TargetDir)</PostBuildEvent>

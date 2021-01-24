@@ -57,9 +57,9 @@ namespace Common.Utils
 
 	static class VersionChecker
 	{
-		const float checkDelaySecs		= Mod.isDevBuild? 0f: 15f;
-		const float checkDelayRangeSecs = Mod.isDevBuild? 0f: 60f;
-		const float checkPeriodHours	= Mod.isDevBuild? 0f: 1f;
+		const float checkDelaySecs		= Mod.Consts.isDevBuild? 0f: 15f;
+		const float checkDelayRangeSecs = Mod.Consts.isDevBuild? 0f: 60f;
+		const float checkPeriodHours	= Mod.Consts.isDevBuild? 0f: 1f;
 
 		static readonly string versionFilePath = Paths.modRootPath + "latest-version.txt";
 

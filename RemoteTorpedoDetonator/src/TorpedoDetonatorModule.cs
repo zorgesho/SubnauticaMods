@@ -1,5 +1,4 @@
-﻿using SMLHelper.V2.Crafting;
-using Common.Crafting;
+﻿using Common.Crafting;
 
 namespace RemoteTorpedoDetonator
 {
@@ -7,11 +6,11 @@ namespace RemoteTorpedoDetonator
 	{
 		public static new TechType TechType { get; private set; } = 0;
 
-		protected override TechData getTechData() => new TechData
+		protected override TechInfo getTechInfo() => new TechInfo
 		(
-			new Ingredient(TechType.AdvancedWiringKit, 1),
-			new Ingredient(TechType.Magnetite, 1)
-		)	{ craftAmount = 1};
+			new TechInfo.Ing(TechType.AdvancedWiringKit),
+			new TechInfo.Ing(TechType.Magnetite)
+		);
 
 		protected override void initPrefabPool() => addPrefabToPool(TechType.VehicleArmorPlating);
 

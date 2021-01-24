@@ -1,6 +1,8 @@
 ﻿using Harmony;
 using UnityEngine;
 
+using Common;
+
 namespace DebrisRecycling
 {
 	[HarmonyPatch(typeof(BuilderTool), "Construct")]
@@ -36,13 +38,8 @@ namespace DebrisRecycling
 	{
 		static void Prefix(BuilderTool __instance)
 		{
-			if (__instance.isDrawn && !Builder.isPlacing && AvatarInputHandler.main.IsEnabled())
-			{
-				Targeting.GetTarget(Player.main.gameObject, 10f, out GameObject go, out float num, null);
-
-				if (go)
-					DebrisPatcher.processObject(go);
-			}
+			if (__instance.isDrawn && !Builder.isPlacing && AvatarInputHandler.main.IsEnabled() && GameUtils.getTarget(10f) is GameObject go)
+				DebrisPatcher.processObject(go);
 		}
 	}
 }

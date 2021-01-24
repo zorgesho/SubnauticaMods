@@ -15,19 +15,6 @@ namespace Common
 
 	static partial class Mod
 	{
-		public const bool isDevBuild =
-#if DEBUG
-			true;
-#else
-			false;
-#endif
-		public const bool isBranchStable =
-#if BRANCH_STABLE
-			true;
-#elif BRANCH_EXP
-			false;
-#endif
-
 		public static bool isShuttingDown { get; private set; }
 		class ShutdownListener: MonoBehaviour { void OnApplicationQuit() { isShuttingDown = true; "Shutting down".logDbg(); } }
 
@@ -59,10 +46,10 @@ namespace Common
 			bool needCheckVer = manifest["UpdateCheck"].AsBool;
 
 #if DISABLE_VERSION_CHECK_IN_DEVBUILD
-			if (needCheckVer && isDevBuild)
+			if (needCheckVer && Consts.isDevBuild)
 				"Version check is disabled for dev build!".logDbg();
 
-			needCheckVer &= !isDevBuild;
+			needCheckVer &= !Consts.isDevBuild;
 #endif
 			if (needCheckVer)
 			{

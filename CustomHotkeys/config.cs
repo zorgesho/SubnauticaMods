@@ -6,8 +6,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Common;
-using Common.Harmony;
 using Common.Configuration;
+using Common.Configuration.Actions;
 
 namespace CustomHotkeys
 {
@@ -15,7 +15,7 @@ namespace CustomHotkeys
 	{
 		[Options.Field("Enable developer tools hotkeys", "Use <b>F1</b>, <b>F3</b> and <b>F6</b> for vanilla developer tools (you can reassign those tools to the other hotkeys)")]
 		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
-		public readonly bool enableDevToolsHotkeys = !Mod.isDevBuild;
+		public readonly bool enableDevToolsHotkeys = !Mod.Consts.isDevBuild;
 
 		class OnlyInMainMenu: Options.Components.Hider.IVisibilityChecker
 		{ public bool visible => Options.mode == Options.Mode.MainMenu; }
@@ -24,7 +24,7 @@ namespace CustomHotkeys
 		[Options.Hideable(typeof(OnlyInMainMenu))]
 		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 		[Options.FinalizeAction(typeof(FeedbackCollectorPatch.SettingChanged))]
-		public readonly bool enableFeedback = !Mod.isDevBuild;
+		public readonly bool enableFeedback = !Mod.Consts.isDevBuild;
 
 		public class HotkeyHider: Field.IAction
 		{ public void action() => Options.Components.Hider.refresh("hotkeys"); }
@@ -37,7 +37,9 @@ namespace CustomHotkeys
 		[Field.Action(typeof(HotkeyHider))]
 		public readonly bool showHidden = false;
 
+#if GAME_SN // BZ is using right click for that
 		public readonly bool easyBindRemove = true;
+#endif
 		public readonly bool addConsoleCommands = true;
 
 		class OpenConfig: Field.IAction
@@ -58,7 +60,7 @@ namespace CustomHotkeys
 	}
 
 
-	[SerializerSettings(ignoreNullValues = true, verboseErrors = true)]
+	[SerializerSettings(ignoreNullValues = true, verboseErrors = true, converters = new[] { typeof(KWM_JsonConverter) })]
 	class HKConfig: Config
 	{
 		[NonSerialized, NoInnerFieldsAttrProcessing]
@@ -86,7 +88,7 @@ namespace CustomHotkeys
 			addBindOptions();
 
 			if (resetOptionsPanel)
-				Options.resetPanel();
+				Options.Utils.resetPanel();
 		}
 
 		void addBindOptions()
@@ -108,7 +110,7 @@ namespace CustomHotkeys
 					if (hidden)
 						label = $"<color=silver>{label}</color>";
 
-					var option = new Options.KeyWModBindOption(cfgField, label);
+					var option = new KeyWModBindOption(cfgField, label);
 
 					var tooltip = "<color=white><b>Command: </b></color>";
 					tooltip += hotkey.command.Replace(";", "<color=orange><b>;</b></color>").Replace("|", "<color=yellow><b>|</b></color>");
@@ -134,7 +136,7 @@ namespace CustomHotkeys
 
 			[Field.Action(typeof(UpdateBinds))]
 			[Field.Action(typeof(ModConfig.HotkeyHider))]
-			public InputHelper.KeyWithModifier key;
+			public KeyWithModifier key;
 
 			public string command;
 			public Mode? mode; // nullable so it can be ignored by serializer
@@ -144,25 +146,17 @@ namespace CustomHotkeys
 #pragma warning restore
 		}
 
-		class HotkeyListChanged: Field.IAction, IRootConfigInfo
-		{
-			HKConfig hkConfig;
-			public void setRootConfig(Config config) => hkConfig = config as HKConfig;
-
-			public void action() => hkConfig.refreshHotkeyList();
-		}
-
 		class AddHotkeysAttribute: Attribute, IRootConfigInfo
 		{ public void setRootConfig(Config config) => (config as HKConfig).refreshHotkeyList(false); }
 
-		[Field.Action(typeof(HotkeyListChanged))]
+		[Field.Action(typeof(CallMethod), nameof(refreshHotkeyList), true)]
 		[AddHotkeys, Field.Reloadable, NoInnerFieldsAttrProcessing]
 		public readonly List<Hotkey> hotkeys = new List<Hotkey>()
 		{
 			new Hotkey { command = "autoforward", label = "Autoforward", key = KeyCode.LeftAlt },
 			new Hotkey { command = "useitem firstaidkit", label = "Use medkit", key = KeyCode.H },
 			new Hotkey { command = "vehicle_enter", label = "Enter nearby vehicle", key = KeyCode.E },
-			new Hotkey { command = "showmodoptions", label = "Open mod options", key = new InputHelper.KeyWithModifier(KeyCode.O, KeyCode.RightAlt) },
+			new Hotkey { command = "showmodoptions", label = "Open mod options", key = new KeyWithModifier(KeyCode.O, KeyCode.RightAlt) },
 
 #if GENERATE_SAMPLE_CONFIG
 			new Hotkey { command = "setresolution 1280 720 false; setwindowpos 10 10 | setresolution 2560 1440", key = KeyCode.F2, label = "Toggle fullscreen" },

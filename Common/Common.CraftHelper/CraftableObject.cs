@@ -8,6 +8,12 @@ using SMLHelper.V2.Assets;
 using SMLHelper.V2.Crafting;
 using SMLHelper.V2.Handlers;
 
+#if GAME_SN
+	using Sprite = Atlas.Sprite;
+#elif GAME_BZ
+	using Sprite = UnityEngine.Sprite;
+#endif
+
 namespace Common.Crafting
 {
 	using Reflection;
@@ -24,7 +30,7 @@ namespace Common.Crafting
 		public virtual GameObject getGameObject() => null;
 		public virtual IEnumerator getGameObjectAsync(IOut<GameObject> result) => null;
 
-		protected abstract TechData getTechData();
+		protected abstract TechInfo getTechInfo();
 
 		public sealed override GameObject GetGameObject()
 		{
@@ -37,12 +43,12 @@ namespace Common.Crafting
 			return isUsingExactPrefab? null: getGameObjectAsync(result);
 		}
 
-		void registerPrefabAndTechData()
+		void registerPrefabAndTechInfo()
 		{
 			PrefabHandler.RegisterPrefab(this);
 
-			if (getTechData() is TechData techData)
-				CraftDataHandler.SetTechData(TechType, techData);
+			if (getTechInfo() is TechInfo techInfo)
+				CraftDataHandler.SetTechData(TechType, techInfo);
 		}
 
 		protected void useExactPrefab()
@@ -55,10 +61,10 @@ namespace Common.Crafting
 		protected void register(TechType techType) // for already existing techtypes
 		{
 			TechType = techType;
-			registerPrefabAndTechData();
+			registerPrefabAndTechInfo();
 		}
 
-		protected TechType register() =>  // just for convenience during development
+		protected TechType register() => // just for convenience during development
 			register(ClassID, ClassID);
 
 		protected TechType register(string name, string description) => // using external sprite
@@ -67,11 +73,11 @@ namespace Common.Crafting
 		protected TechType register(string name, string description, TechType spriteTechType) => // using sprite for another techtype
 			register(name, description, SpriteHelper.getSprite(spriteTechType));
 
-		protected TechType register(string name, string description, Atlas.Sprite sprite)
+		protected TechType register(string name, string description, Sprite sprite)
 		{
 			TechType = TechTypeHandler.AddTechType(ClassID, name, description, sprite, false);
 
-			registerPrefabAndTechData();
+			registerPrefabAndTechInfo();
 
 			return TechType;
 		}

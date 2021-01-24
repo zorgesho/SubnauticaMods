@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 using UnityEngine;
 
 using Common;
-using Common.Harmony;
 using Common.Configuration;
+using Common.Configuration.Actions;
 
 namespace UITweaks
 {
-#if DEBUG
 	[Field.BindConsole("ui")]
-#endif
 	class ModConfig: Config
 	{
 		[Options.Hideable(typeof(Hider), "bulk")]
@@ -76,14 +73,16 @@ namespace UITweaks
 		}
 		public readonly PDATweaks pdaTweaks = new PDATweaks();
 
+#if GAME_SN
 		class HideRenameBeacons: Options.Components.Hider.IVisibilityChecker
 		{ public bool visible => !Main.config.oldRenameBeaconsModActive; }
 
-		[NonSerialized]
+		[System.NonSerialized]
 		bool oldRenameBeaconsModActive = false;
 
-		[Options.Field("Rename beacons in the inventory", "Use middle mouse button (or custom hotkey) to rename beacons that are in the inventory")]
 		[Options.Hideable(typeof(HideRenameBeacons))]
+#endif
+		[Options.Field("Rename beacons in the inventory", "Use middle mouse button (or custom hotkey) to rename beacons that are in the inventory")]
 		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 		public bool renameBeacons = true;
 
@@ -99,17 +98,29 @@ namespace UITweaks
 		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 		public readonly bool hideMessagesWhileLoading = true;
 
+		const float defaultSpacing = 15f;
+
+		[Options.Field("Options spacing", "Vertical spacing between options in the 'Mods' options tab")]
+		[Field.Action(typeof(CallMethod), nameof(setOptionsSpacing))]
+		[Options.Choice("Default", defaultSpacing, "Tight", 10f, "Compact", 5f)]
+		readonly float optionsSpacing = defaultSpacing;
+		void setOptionsSpacing() => Options.Utils.setOptionsSpacing(optionsSpacing);
+
 		public readonly KeyCode renameBeaconsKey = KeyCode.None; // using middle mouse button by default
 		public readonly bool showToolbarHotkeys = false;
 
 		protected override void onLoad()
 		{
+#if GAME_SN
 			if (Mod.isModEnabled("RenameBeacons"))
 			{
 				oldRenameBeaconsModActive = true;
 				renameBeacons = false;
 				Mod.addCriticalMessage(L10n.str(L10n.ids_modMerged), color: "yellow");
 			}
+#endif
+			if (optionsSpacing != defaultSpacing)
+				Options.Utils.setOptionsSpacing(optionsSpacing);
 		}
 	}
 
@@ -121,6 +132,8 @@ namespace UITweaks
 		public static readonly string ids_beaconName = "Name";
 		public static readonly string ids_beaconRename = "rename";
 
+#if GAME_SN
 		public static readonly string ids_modMerged = "<b>RenameBeacons</b> mod is now merged into <b>UI Tweaks</b> mod, you can safely delete it.";
+#endif
 	}
 }

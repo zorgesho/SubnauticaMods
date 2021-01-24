@@ -1,10 +1,9 @@
 ﻿using System;
+using UnityEngine;
 
 #if GAME_SN
 using System.Collections.Generic;
 #endif
-
-using UnityEngine;
 
 namespace Common.Configuration
 {

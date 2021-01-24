@@ -71,7 +71,7 @@ namespace Common
 				Array.Copy(array, indexBegin, newArray, 0, length);
 				return newArray;
 			}
-			catch(Exception e) { Log.msg(e); return null; }
+			catch (Exception e) { Log.msg(e); return null; }
 		}
 	}
 
@@ -93,22 +93,19 @@ namespace Common
 			return s.Remove(length / 2, s.Length - length + 3).Insert(length / 2, "...");
 		}
 
-		static string formatFileName(string filename)
-		{
-			return filename.isNullOrEmpty()? filename: Paths.makeRootPath(Paths.ensureExtension(filename, "txt"));
-		}
-
 		public static void saveToFile(this string s, string localPath)
 		{
-			try { File.WriteAllText(formatFileName(localPath), s); }
+			try { File.WriteAllText(_formatFileName(localPath), s); }
 			catch (Exception e) { Log.msg(e); }
 		}
 
 		public static void appendToFile(this string s, string localPath)
 		{
-			try { File.AppendAllText(formatFileName(localPath), s + Environment.NewLine); }
+			try { File.AppendAllText(_formatFileName(localPath), s + Environment.NewLine); }
 			catch (Exception e) { Log.msg(e); }
 		}
+
+		static string _formatFileName(string filename) => Paths.formatFileName(filename, "txt");
 	}
 
 

@@ -30,5 +30,9 @@ namespace Common
 			if (!Directory.Exists(path))
 				Directory.CreateDirectory(path);
 		}
+
+		// completes path with modRootPath and adds extension if needed
+		public static string formatFileName(string filename, string extension, bool nullIfEmpty = false) =>
+			filename.isNullOrEmpty()? (nullIfEmpty? null: filename): makeRootPath(ensureExtension(filename, extension));
 	}
 }

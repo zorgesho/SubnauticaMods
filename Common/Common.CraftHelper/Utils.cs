@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections;
-#if BRANCH_STABLE
-using System.IO;
-#endif
 
 using UWE;
 using UnityEngine;
 using SMLHelper.V2.Assets;
+
+#if BRANCH_STABLE
+using System.IO;
+#endif
 
 namespace Common.Crafting
 {

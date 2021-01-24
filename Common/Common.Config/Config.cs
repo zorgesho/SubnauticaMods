@@ -44,8 +44,7 @@ namespace Common.Configuration
 
 			Config config;
 
-			string configPath = loadPath.isNullOrEmpty()? null: Paths.makeRootPath(loadPath);
-			configPath = Paths.ensureExtension(configPath, "json");
+			string configPath = Paths.formatFileName(loadPath, "json", true);
 			Paths.ensurePath(configPath);
 
 			try
@@ -86,7 +85,7 @@ namespace Common.Configuration
 
 		public void save(string savePath = null)
 		{
-			string path = Paths.ensureExtension(savePath, "json") ?? configPath;
+			string path = savePath ?? configPath;
 			if (path == null)
 				return;
 

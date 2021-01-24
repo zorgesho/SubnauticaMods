@@ -29,7 +29,7 @@ namespace Common
 
 			filename ??= go.name.Replace("(Clone)", "").ToLower();
 #if DEBUG
-			System.IO.Directory.CreateDirectory(pathForDumps);
+			Paths.ensurePath(pathForDumps);
 			filename = pathForDumps + filename;
 #endif
 			ObjectDumper.dump(go, true, true).saveToFile(filename + ".yml");

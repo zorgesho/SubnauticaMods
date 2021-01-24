@@ -16,10 +16,10 @@ namespace Common.Configuration
 			{
 				public ModOption create(Config.Field cfgField)
 				{
-					if (cfgField.type == typeof(KeyCode))
-						return new KeyBindOption(cfgField, cfgField.getAttr<FieldAttribute>()?.label);
+					if (cfgField.type != typeof(KeyCode))
+						return null;
 
-					return null;
+					return new KeyBindOption(cfgField, cfgField.getAttr<FieldAttribute>()?.label);
 				}
 			}
 		}

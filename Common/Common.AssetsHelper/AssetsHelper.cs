@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 
 using UnityEngine;
 
@@ -9,6 +10,8 @@ namespace Common
 
 	static class AssetsHelper
 	{
+		const string assetsExt = ".assets";
+
 		public static Sprite loadSprite(string textureName) => textureToSprite(loadTexture(textureName));
 		public static Sprite loadSprite(string textureName, float pixelsPerUnit, float border) => textureToSprite(loadTexture(textureName), pixelsPerUnit, border);
 
@@ -28,7 +31,7 @@ namespace Common
 
 		static AssetsHelper()
 		{
-			string bundlePath = Paths.assetsPath + Mod.id + ".assets";
+			string bundlePath = Paths.assetsPath + Mod.id + assetsExt;
 
 			if (File.Exists(bundlePath))
 			{
@@ -63,11 +66,7 @@ namespace Common
 				if (!Directory.Exists(dir))
 					return null;
 
-				var files = Directory.GetFiles(dir, Path.GetFileName(textureFilePath) + ".*");
-				Debug.assert(files.isNullOrEmpty() || files.Length == 1);
-
-				if (!files.isNullOrEmpty())
-					textureFilePath = files[0];
+				textureFilePath = Directory.GetFiles(dir, Path.GetFileName(textureFilePath) + ".*").Where(path => Path.GetExtension(path) != assetsExt).FirstOrDefault();
 			}
 
 			if (!File.Exists(textureFilePath))

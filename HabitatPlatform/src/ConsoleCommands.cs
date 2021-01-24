@@ -1,11 +1,10 @@
-﻿#if DEBUG
+﻿using UnityEngine;
+using Common;
+
+#if DEBUG
 using System.Linq;
 using System.Collections;
 #endif
-
-using UnityEngine;
-
-using Common;
 
 namespace HabitatPlatform
 {
@@ -152,7 +151,7 @@ namespace HabitatPlatform
 							 SelectMany(models => models.GetComponentsInChildren<Renderer>()).
 							 ForEach(rend => rend.enabled = !rend.enabled);
 		}
-#endif
+#endif // DEBUG
 	#endregion
 	}
 }

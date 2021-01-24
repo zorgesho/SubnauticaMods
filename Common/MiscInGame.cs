@@ -94,7 +94,7 @@ namespace Common
 			if (textUse != null)			hand.textUse = textUse;
 			if (textHand != null)			hand.textHand = textHand;
 			if (textUseSubscript != null)	hand.textUseSubscript = textUseSubscript;
-			if (textHandSubscript != null)	hand.textHand = textHandSubscript;
+			if (textHandSubscript != null)	hand.textHandSubscript = textHandSubscript;
 #endif
 		}
 	}

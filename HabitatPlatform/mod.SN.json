@@ -2,7 +2,7 @@
   "Id": "HabitatPlatform",
   "DisplayName": "Habitat Platform",
   "Author": "zorgesho",
-  "Version": "1.0.0",
+  "Version": "1.0.1",
   "Dependencies": [ "SMLHelper" ],
   "VersionDependencies": { "SMLHelper": "2.9.0" },
   "Enable": true,

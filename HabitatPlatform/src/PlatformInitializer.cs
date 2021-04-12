@@ -8,6 +8,21 @@ using Common.Crafting;
 
 namespace HabitatPlatform
 {
+	static class PlatformFixer
+	{
+		// hacky way to fix collision bugs
+		public static void fixCollision(GameObject platform)
+		{
+			if (!platform)
+				return;
+
+			Common.Debug.assert(platform.GetComponent<HabitatPlatform.Tag>());
+
+			var rb = platform.GetComponent<Rigidbody>();
+			rb.position = rb.position.setY(Main.config.defPosY);
+		}
+	}
+
 	class PlatformInitializer: MonoBehaviour
 	{
 		static readonly Vector3 firstFoundationPos = new Vector3(13.7f, 1.4f, 7.5f);
@@ -69,6 +84,9 @@ namespace HabitatPlatform
 			else
 			{
 				_disablePhysics(gameObject);
+
+				if (Main.config.tryFixCollisionBug)
+					PlatformFixer.fixCollision(gameObject);
 			}
 
 			addFloor();

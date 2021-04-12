@@ -10,9 +10,11 @@ namespace HabitatPlatform
 	{
 		public readonly float stepMove = 0.1f;
 		public readonly float stepRotate = 0.5f;
+		public readonly float defPosY = -0.0465f;
 
 		public readonly bool chargeCameras = Mod.Consts.isDevBuild;
 		public readonly bool ignoreEnginesColliders = true;
+		public readonly bool tryFixCollisionBug = true;
 
 #if DEBUG
 		public readonly bool dbgVisibleFoundations = false;

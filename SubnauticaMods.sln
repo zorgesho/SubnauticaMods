@@ -171,6 +171,7 @@ Global
 		Common\Common.Config\Common.Config.projitems*{c504563a-b554-4a91-ae30-14cfcd626007}*SharedItemsImports = 4
 		Common\Common.CraftHelper\Common.CraftHelper.projitems*{c504563a-b554-4a91-ae30-14cfcd626007}*SharedItemsImports = 4
 		Common\Common.projitems*{c504563a-b554-4a91-ae30-14cfcd626007}*SharedItemsImports = 4
+		Common\Common.UnityDebug\Common.UnityDebug.projitems*{c504563a-b554-4a91-ae30-14cfcd626007}*SharedItemsImports = 4
 		Common\Common.Config.Options\Common.Config.Options.projitems*{cb025d20-0b16-4e80-95e6-3c3fc77935fb}*SharedItemsImports = 4
 		Common\Common.Config\Common.Config.projitems*{cb025d20-0b16-4e80-95e6-3c3fc77935fb}*SharedItemsImports = 4
 		Common\Common.projitems*{cb025d20-0b16-4e80-95e6-3c3fc77935fb}*SharedItemsImports = 4

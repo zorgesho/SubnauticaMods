@@ -4,34 +4,39 @@ using Common;
 #if DEBUG
 using System.Linq;
 using System.Collections;
+
+using Common.UnityDebug;
 #endif
 
 namespace HabitatPlatform
 {
 	class ConsoleCommands: PersistentConsoleCommands
 	{
-		const float defPosY = -0.0465f;
-
-		GameObject _findPlatform() => UnityHelper.findNearestToCam<HabitatPlatform.Tag>()?.gameObject;
+		static GameObject _platform => UnityHelper.findNearestToCam<HabitatPlatform.Tag>()?.gameObject;
 
 		public void hbpl_move(float dx, float dy)
 		{
-			if (_findPlatform() is GameObject platform)
+			if (_platform is GameObject platform)
 				platform.transform.position += Main.config.stepMove * (dx * platform.transform.right - dy * platform.transform.forward);
 		}
 
-		public void hbpl_rotate(float angle)
+		public static void hbpl_rotate(float angle)
 		{
-			if (_findPlatform() is GameObject platform)
+			if (_platform is GameObject platform)
 				platform.transform.rotation *= Quaternion.AngleAxis(Main.config.stepRotate * angle, Vector3.up);
+		}
+
+		public static void hbpl_fix()
+		{
+			PlatformFixer.fixCollision(_platform);
 		}
 
 		public void hbpl_reset_angles()
 		{
-			if (_findPlatform() is GameObject platform)
+			if (_platform is GameObject platform)
 			{
 				platform.transform.rotation = Quaternion.identity;
-				platform.transform.position = platform.transform.position.setY(defPosY);
+				platform.transform.position = platform.transform.position.setY(Main.config.defPosY);
 			}
 		}
 
@@ -39,7 +44,7 @@ namespace HabitatPlatform
 		{
 			const float distance = 50f;
 
-			if (_findPlatform() is GameObject platform)
+			if (_platform is GameObject platform)
 			{
 				Vector3 pos = MainCamera.camera.transform.position + distance * MainCamera.camera.transform.forward;
 				platform.transform.position = new Vector3(x ?? pos.x, platform.transform.position.y, y ?? pos.z);
@@ -50,12 +55,12 @@ namespace HabitatPlatform
 #if DEBUG
 		public void hbpl_dump(int parent = 0)
 		{
-			_findPlatform()?.dump("platform", parent);
+			_platform?.dump("platform", parent);
 		}
 
 		public void hbpl_physics(bool? enabled)
 		{
-			if (_findPlatform() is GameObject platform)
+			if (_platform is GameObject platform)
 			{
 				var rb = platform.GetComponent<Rigidbody>();
 				rb.isKinematic = !enabled ?? !rb.isKinematic;
@@ -79,17 +84,34 @@ namespace HabitatPlatform
 					$"{FindObjectsOfType<Base>().Length}".onScreen("bases count");
 					$"{FindObjectsOfType<BaseFoundationPiece>().Length}".onScreen("foundation count");
 
+					if (_platform is GameObject platform)
+					{
+						var rb = platform.GetComponent<Rigidbody>();
+						$"pos: {platform.transform.position.ToString("F4")} rot: {platform.transform.eulerAngles} rb pos: {rb.position.ToString("F4")}".onScreen("nearest platform");
+					}
+
 					yield return new WaitForSeconds(delay);
 				}
 			}
 		}
 
+		public void hbpl_show_colliders(bool show)
+		{
+			if (_platform is GameObject platform)
+			{
+				if (show)
+					platform.ensureComponent<DrawColliders>();
+				else
+					platform.destroyComponent<DrawColliders>(false);
+			}
+		}
+
 		void _printVec(Vector3 vec, string prefix) => vec.ToString("F4").onScreen(prefix).logDbg();
-		GameObject _findPlatformFloor() => _findPlatform()?.GetComponentInChildren<PlatformInitializer.FloorTag>()?.gameObject;
+		GameObject _platformFloor => _platform?.GetComponentInChildren<PlatformInitializer.FloorTag>()?.gameObject;
 
 		public void hbpl_movefloor(float dx, float dy, float dz)
 		{
-			if (_findPlatformFloor() is GameObject floor)
+			if (_platformFloor is GameObject floor)
 			{
 				floor.transform.localPosition += new Vector3(dx, dy, dz) * Main.config.stepMove;
 				_printVec(floor.transform.localPosition, "floor pos");
@@ -98,7 +120,7 @@ namespace HabitatPlatform
 
 		public void hbpl_scalefloor(float dx, float dz)
 		{
-			if (_findPlatformFloor() is GameObject floor)
+			if (_platformFloor is GameObject floor)
 			{
 				floor.transform.localScale += new Vector3(dx, 0f, dz) * Main.config.stepMove;
 				_printVec(floor.transform.localScale, "floor scale");
@@ -107,7 +129,7 @@ namespace HabitatPlatform
 
 		public void hbpl_moveengines(float x, float y)
 		{
-			if (_findPlatform() is GameObject platform)
+			if (_platform is GameObject platform)
 			{
 				GameObject platformBase = platform.getChild("Base/rocketship_platform/Rocket_Geo/Rocketship_platform/");
 
@@ -119,7 +141,7 @@ namespace HabitatPlatform
 
 		public void hbpl_lightmap(string texName)
 		{
-			if (_findPlatform() is GameObject platform)
+			if (_platform is GameObject platform)
 			{
 				Texture2D lightmap = AssetsHelper.loadTexture(texName);
 				GameObject platformBase = platform.getChild("Base/rocketship_platform/Rocket_Geo/Rocketship_platform/Rocketship_platform_base-1/Rocketship_platform_base_MeshPart0");
@@ -131,7 +153,7 @@ namespace HabitatPlatform
 
 		public void hbpl_movebase(float dx, float dy, float dz)
 		{
-			if (_findPlatform()?.GetComponentInChildren<Base>()?.gameObject is GameObject baseGo)
+			if (_platform?.GetComponentInChildren<Base>()?.gameObject is GameObject baseGo)
 			{
 				baseGo.transform.localPosition += new Vector3(dx, dy, dz) * Main.config.stepMove;
 				_printVec(baseGo.transform.localPosition, "foundation pos");
@@ -140,16 +162,16 @@ namespace HabitatPlatform
 
 		public void hbpl_printpos()
 		{
-			if (_findPlatform() is GameObject platform)
+			if (_platform is GameObject platform)
 				_printVec(platform.transform.position, "platform pos");
 		}
 
 		public void hbpl_toggle_foundations()
 		{
-			_findPlatform()?.GetComponentsInChildren<BaseFoundationPiece>().
-							 Select(fpiece => fpiece.gameObject.getChild("models")).OfType<GameObject>().
-							 SelectMany(models => models.GetComponentsInChildren<Renderer>()).
-							 ForEach(rend => rend.enabled = !rend.enabled);
+			_platform?.GetComponentsInChildren<BaseFoundationPiece>().
+					   Select(fpiece => fpiece.gameObject.getChild("models")).OfType<GameObject>().
+					   SelectMany(models => models.GetComponentsInChildren<Renderer>()).
+					   ForEach(rend => rend.enabled = !rend.enabled);
 		}
 #endif // DEBUG
 	#endregion

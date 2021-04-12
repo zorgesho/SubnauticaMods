@@ -203,11 +203,15 @@ namespace UITweaks
 					PingManager.onRemove -= _makeDirty;
 				}
 			}
-
+#if GAME_SN
 			void _makeDirty(int _) => _makeDirty();
 			void _makeDirty(int _1, Color _2) => _makeDirty();
 			void _makeDirty(int _1, PingInstance _2) => _makeDirty();
-
+#elif GAME_BZ
+			void _makeDirty(string _) => _makeDirty();
+			void _makeDirty(string _1, Color _2) => _makeDirty();
+			void _makeDirty(PingInstance _) => _makeDirty();
+#endif
 			void _makeDirty()
 			{																				"PingToggleToolbar: makeDirty()".logDbg();
 				dirty = true;

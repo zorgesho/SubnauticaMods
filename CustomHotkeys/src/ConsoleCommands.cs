@@ -197,7 +197,7 @@ namespace CustomHotkeys
 #if GAME_SN
 					Inventory.main.UseItem(item);
 #elif GAME_BZ
-					Inventory.main.UseItemAction(item);
+					Inventory.main.ExecuteItemAction(item, 0);
 #endif
 					break;
 				}

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 using Common;
 using Common.Configuration;
+using Common.Configuration.Actions;
 
 namespace WarningsDisabler
 {
@@ -169,7 +170,7 @@ namespace WarningsDisabler
 
 #if GAME_BZ
 		[Options.Field("Disclaimers", "Show disclaimers on startup and on the 'Play' button")]
-		[Options.FinalizeAction(typeof(Common.Harmony.UpdateOptionalPatches))]
+		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 		public readonly bool showDisclaimers = true;
 #endif
 		[AddMessages("Custom messages")]

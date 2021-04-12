@@ -1,13 +1,11 @@
 {
   "Id": "OxygenRefill",
-  "DisplayName": "OxygenRefill",
+  "DisplayName": "Oxygen Refill",
   "Author": "zorgesho",
   "Version": "1.0.0",
-  "Dependencies": ["SMLHelper"],
-  "LoadBefore": [],
-  "LoadAfter": [],
+  "Dependencies": [ "SMLHelper" ],
   "Enable": true,
-  "Game": "Subnautica",
+  "Game": "BelowZero",
   "AssemblyName": "OxygenRefill.dll",
   "EntryMethod": "OxygenRefill.Main.patch"
 }

@@ -12,9 +12,11 @@ namespace OxygenRefill
 		public static ModCraftTreeRoot treeRootNode { get; private set; }
 		CraftTree.Type treeType;
 
-		protected override TechInfo getTechInfo() => new TechInfo // TODO: ingredients
+		protected override TechInfo getTechInfo() => new TechInfo
 		(
-			new TechInfo.Ing(TechType.AdvancedWiringKit)
+			new TechInfo.Ing(TechType.Titanium, 2),
+			new TechInfo.Ing(TechType.CopperWire, 2),
+			new TechInfo.Ing(TechType.AdvancedWiringKit, 1)
 		);
 
 		public override void patch()
@@ -41,7 +43,7 @@ namespace OxygenRefill
 	}
 
 	[CraftHelper.NoAutoPatch]
-	abstract class TankRefill: CraftableObject
+	abstract class TankRefill: PoolCraftableObject
 	{
 		// used for fill tank after creating at refilling station (we can't just change it in prefab)
 		class RefillOxygen: MonoBehaviour
@@ -69,15 +71,16 @@ namespace OxygenRefill
 			this.craftingTime = craftingTime;
 		}
 
-		public override GameObject getGameObject()
+		protected override TechInfo getTechInfo() => new TechInfo(new TechInfo.Ing(tankType));
+
+		protected override void initPrefabPool() => addPrefabToPool(tankType);
+
+		protected override GameObject getGameObject(GameObject prefab)
 		{
-			GameObject prefab = PrefabUtils.getPrefabCopy(tankType); // TODO: async way
 			prefab.AddComponent<RefillOxygen>();
 
 			return prefab; // using this as exact prefab, so no need in LinkedItems
 		}
-
-		protected override TechInfo getTechInfo() => new TechInfo(new TechInfo.Ing(tankType));
 
 		public override void patch()
 		{

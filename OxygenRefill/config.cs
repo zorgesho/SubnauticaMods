@@ -14,10 +14,10 @@ namespace OxygenRefill
 		[NoInnerFieldsAttrProcessing]
 		public readonly Dictionary<TechType, float> tankCapacities = new Dictionary<TechType, float>
 		{
-			{TechType.Tank,				111f},
-			{TechType.DoubleTank,		222f},
-			{TechType.PlasteelTank,		333f},
-			{TechType.HighCapacityTank, 444f},
+			{TechType.Tank,				200f},
+			{TechType.DoubleTank,		400f},
+			{TechType.PlasteelTank,		400f},
+			{TechType.HighCapacityTank, 800f},
 		};
 
 		public float getTankCapacity(GameObject tank) =>

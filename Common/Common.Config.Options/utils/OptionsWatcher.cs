@@ -19,7 +19,7 @@ namespace Common.Configuration.Utils
 					return false;
 
 				// if types are equal we try to compare action parameters
-				if ((x as Config.Field.IActionArgs)?.getArgs() is object[] argsX && (y as Config.Field.IActionArgs)?.getArgs() is object[] argsY)
+				if ((x as Config.Field.IActionArgs)?.args is object[] argsX && (y as Config.Field.IActionArgs)?.args is object[] argsY)
 				{
 					if (argsX.Length != argsY.Length)
 						return false;

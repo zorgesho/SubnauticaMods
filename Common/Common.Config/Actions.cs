@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 
 namespace Common.Configuration.Actions
@@ -10,12 +11,12 @@ namespace Common.Configuration.Actions
 	// updates all patches if used without params or only selected patches
 	class UpdateOptionalPatches: Config.Field.IAction, Config.Field.IActionArgs
 	{
-		object[] args;
-		public void setArgs(object[] args) => this.args = args;
-		public object[] getArgs() => args;
+		public object[] args { get; set; }
 
 		public void action()
 		{
+			Debug.assert(args.isNullOrEmpty() || args.All(arg => arg is Type));
+
 			if (args.isNullOrEmpty())
 				OptionalPatches.update();
 			else
@@ -29,15 +30,19 @@ namespace Common.Configuration.Actions
 	{
 		MethodInfo targetMethod;
 
-		object[] args, argsMethod;
-		public void setArgs(object[] args)
+		public object[] args
 		{
-			Debug.assert(!args.isNullOrEmpty());
+			get => _args;
 
-			this.args = args;
-			argsMethod = args.Length == 1? null: args.subArray(1);
+			set
+			{
+				Debug.assert(!value.isNullOrEmpty());
+
+				_args = value;
+				argsMethod = _args.Length == 1? null: _args.subArray(1);
+			}
 		}
-		public object[] getArgs() => args;
+		object[] _args, argsMethod;
 
 		Config rootConfig;
 		public void setRootConfig(Config config) => rootConfig = config;

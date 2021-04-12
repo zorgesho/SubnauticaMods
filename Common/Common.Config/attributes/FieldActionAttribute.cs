@@ -13,8 +13,7 @@ namespace Common.Configuration
 			}
 			public interface IActionArgs
 			{
-				void setArgs(object[] args);
-				object[] getArgs();
+				object[] args { get; set; }
 			}
 
 			[AttributeUsage(AttributeTargets.Class | AttributeTargets.Field, AllowMultiple = true)]
@@ -34,7 +33,8 @@ namespace Common.Configuration
 					var action = Activator.CreateInstance(_actionType) as IAction;
 					Debug.assert(action != null, $"Field.ActionAttribute: '{_actionType}' You need to implement IAction in ActionType");
 
-					(action as IActionArgs)?.setArgs(args);
+					if (action is IActionArgs actionArgs)
+						actionArgs.args = args;
 
 					return action;
 				}

@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>70f1d5d2-31da-471d-9504-3ff971cb6a96</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Common.UnityDebug</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)components\DrawAxis.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)components\DrawCapsule.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)components\DrawCollider.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)components\DrawBox.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)components\DrawSphere.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)components\DrawWire.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)LineHelper.cs" />
+  </ItemGroup>
+</Project>

@@ -144,6 +144,10 @@
       <HintPath>$(ProjectDependencies)\UnityEngine.InputLegacyModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.PhysicsModule">
+      <HintPath>..\.dependencies\gameSN\UnityEngine.PhysicsModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="UnityEngine.UI">
       <HintPath>$(ProjectDependencies)\UnityEngine.UI.dll</HintPath>
       <Private>False</Private>
@@ -173,6 +177,7 @@
   <Import Project="..\Common\Common.Config\Common.Config.projitems" Label="Shared" />
   <Import Project="..\Common\Common.CraftHelper\Common.CraftHelper.projitems" Label="Shared" />
   <Import Project="..\Common\Common.Config.Options\Common.Config.Options.projitems" Label="Shared" />
+  <Import Project="..\Common\Common.UnityDebug\Common.UnityDebug.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>$(SolutionDir)post-build.bat $(ConfigurationName) $(ProjectName) $(ProjectDir) $(TargetPath) $(TargetDir)</PostBuildEvent>

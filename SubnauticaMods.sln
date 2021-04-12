@@ -92,6 +92,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UITweaks", "UITweaks\UITwea
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "hidden", "hidden", "{ED942635-A471-4B33-8140-3F453A4A0869}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Common.UnityDebug", "Common\Common.UnityDebug\Common.UnityDebug.shproj", "{70F1D5D2-31DA-471D-9504-3FF971CB6A96}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Common\Common.Config.Options\Common.Config.Options.projitems*{0610f2c1-4b75-45f9-b517-9d747e3edd41}*SharedItemsImports = 13
@@ -123,10 +125,12 @@ Global
 		Common\Common.Config\Common.Config.projitems*{5322339c-9933-4fb2-a04a-495718a3f66b}*SharedItemsImports = 4
 		Common\Common.CraftHelper\Common.CraftHelper.projitems*{5322339c-9933-4fb2-a04a-495718a3f66b}*SharedItemsImports = 4
 		Common\Common.projitems*{5322339c-9933-4fb2-a04a-495718a3f66b}*SharedItemsImports = 4
+		Common\Common.UnityDebug\Common.UnityDebug.projitems*{5322339c-9933-4fb2-a04a-495718a3f66b}*SharedItemsImports = 4
 		Common\Common.Config.Options\Common.Config.Options.projitems*{655a27d7-f0e2-480c-b875-96312b41ef0f}*SharedItemsImports = 4
 		Common\Common.Config\Common.Config.projitems*{655a27d7-f0e2-480c-b875-96312b41ef0f}*SharedItemsImports = 4
 		Common\Common.GameSerialization\Common.GameSerialization.projitems*{655a27d7-f0e2-480c-b875-96312b41ef0f}*SharedItemsImports = 4
 		Common\Common.projitems*{655a27d7-f0e2-480c-b875-96312b41ef0f}*SharedItemsImports = 4
+		Common\Common.UnityDebug\Common.UnityDebug.projitems*{70f1d5d2-31da-471d-9504-3ff971cb6a96}*SharedItemsImports = 13
 		Common\Common.AssetsHelper\Common.AssetsHelper.projitems*{7575770c-9962-4bd2-bbbe-e440b9437c03}*SharedItemsImports = 13
 		Common\Common.AssetsHelper\Common.AssetsHelper.projitems*{83c36088-5678-4a99-91d6-d5751e789482}*SharedItemsImports = 4
 		Common\Common.Config\Common.Config.projitems*{83c36088-5678-4a99-91d6-d5751e789482}*SharedItemsImports = 4
@@ -612,6 +616,7 @@ Global
 		{1832033A-214B-48C2-89BA-EEA25FC69B19} = {7B8B7765-2191-43CD-ABE0-89BBEF79CFC2}
 		{C049D169-7634-404A-9121-0436A68FA319} = {C49BC122-0A68-48A8-8EA3-737FB7553D8B}
 		{ED942635-A471-4B33-8140-3F453A4A0869} = {C49BC122-0A68-48A8-8EA3-737FB7553D8B}
+		{70F1D5D2-31DA-471D-9504-3FF971CB6A96} = {EE6D7B7D-F20A-439A-8C01-97B6A16F9B52}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0A745472-1C11-4AB7-B6C4-79A169E0FB35}

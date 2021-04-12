@@ -22,6 +22,6 @@ namespace PrawnSuitGrapplingArmUpgrade
 		public readonly float force = 600f; // default: 400f
 
 		[Field.Range(0, 30)]
-		public readonly int fragmentCountToUnlock = 4; // unlock with vanilla arm if zero
+		public readonly int fragmentCountToUnlock = Mod.Consts.isGameSN? 4: 2; // unlock with vanilla arm if zero
 	}
 }

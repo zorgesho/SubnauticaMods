@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Reflection.Emit;
 using System.Collections.Generic;
 
@@ -12,18 +13,29 @@ namespace PrawnSuitGrapplingArmUpgrade
 	using static CIHelper;
 	using CIEnumerable = IEnumerable<CodeInstruction>;
 
+	[HarmonyPatch(typeof(ExosuitGrapplingArm), "Start")]
+	static class ExosuitGrapplingArm_Start_Patch
+	{
+		static void Postfix(ExosuitGrapplingArm __instance)
+		{
+			if (!__instance.GetComponent<GrapplingArmUpgraded>())
+				return;
+
+			__instance.hook.GetComponent<SphereCollider>().radius = 0.25f; // from 0.5f
+			__instance.hook.GetComponent<Rigidbody>().collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+		}
+	}
+
 	[HarmonyPatch(typeof(Exosuit), "OnUpgradeModuleChange")]
 	static class Exosuit_OnUpgradeModuleChange_Patch
 	{
 		static bool Prefix(Exosuit __instance, TechType techType)
 		{
-			if (techType == GrapplingArmUpgradeModule.TechType)
-			{
-				__instance.MarkArmsDirty();
-				return false;
-			}
+			if (techType != GrapplingArmUpgradeModule.TechType)
+				return true;
 
-			return true;
+			__instance.MarkArmsDirty();
+			return false;
 		}
 	}
 
@@ -40,6 +52,16 @@ namespace PrawnSuitGrapplingArmUpgrade
 
 			return false;
 		}
+	}
+
+	// fix for vanilla bug (left arm's hook orientation in the attached state)
+	[HarmonyPatch(typeof(GrapplingHook), "OnCollisionEnter")]
+	static class GrapplingHook_OnCollisionEnter_Patch
+	{
+		static float getAngle(GrapplingHook hook) => Math.Sign(hook.transform.localScale.x) * -90f;
+
+		static CIEnumerable Transpiler(CIEnumerable cins) =>
+			cins.ciReplace(ci => ci.isLDC(90f), OpCodes.Ldarg_0, emitCall<Func<GrapplingHook, float>>(getAngle));
 	}
 
 	// patching hook max distance, force & acceleration

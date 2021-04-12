@@ -39,11 +39,8 @@ namespace Common.Configuration
 		{
 			// serialize only fields (including private and readonly, except static and with NonSerialized attribute)
 			// don't serialize properties
-			protected override List<MemberInfo> GetSerializableMembers(Type objectType)
-			{
-				IEnumerable<MemberInfo> members = objectType.fields().Where(field => !field.IsStatic && !field.checkAttr<NonSerializedAttribute>());
-				return members.ToList();
-			}
+			protected override List<MemberInfo> GetSerializableMembers(Type objectType) =>
+				objectType.fields().Where(field => !field.IsStatic && !field.checkAttr<NonSerializedAttribute>()).Cast<MemberInfo>().ToList();
 
 			// we can deserialize all members and serialize members without LoadOnly attribute
 			protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)

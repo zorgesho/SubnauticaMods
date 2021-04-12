@@ -31,6 +31,7 @@ namespace CustomHotkeys
 			public KeyWithModifier key
 			{
 				get => _key;
+
 				set
 				{
 					_key = value;

@@ -126,9 +126,9 @@ namespace Common
 #if DEBUG
 			if (nonUniqueIDsWarning)
 				$"UniqueIDs: fixed ID: {id}".logWarning();
-#endif
-			Debug.assert(allIDs.Add(id)); // checking updated id just in case
 
+			Debug.assert(allIDs.Add(id)); // checking updated id just in case
+#endif
 			return false;
 		}
 

@@ -45,7 +45,7 @@ goto :exit
 
 :BZ :: BelowZero, both branches on Steam
 
-set steam_folder="c:\games\{steam}\steamapps\common"
+set steam_folder="d:\games\steamapps\common"
 set branches_folder="d:\games"
 set game_folder="SubnauticaZero"
 set game_manifest="appmanifest_848450.acf"

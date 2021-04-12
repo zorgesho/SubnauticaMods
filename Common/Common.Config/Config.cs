@@ -21,7 +21,7 @@ namespace Common.Configuration
 		}
 
 		const bool ignoreExistingFile = // can be overrided by LoadOptions.ForcedLoad
-#if (DEBUG && !LOAD_CONFIG)
+#if DEBUG && !LOAD_CONFIG
 			true;
 #else
 			false;

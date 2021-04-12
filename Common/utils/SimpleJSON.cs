@@ -533,6 +533,7 @@ namespace Common.Utils
 			public override Node this[int aIndex]
 			{
 				get => (aIndex < 0 || aIndex >= mList.Count)? new LazyCreator(this): mList[aIndex];
+
 				set
 				{
 					value ??= Null.CreateOrGet();
@@ -638,6 +639,7 @@ namespace Common.Utils
 			public override Node this[int aIndex]
 			{
 				get => (aIndex < 0 || aIndex >= mDict.Count)? null: mDict.ElementAt(aIndex).Value;
+
 				set
 				{
 					if (aIndex >= 0 && aIndex < mDict.Count)
@@ -779,6 +781,7 @@ namespace Common.Utils
 			public override string Value
 			{
 				get => mData.ToString(CultureInfo.InvariantCulture);
+
 				set
 				{
 					if (double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out double val))
@@ -839,6 +842,7 @@ namespace Common.Utils
 			public override string Value
 			{
 				get => mData.ToString();
+
 				set
 				{
 					if (bool.TryParse(value, out bool val))

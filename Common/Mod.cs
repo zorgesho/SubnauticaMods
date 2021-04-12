@@ -47,9 +47,9 @@ namespace Common
 
 #if DISABLE_VERSION_CHECK_IN_DEVBUILD
 			if (needCheckVer && Consts.isDevBuild)
-				"Version check is disabled for dev build!".logDbg();
-
-			needCheckVer &= !Consts.isDevBuild;
+			{																											"Version check is disabled for dev build!".logDbg();
+				needCheckVer = false;
+			}
 #endif
 			if (needCheckVer)
 			{

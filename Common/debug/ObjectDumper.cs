@@ -89,9 +89,11 @@ namespace Common
 
 				try
 				{
+					var bf = ReflectionHelper.bfAll ^ BindingFlags.Static;
+
 					if (dumpProperties)
 					{
-						var properties = objType.properties(ReflectionHelper.bfAll ^ BindingFlags.Static).ToList();
+						var properties = objType.properties(bf).ToList();
 						if (properties.Count > 0)
 						{
 							_sort(properties);
@@ -105,7 +107,7 @@ namespace Common
 
 					if (dumpFields)
 					{
-						var fields = objType.fields(ReflectionHelper.bfAll ^ BindingFlags.Static).ToList();
+						var fields = objType.fields(bf).ToList();
 						if (fields.Count > 0)
 						{
 							_sort(fields);

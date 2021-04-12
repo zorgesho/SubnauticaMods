@@ -73,7 +73,7 @@ namespace Common.Harmony
 		{
 			testPassed = true;
 
-			Assembly.GetExecutingAssembly().GetTypes().forEach(type => checkType(type));
+			Assembly.GetExecutingAssembly().GetTypes().forEach(checkType);
 
 			if (testPassed)
 				$"PatchesValidator: patches OK".logDbg();
@@ -88,13 +88,12 @@ namespace Common.Harmony
 		static void checkType(Type type)
 		{
 			checkPatches(type);
-			type.methods(ReflectionHelper.bfAll ^ BindingFlags.Instance).forEach(method => checkPatches(method));
+			type.methods(ReflectionHelper.bfAll ^ BindingFlags.Instance).forEach(checkPatches);
 		}
 
 		static void checkPatches(MemberInfo member)
 		{
-			member.getAttrs<HarmonyPatch>().Where(patch => patch.info.getTargetMethod() == null).
-											forEach(patch => _error(getFullName(patch.info)));
+			member.getAttrs<HarmonyPatch>().Where(patch => patch.info.getTargetMethod() == null).forEach(patch => _error(getFullName(patch.info)));
 
 			var patchAttr = HarmonyHelper.PatchAttribute.merge(member.getAttrs<HarmonyHelper.PatchAttribute>());
 			if (patchAttr != null && !patchAttr.options.HasFlag(HarmonyHelper.PatchOptions.CanBeAbsent) && patchAttr.targetMethod == null)

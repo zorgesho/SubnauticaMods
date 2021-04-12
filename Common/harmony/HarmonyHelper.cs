@@ -13,8 +13,7 @@ namespace Common.Harmony
 
 	static partial class HarmonyHelper
 	{
-		public static HarmonyInstance harmonyInstance => _harmonyInstance ??= HarmonyInstance.Create(Mod.id);
-		static HarmonyInstance _harmonyInstance;
+		public static HarmonyInstance harmonyInstance { get; } = HarmonyInstance.Create(Mod.id);
 
 		public static void patchAll(bool searchForPatchClasses = false)
 		{
@@ -23,13 +22,12 @@ namespace Common.Harmony
 #if VALIDATE_PATCHES
 				PatchesValidator.validate();
 #endif
-				using (Debug.profiler("HarmonyHelper.patchAll"))
-				{
-					harmonyInstance.PatchAll(Assembly.GetExecutingAssembly());
+				using var _ = Debug.profiler("HarmonyHelper.patchAll");
 
-					if (searchForPatchClasses)
-						ReflectionHelper.definedTypes.Where(type => type.checkAttr<PatchClassAttribute>()).forEach(type => patch(type));
-				}
+				harmonyInstance.PatchAll(Assembly.GetExecutingAssembly());
+
+				if (searchForPatchClasses)
+					ReflectionHelper.definedTypes.Where(type => type.checkAttr<PatchClassAttribute>()).forEach(type => patch(type));
 			}
 			catch (Exception e)
 			{

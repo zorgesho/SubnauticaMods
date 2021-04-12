@@ -46,10 +46,10 @@ namespace Common
 
 			var methods = GetType().methods(bf);
 
-			if (methods.Length == 0) // if there are no public methods, try declared private methods
+			if (methods.isNullOrEmpty()) // if there are no public methods, try declared private methods
 				methods = GetType().methods(bf | BindingFlags.NonPublic);
 
-			methods.forEach(method => addCommand(method));
+			methods.forEach(addCommand);
 
 			commandProxy = gameObject.AddComponent(CommandProxy.create(this));
 
@@ -140,7 +140,7 @@ namespace Common
 			public static Type create(PersistentConsoleCommands host)
 			{
 				assemblyBuilder ??= AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName($"{Mod.id}.{nameSuffix}"), AssemblyBuilderAccess.Run);
-				moduleBuilder	??= assemblyBuilder.DefineDynamicModule(nameSuffix);
+				moduleBuilder ??= assemblyBuilder.DefineDynamicModule(nameSuffix);
 
 				var typeBuilder = moduleBuilder.DefineType($"{host.GetType().FullName}.CommandProxy", TypeAttributes.Public, typeof(MonoBehaviour));
 

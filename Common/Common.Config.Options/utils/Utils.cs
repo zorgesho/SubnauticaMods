@@ -2,6 +2,7 @@
 using System.Collections;
 
 using Harmony;
+using UnityEngine;
 using SMLHelper.V2.Options;
 
 namespace Common.Configuration
@@ -26,14 +27,16 @@ namespace Common.Configuration
 				int currentTab = optionsPanel.currentTab;
 				Debug.assert(currentTab < optionsPanel.tabs.Count);
 
-				var scroll = optionsPanel.tabs[currentTab].pane.GetComponent(typeScrollRect);
+				Component _getScroll() => optionsPanel.tabs[currentTab].pane.GetComponent(typeScrollRect);
+
+				var scroll = _getScroll();
 				float scrollPos = propScrollPos.get<float>(scroll);
 
 				optionsPanel.enabled = false; // all work is done by OnDisable() and OnEnable()
 				optionsPanel.enabled = true;
 				optionsPanel.SetVisibleTab(currentTab);
 
-				scroll = optionsPanel.tabs[currentTab].pane.GetComponent(typeScrollRect); // new objects and components
+				scroll = _getScroll(); // new objects and components
 				propScrollPos.set(scroll, scrollPos);
 			}
 

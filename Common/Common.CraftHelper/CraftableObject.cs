@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
+using Harmony;
 using UnityEngine;
 
 using SMLHelper.V2.Assets;
@@ -16,7 +17,24 @@ using SMLHelper.V2.Handlers;
 
 namespace Common.Crafting
 {
+	using Harmony;
 	using Reflection;
+
+	// blocks SMLHelper from processing prefab (so we can use exact prefab)
+	static class PrefabProcessingBlocker
+	{
+		public static bool block = false;
+
+		static bool inited = false;
+		public static void init()
+		{
+			if (!inited && (inited = true))
+				HarmonyHelper.patch();
+		}
+
+		[HarmonyPrefix, HarmonyHelper.Patch("SMLHelper.V2.Assets.ModPrefab, SMLHelper", "ProcessPrefab")]
+		static bool blockPrefabProcessing() => !block || (block = false);
+	}
 
 	abstract class CraftableObject: ModPrefab
 	{
@@ -34,13 +52,13 @@ namespace Common.Crafting
 
 		public sealed override GameObject GetGameObject()
 		{
-			Debug.assert(!isUsingExactPrefab);
-			return isUsingExactPrefab? null: getGameObject();
+			PrefabProcessingBlocker.block = isUsingExactPrefab;
+			return getGameObject();
 		}
 		public sealed override IEnumerator GetGameObjectAsync(IOut<GameObject> result)
 		{
-			Debug.assert(!isUsingExactPrefab);
-			return isUsingExactPrefab? null: getGameObjectAsync(result);
+			PrefabProcessingBlocker.block = isUsingExactPrefab;
+			return getGameObjectAsync(result);
 		}
 
 		void registerPrefabAndTechInfo()
@@ -52,9 +70,9 @@ namespace Common.Crafting
 		}
 
 		protected void useExactPrefab()
-		{																												$"Already using exact prefab! ({ClassID})".logDbgError(isUsingExactPrefab);
+		{
 			isUsingExactPrefab = true;
-			PrefabDatabasePatcher.addPrefab(this);
+			PrefabProcessingBlocker.init();
 		}
 
 
@@ -156,6 +174,9 @@ namespace Common.Crafting
 		}
 
 		List<PrefabInfo> poolPrefabInfo;
+
+		protected PoolCraftableObject(): base() {}
+		protected PoolCraftableObject(string classID): base(classID) {}
 
 		protected int addPrefabToPool(TechType techType, bool copy = true)
 		{

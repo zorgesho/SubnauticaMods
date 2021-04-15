@@ -4,6 +4,6 @@ namespace MiscPrototypes
 {
 	class ModConfig: Config
 	{
-		public readonly float maxPowerOnBatteries = 100f;
+		public readonly int val = 42;
 	}
 }

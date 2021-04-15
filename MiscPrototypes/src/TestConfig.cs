@@ -171,7 +171,7 @@ namespace MiscPrototypes
 		[Options.Choice("Choice 1", "Choice 2", "Choice 3")]
 		public readonly int tooltipChoice1 = 0;
 
-		public enum ChoiceEnum { EnumChoice1, EnumChoice2, EnumChoice3};
+		public enum ChoiceEnum { EnumChoice1, EnumChoice2, EnumChoice3 };
 
 		[Options.Field("Enum choice with tooltip", "Enum choice tooltip")]
 		public readonly ChoiceEnum tooltipChoice2 = ChoiceEnum.EnumChoice1;
@@ -194,14 +194,14 @@ namespace MiscPrototypes
 		public readonly float formatSlider1 = 50f;
 
 		[Options.Field("Float slider")]
-		[Options.Slider(valueFormat:"{0:F2}")]
+		[Options.Slider(valueFormat: "{0:F2}")]
 		[Field.Range(0, 1)]
 		public readonly float floatSlider = 0.5f;
 
-		const string testFormat = "dsfdsf xxx {0:F0} %";
+		const string testFormat = "test frmt {0:F0} %";
 
-		[Options.Field("slider w/t", "TOOO")]
-		[Options.Slider(valueFormat:testFormat)]
+		[Options.Field("slider w/t", "THIS IS TOOLTIP")]
+		[Options.Slider(valueFormat: testFormat)]
 		[Field.Range(0, 100)]
 		public readonly int percentSlider = 50;
 
@@ -211,12 +211,12 @@ namespace MiscPrototypes
 		public readonly int percentSlider1 = 50;
 
 		[Options.Field("Slider with big value")]
-		[Options.Slider(valueFormat:"{0:F0}")]
+		[Options.Slider(valueFormat: "{0:F0}")]
 		[Field.Range(0, 10000000000)]
 		public readonly float bigSider0 = 0f;
 
 		[Options.Field("Slider with ridiculously big description and value")]
-		[Options.Slider(valueFormat:"{0:F0}")]
+		[Options.Slider(valueFormat: "{0:F0}")]
 		[Field.Range(0, 10000000000)]
 		public readonly float bigSider1 = 0f;
 #endif
@@ -231,41 +231,41 @@ namespace MiscPrototypes
 
 			[Options.Field("2. Range [-10, 10], slider [-20, 20]")]
 			[Field.Range(-10, 10)]
-			[Options.Slider(defaultValue:0f, minValue: -20, maxValue: 20)]
+			[Options.Slider(defaultValue: 0f, minValue: -20, maxValue: 20)]
 			public readonly float slider2 = 0f;
 
 			[Options.Field("3. Range [-10, 10], slider [-5, 5]")]
 			[Field.Range(-10, 10)]
-			[Options.Slider(defaultValue:0f, minValue: -5, maxValue: 5)]
+			[Options.Slider(defaultValue: 0f, minValue: -5, maxValue: 5)]
 			public readonly float slider3 = 0f;
 
 			[Options.Field("4. Range [min:-10], slider [-5, 5]")]
 			[Field.Range(min: -10)]
-			[Options.Slider(defaultValue:0f, minValue: -5, maxValue: 5)]
+			[Options.Slider(defaultValue: 0f, minValue: -5, maxValue: 5)]
 			public readonly float slider4 = 0f;
 
 			[Options.Field("5. Range [min:-10], slider [-20, 20]")]
 			[Field.Range(min: -10)]
-			[Options.Slider(defaultValue:0f, minValue: -20, maxValue: 20)]
+			[Options.Slider(defaultValue: 0f, minValue: -20, maxValue: 20)]
 			public readonly float slider5 = 0f;
 
 			[Options.Field("6. Range [max:10], slider [-5, 5]")]
 			[Field.Range(max: 10)]
-			[Options.Slider(defaultValue:0f, minValue: -5, maxValue: 5)]
+			[Options.Slider(defaultValue: 0f, minValue: -5, maxValue: 5)]
 			public readonly float slider6 = 0f;
 
 			[Options.Field("7. Range [max:10], slider [-20, 20]")]
 			[Field.Range(max: 10)]
-			[Options.Slider(defaultValue:0f, minValue: -20, maxValue: 20)]
+			[Options.Slider(defaultValue: 0f, minValue: -20, maxValue: 20)]
 			public readonly float slider7 = 0f;
 
 			[Options.Field("8. Range [no], slider [-20, 20]")]
-			[Options.Slider(defaultValue:0f, minValue: -20, maxValue: 20, valueFormat: "{0:F0}")]
+			[Options.Slider(defaultValue: 0f, minValue: -20, maxValue: 20, valueFormat: "{0:F0}")]
 			public readonly float slider8 = 50f;
 
 			// not supposed to be added
 			[Options.Field("9. Range [no], slider [min:-20]")]
-			[Options.Slider(defaultValue:0f, minValue: -20)]
+			[Options.Slider(defaultValue: 0f, minValue: -20)]
 			public readonly float slider9 = 0f;
 		}
 		public readonly RangeTest rangeTest = new RangeTest();
@@ -282,7 +282,7 @@ namespace MiscPrototypes
 		}
 
 		[Options.Field("Slider with custom value")]
-		[Options.Slider(valueFormat:"{0:F0}", customValueType:typeof(CustomSliderValue))]
+		[Options.Slider(valueFormat: "{0:F0}", customValueType: typeof(CustomSliderValue))]
 		[Field.Range(0, 100)]
 		public readonly float customSlider = 0f;
 

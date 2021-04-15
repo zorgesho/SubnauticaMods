@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("SimpleModManager")]
 [assembly: AssemblyProduct("SimpleModManager")]
-[assembly: AssemblyCopyright("© 2020 zorgesho")]
+[assembly: AssemblyCopyright("© 2020-2021 zorgesho")]
 
 [assembly: ComVisible(false)]
 

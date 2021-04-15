@@ -47,12 +47,13 @@ namespace MiscPatches
 		[HarmonyPostfix, HarmonyPatch(typeof(Exosuit), "Awake")]
 		static void Exosuit_Awake_Postfix(Exosuit __instance)
 		{
-			var toggleLights = __instance.gameObject.ensureComponent<ToggleLights>();
+			var exoGO = __instance.gameObject;
+
+			var toggleLights = exoGO.ensureComponent<ToggleLights>();
 			var toggleLightsPrefab = Resources.Load<GameObject>("WorldEntities/Tools/SeaMoth").GetComponent<SeaMoth>().toggleLights;
 
 			toggleLights.copyFieldsFrom(toggleLightsPrefab, "lightsOnSound", "lightsOffSound", "onSound", "offSound", "energyPerSecond");
-
-			toggleLights.lightsParent = __instance.transform.Find("lights_parent").gameObject;
+			toggleLights.lightsParent = exoGO.getChild("lights_parent");
 			toggleLights.energyMixin = __instance.GetComponent<EnergyMixin>();
 		}
 
@@ -64,7 +65,7 @@ namespace MiscPatches
 				toggleLights.UpdateLightEnergy();
 
 				if (__instance.GetPilotingMode() && Input.GetKeyDown(Main.config.toggleLightKey) && !(Player.main.GetPDA().isOpen || !AvatarInputHandler.main.IsEnabled()))
-					toggleLights.SetLightsActive(!toggleLights.lightsActive);
+					toggleLights.SetLightsActive(!toggleLights.GetLightsActive());
 			}
 		}
 	}
@@ -170,7 +171,7 @@ namespace MiscPatches
 
 		static void Postfix(Vehicle __instance)
 		{
-			if (__instance.pilotId != null && UniqueIdentifier.TryGetIdentifier(__instance.pilotId, out UniqueIdentifier pilotID))
+			if (UniqueIdentifier.TryGetIdentifier(__instance.pilotId, out var pilotID))
 				__instance.EnterVehicle(pilotID.GetComponent<Player>(), true, false);
 		}
 	}

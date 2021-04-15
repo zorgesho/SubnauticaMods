@@ -158,6 +158,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="src\Patches.cs" />
     <None Include="src\TestConfig.cs" />
     <Compile Include="src\ConsoleCommands.cs" />
     <Compile Include="config.cs" />

@@ -3,7 +3,7 @@
   "DisplayName": "Custom Hotkeys",
   "Author": "zorgesho",
   "Version": "1.0.0",
-  "Dependencies": ["SMLHelper"],
+  "Dependencies": [ "SMLHelper" ],
   "VersionDependencies": { "SMLHelper": "2.6.0" },
   "Enable": true,
   "Game": "BelowZero",

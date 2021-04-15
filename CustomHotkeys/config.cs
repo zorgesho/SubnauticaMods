@@ -156,14 +156,17 @@ namespace CustomHotkeys
 #if DEBUG && !GENERATE_SAMPLE_CONFIG
 			new Hotkey { command = "autoforward", label = "Autoforward", key = KeyCode.LeftAlt },
 			new Hotkey { command = "setresolution 1280 720 false; setwindowpos 10 10 | setresolution 2560 1440", key = KeyCode.F1, label = "Toggle fullscreen" },
-			new Hotkey { command = "spawn seamoth; warpforward 10; speed 10; vehicle_enter; wait 2; speed 1; clearmessages", key = KeyCode.F5, label = "Spawn seamoth" },
+			new Hotkey { command = "spawn seamoth; warpforward 10; speed 10; vehicle_enter; wait 2; speed 1; clearmessages", key = KeyCode.None, label = "Spawn seamoth" },
 			new Hotkey { command = "showmodoptions", label = "Open mod options", key = KeyCode.F3 },
 			new Hotkey { command = "pincfgvars all | pincfgvars", label = "Toggle cfgvars", key = KeyCode.F2 },
 
-			new Hotkey { command = "togglemod autoload", label = "Toggle AutoLoad", key = new KeyWithModifier(KeyCode.F12, KeyCode.LeftControl) },
-			new Hotkey { command = "togglecfgvar misc.dbg.faststart.enabled", label = "Toggle Fast Start", key = new KeyWithModifier(KeyCode.F12, KeyCode.LeftAlt) },
+			new Hotkey { command = "freecam", label = "Free cam", key = KeyCode.F5 },
+			new Hotkey { command = "devtools_toggleframegraph", label = "Toggle frame graph", key = KeyCode.F7 },
+			new Hotkey { command = "devtools_wireframe", label = "Toggle wireframe", key = KeyCode.F8 },
+			new Hotkey { command = "game_startnew", label = "Start new game", key = KeyCode.F11 },
+			new Hotkey { command = "togglecfgvar misc.dbg.faststart.enabled", label = "Toggle Fast Start", key = KeyCode.F12 },
 			new Hotkey { command = "devtools_hidegui mask; fov 5 | fov 60; devtools_hidegui none", label = "Zoom in", key = KeyCode.V, mode = Hotkey.Mode.PressRelease },
-			new Hotkey { command = "warpforward 1", key = KeyCode.UpArrow, mode = Hotkey.Mode.Hold, label = "Warp forward" },
+			new Hotkey { command = "warpforward 1", key = new KeyWithModifier(KeyCode.W, KeyCode.LeftAlt), mode = Hotkey.Mode.Hold, label = "Warp forward" },
 #else
 			new Hotkey { command = "autoforward", label = "Autoforward", key = KeyCode.LeftAlt },
 			new Hotkey { command = "useitem firstaidkit", label = "Use medkit", key = KeyCode.H },

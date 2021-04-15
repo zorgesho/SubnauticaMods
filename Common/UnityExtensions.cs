@@ -16,7 +16,7 @@ namespace Common
 		public static void callAfterDelay(this GameObject go, float delay, UnityAction action) =>
 			go.AddComponent<CallAfterDelay>().init(delay, action);
 
-		public static T ensureComponent<T>(this GameObject go) where T: Component => go.ensureComponent(typeof(T)) as T;
+		public static C ensureComponent<C>(this GameObject go) where C: Component => go.ensureComponent(typeof(C)) as C;
 		public static Component ensureComponent(this GameObject go, Type type) => go.GetComponent(type) ?? go.AddComponent(type);
 
 		public static void setParent(this GameObject go, GameObject parent, Vector3? position = null, Quaternion? rotation = null, Vector3? scale = null)
@@ -29,6 +29,14 @@ namespace Common
 		}
 
 		public static GameObject getChild(this GameObject go, string name) => go.transform.Find(name)?.gameObject;
+
+		// for use with inactive game objects
+		public static C getComponentInParent<C>(this GameObject go) where C: Component
+		{
+			return _get<C>(go);
+
+			static _C _get<_C>(GameObject _go) where _C: Component => !_go? null: (_go.GetComponent<_C>() ?? _get<_C>(_go.transform.parent?.gameObject));
+		}
 
 
 		static void _destroy(this Object obj, bool immediate)
@@ -48,11 +56,11 @@ namespace Common
 		public static void destroyComponent(this GameObject go, Type componentType, bool immediate = true) =>
 			go.GetComponent(componentType)?._destroy(immediate);
 
-		public static void destroyComponent<T>(this GameObject go, bool immediate = true) where T: Component =>
-			destroyComponent(go, typeof(T), immediate);
+		public static void destroyComponent<C>(this GameObject go, bool immediate = true) where C: Component =>
+			destroyComponent(go, typeof(C), immediate);
 
-		public static void destroyComponentInChildren<T>(this GameObject go, bool immediate = true) where T: Component =>
-			go.GetComponentInChildren<T>()?._destroy(immediate);
+		public static void destroyComponentInChildren<C>(this GameObject go, bool immediate = true) where C: Component =>
+			go.GetComponentInChildren<C>()?._destroy(immediate);
 
 
 		// if fields is empty we try to copy all fields
@@ -97,12 +105,13 @@ namespace Common
 			return obj;
 		}
 
-		public static GameObject createPersistentGameObject<T>(string name) where T: Component
+		public static GameObject createPersistentGameObject<C>(string name) where C: Component
 		{
 			var obj = createPersistentGameObject(name);
-			obj.AddComponent<T>();
+			obj.AddComponent<C>();
 			return obj;
 		}
+
 
 		// using reflection to avoid including UnityEngine.UI in all projects
 		static readonly Type eventSystem = Type.GetType("UnityEngine.EventSystems.EventSystem, UnityEngine.UI");
@@ -110,11 +119,10 @@ namespace Common
 		static readonly MethodWrapper setSelectedGameObject = eventSystem.method("SetSelectedGameObject", typeof(GameObject)).wrap();
 
 		// unselects currently selected object (needed for buttons)
-		public static void clearSelectedUIObject()
-		{
+		public static void clearSelectedUIObject() =>
 			setSelectedGameObject.invoke(currentEventSystem.get(), null);
-		}
 
+		// findNearest* methods are for use in non-performance critical code
 		public static C findNearestToCam<C>() where C: Component =>
 			findNearest<C>(LargeWorldStreamer.main?.cachedCameraPosition, out _);
 
@@ -124,7 +132,6 @@ namespace Common
 		public static C findNearestToPlayer<C>(out float distSq) where C: Component =>
 			findNearest<C>(Player.main?.transform.position, out distSq);
 
-		// for use in non-performance critical code
 		public static C findNearest<C>(Vector3? pos, out float distSq) where C: Component
 		{
 			distSq = float.MaxValue;

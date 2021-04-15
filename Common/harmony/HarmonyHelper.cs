@@ -38,14 +38,15 @@ namespace Common.Harmony
 
 		public static void patch(MethodBase original, MethodInfo prefix = null, MethodInfo postfix = null, MethodInfo transpiler = null)
 		{
-			Debug.assert(original != null);										$"HarmonyHelper.patch: patching '{original.fullName()}' with prefix:'{prefix}' postfix:'{postfix}' transpiler:'{transpiler}'".logDbg();
+			static string _dbg(string type, MethodInfo method) => method != null? $"{type}:{method} ": "";
+			Debug.assert(original != null);										$"HarmonyHelper.patch: patching '{original.fullName()}' with {_dbg("prefix", prefix)}{_dbg("postfix", postfix)}{_dbg("transpiler", transpiler)}".logDbg();
 
 			if (original == null && "HarmonyHelper.patch: target method is null".logError())
 				return;
 
 			try
 			{
-				static HarmonyMethod _harmonyMethod(MethodInfo method) => (method == null)? null: new HarmonyMethod(method);
+				static HarmonyMethod _harmonyMethod(MethodInfo method) => method == null? null: new HarmonyMethod(method);
 
 				using (Debug.profiler($"HarmonyHelper.patch '{original.fullName()}'"))
 					harmonyInstance.Patch(original, _harmonyMethod(prefix), _harmonyMethod(postfix), _harmonyMethod(transpiler));

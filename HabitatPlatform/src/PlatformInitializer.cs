@@ -36,7 +36,12 @@ namespace HabitatPlatform
 				RigidbodyKinematicFixer.disablePhysics(gameObject);
 
 				if (Main.config.tryFixCollisionBug)
+				{
 					PlatformCollisionFixer.fix(gameObject);
+					gameObject.AddComponent<TransformFixer>();
+
+					Player.main.gameObject.ensureComponent<PlayerTransformFixer>(); // it's safe because Player deserializes before bases
+				}
 			}
 
 			addFloor();

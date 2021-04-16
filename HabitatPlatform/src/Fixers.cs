@@ -7,6 +7,19 @@ namespace HabitatPlatform
 	// hacky way to fix collision bugs
 	static class PlatformCollisionFixer
 	{
+		class PosFixer: MonoBehaviour // fixers are never enough
+		{
+			Vector3 initPos;
+
+			void Awake() => initPos = gameObject.transform.position;
+
+			void LateUpdate()
+			{																									$"PlatformCollisionFixer.PosFixer: fixing {gameObject.transform.position.ToString("F4")} -> {initPos.ToString("F4")}".logDbg();
+				gameObject.transform.position = initPos;
+				Destroy(this);
+			}
+		}
+
 		public static void fix(GameObject platform)
 		{
 			if (!platform)
@@ -16,6 +29,8 @@ namespace HabitatPlatform
 
 			var rb = platform.GetComponent<Rigidbody>();
 			rb.position = rb.position.setY(Main.config.defPosY);
+
+			platform.AddComponent<PosFixer>();
 		}
 	}
 
@@ -108,6 +123,11 @@ namespace HabitatPlatform
 				player = gameObject.GetComponent<Player>();
 
 				Common.Debug.assert(player != null);
+
+				if (GameUtils.getVehicle(player))
+				{																								$"PlayerTransformFixer: player is in the vehicle, aborting".logDbg();
+					Destroy(this);
+				}
 			}
 
 			protected override void fix() => player?.SetPosition(initPos, initRot);

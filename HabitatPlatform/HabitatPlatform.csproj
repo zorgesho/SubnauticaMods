@@ -126,6 +126,7 @@
     <Compile Include="src\patches\BasePatches.cs" />
     <Compile Include="src\patches\ConstructorPatches.cs" />
     <Compile Include="src\CameraDroneCharge.cs" />
+    <Compile Include="src\patches\DebugPatches.cs" />
     <Compile Include="src\PlatformBuildable.cs" />
     <Compile Include="src\PlatformInitializer.cs" />
   </ItemGroup>

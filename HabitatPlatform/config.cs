@@ -15,11 +15,11 @@ namespace HabitatPlatform
 		public readonly bool chargeCameras = Mod.Consts.isDevBuild;
 		public readonly bool ignoreEnginesColliders = true;
 		public readonly bool tryFixCollisionBug = true;
-
 #if DEBUG
 		public readonly bool dbgVisibleFoundations = false;
 		public readonly bool dbgPrintColliders = false;
 		public readonly bool dbgFastPlatformBuild = true;
+		public readonly bool dbgPatches = true;
 #endif
 	}
 

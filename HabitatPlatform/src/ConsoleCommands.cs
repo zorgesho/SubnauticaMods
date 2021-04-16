@@ -28,7 +28,7 @@ namespace HabitatPlatform
 
 		public static void hbpl_fix()
 		{
-			PlatformFixer.fixCollision(_platform);
+			PlatformCollisionFixer.fix(_platform);
 		}
 
 		public void hbpl_reset_angles()

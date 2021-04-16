@@ -8,22 +8,7 @@ using Common.Crafting;
 
 namespace HabitatPlatform
 {
-	static class PlatformFixer
-	{
-		// hacky way to fix collision bugs
-		public static void fixCollision(GameObject platform)
-		{
-			if (!platform)
-				return;
-
-			Common.Debug.assert(platform.GetComponent<HabitatPlatform.Tag>());
-
-			var rb = platform.GetComponent<Rigidbody>();
-			rb.position = rb.position.setY(Main.config.defPosY);
-		}
-	}
-
-	class PlatformInitializer: MonoBehaviour
+	partial class PlatformInitializer: MonoBehaviour
 	{
 		static readonly Vector3 firstFoundationPos = new Vector3(13.7f, 1.4f, 7.5f);
 
@@ -32,44 +17,9 @@ namespace HabitatPlatform
 #if DEBUG
 		public class FloorTag: MonoBehaviour {} // for use in debug console commands
 #endif
-		static Rigidbody _disablePhysics(GameObject go)
-		{
-			var rb = go.GetComponent<Rigidbody>();
-			rb.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
-			rb.isKinematic = true;
-
-			return rb;
-		}
-
-		class RigidbodyKinematicFixer: MonoBehaviour
-		{
-			Rigidbody rb;
-			float timeBuildCompleted;
-
-			void Awake()
-			{
-				rb = _disablePhysics(gameObject);
-			}
-
-			void SubConstructionComplete()
-			{
-				rb.isKinematic = false;
-				timeBuildCompleted = Time.time;
-			}
-
-			void FixedUpdate()
-			{
-				if (!rb.isKinematic && timeBuildCompleted + 5f < Time.time && rb.velocity.sqrMagnitude < 0.1f)
-				{
-					rb.isKinematic = true;
-					Destroy(this);
-				}
-			}
-		}
-
 
 		IEnumerator Start()
-		{
+		{																										"PlatformInitializer: starting".logDbg();
 			yield return null; // wait for one frame while VFXConstructing is initialized
 
 			var vfx = gameObject.getChild("Base").GetComponent<VFXConstructing>();
@@ -83,10 +33,10 @@ namespace HabitatPlatform
 			}
 			else
 			{
-				_disablePhysics(gameObject);
+				RigidbodyKinematicFixer.disablePhysics(gameObject);
 
 				if (Main.config.tryFixCollisionBug)
-					PlatformFixer.fixCollision(gameObject);
+					PlatformCollisionFixer.fix(gameObject);
 			}
 
 			addFloor();

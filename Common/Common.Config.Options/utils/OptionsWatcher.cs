@@ -36,7 +36,7 @@ namespace Common.Configuration.Utils
 		}
 
 		static bool optionsActive = false;
-		static readonly HashSet<Config.Field.IAction> postponedActions = new HashSet<Config.Field.IAction>(new ActionComparer());
+		static readonly HashSet<Config.Field.IAction> postponedActions = new(new ActionComparer());
 
 		public static void processAction(Config.Field.IAction action)
 		{

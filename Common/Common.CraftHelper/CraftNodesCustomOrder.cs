@@ -59,7 +59,7 @@ namespace Common.Crafting
 			}
 		}
 
-		static readonly Dictionary<CraftTree.Type, List<CraftNode>> nodesToAdd = new Dictionary<CraftTree.Type, List<CraftNode>>();
+		static readonly Dictionary<CraftTree.Type, List<CraftNode>> nodesToAdd = new();
 
 		static List<CraftNode> getNodeList(CraftTree.Type treeType)
 		{

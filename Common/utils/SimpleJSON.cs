@@ -233,8 +233,8 @@ namespace Common.Utils
 			public abstract Enumerator GetEnumerator();
 
 			public IEnumerable<KeyValuePair<string, Node>> Linq => new LinqEnumerator(this);
-			public KeyEnumerator Keys => new KeyEnumerator(GetEnumerator());
-			public ValueEnumerator Values => new ValueEnumerator(GetEnumerator());
+			public KeyEnumerator Keys => new(GetEnumerator());
+			public ValueEnumerator Values => new(GetEnumerator());
 			#endregion common interface
 
 			#region typecasting properties
@@ -365,10 +365,10 @@ namespace Common.Utils
 
 			public static Node Parse(string aJSON)
 			{
-				Stack<Node> stack = new Stack<Node>();
+				var stack = new Stack<Node>();
 				Node ctx = null;
 				int i = 0;
-				StringBuilder Token = new StringBuilder();
+				var Token = new StringBuilder();
 				string TokenName = "";
 				bool QuoteMode = false;
 				bool TokenIsQuoted = false;
@@ -517,7 +517,7 @@ namespace Common.Utils
 
 		public class Array: Node
 		{
-			readonly List<Node> mList = new List<Node>();
+			readonly List<Node> mList = new();
 
 			public override bool Inline
 			{
@@ -528,7 +528,7 @@ namespace Common.Utils
 
 			public override NodeType Tag => NodeType.Array;
 			public override bool IsArray => true;
-			public override Enumerator GetEnumerator() => new Enumerator(mList.GetEnumerator());
+			public override Enumerator GetEnumerator() => new(mList.GetEnumerator());
 
 			public override Node this[int aIndex]
 			{
@@ -616,7 +616,7 @@ namespace Common.Utils
 
 		public class Object: Node
 		{
-			readonly Dictionary<string, Node> mDict = new Dictionary<string, Node>();
+			readonly Dictionary<string, Node> mDict = new();
 
 			public override bool Inline
 			{
@@ -628,7 +628,7 @@ namespace Common.Utils
 			public override NodeType Tag => NodeType.Object;
 			public override bool IsObject => true;
 
-			public override Enumerator GetEnumerator() => new Enumerator(mDict.GetEnumerator());
+			public override Enumerator GetEnumerator() => new(mDict.GetEnumerator());
 
 			public override Node this[string aKey]
 			{
@@ -741,7 +741,7 @@ namespace Common.Utils
 			public override NodeType Tag => NodeType.String;
 			public override bool IsString => true;
 
-			public override Enumerator GetEnumerator() => new Enumerator();
+			public override Enumerator GetEnumerator() => new();
 
 			public override string Value
 			{
@@ -776,7 +776,7 @@ namespace Common.Utils
 
 			public override NodeType Tag => NodeType.Number;
 			public override bool IsNumber => true;
-			public override Enumerator GetEnumerator() => new Enumerator();
+			public override Enumerator GetEnumerator() => new();
 
 			public override string Value
 			{
@@ -837,7 +837,7 @@ namespace Common.Utils
 
 			public override NodeType Tag => NodeType.Boolean;
 			public override bool IsBoolean => true;
-			public override Enumerator GetEnumerator() =>new Enumerator();
+			public override Enumerator GetEnumerator() => new();
 
 			public override string Value
 			{
@@ -871,7 +871,7 @@ namespace Common.Utils
 
 		class Null: Node
 		{
-			static readonly Null mStaticInstance = new Null();
+			static readonly Null mStaticInstance = new();
 			public static bool reuseSameInstance = true;
 
 			Null() {}
@@ -879,7 +879,7 @@ namespace Common.Utils
 
 			public override NodeType Tag => NodeType.NullValue;
 			public override bool IsNull => true;
-			public override Enumerator GetEnumerator() => new Enumerator();
+			public override Enumerator GetEnumerator() => new();
 
 			public override string Value => "null";
 			public override bool AsBool => false;
@@ -900,7 +900,7 @@ namespace Common.Utils
 			readonly string mKey = null;
 
 			public override NodeType Tag => NodeType.None;
-			public override Enumerator GetEnumerator() => new Enumerator();
+			public override Enumerator GetEnumerator() => new();
 
 			public LazyCreator(Node aNode)
 			{

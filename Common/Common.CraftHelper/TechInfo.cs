@@ -26,10 +26,10 @@ namespace Common.Crafting
 		}
 
 		public int craftAmount = 1;
-		public readonly List<Ing> ingredients = new List<Ing>();
-		public readonly List<TechType> linkedItems = new List<TechType>();
+		public readonly List<Ing> ingredients = new();
+		public readonly List<TechType> linkedItems = new();
 
-		public TechInfo(params Ing[] ingredients) => ingredients.forEach(ing => this.ingredients.Add(ing));
+		public TechInfo(params Ing[] ingredients) => this.ingredients.AddRange(ingredients);
 
 		public static implicit operator _TechInfo(TechInfo techInfo)
 		{

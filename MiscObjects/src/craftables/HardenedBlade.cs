@@ -6,7 +6,7 @@ namespace MiscObjects
 {
 	class DiamondBlade: PoolCraftableObject
 	{
-		protected override TechInfo getTechInfo() => new TechInfo
+		protected override TechInfo getTechInfo() => new
 		(
 			new TechInfo.Ing(TechType.Knife),
 			new TechInfo.Ing(TechType.Diamond, 2)

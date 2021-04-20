@@ -225,7 +225,7 @@ namespace MiscPatches
 		[HarmonyPostfix, HarmonyPatch(typeof(Vehicle), "TorpedoShot")]
 		static void Vehicle_TorpedoShot_Postfix(ItemsContainer container, TorpedoType torpedoType, bool __result)
 		{
-			if (!__result || !(container.tr.GetComponentInParent<SeaMoth>() is SeaMoth seamoth))
+			if (!__result || container.tr.GetComponentInParent<SeaMoth>() is not SeaMoth seamoth)
 				return;
 
 			int torpedoSlotID = seamoth.getSlotByTorpedoContainer(container);
@@ -259,7 +259,7 @@ namespace MiscPatches
 
 			for (int i = 0; i < 4; i++)
 			{
-				if (!(currentSeamoth.GetStorageInSlot(i, TechType.SeamothTorpedoModule) is ItemsContainer storage))
+				if (currentSeamoth.GetStorageInSlot(i, TechType.SeamothTorpedoModule) is not ItemsContainer storage)
 					continue;
 
 				if (handle)

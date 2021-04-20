@@ -29,7 +29,7 @@ namespace PrawnSuitSettings
 			[Options.Slider(defaultValue: 0.1f, maxValue: 1f, valueFormat: "{0:P0}")]
 			public readonly float mirroredSelfDamageFraction = 0.1f;
 		}
-		public readonly CollisionSelfDamageSettings collisionSelfDamage = new CollisionSelfDamageSettings();
+		public readonly CollisionSelfDamageSettings collisionSelfDamage = new();
 
 
 		[Options.Hideable(typeof(Hider), "arms_energy")]
@@ -67,7 +67,7 @@ namespace PrawnSuitSettings
 			[Field.Range(min: 0f)]
 			public readonly float clawArm = 0.1f; // using claw arm costs that much energy units
 		}
-		public readonly ArmsEnergyUsageSettings armsEnergyUsage = new ArmsEnergyUsageSettings();
+		public readonly ArmsEnergyUsageSettings armsEnergyUsage = new();
 
 		[Options.Field("Propulsion arm 'ready' animation", "Whether propulsion arm should play animation when pointed to something pickupable")]
 		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]

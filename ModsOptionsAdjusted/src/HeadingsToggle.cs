@@ -25,7 +25,7 @@ namespace ModsOptionsAdjusted
 		{
 			class StatesConfig: Config
 			{
-				readonly Dictionary<string, HeadingState> states = new Dictionary<string, HeadingState>();
+				readonly Dictionary<string, HeadingState> states = new();
 
 				public HeadingState this[string name]
 				{

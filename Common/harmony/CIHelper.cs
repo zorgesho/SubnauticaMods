@@ -289,7 +289,7 @@ namespace Common.Harmony
 			{
 				class GetOpSpec: IGetOpCode<float>, IGetOpCode<double>, IGetOpCode<int>, IGetOpCode<sbyte>
 				{
-					public static readonly GetOpSpec S = new GetOpSpec();
+					public static readonly GetOpSpec S = new();
 
 					OpCode IGetOpCode<float>.get()  => OpCodes.Ldc_R4;
 					OpCode IGetOpCode<double>.get() => OpCodes.Ldc_R8;

@@ -57,6 +57,15 @@ namespace Common.Crafting
 
 
 		#region async 'getPrefab' methods
+
+#if GAME_SN && BRANCH_STABLE // to avoid warnings :(
+#pragma warning disable CS0618 // marked obsolete in stable branch
+#endif
+		static IPrefabRequest _getPrefabForFilenameAsync(string filename) => PrefabDatabase.GetPrefabForFilenameAsync(filename);
+#if GAME_SN && BRANCH_STABLE
+#pragma warning restore CS0618
+#endif
+
 		public static CoroutineTask<GameObject> getPrefabAsync(TechType techType)
 		{																												$"PrefabUtils: getPrefabAsync(TechType.{techType})".logDbg();
 			return CraftData.GetPrefabForTechTypeAsync(techType);
@@ -70,18 +79,15 @@ namespace Common.Crafting
 
 		static IEnumerator getPrefabAsync(string filename, IOut<GameObject> result)
 		{																												$"PrefabUtils: getPrefabAsync(\"{filename}\")".logDbg();
-#pragma warning disable CS0618 // marked obsolete in stable branch
-			var request = PrefabDatabase.GetPrefabForFilenameAsync(filename);
-#pragma warning restore CS0618
+			var request = _getPrefabForFilenameAsync(filename);
+
 			yield return request;
 			request.TryGetPrefab(out GameObject prefab);
 
 #if BRANCH_STABLE
 			if (!prefab) // trying without extension
 			{																											$"PrefabUtils: trying to load \"{filename}\" without extension".logDbg();
-#pragma warning disable CS0618
-				request = PrefabDatabase.GetPrefabForFilenameAsync(Path.ChangeExtension(filename, null));
-#pragma warning restore CS0618
+				request = _getPrefabForFilenameAsync(Path.ChangeExtension(filename, null));
 				yield return request;
 				request.TryGetPrefab(out prefab);
 			}

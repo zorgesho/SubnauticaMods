@@ -32,7 +32,7 @@ namespace UITweaks
 			[Options.Field("\tFaster animations for the items", "Ingredients for crafting and crafted items will be fly from/to inventory faster, based on the craft amount")]
 			public readonly bool inventoryItemsFasterAnim = true;
 		}
-		public readonly BulkCrafting bulkCrafting = new BulkCrafting();
+		public readonly BulkCrafting bulkCrafting = new();
 
 		[Options.Hideable(typeof(Hider), "pda")]
 		public class PDATweaks
@@ -61,7 +61,7 @@ namespace UITweaks
 
 			[Field.Reloadable]
 			[NoInnerFieldsAttrProcessing]
-			public readonly Dictionary<PDATab, KeyCode> tabHotkeys = new Dictionary<PDATab, KeyCode>()
+			public readonly Dictionary<PDATab, KeyCode> tabHotkeys = new()
 			{
 				{ PDATab.Inventory,		KeyCode.Alpha1 },
 				{ PDATab.Journal,		KeyCode.Alpha2 },
@@ -71,7 +71,7 @@ namespace UITweaks
 				{ PDATab.Encyclopedia,	KeyCode.Alpha6 },
 			};
 		}
-		public readonly PDATweaks pdaTweaks = new PDATweaks();
+		public readonly PDATweaks pdaTweaks = new();
 
 #if GAME_SN
 		class HideRenameBeacons: Options.Components.Hider.IVisibilityChecker

@@ -9,7 +9,7 @@ namespace FloatingCargoCrate
 	{
 		public static new TechType TechType { get; private set; } = 0;
 
-		protected override TechInfo getTechInfo() => new TechInfo
+		protected override TechInfo getTechInfo() => new
 		(
 			new TechInfo.Ing(TechType.Titanium, Main.config.cheapBlueprint? 3: 6),
 			new TechInfo.Ing(TechType.Silicone, Main.config.cheapBlueprint? 1: 2),

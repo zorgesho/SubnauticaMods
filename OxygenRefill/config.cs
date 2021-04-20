@@ -12,7 +12,7 @@ namespace OxygenRefill
 		public readonly float multCapacity = 1.0f;
 
 		[NoInnerFieldsAttrProcessing]
-		public readonly Dictionary<TechType, float> tankCapacities = new Dictionary<TechType, float>
+		public readonly Dictionary<TechType, float> tankCapacities = new()
 		{
 			{TechType.Tank,				200f},
 			{TechType.DoubleTank,		400f},

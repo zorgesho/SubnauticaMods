@@ -101,7 +101,7 @@ namespace CustomHotkeys
 			bind1.gameObject.AddComponent<Tag>();
 			bind2.gameObject.AddComponent<Tag>();
 
-			BindCallback _getCallback(uGUI_Binding bind) => new BindCallback((_, _1, _2, s) =>
+			BindCallback _getCallback(uGUI_Binding bind) => new((_, _, _, s) =>
 			{
 				bind.value = s;
 				onValueChange();

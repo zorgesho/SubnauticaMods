@@ -13,10 +13,10 @@ namespace Common.Crafting
 	static class UnlockTechHelper
 	{
 		// key - original fragment tech type, value - substitute fragment tech type
-		static readonly Dictionary<TechType, TechType> fragments = new Dictionary<TechType, TechType>();
+		static readonly Dictionary<TechType, TechType> fragments = new();
 
 		// key - tech for unlocking, value - tech for unlockPopup sprite (can be tech type or fragment type)
-		static readonly Dictionary<TechType, TechType> unlockPopups = new Dictionary<TechType, TechType>();
+		static readonly Dictionary<TechType, TechType> unlockPopups = new();
 
 		static bool inited = false;
 		static void init()

@@ -6,7 +6,7 @@ namespace Common.UnityDebug
 	abstract class DrawWire: MonoBehaviour
 	{
 		GameObject linesParent;
-		readonly List<LineRenderer> lines = new List<LineRenderer>();
+		readonly List<LineRenderer> lines = new();
 
 		protected LineRenderer addLine(Color color)
 		{

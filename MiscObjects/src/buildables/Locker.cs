@@ -16,7 +16,7 @@ namespace MiscObjects
 			public static string ids_OpenLocker = "Open locker";
 		}
 
-		protected override TechInfo getTechInfo() => new TechInfo(new TechInfo.Ing(TechType.Titanium, 2));
+		protected override TechInfo getTechInfo() => new(new TechInfo.Ing(TechType.Titanium, 2));
 
 		public override void patch()
 		{

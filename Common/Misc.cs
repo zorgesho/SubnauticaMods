@@ -111,8 +111,8 @@ namespace Common
 
 	class UniqueIDs
 	{
-		readonly HashSet<string> allIDs = new HashSet<string>();
-		readonly Dictionary<string, int> nonUniqueIDs = new Dictionary<string, int>();
+		readonly HashSet<string> allIDs = new();
+		readonly Dictionary<string, int> nonUniqueIDs = new();
 
 		public bool ensureUniqueID(ref string id, bool nonUniqueIDsWarning = true)
 		{

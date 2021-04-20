@@ -7,7 +7,7 @@ namespace PrawnSuitSonarUpgrade
 	{
 		public static new TechType TechType { get; private set; } = 0;
 
-		protected override TechInfo getTechInfo() => new TechInfo
+		protected override TechInfo getTechInfo() => new
 		(
 #if GAME_SN
 			new TechInfo.Ing(TechType.SeamothSonarModule),

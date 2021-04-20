@@ -31,7 +31,7 @@ namespace Common
 
 		static GameObject hostGO;
 
-		readonly Dictionary<string, CommandInfo> commands = new Dictionary<string, CommandInfo>();
+		readonly Dictionary<string, CommandInfo> commands = new();
 		Component commandProxy;
 
 		public static void register<T>() where T: PersistentConsoleCommands

@@ -71,7 +71,7 @@ namespace HabitatPlatform
 		static Base lastBase;
 		static HabitatPlatform.Tag lastPlatform;
 
-		static readonly HashSet<Collider> ignoredColliders = new HashSet<Collider>();
+		static readonly HashSet<Collider> ignoredColliders = new();
 
 		public static void addIgnored(Collider collider) => ignoredColliders.Add(collider);
 		public static void addIgnored(IEnumerable<Collider> colliders) => ignoredColliders.AddRange(colliders);

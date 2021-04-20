@@ -20,7 +20,7 @@ namespace DayNightSpeed
 			const string saveName = "goals";
 
 			static StoryGoalsListener instance = null;
-			List<string> goals = new List<string>(); // goals with delay less than shortGoalDelay
+			List<string> goals = new(); // goals with delay less than shortGoalDelay
 
 			SaveLoadHelper slHelper;
 			class SaveData { public List<string> goals; }

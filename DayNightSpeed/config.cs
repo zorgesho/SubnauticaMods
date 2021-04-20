@@ -344,7 +344,7 @@ namespace DayNightSpeed
 			public readonly bool showToggleLightStats = false;
 			public readonly bool showWaterParkCreatures = false;
 		}
-		public readonly DbgCfg dbgCfg = new DbgCfg();
+		public readonly DbgCfg dbgCfg = new();
 #endif
 		#endregion
 	}

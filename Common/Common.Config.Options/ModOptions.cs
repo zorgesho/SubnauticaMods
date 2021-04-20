@@ -26,7 +26,7 @@ namespace Common.Configuration
 		static uGUI_OptionsPanel optionsPanel;
 		static uGUI_TabbedControlsPanel.Tab modOptionsTab => optionsPanel.tabs[modsTabIndex];
 
-		readonly List<ModOption> modOptions = new List<ModOption>();
+		readonly List<ModOption> modOptions = new();
 
 		public static void add(ModOption option)
 		{

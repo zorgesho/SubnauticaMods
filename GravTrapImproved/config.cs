@@ -24,7 +24,7 @@ namespace GravTrapImproved
 			[Field.Range(0, 30)]
 			public readonly int fragmentCountToUnlock = 4; // unlock with vanilla gravtrap if zero
 		}
-		public MK2Props mk2 = new MK2Props();
+		public MK2Props mk2 = new();
 
 #if !DEBUG
 		[Field.Range(12, 1000)]
@@ -85,16 +85,16 @@ namespace GravTrapImproved
 			}
 		}
 
-		public readonly List<string> noJoin = new List<string>()
+		public readonly List<string> noJoin = new()
 		{
 #if DEBUG
 			"Test"
 #endif
 		};
 
-		public readonly List<TechTypeList> techTypeLists = new List<TechTypeList>() // from GravSphere.allowedTechTypes[]
+		public readonly List<TechTypeList> techTypeLists = new() // from GravSphere.allowedTechTypes[]
 		{
-			new TechTypeList
+			new
 			(
 				"Creatures",
 #if GAME_SN
@@ -142,7 +142,7 @@ namespace GravTrapImproved
 				TechType.PrecursorDroid,
 				TechType.Skyray
 			),
-			new TechTypeList
+			new
 			(
 				"Resources",
 #if GAME_SN
@@ -190,7 +190,7 @@ namespace GravTrapImproved
 				TechType.TitaniumIngot,
 				TechType.UraniniteCrystal
 			),
-			new TechTypeList
+			new
 			(
 				"Eggs",
 #if GAME_SN
@@ -260,7 +260,7 @@ namespace GravTrapImproved
 				TechType.ShockerEggUndiscovered
 			),
 #if DEBUG
-			new TechTypeList
+			new
 			(
 				"Test",
 #if GAME_SN

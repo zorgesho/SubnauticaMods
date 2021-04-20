@@ -256,7 +256,7 @@ namespace UITweaks
 		{
 			static bool prepare() => Main.config.bulkCrafting.enabled;
 
-			static readonly Dictionary<CrafterLogic, CraftData.TechData> crafterCache = new Dictionary<CrafterLogic, CraftData.TechData>();
+			static readonly Dictionary<CrafterLogic, CraftData.TechData> crafterCache = new();
 
 			static bool _isAmountChanged(TechType techType) =>
 				techType == currentTechType && currentCraftAmount > 1;

@@ -56,9 +56,9 @@ namespace Common.UnityDebug
 		}
 
 
-		readonly List<Component> wires = new List<Component>();
+		readonly List<Component> wires = new();
 
-		static readonly (Type colliderType, Type componentType)[] types = new[]
+		static readonly (Type colliderType, Type componentType)[] types =
 		{
 			(typeof(BoxCollider), typeof(DrawColliderBox)),
 			(typeof(SphereCollider), typeof(DrawColliderSphere)),
@@ -69,13 +69,13 @@ namespace Common.UnityDebug
 		{
 			foreach (var collider in gameObject.GetAllComponentsInChildren<Collider>())
 			{
-				if (types.FirstOrDefault(pair => collider.GetType() == pair.colliderType).componentType is Type componentType)
-				{
-					var wire = collider.gameObject.AddComponent(componentType);
-					wires.Add(wire);
+				if (types.FirstOrDefault(pair => collider.GetType() == pair.colliderType).componentType is not Type componentType)
+					continue;
 
-					(wire as ISetCollider)?.setCollider(collider);
-				}
+				var wire = collider.gameObject.AddComponent(componentType);
+				wires.Add(wire);
+
+				(wire as ISetCollider)?.setCollider(collider);
 			}
 		}
 

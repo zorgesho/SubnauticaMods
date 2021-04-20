@@ -7,7 +7,7 @@ namespace MiscObjects
 {
 	class NutrientBlockCraftable: PoolCraftableObject
 	{
-		protected override TechInfo getTechInfo() => new TechInfo
+		protected override TechInfo getTechInfo() => new
 		(
 #if GAME_SN
 			new TechInfo.Ing(TechType.CuredPeeper),

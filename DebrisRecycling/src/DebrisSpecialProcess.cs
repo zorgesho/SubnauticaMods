@@ -11,7 +11,7 @@ namespace DebrisRecycling
 	{
 		class DebrisProcessed: MonoBehaviour {}
 
-		static readonly Dictionary<string, Action<GameObject>> debrisSpecial = new Dictionary<string, Action<GameObject>>()
+		static readonly Dictionary<string, Action<GameObject>> debrisSpecial = new()
 		{
 			{"078b41f8-968e-4ca3-8a7e-4e3d7d98422c", process_SubmarineLocker05},				// submarine_locker_05
 			{"8ce870ba-b559-45d7-9c10-a5477967db24", process_TechLight},						// tech_light_deco
@@ -86,7 +86,7 @@ namespace DebrisRecycling
 		{
 			if (!go.GetComponent<DebrisProcessed>())
 			{
-				GameObject modelRoot = new GameObject("modelroot");
+				var modelRoot = new GameObject("modelroot");
 				modelRoot.transform.parent = go.transform;
 
 				go.getChild("mirror").transform.parent = modelRoot.transform;

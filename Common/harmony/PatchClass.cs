@@ -105,7 +105,7 @@ namespace Common.Harmony
 			{
 				bool _isPatched(MethodBase targetMethod) => patched ??= isPatchedBy(targetMethod, method);
 
-				if (!(_getPatchTargets(method) is MethodBase[] targetMethods))
+				if (_getPatchTargets(method) is not MethodBase[] targetMethods)
 					continue;
 
 				foreach (var targetMethod in targetMethods)

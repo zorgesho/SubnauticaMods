@@ -65,7 +65,7 @@ namespace Common.Harmony
 
 		public static CIEnumerable _codeForCfgVar<T, C>(T val, string cfgVarName, ILGenerator ilg) where C: Component
 		{																												$"HarmonyHelper._codeForCfgVar: injecting {val} => {cfgVarName} ({typeof(C)})".logDbg();
-			if (!(getCfgVarCI(cfgVarName) is CodeInstruction cfgVarCI))
+			if (getCfgVarCI(cfgVarName) is not CodeInstruction cfgVarCI)
 				yield break;
 
 			Label lb1 = ilg.DefineLabel();

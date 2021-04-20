@@ -87,7 +87,7 @@ namespace Common.Configuration
 					this.visChecker = visChecker;
 				}
 
-				static readonly List<Hider> hiders = new List<Hider>();
+				static readonly List<Hider> hiders = new();
 
 				static void register(Hider cmp) => hiders.Add(cmp);
 				static void unregister(Hider cmp) => hiders.Remove(cmp);

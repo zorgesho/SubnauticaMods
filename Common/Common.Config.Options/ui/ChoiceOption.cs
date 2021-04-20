@@ -100,7 +100,7 @@ namespace Common.Configuration
 		public class ChoiceMasterOption: ChoiceOption
 		{
 			// key - choice's value, value - list of pairs of field and field's new value for key value
-			readonly Dictionary<object, List<(Config.Field, object)>> dependants = new Dictionary<object, List<(Config.Field, object)>>();
+			readonly Dictionary<object, List<(Config.Field, object)>> dependants = new();
 
 			public ChoiceMasterOption(Config.Field cfgField, string label, string[] choices, object[] values = null): base(cfgField, label, choices, values)
 			{

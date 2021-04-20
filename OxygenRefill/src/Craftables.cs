@@ -12,7 +12,7 @@ namespace OxygenRefill
 		public static ModCraftTreeRoot treeRootNode { get; private set; }
 		CraftTree.Type treeType;
 
-		protected override TechInfo getTechInfo() => new TechInfo
+		protected override TechInfo getTechInfo() => new
 		(
 			new TechInfo.Ing(TechType.Titanium, 2),
 			new TechInfo.Ing(TechType.CopperWire, 2),
@@ -71,7 +71,7 @@ namespace OxygenRefill
 			this.craftingTime = craftingTime;
 		}
 
-		protected override TechInfo getTechInfo() => new TechInfo(new TechInfo.Ing(tankType));
+		protected override TechInfo getTechInfo() => new(new TechInfo.Ing(tankType));
 
 		protected override void initPrefabPool() => addPrefabToPool(tankType);
 

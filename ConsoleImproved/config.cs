@@ -146,6 +146,6 @@ namespace ConsoleImproved
 			[Field.Range(min: 0.1f)]
 			public float timeInvisible = 0.1f;
 		}
-		public MessagesSettings msgsSettings = new MessagesSettings();
+		public MessagesSettings msgsSettings = new();
 	}
 }

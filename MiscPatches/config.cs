@@ -70,7 +70,7 @@ namespace MiscPatches
 
 			// can be changed with console command 'initial_equipment'
 			[NoInnerFieldsAttrProcessing]
-			public readonly Dictionary<TechType, int> initialEquipment = new Dictionary<TechType, int>();
+			public readonly Dictionary<TechType, int> initialEquipment = new();
 
 			[Field.Action(typeof(UpdateOptionalPatches))]
 			public readonly bool propulsionCannonIgnoreLimits = false;
@@ -110,8 +110,8 @@ namespace MiscPatches
 #endif
 				};
 			}
-			public readonly FastStart fastStart = new FastStart();
+			public readonly FastStart fastStart = new();
 		}
-		public readonly Debug dbg = new Debug();
+		public readonly Debug dbg = new();
 	}
 }

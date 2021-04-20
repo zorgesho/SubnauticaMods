@@ -6,7 +6,7 @@ namespace RemoteTorpedoDetonator
 	{
 		public static new TechType TechType { get; private set; } = 0;
 
-		protected override TechInfo getTechInfo() => new TechInfo
+		protected override TechInfo getTechInfo() => new
 		(
 			new TechInfo.Ing(TechType.AdvancedWiringKit),
 			new TechInfo.Ing(TechType.Magnetite)

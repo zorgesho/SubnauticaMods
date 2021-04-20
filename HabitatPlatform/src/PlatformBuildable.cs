@@ -23,7 +23,7 @@ namespace HabitatPlatform
 			new Vector3(-dx, -dy, 0f)
 		};
 
-		protected override TechInfo getTechInfo() => new TechInfo
+		protected override TechInfo getTechInfo() => new
 		(
 			new TechInfo.Ing(TechType.TitaniumIngot, 2),
 			new TechInfo.Ing(TechType.ComputerChip),

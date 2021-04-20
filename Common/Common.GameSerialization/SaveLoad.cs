@@ -35,7 +35,7 @@ namespace Common.GameSerialization
 			}
 		}
 
-		static readonly JsonSerializerSettings srzSettings = new JsonSerializerSettings()
+		static readonly JsonSerializerSettings srzSettings = new()
 		{
 			Formatting = Mod.Consts.isDevBuild? Formatting.Indented: Formatting.None,
 			ContractResolver = new SaveContractResolver()

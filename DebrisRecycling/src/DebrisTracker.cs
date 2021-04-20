@@ -11,7 +11,7 @@ namespace DebrisRecycling
 	static class DebrisTracker
 	{
 		// key - uniqueID, value - classID
-		static readonly Dictionary<string, string> trackedDebris = new Dictionary<string, string>();
+		static readonly Dictionary<string, string> trackedDebris = new();
 
 		public static void track(GameObject go)
 		{

@@ -49,7 +49,7 @@ namespace WarningsDisabler
 			{
 				get
 				{
-					StringBuilder sb = new StringBuilder();
+					var sb = new StringBuilder();
 
 					string title = L10n.str(msgList.messages.Count == 1? "ids_thisMessage": "ids_theseMessages");
 					title = title.format(L10n.str(msgList.enabled? "ids_enabled": "ids_disabled"));
@@ -98,7 +98,7 @@ namespace WarningsDisabler
 		}
 
 		[NonSerialized, NoInnerFieldsAttrProcessing]
-		readonly List<Messages> allMessages = new List<Messages>();
+		readonly List<Messages> allMessages = new();
 
 		public bool isMessageAllowed(string message) => !allMessages.Exists(list => !list.isMessageAllowed(message));
 
@@ -119,7 +119,7 @@ namespace WarningsDisabler
 #pragma warning disable IDE0052 // field is never read
 
 		[AddMessages("Food and water warnings")]
-		readonly Messages foodWaterWarnings = new Messages
+		readonly Messages foodWaterWarnings = new
 		(
 			"FoodLow",			// "Calorie intake recommended."
 			"FoodVeryLow",		// "Seek calorie intake."
@@ -131,14 +131,14 @@ namespace WarningsDisabler
 		);
 
 		[AddMessages("Depth warnings")]
-		readonly Messages depthWarnings = new Messages
+		readonly Messages depthWarnings = new
 		(
 			"DepthWarning100",	// "Warning: Passing 100 meters. Oxygen efficiency decreased."
 			"DepthWarning200"	// "Warning: Passing 200 meters. Oxygen efficiency greatly decreased."
 		);
 
 		[AddMessages("Habitat power warnings")]
-		readonly Messages powerWarnings = new Messages
+		readonly Messages powerWarnings = new
 		(
 			"BasePowerDown",		// "HABITAT: Warning, emergency power only."
 			"BaseWelcomeNoPower",	// "HABITAT: Warning: Emergency power only. Oxygen production offline."
@@ -146,7 +146,7 @@ namespace WarningsDisabler
 		);
 
 		[AddMessages("Welcome messages")]
-		readonly Messages welcomeMessages = new Messages
+		readonly Messages welcomeMessages = new
 		(
 #if GAME_SN
 			"CyclopsWelcomeAboard",				// "CYCLOPS: Welcome aboard captain. All systems online."
@@ -162,7 +162,7 @@ namespace WarningsDisabler
 
 #if GAME_SN
 		[AddMessages("Stillsuit equip message")]
-		readonly Messages stillsuitMessage = new Messages
+		readonly Messages stillsuitMessage = new
 		(
 			"StillsuitEquipped"
 		);
@@ -174,7 +174,7 @@ namespace WarningsDisabler
 		public readonly bool showDisclaimers = true;
 #endif
 		[AddMessages("Custom messages")]
-		readonly Messages customMessages = new Messages { enabled = false };
+		readonly Messages customMessages = new() { enabled = false };
 
 #pragma warning restore
 	}

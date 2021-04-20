@@ -57,7 +57,7 @@ namespace Common.Configuration
 					readonly Type tooltipCmpType;
 					readonly bool localizeAllow; // is it needed to add tooltip string to LanguageHandler
 
-					static readonly UniqueIDs uniqueIDs = new UniqueIDs();
+					static readonly UniqueIDs uniqueIDs = new();
 
 					ModOption parentOption;
 

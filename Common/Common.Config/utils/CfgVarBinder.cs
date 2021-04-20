@@ -21,8 +21,8 @@ namespace Common.Configuration.Utils
 
 		static void init() => PersistentConsoleCommands.register<CfgVarCommands>();
 
-		static readonly UniqueIDs uniqueIDs = new UniqueIDs();
-		static readonly Dictionary<string, Config.Field> cfgFields = new Dictionary<string, Config.Field>();
+		static readonly UniqueIDs uniqueIDs = new();
+		static readonly Dictionary<string, Config.Field> cfgFields = new();
 
 		public static string[] getVarNames() => cfgFields.Keys.ToArray();
 

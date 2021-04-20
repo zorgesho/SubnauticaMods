@@ -11,7 +11,7 @@ namespace Common.Configuration
 
 		public abstract class ModOption
 		{
-			static readonly UniqueIDs uniqueIDs = new UniqueIDs();
+			static readonly UniqueIDs uniqueIDs = new();
 
 			public interface IOnGameObjectChangeHandler
 			{
@@ -19,7 +19,7 @@ namespace Common.Configuration
 				void handle(GameObject gameObject);
 			}
 
-			readonly List<IOnGameObjectChangeHandler> handlers = new List<IOnGameObjectChangeHandler>();
+			readonly List<IOnGameObjectChangeHandler> handlers = new();
 
 			public void addHandler(IOnGameObjectChangeHandler handler)
 			{

@@ -7,7 +7,7 @@ namespace Common.UnityDebug
 	{
 		public const float defaultLineWidth = 0.01f;
 
-		static readonly Material lineMaterial = new Material(Shader.Find("Hidden/Internal-Colored"));
+		static readonly Material lineMaterial = new(Shader.Find("Hidden/Internal-Colored"));
 
 		public static LineRenderer addLine(GameObject parent, Color color)
 		{

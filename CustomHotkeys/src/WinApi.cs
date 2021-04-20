@@ -13,7 +13,7 @@ namespace CustomHotkeys
 	{
 		public static void startProcess(string filename, string args)
 		{
-			Process process = new Process();
+			var process = new Process();
 
 			process.StartInfo.FileName = filename;
 			process.StartInfo.Arguments = args;

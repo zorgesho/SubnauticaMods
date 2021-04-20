@@ -78,7 +78,7 @@ namespace FloatingCargoCrate
 
 		Beacon beaconAttached = null;
 		string _beaconID; // used after loading
-		static readonly Dictionary<Beacon, FloatingCargoCrateControl> allBeaconsAttached = new Dictionary<Beacon, FloatingCargoCrateControl>();
+		static readonly Dictionary<Beacon, FloatingCargoCrateControl> allBeaconsAttached = new();
 
 		void Awake()
 		{

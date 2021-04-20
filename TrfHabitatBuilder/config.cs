@@ -21,17 +21,17 @@ namespace TrfHabitatBuilder
 
 		public class LockedTabs
 		{
-			public List<int> trfBuilder = new List<int>() { 3, 4 };
-			public List<int> vanillaBuilder = new List<int>() { 0 };
+			public List<int> trfBuilder = new() { 3, 4 };
+			public List<int> vanillaBuilder = new() { 0 };
 
 			public List<int> get(TechType builderType) => builderType == TechType.Builder? vanillaBuilder: trfBuilder;
 		}
-		public LockedTabs lockedTabs = new LockedTabs();
+		public LockedTabs lockedTabs = new();
 
 		public class LockedBlueprints
 		{
-			public List<TechType> trfBuilder = new List<TechType>();
-			public List<TechType> vanillaBuilder = new List<TechType>()
+			public List<TechType> trfBuilder = new();
+			public List<TechType> vanillaBuilder = new()
 			{
 				TechType.ThermalPlant,
 				TechType.BaseFiltrationMachine,
@@ -42,7 +42,7 @@ namespace TrfHabitatBuilder
 
 			public List<TechType> get(TechType builderType) => builderType == TechType.Builder? vanillaBuilder: trfBuilder;
 		}
-		public LockedBlueprints lockedBlueprints = new LockedBlueprints();
+		public LockedBlueprints lockedBlueprints = new();
 
 		protected override void onLoad()
 		{

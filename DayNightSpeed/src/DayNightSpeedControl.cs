@@ -90,7 +90,7 @@ namespace DayNightSpeed
 		// for debugging
 		class DayNightSpeedWatch: MonoBehaviour
 		{
-			readonly HashSet<string> goals = new HashSet<string>(); // for ignoring duplicates
+			readonly HashSet<string> goals = new(); // for ignoring duplicates
 
 			void Update()
 			{

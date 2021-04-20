@@ -39,7 +39,7 @@ namespace TrfHabitatBuilder
 			return prefab;
 		}
 
-		protected override TechInfo getTechInfo() => new TechInfo
+		protected override TechInfo getTechInfo() => new
 		(
 			new TechInfo.Ing(TechType.ComputerChip),
 			new TechInfo.Ing(TechType.WiringKit),

@@ -64,7 +64,7 @@ namespace CustomHotkeys
 	class HKConfig: Config
 	{
 		[NonSerialized, NoInnerFieldsAttrProcessing]
-		readonly List<Options.ModOption> bindOptions = new List<Options.ModOption>();
+		readonly List<Options.ModOption> bindOptions = new();
 
 		class HotkeyHider: Options.Components.Hider.IVisibilityChecker
 		{
@@ -151,7 +151,7 @@ namespace CustomHotkeys
 
 		[Field.Action(typeof(CallMethod), nameof(refreshHotkeyList), true)]
 		[AddHotkeys, Field.Reloadable, NoInnerFieldsAttrProcessing]
-		public readonly List<Hotkey> hotkeys = new List<Hotkey>()
+		public readonly List<Hotkey> hotkeys = new()
 		{
 #if DEBUG && !GENERATE_SAMPLE_CONFIG
 			new Hotkey { command = "autoforward", label = "Autoforward", key = KeyCode.LeftAlt },

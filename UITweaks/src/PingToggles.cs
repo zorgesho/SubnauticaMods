@@ -38,7 +38,7 @@ namespace UITweaks
 
 			const float iconScale = 0.7f;
 			const float groupSpacing = 10f;
-			static readonly Color colorDisabled = new Color(0.4f, 0.4f, 0.4f, 0.5f);
+			static readonly Color colorDisabled = new(0.4f, 0.4f, 0.4f, 0.5f);
 
 			bool dirty = true;
 
@@ -52,7 +52,7 @@ namespace UITweaks
 			{
 				const string saveName = "pings";
 
-				readonly Dictionary<int, bool> pingEnabled = new Dictionary<int, bool>();
+				readonly Dictionary<int, bool> pingEnabled = new();
 
 				static int hash(PingType pingType, int colorIndex) => ((int)pingType << 8) | (colorIndex & 0xFF);
 

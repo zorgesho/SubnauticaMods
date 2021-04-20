@@ -95,10 +95,10 @@ namespace Common.Configuration
 				// breaks slider to several linear intervals
 				public class Nonlinear: ModSliderOption.SliderValue
 				{
-					readonly List<(float, float)> sliderToDisplay = new List<(float, float)>();
-					readonly List<(float, float)> displayToSlider = new List<(float, float)>();
+					readonly List<(float, float)> sliderToDisplay = new();
+					readonly List<(float, float)> displayToSlider = new();
 
-					readonly List<(float sliderValue, string formatBefore, string formatAfter)> valueFormats = new List<(float, string, string)>();
+					readonly List<(float sliderValue, string formatBefore, string formatAfter)> valueFormats = new();
 
 					public override float ValueWidth => 0f;
 

@@ -8,7 +8,7 @@ namespace MiscObjects
 {
 	class LuggageBag: PoolCraftableObject
 	{
-		protected override TechInfo getTechInfo() => new TechInfo
+		protected override TechInfo getTechInfo() => new
 		(
 			new TechInfo.Ing(TechType.FiberMesh, 2),
 			new TechInfo.Ing(TechType.Silicone)

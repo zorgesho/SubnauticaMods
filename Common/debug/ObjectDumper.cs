@@ -38,10 +38,10 @@ namespace Common
 
 		static class ObjectDumper
 		{
-			static readonly StringBuilder output = new StringBuilder();
-			static readonly Regex sanitizer = new Regex("[\\r\\n\\t\0]", RegexOptions.Compiled);
+			static readonly StringBuilder output = new();
+			static readonly Regex sanitizer = new("[\\r\\n\\t\0]", RegexOptions.Compiled);
 
-			static readonly Type[] dumpTypes = new[] // dump these non-Component types too
+			static readonly Type[] dumpTypes = // dump these non-Component types too
 			{
 				typeof(Sprite),
 				typeof(Texture2D),

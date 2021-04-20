@@ -21,7 +21,7 @@ namespace SimpleModManager
 	{
 		// used for console commands
 		// we using list instead of dictionary because console commands can be used with partial mod name
-		static readonly List<(string modName, Config.Field toggleField)> modToggleFields = new List<(string, Config.Field)>();
+		static readonly List<(string modName, Config.Field toggleField)> modToggleFields = new();
 
 		class ConsoleCommands: PersistentConsoleCommands
 		{

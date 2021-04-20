@@ -25,7 +25,7 @@ namespace GravTrapImproved
 
 		public static new TechType TechType { get; private set; } = 0;
 
-		protected override TechInfo getTechInfo() => new TechInfo
+		protected override TechInfo getTechInfo() => new
 		(
 			new TechInfo.Ing(TechType.Gravsphere),
 			new TechInfo.Ing(TechType.Titanium, 2),

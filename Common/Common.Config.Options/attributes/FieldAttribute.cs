@@ -39,7 +39,7 @@ namespace Common.Configuration
 
 			public void process(object config, FieldInfo field)
 			{																			$"Options.FieldAttribute.process fieldName:'{field.Name}' fieldType:{field.FieldType} label: '{label}'".logDbg();
-				var cfgField = new Config.Field(config, field, rootConfig);
+				Config.Field cfgField = new(config, field, rootConfig);
 
 				if (Factory.create(cfgField) is ModOption option)
 					add(option);

@@ -73,7 +73,7 @@ namespace Common.Crafting
 
 		public static CoroutineTask<GameObject> getPrefabAsync(string filename)
 		{
-			var result = new TaskResult<GameObject>();
+			TaskResult<GameObject> result = new();
 			return new CoroutineTask<GameObject>(getPrefabAsync(filename, result), result);
 		}
 
@@ -97,13 +97,13 @@ namespace Common.Crafting
 
 		public static CoroutineTask<GameObject> getPrefabCopyAsync(TechType techType, CopyOptions options = CopyOptions.Default)
 		{
-			var result = new TaskResult<GameObject>();
+			TaskResult<GameObject> result = new();
 			return new CoroutineTask<GameObject>(getPrefabCopyAsync(techType, result, options), result);
 		}
 
 		public static IEnumerator getPrefabCopyAsync(TechType techType, IOut<GameObject> result, CopyOptions options = CopyOptions.Default)
 		{																												$"PrefabUtils: getPrefabCopyAsync(TechType.{techType})".logDbg();
-			var prefabResult = new TaskResult<GameObject>();
+			TaskResult<GameObject> prefabResult = new();
 			yield return CraftData.GetPrefabForTechTypeAsync(techType, false, prefabResult);
 
 			result.Set(_instantiate(prefabResult.Get(), options));
@@ -111,13 +111,13 @@ namespace Common.Crafting
 
 		public static CoroutineTask<GameObject> getPrefabCopyAsync(string filename, CopyOptions options = CopyOptions.Default)
 		{
-			var result = new TaskResult<GameObject>();
+			TaskResult<GameObject> result = new();
 			return new CoroutineTask<GameObject>(getPrefabCopyAsync(filename, result, options), result);
 		}
 
 		public static IEnumerator getPrefabCopyAsync(string filename, IOut<GameObject> result, CopyOptions options = CopyOptions.Default)
 		{																												$"PrefabUtils: getPrefabCopyAsync(\"{filename}\")".logDbg();
-			var prefabResult = new TaskResult<GameObject>();
+			TaskResult<GameObject> prefabResult = new();
 			yield return getPrefabAsync(filename, prefabResult);
 
 			result.Set(_instantiate(prefabResult.Get(), options));

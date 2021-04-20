@@ -6,7 +6,7 @@ namespace HabitatPlatform
 	{
 		protected override TechInfo getTechInfo()
 		{
-			var techInfo = new TechInfo(new TechInfo.Ing(TechType.MapRoomCamera));
+			TechInfo techInfo = new(new TechInfo.Ing(TechType.MapRoomCamera));
 			techInfo.linkedItems.Add(TechType.MapRoomCamera);
 
 			return techInfo;

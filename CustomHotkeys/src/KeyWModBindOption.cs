@@ -94,7 +94,7 @@ namespace CustomHotkeys
 				bind2.value = "";
 			}
 #if GAME_SN
-			var callback = new UnityAction<string>(_ => onValueChange());
+			UnityAction<string> callback = new(_ => onValueChange());
 			bind1.onValueChanged.AddListener(callback);
 			bind2.onValueChanged.AddListener(callback);
 #elif GAME_BZ

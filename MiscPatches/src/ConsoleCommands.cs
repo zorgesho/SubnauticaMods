@@ -123,7 +123,7 @@ namespace MiscPatches
 
 			IEnumerator _pincache()
 			{
-				var sb = new StringBuilder();
+				StringBuilder sb = new();
 
 				while (true)
 				{

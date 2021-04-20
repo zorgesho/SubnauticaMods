@@ -122,7 +122,7 @@ namespace UITweaks
 
 				static GameObject _createLayout(string name, float spacing, bool sizeControl = false)
 				{
-					var layout = new GameObject(name);
+					GameObject layout = new(name);
 
 					var hlg = layout.AddComponent<HorizontalLayoutGroup>();
 					hlg.childControlHeight = hlg.childControlWidth = sizeControl;
@@ -138,7 +138,7 @@ namespace UITweaks
 
 					var btn = Instantiate(buttonPrefab, parent.transform);
 
-					var toggleEvent = btn.GetComponent<Toggle>().onValueChanged = new Toggle.ToggleEvent();
+					Toggle.ToggleEvent toggleEvent = btn.GetComponent<Toggle>().onValueChanged = new();
 					toggleEvent.AddListener(val => toggleButton(btn, color, pingType, val));
 
 					btn.AddComponent<LayoutElement>();

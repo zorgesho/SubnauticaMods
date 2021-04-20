@@ -13,7 +13,7 @@ namespace CustomHotkeys
 	{
 		public static void startProcess(string filename, string args)
 		{
-			var process = new Process();
+			Process process = new();
 
 			process.StartInfo.FileName = filename;
 			process.StartInfo.Arguments = args;
@@ -48,7 +48,7 @@ namespace CustomHotkeys
 			if (ret != S_FALSE)
 				return null;
 
-			var sb = new StringBuilder((int)length);
+			StringBuilder sb = new((int)length);
 			ret = AssocQueryString(AssocFlags.None, assocStr, extension, null, sb, ref length);
 			if (ret != S_OK)
 				return null;

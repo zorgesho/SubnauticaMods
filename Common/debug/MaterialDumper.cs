@@ -18,7 +18,7 @@ namespace Common
 				if (material?.shader != Shader.Find("MarmosetUBER"))
 					return;
 
-				var sb = new StringBuilder();
+				StringBuilder sb = new();
 
 				void _add(string name, string val) => sb.AppendLine($"{name} = {val}");
 

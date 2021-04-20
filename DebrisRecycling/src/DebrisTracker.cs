@@ -54,7 +54,7 @@ namespace DebrisRecycling
 			if (!ResourceTracker.resources.TryGetValue(SalvageableDebrisDR.TechType, out var trackedResources))
 				return;
 
-			var toRemove = new List<ResourceTracker.ResourceInfo>();
+			List<ResourceTracker.ResourceInfo> toRemove = new();
 
 			foreach (var info in trackedResources)
 			{

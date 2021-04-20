@@ -33,7 +33,7 @@ namespace Common
 
 		public static string onScreen(this List<string> list, string prefix)
 		{
-			var sb = new StringBuilder();
+			StringBuilder sb = new();
 			list.ForEach(line => sb.AppendLine(line));
 			return sb.ToString().onScreen(prefix);
 		}

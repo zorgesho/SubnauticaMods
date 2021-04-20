@@ -24,7 +24,7 @@ namespace Common.Crafting
 			if (allPatched || !(allPatched = true))
 				return;
 
-			var toPatch = new List<Type>();
+			List<Type> toPatch = new();
 
 			foreach (var type in ReflectionHelper.definedTypes)
 			{

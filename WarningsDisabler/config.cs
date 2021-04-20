@@ -49,7 +49,7 @@ namespace WarningsDisabler
 			{
 				get
 				{
-					var sb = new StringBuilder();
+					StringBuilder sb = new();
 
 					string title = L10n.str(msgList.messages.Count == 1? "ids_thisMessage": "ids_theseMessages");
 					title = title.format(L10n.str(msgList.enabled? "ids_enabled": "ids_disabled"));
@@ -86,9 +86,9 @@ namespace WarningsDisabler
 				if (messages.messages.Count == 0)
 					return;
 
-				var cfgField = new Field(messages, nameof(Messages.enabled));
+				Field cfgField = new(messages, nameof(Messages.enabled));
 
-				var option = new Options.ToggleOption(cfgField, label);
+				Options.ToggleOption option = new(cfgField, label);
 				option.addHandler(new Options.Components.Tooltip.Add(typeof(MessageListTooltip), null));
 
 				Options.add(option);

@@ -221,7 +221,7 @@ namespace MiscPatches
 		{
 			static void _printRaycastResults(List<RaycastResult> list)
 			{
-				var sb = new StringBuilder("\n");
+				StringBuilder sb = new("\n");
 
 				list.ForEach(raycast => sb.AppendLine(raycast.gameObject.name));
 				sb.ToString().onScreen("raycast result");

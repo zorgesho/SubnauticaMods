@@ -104,13 +104,13 @@ namespace CustomHotkeys
 				foreach (var hotkey in hotkeys)
 				{
 					bool hidden = hotkey.hidden == true;
-					var cfgField = new Field(hotkey, nameof(Hotkey.key), this, $"hotkey.{id++:D2}");
+					Field cfgField = new(hotkey, nameof(Hotkey.key), this, $"hotkey.{id++:D2}");
 					var label = !string.IsNullOrWhiteSpace(hotkey.label)? hotkey.label: hotkey.command.clampLength(30).Replace("...", "<color=silver>...</color>");
 
 					if (hidden)
 						label = $"<color=silver>{label}</color>";
 
-					var option = new KeyWModBindOption(cfgField, label);
+					KeyWModBindOption option = new(cfgField, label);
 
 					var tooltip = "<color=white><b>Command: </b></color>";
 					tooltip += hotkey.command.Replace(";", "<color=orange><b>;</b></color>").Replace("|", "<color=yellow><b>|</b></color>");

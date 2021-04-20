@@ -216,14 +216,14 @@ namespace Common.Utils
 
 			public override string ToString()
 			{
-				var sb = new StringBuilder();
+				StringBuilder sb = new();
 				WriteToStringBuilder(sb, 0, 0, TextMode.Compact);
 				return sb.ToString();
 			}
 
 			public virtual string ToString(int aIndent)
 			{
-				var sb = new StringBuilder();
+				StringBuilder sb = new();
 				WriteToStringBuilder(sb, 0, aIndent, TextMode.Indent);
 				return sb.ToString();
 			}
@@ -365,10 +365,10 @@ namespace Common.Utils
 
 			public static Node Parse(string aJSON)
 			{
-				var stack = new Stack<Node>();
+				Stack<Node> stack = new();
 				Node ctx = null;
 				int i = 0;
-				var Token = new StringBuilder();
+				StringBuilder Token = new();
 				string TokenName = "";
 				bool QuoteMode = false;
 				bool TokenIsQuoted = false;
@@ -573,7 +573,7 @@ namespace Common.Utils
 
 			public override Node Clone()
 			{
-				var node = new Array();
+				Array node = new();
 				node.mList.Capacity = mList.Capacity;
 				mList.ForEach(n => node.Add(n?.Clone()));
 
@@ -684,7 +684,7 @@ namespace Common.Utils
 
 			public override Node Clone()
 			{
-				var node = new Object();
+				Object node = new();
 				mDict.forEach(n => node.Add(n.Key, n.Value.Clone()));
 
 				return node;

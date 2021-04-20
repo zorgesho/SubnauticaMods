@@ -14,7 +14,7 @@ namespace Common.Reflection
 
 		public static Type getCallingDerivedType()
 		{
-			var stackTrace = new StackTrace();
+			StackTrace stackTrace = new();
 			Type baseType = stackTrace.GetFrame(1).GetMethod().ReflectedType;
 			Type resultType = baseType;
 

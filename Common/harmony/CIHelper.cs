@@ -41,7 +41,7 @@ namespace Common.Harmony
 		// makes list with CodeInstructions from various objects (see 'switch' for object types)
 		public static CIList toCIList(params object[] cins)
 		{
-			var list = new CIList();
+			CIList list = new();
 
 			foreach (var i in cins)
 			{

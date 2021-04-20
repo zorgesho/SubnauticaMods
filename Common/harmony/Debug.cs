@@ -18,7 +18,7 @@ namespace Common.Harmony
 
 		public static void log(this IEnumerable<CodeInstruction> cins, string filename = null, bool printIndexes = true, bool printFirst = false)
 		{
-			var sb = new StringBuilder();
+			StringBuilder sb = new();
 			var list = cins.ToList();
 
 			int _findLabel(object label) => // find target index for jumps
@@ -115,7 +115,7 @@ namespace Common.Harmony
 			var patchedMethods = HarmonyHelper.harmonyInstance.GetPatchedMethods().ToList();
 			patchedMethods.Sort((m1, m2) => string.Compare(m1.fullName(), m2.fullName(), StringComparison.Ordinal));
 
-			var sb = new StringBuilder();
+			StringBuilder sb = new();
 			harmonyID = harmonyID?.ToLower();
 
 			foreach (var method in patchedMethods)

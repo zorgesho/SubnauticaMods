@@ -100,7 +100,7 @@ namespace Common
 	{
 		public static GameObject createPersistentGameObject(string name)
 		{
-			var obj = new GameObject(name, typeof(SceneCleanerPreserve));
+			GameObject obj = new(name, typeof(SceneCleanerPreserve));
 			Object.DontDestroyOnLoad(obj);
 			return obj;
 		}

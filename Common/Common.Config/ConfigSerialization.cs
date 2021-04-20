@@ -57,7 +57,7 @@ namespace Common.Configuration
 
 		static JsonSerializerSettings _initSerializer(Type configType)
 		{
-			var settings = new JsonSerializerSettings()
+			JsonSerializerSettings settings = new()
 			{
 				Formatting = Formatting.Indented,
 				ContractResolver = new ConfigContractResolver(),

@@ -122,7 +122,7 @@ namespace UITweaks
 
 		static CraftData.TechData makeCopy(CraftData.TechData techData)
 		{
-			var copy = new CraftData.TechData()
+			CraftData.TechData copy = new()
 			{
 				_techType = techData._techType,
 				_craftAmount = techData.craftAmount,

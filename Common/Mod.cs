@@ -53,7 +53,7 @@ namespace Common
 #endif
 			if (needCheckVer)
 			{
-				var currentVersion = new Version(manifest["Version"]);
+				Version currentVersion = new(manifest["Version"]);
 				var latestVersion = VersionChecker.getLatestVersion(manifest["VersionURL"]);							$"Latest version is {latestVersion}".logDbg();
 
 				if (latestVersion > currentVersion)

@@ -54,7 +54,7 @@ namespace ConsoleImproved
 				// save 'historySizeToSave' last history entries or all history if historySizeToSave == 0
 				int i = Main.config.historySizeToSave == 0? 0: Mathf.Max(0, history.Count - Main.config.historySizeToSave);
 
-				var sb = new StringBuilder();
+				StringBuilder sb = new();
 				while (i < history.Count)
 					sb.AppendLine(history[i++]);
 

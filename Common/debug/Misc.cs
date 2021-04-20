@@ -12,7 +12,7 @@ namespace Common
 		public static void logStack(string msg = "")
 		{
 			var stackFrames = new StackTrace().GetFrames();
-			var sb = new StringBuilder($"Callstack {msg}:{Environment.NewLine}");
+			StringBuilder sb = new($"Callstack {msg}:{Environment.NewLine}");
 
 			for (int i = 1; i < stackFrames.Length; i++) // don't print first item, it is "logStack"
 				sb.AppendLine($"\t{stackFrames[i].GetMethod().fullName()}");

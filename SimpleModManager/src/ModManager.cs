@@ -79,11 +79,11 @@ namespace SimpleModManager
 					bool hidden = (new DirectoryInfo(dir).Attributes & FileAttributes.Hidden) != 0;
 					bool blacklisted = Main.config.blacklist.contains(modID);
 
-					var cfgField = new Field(this, nameof(enabled));
+					Field cfgField = new(this, nameof(enabled));
 
 					Options.nonUniqueOptionsIDsWarning = false;
 					string optionName = $"{(hidden? "<color=silver>": "")}{modJson.Property("DisplayName").Value}{(hidden? "</color>": "")}";
-					var option = new Options.ToggleOption(cfgField, optionName);
+					Options.ToggleOption option = new(cfgField, optionName);
 					Options.nonUniqueOptionsIDsWarning = true;
 
 					if (hidden)		 option.addHandler(new Options.Components.Hider.Add(new HideHidden(), "hidden-mod"));

@@ -30,7 +30,7 @@ namespace MiscPrototypes
 			{
 				while (true)
 				{
-					var sb = new StringBuilder();
+					StringBuilder sb = new();
 					sb.AppendLine();
 					sb.AppendLine($"clearInput: {GameInput.clearInput}; scanningInput: {GameInput.scanningInput}");
 					sb.AppendLine($"movedir: {GameInput.GetMoveDirection()}");
@@ -45,7 +45,7 @@ namespace MiscPrototypes
 
 		void debug_print_gameinput()
 		{
-			var sb = new StringBuilder();
+			StringBuilder sb = new();
 			sb.AppendLine();
 			for (int i = 0; i < GameInput.inputs.Count; i++)
 			{

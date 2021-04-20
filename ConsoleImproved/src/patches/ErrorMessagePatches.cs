@@ -67,7 +67,7 @@ namespace ConsoleImproved
 			em.timeFadeOut = settings.timeFadeOut;
 			em.timeInvisible = settings.timeInvisible;
 #if GAME_SN
-			var texts = new List<Text>(em.pool);
+			List<Text> texts = new(em.pool);
 			em.messages.ForEach(message => texts.Add(message.entry));
 			texts.Add(em.prefabMessage);
 

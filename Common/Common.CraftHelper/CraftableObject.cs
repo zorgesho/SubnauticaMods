@@ -256,7 +256,7 @@ namespace Common.Crafting
 
 			for (int i = 0; i < poolPrefabInfo.Count; i++)
 			{
-				var taskResult = new TaskResult<GameObject>();
+				TaskResult<GameObject> taskResult = new();
 				yield return preparePrefabAsync(poolPrefabInfo[i], taskResult);
 
 				prefabs[i] = taskResult.Get();

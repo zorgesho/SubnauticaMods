@@ -153,8 +153,8 @@ namespace DebrisRecycling
 				if (label == null)
 					return;
 
-				var cfgField = new Field(prefabs, nameof(PrefabList.enabled), rootConfig);
-				var option = new Options.ToggleOption(cfgField, label);
+				Field cfgField = new(prefabs, nameof(PrefabList.enabled), rootConfig);
+				Options.ToggleOption option = new(cfgField, label);
 				option.addHandler(new Options.Components.Hider.Add(new VisChecker(prefabs)));
 
 				Options.add(option);
@@ -166,7 +166,7 @@ namespace DebrisRecycling
 
 		public Dictionary<string, int> getValidPrefabs()
 		{
-			var validPrefabs = new Dictionary<string, int>();
+			Dictionary<string, int> validPrefabs = new();
 			allLists.Where(list => list.enabled).ForEach(list => list.copyPrefabsTo(validPrefabs));
 
 			return validPrefabs;

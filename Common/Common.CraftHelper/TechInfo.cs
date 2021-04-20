@@ -33,7 +33,7 @@ namespace Common.Crafting
 
 		public static implicit operator _TechInfo(TechInfo techInfo)
 		{
-			var result = new _TechInfo()
+			_TechInfo result = new()
 			{
 				craftAmount = techInfo.craftAmount,
 				LinkedItems = techInfo.linkedItems

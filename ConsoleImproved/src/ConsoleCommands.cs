@@ -166,8 +166,8 @@ namespace ConsoleImproved
 				static IEnumerator _printCfgVars(string prefix)
 				{
 					var varNames = cfgVarsCache.findByPrefix(prefix).Select(name => name.Trim()).ToList();
-					var prevValues = new Dictionary<string, (object varValue, float lastChangeTime)>(); // key: var name
-					var sb = new StringBuilder();
+					Dictionary<string, (object varValue, float lastChangeTime)> prevValues = new(); // key: var name
+					StringBuilder sb = new();
 
 					while (true)
 					{

@@ -19,11 +19,11 @@ namespace HabitatPlatform
 	{
 		static void Postfix(ref bool __result)
 		{
-			if (Builder.ghostModel?.GetComponent<BaseAddCellGhost>() is BaseAddCellGhost cellGhost)
-			{
-				if (cellGhost.cellType == Base.CellType.Foundation && cellGhost.targetBase?.GetComponentInParent<HabitatPlatform.Tag>())
-					__result = false;
-			}
+			if (Builder.ghostModel?.GetComponent<BaseAddCellGhost>() is not BaseAddCellGhost cellGhost)
+				return;
+
+			if (cellGhost.cellType == Base.CellType.Foundation && cellGhost.targetBase?.GetComponentInParent<HabitatPlatform.Tag>())
+				__result = false;
 		}
 	}
 

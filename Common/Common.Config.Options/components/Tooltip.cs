@@ -15,11 +15,11 @@ namespace Common.Configuration
 			{
 				public void process(ModOption option)
 				{
-					if (option.cfgField.getAttr<FieldAttribute>() is FieldAttribute fieldAttr)
-					{
-						if (fieldAttr.tooltipType != null || fieldAttr.tooltip != null)
-							option.addHandler(new Components.Tooltip.Add(fieldAttr.tooltipType, fieldAttr.tooltip));
-					}
+					if (option.cfgField.getAttr<FieldAttribute>() is not FieldAttribute fieldAttr)
+						return;
+
+					if (fieldAttr.tooltipType != null || fieldAttr.tooltip != null)
+						option.addHandler(new Components.Tooltip.Add(fieldAttr.tooltipType, fieldAttr.tooltip));
 				}
 			}
 
@@ -34,11 +34,11 @@ namespace Common.Configuration
 
 					Debug.assert(instance == null); // if this the first option, ModOptions shouldn't be created yet
 
-					if (option.cfgField.getAttr<NameAttribute>(true) is NameAttribute nameAttr)
-					{
-						if (nameAttr.tooltipType != null || nameAttr.tooltip != null)
-							option.addHandler(new Components.Tooltip.AddToHeading(nameAttr.tooltipType, nameAttr.tooltip));
-					}
+					if (option.cfgField.getAttr<NameAttribute>(true) is not NameAttribute nameAttr)
+						return;
+
+					if (nameAttr.tooltipType != null || nameAttr.tooltip != null)
+						option.addHandler(new Components.Tooltip.AddToHeading(nameAttr.tooltipType, nameAttr.tooltip));
 				}
 			}
 		}

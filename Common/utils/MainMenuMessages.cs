@@ -78,7 +78,7 @@ namespace Common.Utils
 			[HarmonyPostfix, HarmonyPatch(typeof(ErrorMessage), "Awake")]
 			static void addMessages()
 			{
-				messageQueue.ForEach(msg => _add(msg));
+				messageQueue.ForEach(_add);
 				messageQueue.Clear();
 			}
 

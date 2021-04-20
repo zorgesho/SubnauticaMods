@@ -37,7 +37,7 @@ namespace Common.Crafting
 					toPatch.Add(type);
 			}
 
-			toPatch.ForEach(type => patchClass(type));
+			toPatch.ForEach(patchClass);
 		}
 
 		static void patchClass(Type type)

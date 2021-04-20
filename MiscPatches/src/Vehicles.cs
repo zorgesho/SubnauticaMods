@@ -26,15 +26,15 @@ namespace MiscPatches
 		static void Postfix(Vehicle __instance) =>
 			__instance.gameObject.callAfterDelay(time, new UnityAction(() =>
 			{
-				if (__instance.gameObject.GetComponentInChildren<ToggleLights>() is ToggleLights lights)
-				{
-					// turn light off. Not using SetLightsActive because of sound
-					lights.lightsActive = false;
-					lights.lightsParent.SetActive(false);
+				if (__instance.gameObject.GetComponentInChildren<ToggleLights>() is not ToggleLights lights)
+					return;
 
-					if (lights.energyPerSecond == 0f)
-						lights.energyPerSecond = Main.config.vehicleLightEnergyPerSec;					$"light energy consumption for {__instance} is {lights.energyPerSecond}".logDbg();
-				}
+				// turn light off. Not using SetLightsActive because of sound
+				lights.lightsActive = false;
+				lights.lightsParent.SetActive(false);
+
+				if (lights.energyPerSecond == 0f)
+					lights.energyPerSecond = Main.config.vehicleLightEnergyPerSec;					$"light energy consumption for {__instance} is {lights.energyPerSecond}".logDbg();
 			}));
 	}
 

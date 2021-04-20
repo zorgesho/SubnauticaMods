@@ -4,7 +4,7 @@ namespace Common.UnityDebug
 {
 	class DrawBox: DrawWire
 	{
-		static readonly Vector3[] verts = new[]
+		static readonly Vector3[] verts =
 		{
 			new Vector3(-0.5f, -0.5f, -0.5f), // 0
 			new Vector3( 0.5f, -0.5f, -0.5f), // 1

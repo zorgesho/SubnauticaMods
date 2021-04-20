@@ -172,8 +172,8 @@ namespace UITweaks
 			{																						"PingToggleToolbar: OnDestroy()".logDbg();
 				subscribeToPingManager(false);
 
-				beaconButtons.ForEach(btn => Destroy(btn));
-				signalButtons.ForEach(btn => Destroy(btn));
+				beaconButtons.ForEach(Destroy);
+				signalButtons.ForEach(Destroy);
 				Destroy(cameraButton);
 
 				updateEntries();

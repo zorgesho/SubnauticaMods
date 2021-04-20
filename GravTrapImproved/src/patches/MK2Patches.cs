@@ -26,7 +26,7 @@ namespace GravTrapImproved
 
 		public class UpdateRanges: Config.Field.IAction
 		{
-			public void action() => Object.FindObjectsOfType<Gravsphere>().ForEach(sphere => updateRange(sphere));
+			public void action() => Object.FindObjectsOfType<Gravsphere>().ForEach(updateRange);
 		}
 
 

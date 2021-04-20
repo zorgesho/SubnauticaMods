@@ -14,15 +14,15 @@ namespace Common.Configuration
 			{
 				public void process(ModOption option)
 				{
-					if (option.cfgField.getAttr<HideableAttribute>(true) is HideableAttribute hideableAttr)
-					{
-						string groupID = hideableAttr.groupID;
+					if (option.cfgField.getAttr<HideableAttribute>(true) is not HideableAttribute hideableAttr)
+						return;
 
-						if (groupID == null)
-							option.cfgField.getAttrs<HideableAttribute>(true).forEach(attr => groupID ??= attr.groupID);
+					string groupID = hideableAttr.groupID;
 
-						option.addHandler(new Components.Hider.Add(hideableAttr.visChecker, groupID));
-					}
+					if (groupID == null)
+						option.cfgField.getAttrs<HideableAttribute>(true).forEach(attr => groupID ??= attr.groupID);
+
+					option.addHandler(new Components.Hider.Add(hideableAttr.visChecker, groupID));
 				}
 			}
 		}

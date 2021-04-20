@@ -29,11 +29,11 @@ namespace Common
 				void _addVector(string name)  => _add(name, material.GetVector(name).ToString("F4"));
 				void _addTexture(string name) => _add(name, $"{material.GetTexture(name)?.name ?? "[null]"} (scale: {material.GetTextureScale(name).ToString("F2")})");
 
-				void _addBools(params string[] names)	 => names.forEach(name => _addBool(name));
-				void _addColors(params string[] names)	 => names.forEach(name => _addColor(name));
-				void _addFloats(params string[] names)	 => names.forEach(name => _addFloat(name));
-				void _addVectors(params string[] names)	 => names.forEach(name => _addVector(name));
-				void _addTextures(params string[] names) => names.forEach(name => _addTexture(name));
+				void _addBools(params string[] names)	 => names.forEach(_addBool);
+				void _addColors(params string[] names)	 => names.forEach(_addColor);
+				void _addFloats(params string[] names)	 => names.forEach(_addFloat);
+				void _addVectors(params string[] names)	 => names.forEach(_addVector);
+				void _addTextures(params string[] names) => names.forEach(_addTexture);
 
 
 				sb.AppendLine("Material properties:");

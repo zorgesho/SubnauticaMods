@@ -66,7 +66,7 @@ namespace Common
 				if (!Directory.Exists(dir))
 					return null;
 
-				textureFilePath = Directory.GetFiles(dir, Path.GetFileName(textureFilePath) + ".*").Where(path => Path.GetExtension(path) != assetsExt).FirstOrDefault();
+				textureFilePath = Directory.GetFiles(dir, Path.GetFileName(textureFilePath) + ".*").FirstOrDefault(path => Path.GetExtension(path) != assetsExt);
 			}
 
 			if (!File.Exists(textureFilePath))

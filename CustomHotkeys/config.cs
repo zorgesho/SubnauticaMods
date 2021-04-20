@@ -95,7 +95,7 @@ namespace CustomHotkeys
 		{
 			Common.Debug.assert(hotkeys != null);
 
-			bindOptions.ForEach(option => Options.remove(option));
+			bindOptions.ForEach(Options.remove);
 			bindOptions.Clear();
 
 			try

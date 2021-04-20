@@ -61,13 +61,13 @@ namespace Common.Configuration
 		{
 			try
 			{
-				if (modOptions.Find(o => o.id == id) is ModOption target)
-				{
-					if (e is GameObjectCreatedEventArgs)
-						target.onGameObjectChange((e as GameObjectCreatedEventArgs).GameObject);
-					else
-						target.onValueChange(e);
-				}
+				if (modOptions.Find(o => o.id == id) is not ModOption target)
+					return;
+
+				if (e is GameObjectCreatedEventArgs)
+					target.onGameObjectChange((e as GameObjectCreatedEventArgs).GameObject);
+				else
+					target.onValueChange(e);
 			}
 			catch (Exception ex) { Log.msg(ex); }
 		}

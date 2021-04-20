@@ -11,7 +11,7 @@ namespace PrawnSuitSettings
 	static class CollisionSelfDamage
 	{
 		public class SettingChanged: Config.Field.IAction
-		{ public void action() => Object.FindObjectsOfType<Exosuit>()?.forEach(ex => refresh(ex)); }
+		{ public void action() => Object.FindObjectsOfType<Exosuit>()?.forEach(refresh); }
 
 		static void refresh(Exosuit exosuit)
 		{

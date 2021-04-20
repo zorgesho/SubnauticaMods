@@ -26,15 +26,15 @@ namespace OxygenRefill
 
 		public static void toggleTankUsage()
 		{
-			if (getTankInSlot() is InventoryItem item)
-			{
-				var oxygen = item.item.GetComponent<Oxygen>();
+			if (getTankInSlot() is not InventoryItem item)
+				return;
 
-				if (isTankUsed(oxygen))
-					Player.main.oxygenMgr.UnregisterSource(oxygen);
-				else
-					Player.main.oxygenMgr.RegisterSource(oxygen);
-			}
+			var oxygen = item.item.GetComponent<Oxygen>();
+
+			if (isTankUsed(oxygen))
+				Player.main.oxygenMgr.UnregisterSource(oxygen);
+			else
+				Player.main.oxygenMgr.RegisterSource(oxygen);
 		}
 	}
 

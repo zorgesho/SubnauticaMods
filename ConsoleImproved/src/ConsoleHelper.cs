@@ -99,16 +99,16 @@ namespace ConsoleImproved
 
 				foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
 				{
-					if (assembly.GetType(name_CfgVarBinder, false) is Type type_CfgVarBinder)
-					{
-						var names = type_CfgVarBinder.method("getVarNames").wrap().invoke<string[]>();
-						Debug.assert(names != null);
-						cfgVarNames.AddRange(names);
+					if (assembly.GetType(name_CfgVarBinder, false) is not Type type_CfgVarBinder)
+						continue;
 
-						var getter = type_CfgVarBinder.method("getVarValue").wrap<Func<string, object>>();
-						Debug.assert(getter);
-						cfgVarGetters.Add(getter);
-					}
+					var names = type_CfgVarBinder.method("getVarNames").wrap().invoke<string[]>();
+					Debug.assert(names != null);
+					cfgVarNames.AddRange(names);
+
+					var getter = type_CfgVarBinder.method("getVarValue").wrap<Func<string, object>>();
+					Debug.assert(getter);
+					cfgVarGetters.Add(getter);
 				}
 			}
 

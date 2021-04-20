@@ -19,7 +19,7 @@ namespace SimpleModManager
 		public readonly bool showBlacklistedMods = false;
 		void _showBlacklisterMods() => Options.Components.Hider.setVisible("blacklist-mod", showBlacklistedMods);
 
-		public readonly string[] blacklist = new[]
+		public readonly string[] blacklist =
 		{
 			"SimpleModManager",
 			"SMLHelper",

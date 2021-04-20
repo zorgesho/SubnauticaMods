@@ -75,19 +75,19 @@ namespace SeamothStorageSlots
 
 		static void Postfix(Vehicle __instance, int slotID, TechType techType, bool added)
 		{
-			if (__instance is SeaMoth seamoth)
+			if (__instance is not SeaMoth seamoth)
+				return;
+
+			//any non-storage module added in seamoth slots 1-4 disables corresponding storage, checking if we need to enable it again
+			if (slotID < 4 && techType != TechType.VehicleStorageModule)
 			{
-				//any non-storage module added in seamoth slots 1-4 disables corresponding storage, checking if we need to enable it again
-				if (slotID < 4 && techType != TechType.VehicleStorageModule)
-				{
-					if (__instance.GetSlotItem(slotID + Main.config.slotsOffset)?.item.GetTechType() == TechType.VehicleStorageModule)
-						seamoth.storageInputs[slotID].SetEnabled(true);
-				}
-				else // if we adding/removing storage module in linked slots, we need to activate/deactivate corresponing storage unit
-				if (slotID >= Main.config.slotsOffset && slotID < Main.config.slotsOffset + 4 && techType == TechType.VehicleStorageModule)
-				{
-					seamoth.storageInputs[slotID - Main.config.slotsOffset].SetEnabled(added);
-				}
+				if (__instance.GetSlotItem(slotID + Main.config.slotsOffset)?.item.GetTechType() == TechType.VehicleStorageModule)
+					seamoth.storageInputs[slotID].SetEnabled(true);
+			}
+			else // if we adding/removing storage module in linked slots, we need to activate/deactivate corresponing storage unit
+			if (slotID >= Main.config.slotsOffset && slotID < Main.config.slotsOffset + 4 && techType == TechType.VehicleStorageModule)
+			{
+				seamoth.storageInputs[slotID - Main.config.slotsOffset].SetEnabled(added);
 			}
 		}
 	}

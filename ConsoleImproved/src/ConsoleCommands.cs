@@ -112,23 +112,23 @@ namespace ConsoleImproved
 
 				Type cmpType = _getComponentType(componentType);
 
-				if (cmpType != null && FindObjectsOfType(cmpType) is Component[] cmps)
+				if (cmpType == null || FindObjectsOfType(cmpType) is not Component[] cmps)
+					return;
+
+				StartCoroutine(_dumpObjects());
+
+				IEnumerator _dumpObjects()
 				{
-					StartCoroutine(_dumpObjects());
+					$"Objects to dump: {cmps.Length}".onScreen();
 
-					IEnumerator _dumpObjects()
+					int index = 0;
+					foreach (var cmp in cmps)
 					{
-						$"Objects to dump: {cmps.Length}".onScreen();
-
-						int index = 0;
-						foreach (var cmp in cmps)
-						{
-							cmp.gameObject.dump(cmp.gameObject.name + "_" + index++, dumpParent);
-							yield return null;
-						}
-
-						"Dump complete".onScreen();
+						cmp.gameObject.dump(cmp.gameObject.name + "_" + index++, dumpParent);
+						yield return null;
 					}
+
+					"Dump complete".onScreen();
 				}
 			}
 

@@ -5,7 +5,10 @@ using System.Collections.Generic;
 
 using Common;
 using Common.Configuration;
+
+#if GAME_BZ
 using Common.Configuration.Actions;
+#endif
 
 namespace WarningsDisabler
 {

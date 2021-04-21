@@ -2,6 +2,9 @@
 using System.IO;
 using System.Collections.Generic;
 
+// fix for C# 9.0 (pre-5.0 .NET) for init-only properties
+namespace System.Runtime.CompilerServices { static class IsExternalInit {} }
+
 namespace Common
 {
 	static class MiscExtensions

@@ -88,25 +88,18 @@ namespace Common.Utils
 					mObject = aDictEnum;
 					mArray = default;
 				}
-				public KeyValuePair<string, Node> Current
+				public KeyValuePair<string, Node> Current => type switch
 				{
-					get
-					{
-						if (type == Type.Array)
-							return new KeyValuePair<string, Node>(string.Empty, mArray.Current);
-						else if (type == Type.Object)
-							return mObject.Current;
-						return new KeyValuePair<string, Node>(string.Empty, null);
-					}
-				}
-				public bool MoveNext()
+					Type.Array => new KeyValuePair<string, Node>(string.Empty, mArray.Current),
+					Type.Object => mObject.Current,
+					_ => new KeyValuePair<string, Node>(string.Empty, null)
+				};
+				public bool MoveNext() => type switch
 				{
-					if (type == Type.Array)
-						return mArray.MoveNext();
-					else if (type == Type.Object)
-						return mObject.MoveNext();
-					return false;
-				}
+					Type.Array => mArray.MoveNext(),
+					Type.Object => mObject.MoveNext(),
+					_ => false
+				};
 			}
 
 			public struct ValueEnumerator
@@ -114,7 +107,7 @@ namespace Common.Utils
 				Enumerator mEnumerator;
 				public ValueEnumerator(List<Node>.Enumerator aArrayEnum): this(new Enumerator(aArrayEnum)) {}
 				public ValueEnumerator(Dictionary<string, Node>.Enumerator aDictEnum): this(new Enumerator(aDictEnum)) {}
-				public ValueEnumerator(Enumerator aEnumerator) { mEnumerator = aEnumerator; }
+				public ValueEnumerator(Enumerator aEnumerator) => mEnumerator = aEnumerator;
 
 				public Node Current => mEnumerator.Current.Value;
 				public bool MoveNext() => mEnumerator.MoveNext();
@@ -126,7 +119,7 @@ namespace Common.Utils
 				Enumerator mEnumerator;
 				public KeyEnumerator(List<Node>.Enumerator aArrayEnum): this(new Enumerator(aArrayEnum)) {}
 				public KeyEnumerator(Dictionary<string, Node>.Enumerator aDictEnum): this(new Enumerator(aDictEnum)) {}
-				public KeyEnumerator(Enumerator aEnumerator) { mEnumerator = aEnumerator; }
+				public KeyEnumerator(Enumerator aEnumerator) => mEnumerator = aEnumerator;
 
 				public string Current => mEnumerator.Current.Key;
 				public bool MoveNext() => mEnumerator.MoveNext();
@@ -259,8 +252,8 @@ namespace Common.Utils
 
 			public virtual bool AsBool
 			{
-				get => (bool.TryParse(Value, out bool val))? val: !string.IsNullOrEmpty(Value);
-				set => Value = (value)? "true": "false";
+				get => bool.TryParse(Value, out bool val)? val: !string.IsNullOrEmpty(Value);
+				set => Value = value? "true": "false";
 			}
 
 			public virtual long AsLong
@@ -279,16 +272,16 @@ namespace Common.Utils
 			public static implicit operator string(Node d) => d?.Value;
 
 			public static implicit operator Node(double n) => new Number(n);
-			public static implicit operator double(Node d) => (d == null)? 0D: d.AsDouble;
+			public static implicit operator double(Node d) => d == null? 0D: d.AsDouble;
 
 			public static implicit operator Node(float n) => new Number(n);
-			public static implicit operator float(Node d) => (d == null)? 0F: d.AsFloat;
+			public static implicit operator float(Node d) => d == null? 0F: d.AsFloat;
 
 			public static implicit operator Node(int n) => new Number(n);
-			public static implicit operator int(Node d) => (d == null)? 0: d.AsInt;
+			public static implicit operator int(Node d) => d == null? 0: d.AsInt;
 
 			public static implicit operator Node(long n) => longAsString? new String(n.ToString()): (Node)new Number(n);
-			public static implicit operator long(Node d) => (d == null)? 0L: d.AsLong;
+			public static implicit operator long(Node d) => d == null? 0L: d.AsLong;
 
 			public static implicit operator Node(bool b) => new Bool(b);
 			public static implicit operator bool(Node d) => d != null && d.AsBool;
@@ -357,10 +350,7 @@ namespace Common.Utils
 				if (tmp == "null")
 					return Null.CreateOrGet();
 
-				if (double.TryParse(token, NumberStyles.Float, CultureInfo.InvariantCulture, out double val))
-					return val;
-				else
-					return token;
+				return double.TryParse(token, NumberStyles.Float, CultureInfo.InvariantCulture, out double val)? val: token;
 			}
 
 			public static Node Parse(string aJSON)

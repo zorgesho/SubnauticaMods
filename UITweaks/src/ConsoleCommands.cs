@@ -33,10 +33,9 @@ namespace UITweaks
 		{
 			var tooltip = uGUI_Tooltip.main.gameObject;
 
-			var text = Instantiate(tooltip.getChild("Text"), tooltip.transform);
-			text.name = "TextBottom";
-
+			var text = tooltip.createChild(tooltip.getChild("Text"), "TextBottom");
 			text.GetComponent<Text>().text = "Test text";
+
 			tooltip.dump("tooltip");
 		}
 

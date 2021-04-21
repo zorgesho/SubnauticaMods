@@ -40,8 +40,7 @@ namespace DebrisRecycling
 		{
 			if (!go.GetComponent<DebrisProcessed>())
 			{
-				GameObject model = UnityEngine.Object.Instantiate(go);
-				model.name = "model";
+				GameObject model = go.createChild(go, "model", localPos: Vector3.zero, localAngles: Vector3.zero);
 				model.destroyChild("Cube (13)");
 				model.destroyComponent<WorldForces>();
 				model.destroyComponent<PrefabIdentifier>();
@@ -49,10 +48,6 @@ namespace DebrisRecycling
 				model.destroyComponent<Constructable>();
 				model.destroyComponent<LargeWorldEntity>();
 				model.destroyComponent<ResourceTracker>();
-
-				model.transform.parent = go.transform;
-				model.transform.localPosition = Vector3.zero;
-				model.transform.localEulerAngles = Vector3.zero;
 
 				go.destroyComponent<MeshFilter>();
 				go.destroyComponent<MeshRenderer>();
@@ -86,16 +81,13 @@ namespace DebrisRecycling
 		{
 			if (!go.GetComponent<DebrisProcessed>())
 			{
-				var modelRoot = new GameObject("modelroot");
-				modelRoot.transform.parent = go.transform;
+				var modelRoot = go.createChild("modelroot");
 
-				go.getChild("mirror").transform.parent = modelRoot.transform;
-				go.getChild("paper_01").transform.parent = modelRoot.transform;
-				go.getChild("paper_02").transform.parent = modelRoot.transform;
-				go.getChild("girl_photo").transform.parent = modelRoot.transform;
-				go.getChild("submarine_locker_05").transform.parent = modelRoot.transform;
-				go.getChild("submarine_locker_03_door_01/Cube (1)").transform.parent = go.getChild("collision").transform;
-				go.getChild("submarine_locker_03_door_01").transform.parent = modelRoot.transform;
+				foreach (var child in new[] { "mirror", "paper_01", "paper_02", "girl_photo", "submarine_locker_05" })
+					go.getChild(child).setParent(modelRoot);
+
+				go.getChild("submarine_locker_03_door_01/Cube (1)").setParent(go.getChild("collision"));
+				go.getChild("submarine_locker_03_door_01").setParent(modelRoot);
 			}
 
 			go.GetComponent<Constructable>().model = go.getChild("modelroot");

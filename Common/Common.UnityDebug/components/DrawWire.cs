@@ -23,8 +23,7 @@ namespace Common.UnityDebug
 
 		protected virtual void Awake()
 		{
-			linesParent = new GameObject("wire");
-			linesParent.setParent(gameObject);
+			linesParent = gameObject.createChild("wire");
 		}
 
 		void OnDestroy()

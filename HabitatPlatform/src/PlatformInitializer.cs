@@ -60,7 +60,7 @@ namespace HabitatPlatform
 			LargeWorld.main?.streamer.cellManager.RegisterEntity(baseObject);
 
 			// adding Base to platform
-			baseObject.setParent(gameObject, position: firstFoundationPos);
+			baseObject.setParent(gameObject, localPos: firstFoundationPos);
 
 			// creating ghost foundation
 			task = PrefabUtils.getPrefabCopyAsync(TechType.BaseFoundation, PrefabUtils.CopyOptions.None);
@@ -94,9 +94,7 @@ namespace HabitatPlatform
 
 		void addFloor()
 		{																										"PlatformInitializer: adding floor".logDbg();
-			var floor = Instantiate(AssetsHelper.loadPrefab("floor"));
-			floor.setParent(gameObject, position: floorPos, scale: floorScale);
-
+			var floor = gameObject.createChild(AssetsHelper.loadPrefab("floor"), localPos: floorPos, localScale: floorScale);
 			var rend = floor.GetComponent<Renderer>();
 
 			Material floorMaterial = rend.material;

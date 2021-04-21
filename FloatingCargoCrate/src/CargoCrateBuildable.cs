@@ -35,8 +35,7 @@ namespace FloatingCargoCrate
 			var prefab = prefabs[0];
 			var model = prefab.getChild("3rd_person_model");
 
-			var modelCargo = Object.Instantiate(prefabs[1].getChild(Main.config.crateModelName), model.transform);
-			modelCargo.transform.localScale *= 2.1f;
+			var modelCargo = model.createChild(prefabs[1].getChild(Main.config.crateModelName), localScale: Vector3.one * 2.1f);
 
 			model.GetComponentInChildren<Animator>().enabled = false;
 
@@ -65,8 +64,7 @@ namespace FloatingCargoCrate
 
 			var storagePillow = model.getChild("floating_storage_cube_tp");
 			storagePillow.destroyChildren("Floating_storage_container_geo", "Floating_storage_lid_geo");
-			storagePillow.transform.localPosition = new Vector3(0f, 1.155f, 0.18f);
-			storagePillow.transform.localScale = new Vector3(3.4f, 7.0f, 8.1f);
+			storagePillow.setTransform(localPos: new Vector3(0f, 1.155f, 0.18f), localScale: new Vector3(3.4f, 7.0f, 8.1f));
 
 			var collider = prefab.getChild("StorageContainer").GetComponent<BoxCollider>();
 			collider.center = new Vector3(0.013f, 1.23f, 0.204f);

@@ -21,7 +21,8 @@ namespace DebrisRecycling
 				return true;
 
 			HandReticle hand = HandReticle.main;
-			hand.SetInteractText(L10n.str("ids_salvageableDebris"), __instance.deconstructText, false, false, HandReticle.Hand.None);
+			string text = L10n.str("ids_salvageableDebris") + (Mod.Consts.isDevBuild? $" ({constructable.gameObject.name})": "");
+			hand.SetInteractText(text, __instance.deconstructText, false, false, HandReticle.Hand.None);
 
 			if (!constructable.constructed)
 			{

@@ -50,8 +50,7 @@ namespace UITweaks
 			tooltip.gameObject.AddComponent<BulkCraftingInitedTag>();
 
 			var textGO = tooltip.gameObject.getChild(Mod.Consts.isBranchStable? "Text": "Container/Text");
-			var textGOBottom = UnityEngine.Object.Instantiate(textGO, textGO.transform.parent);
-			textGOBottom.name = "BottomText";
+			var textGOBottom = textGO.getParent().createChild(textGO, "BottomText");
 
 			var sizeFitter = textGOBottom.AddComponent<ContentSizeFitter>();
 			sizeFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;

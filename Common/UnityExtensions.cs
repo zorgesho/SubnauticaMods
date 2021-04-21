@@ -19,23 +19,54 @@ namespace Common
 		public static C ensureComponent<C>(this GameObject go) where C: Component => go.ensureComponent(typeof(C)) as C;
 		public static Component ensureComponent(this GameObject go, Type type) => go.GetComponent(type) ?? go.AddComponent(type);
 
-		public static void setParent(this GameObject go, GameObject parent, Vector3? position = null, Quaternion? rotation = null, Vector3? scale = null)
-		{
-			go.transform.SetParent(parent.transform, false);
+		public static GameObject getParent(this GameObject go) => go.transform.parent?.gameObject;
+		public static GameObject getChild(this GameObject go, string name) => go.transform.Find(name)?.gameObject;
 
-			if (position != null) go.transform.localPosition = (Vector3)position;
-			if (rotation != null) go.transform.localRotation = (Quaternion)rotation;
-			if (scale != null)	  go.transform.localScale	 = (Vector3)scale;
+		public static void setTransform(this GameObject go, Vector3? pos = null, Vector3? localPos = null, Vector3? localAngles = null, Vector3? localScale = null)
+		{
+			var tr = go.transform;
+
+			if (pos != null)			tr.position = (Vector3)pos;
+			if (localPos != null)		tr.localPosition = (Vector3)localPos;
+			if (localAngles != null)	tr.localEulerAngles = (Vector3)localAngles;
+			if (localScale != null)		tr.localScale = (Vector3)localScale;
 		}
 
-		public static GameObject getChild(this GameObject go, string name) => go.transform.Find(name)?.gameObject;
+		public static void setParent(this GameObject go, GameObject parent, Vector3? localPos = null, Vector3? localAngles = null)
+		{
+			go.transform.SetParent(parent.transform, false);
+			go.setTransform(localPos: localPos, localAngles: localAngles);
+		}
+
+		public static GameObject createChild(this GameObject go, string name, Vector3? localPos = null)
+		{
+			GameObject child = new(name);
+			child.setParent(go);
+
+			child.setTransform(localPos: localPos);
+
+			return child;
+		}
+
+		public static GameObject createChild(this GameObject go, GameObject prefab, string name = null,
+											 Vector3? localPos = null, Vector3? localAngles = null, Vector3? localScale = null)
+		{
+			var child = Object.Instantiate(prefab, go.transform);
+
+			if (name != null)
+				child.name = name;
+
+			child.setTransform(localPos: localPos, localAngles: localAngles, localScale: localScale);
+
+			return child;
+		}
 
 		// for use with inactive game objects
 		public static C getComponentInParent<C>(this GameObject go) where C: Component
 		{
 			return _get<C>(go);
 
-			static _C _get<_C>(GameObject _go) where _C: Component => !_go? null: (_go.GetComponent<_C>() ?? _get<_C>(_go.transform.parent?.gameObject));
+			static _C _get<_C>(GameObject _go) where _C: Component => !_go? null: (_go.GetComponent<_C>() ?? _get<_C>(_go.getParent()));
 		}
 
 

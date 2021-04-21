@@ -75,8 +75,7 @@ namespace CustomHotkeys
 #if GAME_SN
 			bind1.onValueChanged.RemoveAllListeners();
 #endif
-			GameObject bind2GO = UnityEngine.Object.Instantiate(bind1.gameObject);
-			bind2GO.transform.SetParent(bindings.gameObject.transform, false);
+			GameObject bind2GO = bindings.gameObject.createChild(bind1.gameObject);
 			bind2 = bindings.bindings[1] = bind2GO.GetComponent<uGUI_Binding>();
 #if GAME_BZ
 			bind1.action = bind2.action = GameInput.Button.None;

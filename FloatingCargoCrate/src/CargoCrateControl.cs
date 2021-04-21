@@ -207,11 +207,7 @@ namespace FloatingCargoCrate
 
 			GameObject beaconObject = beacon.gameObject;
 			if (attaching)
-			{
-				beaconObject.transform.parent = gameObject.transform;
-				beaconObject.transform.localPosition = new Vector3(-0.36f, 1.66f, -1.3f);
-				beaconObject.transform.localEulerAngles = new Vector3(0f, 180f, 15f);
-			}
+				beaconObject.setParent(gameObject, localPos: new Vector3(-0.36f, 1.66f, -1.3f), localAngles: new Vector3(0f, 180f, 15f));
 
 			beaconObject.GetComponent<WorldForces>().enabled = !attaching;
 			beaconObject.GetComponent<Stabilizer>().enabled = !attaching;

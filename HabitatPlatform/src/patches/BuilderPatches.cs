@@ -34,7 +34,7 @@ namespace HabitatPlatform
 		static void checkPlatform(GameObject gameObject)
 		{
 			if (Builder.placementTarget?.GetComponentInParent<HabitatPlatform.Tag>() is HabitatPlatform.Tag tag)
-				gameObject.transform.parent = tag.GetComponentInChildren<Base>().gameObject.transform;
+				gameObject.setParent(tag.GetComponentInChildren<Base>().gameObject);
 		}
 
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins, ILGenerator ilg)

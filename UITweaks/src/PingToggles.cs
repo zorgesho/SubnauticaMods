@@ -102,7 +102,7 @@ namespace UITweaks
 				var pings = _createLayout("PingButtons", groupSpacing, true);
 				pings.GetComponent<RectTransform>().pivot = new Vector2(1f, 0.5f);
 				pings.GetComponent<RectTransform>().sizeDelta = btnPrefabSize;
-				pings.setParent(content, position: new Vector3(-btnPrefabPos.x + btnPrefabSize.x / 2f, btnPrefabPos.y, 0f));
+				pings.setParent(content, localPos: new Vector3(-btnPrefabPos.x + btnPrefabSize.x / 2f, btnPrefabPos.y, 0f));
 
 				pingStates = PingStates.create();
 
@@ -136,7 +136,7 @@ namespace UITweaks
 				{
 					Debug.assert(pingStates != null); // buttons should be added after loading pingStates
 
-					var btn = Instantiate(buttonPrefab, parent.transform);
+					var btn = parent.createChild(buttonPrefab);
 
 					Toggle.ToggleEvent toggleEvent = btn.GetComponent<Toggle>().onValueChanged = new();
 					toggleEvent.AddListener(val => toggleButton(btn, color, pingType, val));

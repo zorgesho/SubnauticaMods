@@ -11,8 +11,7 @@ namespace Common.UnityDebug
 
 		public static LineRenderer addLine(GameObject parent, Color color)
 		{
-			var lineGO = new GameObject("line");
-			lineGO.setParent(parent);
+			var lineGO = parent.createChild("line");
 
 			var lr = lineGO.AddComponent<LineRenderer>();
 			lr.material = lineMaterial;

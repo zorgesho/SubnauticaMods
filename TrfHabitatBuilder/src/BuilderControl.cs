@@ -79,10 +79,10 @@ namespace TrfHabitatBuilder
 
 			~ConstructionBeam() => Destroy(debugSphere);
 #endif
-			public ConstructionBeam(Transform _beam, Transform _port)
+			public ConstructionBeam(Transform beam, Transform port)
 			{
-				beam = _beam;
-				port = _port;
+				this.beam = beam;
+				this.port = port;
 #if DBG_CPOINTS
 				initDebugSphere();
 #endif
@@ -90,15 +90,8 @@ namespace TrfHabitatBuilder
 
 			public ConstructionBeam(GameObject rootToAdd, GameObject beamPrefab, string beamName, Vector3 position)
 			{
-				port = new GameObject("beamPort" + beamName).transform;
-				port.parent = rootToAdd.transform;
-				port.localPosition = position;
-
-				beam = Instantiate(beamPrefab).transform;
-				beam.gameObject.name = "beam" + beamName;
-				beam.parent = port;
-				beam.localPosition = Vector3.zero;
-				beam.localEulerAngles = Vector3.zero;
+				port = rootToAdd.createChild("beamPort" + beamName, localPos: position).transform;
+				beam = port.gameObject.createChild(beamPrefab, "beam" + beamName, localAngles: Vector3.zero).transform;
 #if DBG_CPOINTS
 				initDebugSphere();
 #endif
@@ -233,7 +226,7 @@ namespace TrfHabitatBuilder
 
 		void setBeamsActive(bool state)
 		{
-			cbeams.ForEach(cbeam => cbeam.setActive(state));
+			cbeams.forEach(cbeam => cbeam.setActive(state));
 		}
 
 		void setAnimationEnabled(bool state)
@@ -255,8 +248,7 @@ namespace TrfHabitatBuilder
 			{
 				builderTool.isConstructing = isConstructing;
 
-				foreach (var cpoint in cpoints)
-					cpoint.reset(builderTool.constructable);
+				cpoints.forEach(cpoint => cpoint.reset(builderTool.constructable));
 			}
 
 			setBeamsActive(builderTool.isConstructing);
@@ -264,8 +256,7 @@ namespace TrfHabitatBuilder
 
 			if (builderTool.isConstructing)
 			{
-				foreach (var cpoint in cpoints)
-					cpoint.update(Time.deltaTime, builderTool.constructable);
+				cpoints.forEach(cpoint => cpoint.update(Time.deltaTime, builderTool.constructable));
 
 				bool isRotating = (animHash == AnimationHelper.getAnimHash(AnimationHelper.Anim.terF_use_open_panel_loop));
 				cbeams[0].setActive(isRotating);

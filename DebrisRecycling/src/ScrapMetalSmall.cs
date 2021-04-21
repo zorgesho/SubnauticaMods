@@ -47,7 +47,7 @@ namespace DebrisRecycling
 
 			int modelType = Random.value < 0.5f? 1: 2;
 			var wreckage = prefabs[1].getChild(modelType == 1? "Model/Metal_wreckage_03_11": "Model/Metal_wreckage_03_10");
-			Object.Instantiate(wreckage, prefab.getChild("model").transform, Vector3.zero, Quaternion.Euler(-90f, 0f, 0f), true);
+			prefab.getChild("model").createChild(wreckage, localPos: Vector3.zero, localAngles: new Vector3(-90f, 0f, 0f));
 
 			GameObject collision = prefab.getChild("collision");
 			collision.destroyComponent<SphereCollider>();

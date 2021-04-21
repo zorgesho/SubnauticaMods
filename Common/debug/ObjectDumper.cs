@@ -21,11 +21,8 @@ namespace Common
 
 		public static void dump(this GameObject go, string filename = null, int dumpParent = 0)
 		{
-			while (dumpParent > 0 && go.transform.parent)
-			{
-				go = go.transform.parent.gameObject;
-				dumpParent--;
-			}
+			while (dumpParent-- > 0 && go.getParent())
+				go = go.getParent();
 
 			filename ??= go.name.Replace("(Clone)", "").ToLower();
 #if DEBUG

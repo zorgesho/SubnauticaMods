@@ -71,7 +71,7 @@ namespace OxygenRefill
 			this.craftingTime = craftingTime;
 		}
 
-		protected override TechInfo getTechInfo() => new(new TechInfo.Ing(tankType));
+		protected override TechInfo getTechInfo() => new (new TechInfo.Ing(tankType));
 
 		protected override void initPrefabPool() => addPrefabToPool(tankType);
 

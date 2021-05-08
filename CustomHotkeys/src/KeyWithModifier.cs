@@ -59,7 +59,7 @@ namespace CustomHotkeys
 		public static bool isModifier(KeyCode keyCode) => _modifiers.Contains(keyCode);
 		public static ReadOnlyCollection<KeyCode> modifiers => _modifiers.ToList().AsReadOnly();
 
-		public static implicit operator KeyWithModifier(KeyCode keyCode) => new(keyCode);
+		public static implicit operator KeyWithModifier(KeyCode keyCode) => new (keyCode);
 
 		public static bool operator ==(KeyWithModifier key1, KeyWithModifier key2) => key1.key == key2.key && key1.modifier == key2.modifier;
 		public static bool operator !=(KeyWithModifier key1, KeyWithModifier key2) => !(key1 == key2);

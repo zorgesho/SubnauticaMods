@@ -7,7 +7,7 @@ namespace MiscObjects
 {
 	class CargoBoxBig: PoolCraftableObject
 	{
-		protected override TechInfo getTechInfo() => new(new TechInfo.Ing(TechType.Titanium, 4));
+		protected override TechInfo getTechInfo() => new (new TechInfo.Ing(TechType.Titanium, 4));
 
 		public override void patch()
 		{

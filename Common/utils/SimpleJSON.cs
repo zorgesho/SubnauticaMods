@@ -226,8 +226,8 @@ namespace Common.Utils
 			public abstract Enumerator GetEnumerator();
 
 			public IEnumerable<KeyValuePair<string, Node>> Linq => new LinqEnumerator(this);
-			public KeyEnumerator Keys => new(GetEnumerator());
-			public ValueEnumerator Values => new(GetEnumerator());
+			public KeyEnumerator Keys => new (GetEnumerator());
+			public ValueEnumerator Values => new (GetEnumerator());
 			#endregion common interface
 
 			#region typecasting properties
@@ -518,7 +518,7 @@ namespace Common.Utils
 
 			public override NodeType Tag => NodeType.Array;
 			public override bool IsArray => true;
-			public override Enumerator GetEnumerator() => new(mList.GetEnumerator());
+			public override Enumerator GetEnumerator() => new (mList.GetEnumerator());
 
 			public override Node this[int aIndex]
 			{
@@ -618,7 +618,7 @@ namespace Common.Utils
 			public override NodeType Tag => NodeType.Object;
 			public override bool IsObject => true;
 
-			public override Enumerator GetEnumerator() => new(mDict.GetEnumerator());
+			public override Enumerator GetEnumerator() => new (mDict.GetEnumerator());
 
 			public override Node this[string aKey]
 			{

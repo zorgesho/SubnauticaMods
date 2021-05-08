@@ -72,7 +72,7 @@ namespace Common
 			if (!File.Exists(textureFilePath))
 				return null;
 
-			Texture2D tex = new(2, 2);
+			Texture2D tex = new (2, 2);
 			return tex.LoadImage(File.ReadAllBytes(textureFilePath))? tex: null;
 		}
 	}

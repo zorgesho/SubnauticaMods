@@ -17,7 +17,7 @@ namespace MiscObjects
 			public static string ids_OpenDrawers = "Open drawers";
 		}
 
-		protected override TechInfo getTechInfo() => new(new TechInfo.Ing(TechType.Titanium, 4));
+		protected override TechInfo getTechInfo() => new (new TechInfo.Ing(TechType.Titanium, 4));
 
 		public override void patch()
 		{

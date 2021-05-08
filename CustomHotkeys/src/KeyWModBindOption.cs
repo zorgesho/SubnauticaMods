@@ -93,14 +93,14 @@ namespace CustomHotkeys
 				bind2.value = "";
 			}
 #if GAME_SN
-			UnityAction<string> callback = new(_ => onValueChange());
+			UnityAction<string> callback = new (_ => onValueChange());
 			bind1.onValueChanged.AddListener(callback);
 			bind2.onValueChanged.AddListener(callback);
 #elif GAME_BZ
 			bind1.gameObject.AddComponent<Tag>();
 			bind2.gameObject.AddComponent<Tag>();
 
-			BindCallback _getCallback(uGUI_Binding bind) => new((_, _, _, s) =>
+			BindCallback _getCallback(uGUI_Binding bind) => new ((_, _, _, s) =>
 			{
 				bind.value = s;
 				onValueChange();

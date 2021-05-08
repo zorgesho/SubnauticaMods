@@ -38,7 +38,7 @@ namespace UITweaks
 
 			const float iconScale = 0.7f;
 			const float groupSpacing = 10f;
-			static readonly Color colorDisabled = new(0.4f, 0.4f, 0.4f, 0.5f);
+			static readonly Color colorDisabled = new (0.4f, 0.4f, 0.4f, 0.5f);
 
 			bool dirty = true;
 
@@ -122,7 +122,7 @@ namespace UITweaks
 
 				static GameObject _createLayout(string name, float spacing, bool sizeControl = false)
 				{
-					GameObject layout = new(name);
+					GameObject layout = new (name);
 
 					var hlg = layout.AddComponent<HorizontalLayoutGroup>();
 					hlg.childControlHeight = hlg.childControlWidth = sizeControl;

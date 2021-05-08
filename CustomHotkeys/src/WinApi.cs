@@ -48,7 +48,7 @@ namespace CustomHotkeys
 			if (ret != S_FALSE)
 				return null;
 
-			StringBuilder sb = new((int)length);
+			StringBuilder sb = new ((int)length);
 			ret = AssocQueryString(AssocFlags.None, assocStr, extension, null, sb, ref length);
 			if (ret != S_OK)
 				return null;

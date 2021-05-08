@@ -10,10 +10,10 @@ namespace HabitatPlatform
 {
 	partial class PlatformInitializer: MonoBehaviour
 	{
-		static readonly Vector3 firstFoundationPos = new(13.7f, 1.4f, 7.5f);
+		static readonly Vector3 firstFoundationPos = new (13.7f, 1.4f, 7.5f);
 
-		static readonly Vector3 floorPos = new(0.05f, 2.863f, 0.065f);
-		static readonly Vector3 floorScale = new(42.44f, 0.1f, 34.51f);
+		static readonly Vector3 floorPos = new (0.05f, 2.863f, 0.065f);
+		static readonly Vector3 floorScale = new (42.44f, 0.1f, 34.51f);
 #if DEBUG
 		public class FloorTag: MonoBehaviour {} // for use in debug console commands
 #endif

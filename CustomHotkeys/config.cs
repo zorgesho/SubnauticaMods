@@ -104,13 +104,13 @@ namespace CustomHotkeys
 				foreach (var hotkey in hotkeys)
 				{
 					bool hidden = hotkey.hidden == true;
-					Field cfgField = new(hotkey, nameof(Hotkey.key), this, $"hotkey.{id++:D2}");
+					Field cfgField = new (hotkey, nameof(Hotkey.key), this, $"hotkey.{id++:D2}");
 					var label = !string.IsNullOrWhiteSpace(hotkey.label)? hotkey.label: hotkey.command.clampLength(30).Replace("...", "<color=silver>...</color>");
 
 					if (hidden)
 						label = $"<color=silver>{label}</color>";
 
-					KeyWModBindOption option = new(cfgField, label);
+					KeyWModBindOption option = new (cfgField, label);
 
 					var tooltip = "<color=white><b>Command: </b></color>";
 					tooltip += hotkey.command.Replace(";", "<color=orange><b>;</b></color>").Replace("|", "<color=yellow><b>|</b></color>");
@@ -154,36 +154,36 @@ namespace CustomHotkeys
 		public readonly List<Hotkey> hotkeys = new()
 		{
 #if DEBUG && !GENERATE_SAMPLE_CONFIG
-			new Hotkey { command = "autoforward", label = "Autoforward", key = KeyCode.LeftAlt },
-			new Hotkey { command = "setresolution 1280 720 false; setwindowpos 10 10 | setresolution 2560 1440", key = KeyCode.F1, label = "Toggle fullscreen" },
-			new Hotkey { command = "spawn seamoth; warpforward 10; speed 10; vehicle_enter; wait 2; speed 1; clearmessages", key = KeyCode.None, label = "Spawn seamoth" },
-			new Hotkey { command = "showmodoptions", label = "Open mod options", key = KeyCode.F3 },
-			new Hotkey { command = "pincfgvars all | pincfgvars", label = "Toggle cfgvars", key = KeyCode.F2 },
+			new() { command = "autoforward", label = "Autoforward", key = KeyCode.LeftAlt },
+			new() { command = "setresolution 1280 720 false; setwindowpos 10 10 | setresolution 2560 1440", key = KeyCode.F1, label = "Toggle fullscreen" },
+			new() { command = "spawn seamoth; warpforward 10; speed 10; vehicle_enter; wait 2; speed 1; clearmessages", key = KeyCode.None, label = "Spawn seamoth" },
+			new() { command = "showmodoptions", label = "Open mod options", key = KeyCode.F3 },
+			new() { command = "pincfgvars all | pincfgvars", label = "Toggle cfgvars", key = KeyCode.F2 },
 
-			new Hotkey { command = "freecam", label = "Free cam", key = KeyCode.F5 },
-			new Hotkey { command = "devtools_toggleframegraph", label = "Toggle frame graph", key = KeyCode.F7 },
-			new Hotkey { command = "devtools_wireframe", label = "Toggle wireframe", key = KeyCode.F8 },
-			new Hotkey { command = "game_startnew", label = "Start new game", key = KeyCode.F11 },
-			new Hotkey { command = "togglecfgvar misc.dbg.faststart.enabled", label = "Toggle Fast Start", key = KeyCode.F12 },
-			new Hotkey { command = "devtools_hidegui mask; fov 5 | fov 60; devtools_hidegui none", label = "Zoom in", key = KeyCode.V, mode = Hotkey.Mode.PressRelease },
-			new Hotkey { command = "warpforward 1", key = new KeyWithModifier(KeyCode.W, KeyCode.LeftAlt), mode = Hotkey.Mode.Hold, label = "Warp forward" },
+			new() { command = "freecam", label = "Free cam", key = KeyCode.F5 },
+			new() { command = "devtools_toggleframegraph", label = "Toggle frame graph", key = KeyCode.F7 },
+			new() { command = "devtools_wireframe", label = "Toggle wireframe", key = KeyCode.F8 },
+			new() { command = "game_startnew", label = "Start new game", key = KeyCode.F11 },
+			new() { command = "togglecfgvar misc.dbg.faststart.enabled", label = "Toggle Fast Start", key = KeyCode.F12 },
+			new() { command = "devtools_hidegui mask; fov 5 | fov 60; devtools_hidegui none", label = "Zoom in", key = KeyCode.V, mode = Hotkey.Mode.PressRelease },
+			new() { command = "warpforward 1", key = new KeyWithModifier(KeyCode.W, KeyCode.LeftAlt), mode = Hotkey.Mode.Hold, label = "Warp forward" },
 #else
-			new Hotkey { command = "autoforward", label = "Autoforward", key = KeyCode.LeftAlt },
-			new Hotkey { command = "useitem firstaidkit", label = "Use medkit", key = KeyCode.H },
-			new Hotkey { command = "vehicle_enter", label = "Enter nearby vehicle", key = KeyCode.E },
-			new Hotkey { command = "showmodoptions", label = "Open mod options", key = new KeyWithModifier(KeyCode.O, KeyCode.RightAlt) },
+			new() { command = "autoforward", label = "Autoforward", key = KeyCode.LeftAlt },
+			new() { command = "useitem firstaidkit", label = "Use medkit", key = KeyCode.H },
+			new() { command = "vehicle_enter", label = "Enter nearby vehicle", key = KeyCode.E },
+			new() { command = "showmodoptions", label = "Open mod options", key = new KeyWithModifier(KeyCode.O, KeyCode.RightAlt) },
 #endif
 
 #if GENERATE_SAMPLE_CONFIG
-			new Hotkey { command = "setresolution 1280 720 false; setwindowpos 10 10 | setresolution 2560 1440", key = KeyCode.F2, label = "Toggle fullscreen" },
-			new Hotkey { command = "bindslot 0 flashlight; equipslot 0", key = KeyCode.None, label = "Equip flashlight" },
-			new Hotkey { command = "bindslot 1 propulsioncannon; equipslot 1 | bindslot 1 repulsioncannon; equipslot 1", key = KeyCode.None, label = "Switch cannons" },
-			new Hotkey { command = "bindslot 0 seaglide; equipslot 0; autoforward true | bindslot 0 flashlight; equipslot 0; autoforward false", key = KeyCode.LeftControl, label = "Toggle seaglide" },
-			new Hotkey { command = "useitem filteredwater disinfectedwater bigfilteredwater stillsuitwater", key = KeyCode.None, label = "Drink water" },
-			new Hotkey { command = "lastcommand", key = KeyCode.L, label = "Run last console command" },
-			new Hotkey { command = "warpforward 1", key = KeyCode.UpArrow, mode = Hotkey.Mode.Hold, label = "Warp forward" },
-			new Hotkey { command = "spawn seamoth; warpforward 10; speed 10; vehicle_enter; wait 2; speed 1; clearmessages", key = KeyCode.None, label = "Spawn seamoth" },
-			new Hotkey { command = "devtools_hidegui mask; fov 5 | fov 60; devtools_hidegui none", key = KeyCode.V, mode = Hotkey.Mode.PressRelease, label = "Zoom in" },
+			new() { command = "setresolution 1280 720 false; setwindowpos 10 10 | setresolution 2560 1440", key = KeyCode.F2, label = "Toggle fullscreen" },
+			new() { command = "bindslot 0 flashlight; equipslot 0", key = KeyCode.None, label = "Equip flashlight" },
+			new() { command = "bindslot 1 propulsioncannon; equipslot 1 | bindslot 1 repulsioncannon; equipslot 1", key = KeyCode.None, label = "Switch cannons" },
+			new() { command = "bindslot 0 seaglide; equipslot 0; autoforward true | bindslot 0 flashlight; equipslot 0; autoforward false", key = KeyCode.LeftControl, label = "Toggle seaglide" },
+			new() { command = "useitem filteredwater disinfectedwater bigfilteredwater stillsuitwater", key = KeyCode.None, label = "Drink water" },
+			new() { command = "lastcommand", key = KeyCode.L, label = "Run last console command" },
+			new() { command = "warpforward 1", key = KeyCode.UpArrow, mode = Hotkey.Mode.Hold, label = "Warp forward" },
+			new() { command = "spawn seamoth; warpforward 10; speed 10; vehicle_enter; wait 2; speed 1; clearmessages", key = KeyCode.None, label = "Spawn seamoth" },
+			new() { command = "devtools_hidegui mask; fov 5 | fov 60; devtools_hidegui none", key = KeyCode.V, mode = Hotkey.Mode.PressRelease, label = "Zoom in" },
 #endif
 		};
 	}

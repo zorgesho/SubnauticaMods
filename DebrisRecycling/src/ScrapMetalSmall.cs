@@ -82,7 +82,7 @@ namespace DebrisRecycling
 
 		protected override TechInfo getTechInfo()
 		{
-			TechInfo techInfo = new(new TechInfo.Ing(sourceTech, sourceCount));
+			TechInfo techInfo = new (new TechInfo.Ing(sourceTech, sourceCount));
 			techInfo.linkedItems.add(TechType.Titanium, resultCount);
 
 			return techInfo;

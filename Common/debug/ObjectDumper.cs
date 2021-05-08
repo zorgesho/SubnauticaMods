@@ -36,7 +36,7 @@ namespace Common
 		static class ObjectDumper
 		{
 			static readonly StringBuilder output = new();
-			static readonly Regex sanitizer = new("[\\r\\n\\t\0]", RegexOptions.Compiled);
+			static readonly Regex sanitizer = new ("[\\r\\n\\t\0]", RegexOptions.Compiled);
 
 			static readonly Type[] dumpTypes = // dump these non-Component types too
 			{

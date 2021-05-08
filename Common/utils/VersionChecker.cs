@@ -88,7 +88,7 @@ namespace Common.Utils
 			{
 				yield return new WaitForSeconds(checkDelaySecs + UnityEngine.Random.Range(0f, checkDelayRangeSecs));
 
-				Thread thread = new(checkVersion);
+				Thread thread = new (checkVersion);
 				thread.Start();
 
 				yield return new WaitWhile(() => thread.IsAlive);
@@ -110,7 +110,7 @@ namespace Common.Utils
 					using WebClient client = new();
 
 					var manifest = SimpleJSON.Parse(client.DownloadString(versionURL));
-					Version version = new(manifest["Version"]);											$"VersionChecker: latest version retrieved: {version}".logDbg();
+					Version version = new (manifest["Version"]);											$"VersionChecker: latest version retrieved: {version}".logDbg();
 
 					File.WriteAllText(versionFilePath, version.ToString()); // using Version to make sure it's valid version string
 				}

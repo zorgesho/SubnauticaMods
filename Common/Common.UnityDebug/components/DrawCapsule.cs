@@ -30,8 +30,8 @@ namespace Common.UnityDebug
 		{
 			float length = Mathf.Max(0f, height / 2 - radius); // distance between the centers of the hemispheres
 
-			Vector3 posHemi = new( length, 0f, 0f);
-			Vector3 negHemi = new(-length, 0f, 0f);
+			Vector3 posHemi = new ( length, 0f, 0f);
+			Vector3 negHemi = new (-length, 0f, 0f);
 
 			void _drawCircle(int index, Vector3 pos, int angle)
 			{

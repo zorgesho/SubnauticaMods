@@ -89,9 +89,9 @@ namespace WarningsDisabler
 				if (messages.messages.Count == 0)
 					return;
 
-				Field cfgField = new(messages, nameof(Messages.enabled));
+				Field cfgField = new (messages, nameof(Messages.enabled));
 
-				Options.ToggleOption option = new(cfgField, label);
+				Options.ToggleOption option = new (cfgField, label);
 				option.addHandler(new Options.Components.Tooltip.Add(typeof(MessageListTooltip), null));
 
 				Options.add(option);

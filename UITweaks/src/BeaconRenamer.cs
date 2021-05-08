@@ -21,7 +21,7 @@ namespace UITweaks
 			// for receiving events from mouse when opened from inventory
 			input.gameObject.ensureComponent<uGUI_GraphicRaycaster>().guiCameraSpace = true;
 
-			uGUI_UserInput.UserInputCallback callback = new(label =>
+			uGUI_UserInput.UserInputCallback callback = new (label =>
 			{
 				beacon.label = label;
 				beacon.beaconLabel.SetLabel(label);

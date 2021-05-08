@@ -121,10 +121,10 @@ namespace Common.Reflection
 			return memberInfo.Name;
 		}
 
-		public static EventWrapper wrap(this EventInfo evnt, object obj = null) => new(evnt, obj);
-		public static MethodWrapper wrap(this MethodInfo method) => new(method);
-		public static MethodWrapper<D> wrap<D>(this MethodInfo method, object obj = null) where D: Delegate => new(method, obj);
-		public static PropertyWrapper wrap(this PropertyInfo property) => new(property);
+		public static EventWrapper wrap(this EventInfo evnt, object obj = null) => new (evnt, obj);
+		public static MethodWrapper wrap(this MethodInfo method) => new (method);
+		public static MethodWrapper<D> wrap<D>(this MethodInfo method, object obj = null) where D: Delegate => new (method, obj);
+		public static PropertyWrapper wrap(this PropertyInfo property) => new (property);
 
 
 		public static A getAttr<A>(this MemberInfo memberInfo, bool includeDeclaringTypes = false) where A: Attribute

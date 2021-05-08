@@ -40,7 +40,7 @@ namespace Common
 
 		public static GameObject createChild(this GameObject go, string name, Vector3? localPos = null)
 		{
-			GameObject child = new(name);
+			GameObject child = new (name);
 			child.setParent(go);
 
 			child.setTransform(localPos: localPos);
@@ -131,7 +131,7 @@ namespace Common
 	{
 		public static GameObject createPersistentGameObject(string name)
 		{
-			GameObject obj = new(name, typeof(SceneCleanerPreserve));
+			GameObject obj = new (name, typeof(SceneCleanerPreserve));
 			Object.DontDestroyOnLoad(obj);
 			return obj;
 		}

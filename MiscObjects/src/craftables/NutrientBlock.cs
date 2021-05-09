@@ -10,14 +10,14 @@ namespace MiscObjects
 		protected override TechInfo getTechInfo() => new
 		(
 #if GAME_SN
-			new TechInfo.Ing(TechType.CuredPeeper),
-			new TechInfo.Ing(TechType.CuredReginald),
+			new (TechType.CuredPeeper),
+			new (TechType.CuredReginald),
 #elif GAME_BZ
-			new TechInfo.Ing(TechType.CuredArcticPeeper, 2), // TODO: ingredients?
-			new TechInfo.Ing(TechType.SmallMaroonPlantFruit),
+			new (TechType.CuredArcticPeeper, 2), // TODO: ingredients?
+			new (TechType.SmallMaroonPlantFruit),
 #endif
-			new TechInfo.Ing(TechType.PurpleVegetable, 2),
-			new TechInfo.Ing(TechType.CreepvinePiece, 2)
+			new (TechType.PurpleVegetable, 2),
+			new (TechType.CreepvinePiece, 2)
 		);
 
 		protected override void initPrefabPool() => addPrefabToPool(TechType.NutrientBlock);

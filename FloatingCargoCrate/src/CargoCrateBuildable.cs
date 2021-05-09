@@ -11,9 +11,9 @@ namespace FloatingCargoCrate
 
 		protected override TechInfo getTechInfo() => new
 		(
-			new TechInfo.Ing(TechType.Titanium, Main.config.cheapBlueprint? 3: 6),
-			new TechInfo.Ing(TechType.Silicone, Main.config.cheapBlueprint? 1: 2),
-			new TechInfo.Ing(TechType.AirBladder, Main.config.cheapBlueprint? 1: 2)
+			new (TechType.Titanium, Main.config.cheapBlueprint? 3: 6),
+			new (TechType.Silicone, Main.config.cheapBlueprint? 1: 2),
+			new (TechType.AirBladder, Main.config.cheapBlueprint? 1: 2)
 		);
 
 		public override void patch()

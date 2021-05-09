@@ -10,8 +10,8 @@ namespace MiscObjects
 	{
 		protected override TechInfo getTechInfo() => new
 		(
-			new TechInfo.Ing(TechType.FiberMesh, 2),
-			new TechInfo.Ing(TechType.Silicone)
+			new (TechType.FiberMesh, 2),
+			new (TechType.Silicone)
 		);
 
 		protected override void initPrefabPool() => addPrefabToPool("WorldEntities/Doodads/Debris/Wrecks/Decoration/docking_luggage_01_bag4");

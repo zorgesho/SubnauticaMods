@@ -8,8 +8,8 @@ namespace MiscObjects
 	{
 		protected override TechInfo getTechInfo() => new
 		(
-			new TechInfo.Ing(TechType.Knife),
-			new TechInfo.Ing(TechType.Diamond, 2)
+			new (TechType.Knife),
+			new (TechType.Diamond, 2)
 		);
 
 		protected override void initPrefabPool() => addPrefabToPool("WorldEntities/Tools/DiamondBlade");

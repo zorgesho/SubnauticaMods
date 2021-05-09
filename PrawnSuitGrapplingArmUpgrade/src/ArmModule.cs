@@ -11,11 +11,11 @@ namespace PrawnSuitGrapplingArmUpgrade
 
 		protected override TechInfo getTechInfo() => new
 		(
-			new TechInfo.Ing(TechType.ExosuitGrapplingArmModule),
-			new TechInfo.Ing(TechType.Polyaniline, 2),
-			new TechInfo.Ing(TechType.Lithium, 2),
-			new TechInfo.Ing(TechType.AramidFibers),
-			new TechInfo.Ing(TechType.AluminumOxide)
+			new (TechType.ExosuitGrapplingArmModule),
+			new (TechType.Polyaniline, 2),
+			new (TechType.Lithium, 2),
+			new (TechType.AramidFibers),
+			new (TechType.AluminumOxide)
 		);
 
 		protected override void initPrefabPool() => addPrefabToPool(TechType.ExosuitGrapplingArmModule);

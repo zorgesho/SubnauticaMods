@@ -14,9 +14,9 @@ namespace OxygenRefill
 
 		protected override TechInfo getTechInfo() => new
 		(
-			new TechInfo.Ing(TechType.Titanium, 2),
-			new TechInfo.Ing(TechType.CopperWire, 2),
-			new TechInfo.Ing(TechType.AdvancedWiringKit, 1)
+			new (TechType.Titanium, 2),
+			new (TechType.CopperWire, 2),
+			new (TechType.AdvancedWiringKit, 1)
 		);
 
 		public override void patch()

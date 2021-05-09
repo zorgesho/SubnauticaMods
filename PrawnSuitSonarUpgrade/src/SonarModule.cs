@@ -10,12 +10,12 @@ namespace PrawnSuitSonarUpgrade
 		protected override TechInfo getTechInfo() => new
 		(
 #if GAME_SN
-			new TechInfo.Ing(TechType.SeamothSonarModule),
-			new TechInfo.Ing(TechType.WiringKit),
-			new TechInfo.Ing(TechType.ComputerChip)
+			new (TechType.SeamothSonarModule),
+			new (TechType.WiringKit),
+			new (TechType.ComputerChip)
 #elif GAME_BZ
-			new TechInfo.Ing(TechType.CopperWire),
-			new TechInfo.Ing(TechType.Magnetite, 2)
+			new (TechType.CopperWire),
+			new (TechType.Magnetite, 2)
 #endif
 		);
 

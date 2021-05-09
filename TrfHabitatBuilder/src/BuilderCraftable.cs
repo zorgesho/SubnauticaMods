@@ -41,9 +41,9 @@ namespace TrfHabitatBuilder
 
 		protected override TechInfo getTechInfo() => new
 		(
-			new TechInfo.Ing(TechType.ComputerChip),
-			new TechInfo.Ing(TechType.WiringKit),
-			new TechInfo.Ing(TechType.Battery)
+			new (TechType.ComputerChip),
+			new (TechType.WiringKit),
+			new (TechType.Battery)
 		);
 
 		public override void patch()

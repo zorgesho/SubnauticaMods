@@ -8,10 +8,10 @@ namespace PrawnSuitJetUpgrade
 
 		protected override TechInfo getTechInfo() => new
 		(
-			new TechInfo.Ing(TechType.AdvancedWiringKit),
-			new TechInfo.Ing(TechType.Sulphur, 3),
-			new TechInfo.Ing(TechType.Aerogel, 2),
-			new TechInfo.Ing(TechType.Polyaniline)
+			new (TechType.AdvancedWiringKit),
+			new (TechType.Sulphur, 3),
+			new (TechType.Aerogel, 2),
+			new (TechType.Polyaniline)
 		);
 
 		protected override void initPrefabPool() => addPrefabToPool(TechType.ExosuitJetUpgradeModule);

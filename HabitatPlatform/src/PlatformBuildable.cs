@@ -17,17 +17,17 @@ namespace HabitatPlatform
 		const float dx = 0.024f, dy = 0.030f;
 		public static readonly Vector3[] engineOffsets =
 		{
-			new Vector3( dx, -dy, 0f),
-			new Vector3( dx,  dy, 0f),
-			new Vector3(-dx,  dy, 0f),
-			new Vector3(-dx, -dy, 0f)
+			new ( dx, -dy, 0f),
+			new ( dx,  dy, 0f),
+			new (-dx,  dy, 0f),
+			new (-dx, -dy, 0f)
 		};
 
 		protected override TechInfo getTechInfo() => new
 		(
-			new TechInfo.Ing(TechType.TitaniumIngot, 2),
-			new TechInfo.Ing(TechType.ComputerChip),
-			new TechInfo.Ing(TechType.Lead, 4)
+			new (TechType.TitaniumIngot, 2),
+			new (TechType.ComputerChip),
+			new (TechType.Lead, 4)
 		);
 
 		public override void patch()

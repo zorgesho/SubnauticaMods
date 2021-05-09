@@ -27,11 +27,11 @@ namespace GravTrapImproved
 
 		protected override TechInfo getTechInfo() => new
 		(
-			new TechInfo.Ing(TechType.Gravsphere),
-			new TechInfo.Ing(TechType.Titanium, 2),
-			new TechInfo.Ing(TechType.PowerCell),
-			new TechInfo.Ing(TechType.Aerogel),
-			new TechInfo.Ing(TechType.AdvancedWiringKit, 2)
+			new (TechType.Gravsphere),
+			new (TechType.Titanium, 2),
+			new (TechType.PowerCell),
+			new (TechType.Aerogel),
+			new (TechType.AdvancedWiringKit, 2)
 		);
 
 		protected override void initPrefabPool() => addPrefabToPool(TechType.Gravsphere);

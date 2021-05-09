@@ -13,19 +13,9 @@ namespace Common.Crafting
 	// intermediate class that used for conversion to SMLHelper's TechData (GAME_SN) or RecipeData (GAME_BZ)
 	class TechInfo
 	{
-		public class Ing
-		{
-			public readonly TechType techType;
-			public readonly int amount;
+		public record Ing(TechType techType, int amount = 1);
 
-			public Ing(TechType techType, int amount = 1)
-			{
-				this.techType = techType;
-				this.amount = amount;
-			}
-		}
-
-		public int craftAmount = 1;
+		public int craftAmount { get; init; } = 1;
 		public readonly List<Ing> ingredients = new();
 		public readonly List<TechType> linkedItems = new();
 

@@ -4,13 +4,8 @@ namespace HabitatPlatform
 {
 	class MapRoomCameraCharge: PoolCraftableObject
 	{
-		protected override TechInfo getTechInfo()
-		{
-			TechInfo techInfo = new (new TechInfo.Ing(TechType.MapRoomCamera));
-			techInfo.linkedItems.Add(TechType.MapRoomCamera);
-
-			return techInfo;
-		}
+		protected override TechInfo getTechInfo() =>
+			new (new TechInfo.Ing(TechType.MapRoomCamera)) { craftAmount = 0, linkedItems = { TechType.MapRoomCamera } };
 
 		public override void patch()
 		{

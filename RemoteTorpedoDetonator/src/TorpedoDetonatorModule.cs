@@ -8,8 +8,8 @@ namespace RemoteTorpedoDetonator
 
 		protected override TechInfo getTechInfo() => new
 		(
-			new TechInfo.Ing(TechType.AdvancedWiringKit),
-			new TechInfo.Ing(TechType.Magnetite)
+			new (TechType.AdvancedWiringKit),
+			new (TechType.Magnetite)
 		);
 
 		protected override void initPrefabPool() => addPrefabToPool(TechType.VehicleArmorPlating);

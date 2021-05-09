@@ -66,7 +66,7 @@ namespace Common
 		// can't use vanilla GetVehicle in OnPlayerModeChange after 06.11 update :(
 		public static Vehicle getVehicle(this Player player) => player?.GetComponentInParent<Vehicle>();
 
-		public static TechType getHeldToolType() => Inventory.main?.GetHeldTool()?.pickupable?.GetTechType() ?? TechType.None;
+		public static TechType getHeldToolType() => Inventory.main?.GetHeld()?.GetTechType() ?? TechType.None;
 
 		public static bool isLoadingState
 		{

@@ -166,11 +166,11 @@ namespace Common.Crafting
 	{
 		class PrefabInfo
 		{
-			public bool copy; // create prefab copy
+			public bool copy { get; init; } // create prefab copy
 
 			// get prefab either by techType or filepath
-			public TechType techType;
-			public string filepath;
+			public TechType techType { get; init; }
+			public string filepath { get; init; }
 		}
 
 		List<PrefabInfo> poolPrefabInfo;
@@ -182,7 +182,7 @@ namespace Common.Crafting
 		{
 			Debug.assert(poolPrefabInfo != null);
 
-			poolPrefabInfo.Add(new PrefabInfo() { techType = techType, copy = copy });
+			poolPrefabInfo.Add(new() { techType = techType, copy = copy });
 			return poolPrefabInfo.Count;
 		}
 
@@ -190,7 +190,7 @@ namespace Common.Crafting
 		{
 			Debug.assert(poolPrefabInfo != null);
 
-			poolPrefabInfo.Add(new PrefabInfo() { filepath = filepath, copy = copy });
+			poolPrefabInfo.Add(new() { filepath = filepath, copy = copy });
 			return poolPrefabInfo.Count;
 		}
 

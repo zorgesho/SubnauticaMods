@@ -1,6 +1,9 @@
 ﻿using System;
-using System.IO;
 using System.Diagnostics;
+
+#if DEBUG
+using System.IO;
+#endif
 
 namespace Common
 {

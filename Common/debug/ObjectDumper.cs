@@ -35,6 +35,8 @@ namespace Common
 
 		static class ObjectDumper
 		{
+			const string indentStep = "    ";
+
 			static readonly StringBuilder output = new();
 			static readonly Regex sanitizer = new ("[\\r\\n\\t\0]", RegexOptions.Compiled);
 
@@ -65,10 +67,10 @@ namespace Common
 				output.AppendLine($"{indent}gameobject: {go.name} activeS/activeH:{go.activeSelf}/{go.activeInHierarchy}");
 
 				foreach (var cmp in go.GetComponents<Component>())
-					dump(cmp, indent + "\t", "component");
+					dump(cmp, indent + indentStep, "component");
 
 				foreach (Transform child in go.transform)
-					dump(child.gameObject, indent + "\t");
+					dump(child.gameObject, indent + indentStep);
 			}
 
 			static void dump(object obj, string indent, string title = null)
@@ -94,11 +96,11 @@ namespace Common
 						if (properties.Count > 0)
 						{
 							_sort(properties);
-							output.AppendLine($"{indent}\tPROPERTIES:");
+							output.AppendLine($"{indent}{indentStep}PROPERTIES:");
 
 							foreach (var prop in properties)
 								if (prop.GetGetMethod() != null)
-									_dumpValue(prop.Name, prop.GetValue(obj, null), indent);
+									_dumpValue(prop.Name, prop.PropertyType, prop.GetValue(obj, null), indent);
 						}
 					}
 
@@ -108,10 +110,10 @@ namespace Common
 						if (fields.Count > 0)
 						{
 							_sort(fields);
-							output.AppendLine($"{indent}\tFIELDS:");
+							output.AppendLine($"{indent}{indentStep}FIELDS:");
 
 							foreach (var field in fields)
-								_dumpValue(field.Name, field.GetValue(obj), indent);
+								_dumpValue(field.Name, field.FieldType, field.GetValue(obj), indent);
 						}
 					}
 				}
@@ -119,23 +121,23 @@ namespace Common
 
 				static void _sort<T>(List<T> list) where T: MemberInfo => list.Sort((m1, m2) => m1.Name.CompareTo(m2.Name));
 
-				static void _dumpValue(string name, object value, string indent)
+				static void _dumpValue(string name, Type type, object value, string indent)
 				{
 					string sanitized = value != null? sanitizer.Replace(value.ToString(), " ").Trim(): "";
-					output.AppendLine($"{indent}\t{name}: \"{sanitized}\"");
+					output.AppendLine($"{indent}{indentStep}{name} [{type.Name}]: \"{sanitized}\"");
 
 					if (value == null)
 						return;
 
-					if (dumpTypes.contains(value.GetType()))
-						dump(value, indent + "\t");
+					if (dumpTypes.contains(type))
+						dump(value, indent + indentStep);
 
-					if (value.GetType().IsArray)
+					if (type.IsArray)
 					{
 						var array = value as Array;
 
 						for (int i = 0; i < array.Length; i++)
-							_dumpValue($"[{i}]", array.GetValue(i), indent + "\t");
+							_dumpValue($"[{i}]", type.GetElementType(), array.GetValue(i), indent + indentStep);
 					}
 				}
 			}

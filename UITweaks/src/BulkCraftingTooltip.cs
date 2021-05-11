@@ -282,13 +282,15 @@ namespace UITweaks
 					__instance.numCrafted = 0;
 			}
 
-			[HarmonyTranspiler, HarmonyPatch(typeof(GhostCrafter), "Craft")]
-			static CIEnumerable craftFixEnergyConsumption(CIEnumerable cins)
+			[HarmonyPriority(Priority.HigherThanNormal)]
+			[HarmonyPrefix, HarmonyPatch(typeof(GhostCrafter), "Craft")]
+			static void craftFixEnergyConsumption(GhostCrafter __instance, TechType techType)
 			{
-				static float _energyToConsume(TechType techType) =>
-					(Main.config.bulkCrafting.changePowerConsumption && _isAmountChanged(techType))? 5f * currentCraftAmount: 5f;
+				if (!Main.config.bulkCrafting.changePowerConsumption)
+					return;
 
-				return CIHelper.ciReplace(cins, ci => ci.isLDC(5f), OpCodes.Ldarg_1, CIHelper.emitCall<Func<TechType, float>>(_energyToConsume));
+				if (_isAmountChanged(techType))
+					CrafterLogic.ConsumeEnergy(__instance.powerRelay, (currentCraftAmount - 1) * 5f); // and 5f also consumed in the vanilla method
 			}
 
 			[HarmonyPostfix, HarmonyPatch(typeof(CrafterLogic), "Reset")]

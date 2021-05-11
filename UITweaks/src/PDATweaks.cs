@@ -86,8 +86,10 @@ namespace UITweaks
 			}
 		}
 
-		static IEnumerator tabHotkeys()
+		static IEnumerator tabHotkeys(bool ignoreFirstKey)
 		{
+			bool ignoreKey = ignoreFirstKey;
+
 			while (uGUI_PDA.main?.tabOpen != PDATab.None)
 			{
 				foreach (var key in Main.config.pdaTweaks.tabHotkeys)
@@ -96,7 +98,10 @@ namespace UITweaks
 						continue;
 
 					if (!FPSInputModule.current.lockMovement && Input.GetKeyDown(key.Value))
-						uGUI_PDA.main.OpenTab(key.Key);
+					{
+						if (!ignoreKey || (ignoreKey = false))
+							uGUI_PDA.main.OpenTab(key.Key);
+					}
 				}
 
 				yield return null;
@@ -128,8 +133,9 @@ namespace UITweaks
 			[HarmonyPostfix, HarmonyPatch(typeof(uGUI_PDA), "OnOpenPDA")]
 			static void openPDA()
 			{
+				// if tab hotkey is pressed before PDA is open it's probably to open storage slot, so we'll ignore first pressed key
 				if (Main.config.pdaTweaks.tabHotkeysEnabled)
-					UWE.CoroutineHost.StartCoroutine(tabHotkeys());
+					UWE.CoroutineHost.StartCoroutine(tabHotkeys(Main.config.pdaTweaks.tabHotkeys.Values.Any(key => Input.GetKeyDown(key))));
 			}
 
 			// compatibility patch for SlotExtender mod

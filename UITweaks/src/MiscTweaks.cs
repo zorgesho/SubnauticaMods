@@ -47,11 +47,12 @@ namespace UITweaks
 		[OptionalPatch, HarmonyPatch(typeof(MainMenuLoadPanel), "UpdateLoadButtonState")]
 		public static class MainMenuLoadPanel_UpdateLoadButtonState_Patch
 		{
+			const string textPath = (Mod.Consts.isBranchStable? "": "SaveDetails/") + "SaveGameLength"; // TODO: fix for BZ
+
 			static bool Prepare() => Main.config.showSaveSlotID;
 
 			static void Postfix(MainMenuLoadButton lb)
 			{
-				string textPath = (Mod.Consts.isBranchStable? "": "SaveDetails/") + "SaveGameLength"; // TODO: fix for BZ
 				if (lb.load.getChild(textPath)?.GetComponent<Text>() is Text text)
 					text.text += $" | {lb.saveGame}";
 			}

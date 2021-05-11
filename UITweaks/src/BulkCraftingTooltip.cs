@@ -87,10 +87,8 @@ namespace UITweaks
 		static readonly MethodWrapper<Func<TechType, int>> EasyCraft_GetPickupCount =
 			Type.GetType("EasyCraft.ClosestItemContainers, EasyCraft")?.method("GetPickupCount").wrap<Func<TechType, int>>();
 
-		static int getCountAvailable(TechType techType)
-		{
-			return EasyCraft_GetPickupCount? EasyCraft_GetPickupCount.invoke(techType): Inventory.main.GetPickupCount(techType);
-		}
+		static int getCountAvailable(TechType techType) =>
+			EasyCraft_GetPickupCount?.invoke(techType) ?? Inventory.main.GetPickupCount(techType);
 
 		static int getMaxAmount(CraftData.TechData techData)
 		{

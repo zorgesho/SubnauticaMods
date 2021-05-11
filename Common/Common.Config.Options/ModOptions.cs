@@ -24,7 +24,8 @@ namespace Common.Configuration
 		}
 		static int modsTabIndex = -1;
 		static uGUI_OptionsPanel optionsPanel;
-		static uGUI_TabbedControlsPanel.Tab modOptionsTab => optionsPanel.tabs[modsTabIndex];
+		static uGUI_TabbedControlsPanel.Tab modOptionsTab =>
+			(modsTabIndex >= 0 && modsTabIndex < optionsPanel?.tabs.Count)? optionsPanel.tabs[modsTabIndex]: default;
 
 		readonly List<ModOption> modOptions = new();
 

@@ -86,7 +86,7 @@ namespace Common.Configuration
 
 				optionsSpacing = spacing;
 
-				if (optionsPanel)
+				if (modOptionsTab.container)
 					_setSpacing(spacing);
 			}
 

@@ -1,10 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Linq;
+using System.Reflection.Emit;
+using System.Collections.Generic;
 
 using Harmony;
 
 using Common;
 using Common.Harmony;
 using Common.Crafting;
+using Common.Reflection;
 
 namespace UITweaks
 {
@@ -55,32 +59,27 @@ namespace UITweaks
 
 			[HarmonyPostfix, HarmonyPatch(typeof(CrafterLogic), Mod.Consts.isGameSN? "Reset": "ResetCrafter")]
 			static void reset(CrafterLogic __instance) => crafterCache.Remove(__instance);
-/*
+
 			[HarmonyTranspiler]
-			[HarmonyHelper.Patch(typeof(CrafterLogic), Mod.Consts.isBranchStable? "TryPickup": "TryPickupAsync")]
-#if BRANCH_EXP
+			[HarmonyHelper.Patch(typeof(CrafterLogic), Mod.Consts.isGameSNStable? "TryPickup": "TryPickupAsync")]
+#if !(GAME_SN && BRANCH_STABLE)
 			[HarmonyHelper.Patch(HarmonyHelper.PatchOptions.PatchIteratorMethod)]
 #endif
-			static IEnumerable<CodeInstruction> pickup(IEnumerable<CodeInstruction> cins)
+			static IEnumerable<CodeInstruction> fixLinkedItemCount(IEnumerable<CodeInstruction> cins)
 			{
 				var list = cins.ToList();
 
-				var get_linkedItemCount = typeof(ITechData).method("get_linkedItemCount");
-				int index = list.ciFindIndexForLast(ci => ci.isOp(OpCodes.Callvirt, get_linkedItemCount),
-													ci => ci.isOp(OpCodes.Ldc_I4_1));
-
+				var numCrafted = typeof(CrafterLogic).field("numCrafted");
+				int index = list.ciFindIndexForLast(ci => ci.isOp(OpCodes.Stfld, numCrafted),
+													ci => ci.isOp(OpCodes.Stfld, numCrafted));
 				return index == -1? cins:
-					list.ciInsert(index + 2,
-						Mod.Consts.isBranchStable? OpCodes.Ldarg_0: OpCodes.Ldloc_1,
-						CIHelper.emitCall<Action<CrafterLogic>>(_changeLinkedItemsAmount));
+					list.ciReplace(index - 1,
+						Mod.Consts.isGameSNStable? OpCodes.Ldarg_0: OpCodes.Ldloc_1,
+						CIHelper.emitCall<Func<CrafterLogic, int>>(_getNumCrafted));
 
-				static void _changeLinkedItemsAmount(CrafterLogic instance)
-				{
-					if (crafterCache.TryGetValue(instance, out CraftData.TechData data))
-						instance.numCrafted = data.craftAmount;
-				}
+				static int _getNumCrafted(CrafterLogic instance) =>
+					crafterCache.TryGetValue(instance, out TechInfo info)? info.craftAmount: 1;
 			}
-*/
 		}
 	}
 }

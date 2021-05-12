@@ -18,7 +18,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\SN.dev\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;GAME_SN;BRANCH_STABLE;LOAD_CONFIG</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;GAME_SN;BRANCH_STABLE;LOAD_CONFIG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -54,7 +54,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\SNexp.dev\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;GAME_SN;BRANCH_EXP;LOAD_CONFIG</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;GAME_SN;BRANCH_EXP;LOAD_CONFIG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -108,6 +108,29 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>9.0</LangVersion>
     <NoWarn>IDE0051</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'BZexp.dev|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\BZexp.dev\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;GAME_BZ;BRANCH_EXP;LOAD_CONFIG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>9.0</LangVersion>
+    <NoWarn>IDE0051</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'BZexp.testbuild|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\BZexp.testbuild\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;GAME_BZ;BRANCH_EXP</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>IDE0051</NoWarn>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>9.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony-1.2.0.1">

@@ -1,18 +1,13 @@
-﻿using System;
-using System.Linq;
-using System.Reflection.Emit;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 using Harmony;
 
 using Common;
 using Common.Harmony;
-using Common.Reflection;
+using Common.Crafting;
 
 namespace UITweaks
 {
-	using CIEnumerable = IEnumerable<CodeInstruction>;
-
 	static partial class BulkCraftingTooltip
 	{
 		[OptionalPatch, PatchClass]
@@ -20,7 +15,7 @@ namespace UITweaks
 		{
 			static bool prepare() => Main.config.bulkCrafting.enabled;
 
-			static readonly Dictionary<CrafterLogic, CraftData.TechData> crafterCache = new();
+			static readonly Dictionary<CrafterLogic, TechInfo> crafterCache = new();
 
 			static bool _isAmountChanged(TechType techType) =>
 				techType == currentTechType && currentCraftAmount > 1;
@@ -37,13 +32,13 @@ namespace UITweaks
 			static void craftUpdateCache(CrafterLogic __instance, TechType techType)
 			{
 				if (_isAmountChanged(techType))
-					crafterCache[__instance] = currentTechData;
+					crafterCache[__instance] = currentTechInfo;
 			}
 
 			[HarmonyPostfix, HarmonyPatch(typeof(CrafterLogic), "Craft")]
 			static void craftFixAmount(CrafterLogic __instance, TechType techType)
 			{
-				if (_isAmountChanged(techType) && originalTechData.craftAmount == 0)
+				if (_isAmountChanged(techType) && originalTechInfo.craftAmount == 0)
 					__instance.numCrafted = 0;
 			}
 
@@ -58,15 +53,15 @@ namespace UITweaks
 					CrafterLogic.ConsumeEnergy(__instance.powerRelay, (currentCraftAmount - 1) * 5f); // and 5f also consumed in the vanilla method
 			}
 
-			[HarmonyPostfix, HarmonyPatch(typeof(CrafterLogic), "Reset")]
+			[HarmonyPostfix, HarmonyPatch(typeof(CrafterLogic), Mod.Consts.isGameSN? "Reset": "ResetCrafter")]
 			static void reset(CrafterLogic __instance) => crafterCache.Remove(__instance);
-
+/*
 			[HarmonyTranspiler]
 			[HarmonyHelper.Patch(typeof(CrafterLogic), Mod.Consts.isBranchStable? "TryPickup": "TryPickupAsync")]
 #if BRANCH_EXP
 			[HarmonyHelper.Patch(HarmonyHelper.PatchOptions.PatchIteratorMethod)]
 #endif
-			static CIEnumerable pickup(CIEnumerable cins)
+			static IEnumerable<CodeInstruction> pickup(IEnumerable<CodeInstruction> cins)
 			{
 				var list = cins.ToList();
 
@@ -85,6 +80,7 @@ namespace UITweaks
 						instance.numCrafted = data.craftAmount;
 				}
 			}
+*/
 		}
 	}
 }

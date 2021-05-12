@@ -1,10 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 
 using UnityEngine;
 using UnityEngine.UI;
 
 using Common;
+using Common.Crafting;
 using Common.Reflection;
 
 namespace UITweaks
@@ -15,8 +16,12 @@ namespace UITweaks
 		static float textPosX;
 
 		static TechType currentTechType;
-		static CraftData.TechData currentTechData, originalTechData;
+		static TechInfo currentTechInfo, originalTechInfo;
 		static int currentCraftAmount, currentCraftAmountMax;
+
+		// originalTechInfo.craftAmount can be zero in case we using only linked items
+		static int originalCraftAmount =>
+			originalTechInfo == null? 0: (originalTechInfo.craftAmount == 0? 1: originalTechInfo.craftAmount);
 
 		static PowerRelay currentPowerRelay;
 
@@ -41,7 +46,7 @@ namespace UITweaks
 				return;
 
 			tooltip.gameObject.AddComponent<BulkCraftingInitedTag>();
-
+#if GAME_SN // TODO for BZ
 			var textGO = tooltip.gameObject.getChild(Mod.Consts.isBranchStable? "Text": "Container/Text");
 			var textGOBottom = textGO.getParent().createChild(textGO, "BottomText");
 
@@ -55,25 +60,23 @@ namespace UITweaks
 			textPosX = text.rectTransform.localPosition.x;
 
 			text.text = _writeAction("tmp"); // adding temporary text to update rect size
+#endif
 		}
 
 
 		static void init(TechType techType)
 		{
-			currentTechType = techType;
-			var techData = CraftData.techData[techType];
-			currentCraftAmountMax = getMaxAmount(techData);
+			currentCraftAmount = 0;
+			TechInfo techInfo = TechInfoUtils.getTechInfo(techType);
+			currentCraftAmountMax = getMaxAmount(techInfo);
 
 			if (currentCraftAmountMax == 0)
-			{
-				currentCraftAmount = 0;
 				return;
-			}
 
 			currentCraftAmount = 1;
-			originalTechData = techData;
-			currentTechData = makeCopy(techData);
-			CraftData.techData[techType] = currentTechData;
+			currentTechType = techType;
+			originalTechInfo = techInfo;
+			currentTechInfo = new TechInfo(techInfo);
 		}
 
 		// if EasyCraft mod is installed we will use it to get count of available ingredients
@@ -83,13 +86,13 @@ namespace UITweaks
 		static int getCountAvailable(TechType techType) =>
 			EasyCraft_GetPickupCount?.invoke(techType) ?? Inventory.main.GetPickupCount(techType);
 
-		static int getMaxAmount(CraftData.TechData techData)
+		static int getMaxAmount(TechInfo techInfo)
 		{
 			int maxAmount = int.MaxValue;
 
 			if (GameModeUtils.RequiresIngredients())
 			{
-				foreach (var ing in techData._ingredients)
+				foreach (var ing in techInfo.ingredients)
 					maxAmount = Math.Min(maxAmount, getCountAvailable(ing.techType) / ing.amount);
 
 				if (currentPowerRelay != null)
@@ -102,29 +105,12 @@ namespace UITweaks
 
 		static void reset()
 		{
-			if (originalTechData != null)
-				CraftData.techData[currentTechType] = originalTechData;
+			if (originalTechInfo != null)
+				TechInfoUtils.setTechInfo(currentTechType, originalTechInfo);
 
 			currentTechType = TechType.None;
-			originalTechData = currentTechData = null;
+			originalTechInfo = currentTechInfo = null;
 		}
-
-
-		static CraftData.TechData makeCopy(CraftData.TechData techData)
-		{
-			CraftData.TechData copy = new()
-			{
-				_techType = techData._techType,
-				_craftAmount = techData.craftAmount,
-				_linkedItems = techData._linkedItems == null? null: new List<TechType>(techData._linkedItems),
-				_ingredients = new CraftData.Ingredients()
-			};
-
-			techData._ingredients.ForEach(i => copy._ingredients.Add(i.techType, i.amount));
-
-			return copy;
-		}
-
 
 		static void setActionText(AmountActionHint hintType)
 		{
@@ -146,11 +132,15 @@ namespace UITweaks
 
 			currentCraftAmount += delta;
 
-			int originalCraftAmount = originalTechData.craftAmount == 0? 1: originalTechData.craftAmount; // in case we use only linked items
-			currentTechData._craftAmount = originalCraftAmount * currentCraftAmount;
+			TechInfo.Ing[] ingsCurrent = originalTechInfo.ingredients.Select(ing => new TechInfo.Ing(ing.techType, ing.amount * currentCraftAmount)).ToArray();
 
-			for (int i = 0; i < currentTechData._ingredients.Count; i++)
-				currentTechData._ingredients[i]._amount = originalTechData.GetIngredient(i).amount * currentCraftAmount;
+			currentTechInfo = new TechInfo(ingsCurrent)
+			{
+				craftAmount = originalCraftAmount * currentCraftAmount,
+				linkedItems = new (originalTechInfo.linkedItems)
+			};
+
+			TechInfoUtils.setTechInfo(currentTechType, currentTechInfo);
 		}
 
 

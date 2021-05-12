@@ -26,9 +26,9 @@ namespace UITweaks
 
 			static CraftTree.Type currentTreeType;
 
-			// prevents SMLHelper from restoring techdata to original state
-			[HarmonyPrefix, HarmonyHelper.Patch("SMLHelper.V2.Patchers.CraftDataPatcher, SMLHelper", "NeedsPatchingCheckPrefix")]
-			static bool SMLPatchCheck(TechType techType) => currentTechType != techType || !CraftData.techData.ContainsKey(techType);
+			// prevents SMLHelper from restoring techdata to original state // TODO check for BZ
+			//[HarmonyPrefix, HarmonyHelper.Patch("SMLHelper.V2.Patchers.CraftDataPatcher, SMLHelper", "NeedsPatchingCheckPrefix")]
+			//static bool SMLPatchCheck(TechType techType) => currentTechType != techType || !CraftData.techData.ContainsKey(techType);
 
 			[HarmonyPostfix, HarmonyPatch(typeof(uGUI_Tooltip), "Awake")]
 			static void awakePatch(uGUI_Tooltip __instance) => init(__instance);
@@ -50,7 +50,7 @@ namespace UITweaks
 				currentPowerRelay = Main.config.bulkCrafting.changePowerConsumption? (receiver as GhostCrafter)?.powerRelay: null;
 			}
 
-			[HarmonyPrefix, HarmonyPatch(typeof(TooltipFactory), "Recipe")]
+			[HarmonyPrefix, HarmonyPatch(typeof(TooltipFactory), Mod.Consts.isGameSN? "Recipe": "CraftRecipe")]
 			static void updateRecipe(TechType techType)
 			{
 				if (currentTreeType == CraftTree.Type.Constructor)
@@ -63,10 +63,10 @@ namespace UITweaks
 					init(techType);
 
 				changeAmount(Math.Sign(InputHelper.getMouseWheelValue()));
-				updateActionHint();
+				//updateActionHint(); // TODO
 			}
 
-			[HarmonyPostfix, HarmonyPatch(typeof(uGUI_Tooltip), "Rebuild")]
+			//[HarmonyPostfix, HarmonyPatch(typeof(uGUI_Tooltip), "Rebuild")] // TODO
 			static void rebuildTooltip(uGUI_Tooltip __instance, CanvasUpdate executing) // TODO BRANCH_EXP: most of this code is unneeded on exp branch
 			{
 				const float tooltipOffsetX = 30f;

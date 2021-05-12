@@ -188,6 +188,7 @@
     <Compile Include="src\bulk-crafting\patches\CrafterPatches.cs" />
     <Compile Include="src\bulk-crafting\patches\IconAnimPatches.cs" />
     <Compile Include="src\bulk-crafting\patches\TooltipPatches.cs" />
+    <Compile Include="src\bulk-crafting\Utils.cs" />
     <Compile Include="src\ConsoleCommands.cs" />
     <Compile Include="src\MiscTweaks.cs" />
     <Compile Include="src\PDATweaks.cs" />
@@ -205,6 +206,7 @@
   <Import Project="..\Common\Common.projitems" Label="Shared" />
   <Import Project="..\Common\Common.Config.Options\Common.Config.Options.projitems" Label="Shared" />
   <Import Project="..\Common\Common.GameSerialization\Common.GameSerialization.projitems" Label="Shared" />
+  <Import Project="..\Common\Common.CraftHelper\Common.CraftHelper.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>$(SolutionDir)post-build.bat $(ConfigurationName) $(ProjectName) $(ProjectDir) $(TargetPath) $(TargetDir)</PostBuildEvent>

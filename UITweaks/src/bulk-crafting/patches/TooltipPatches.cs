@@ -1,11 +1,14 @@
 ﻿using System;
 
 using Harmony;
-using UnityEngine;
-using UnityEngine.UI;
 
 using Common;
 using Common.Harmony;
+
+#if GAME_SN
+using UnityEngine;
+using UnityEngine.UI;
+#endif
 
 namespace UITweaks
 {
@@ -18,9 +21,10 @@ namespace UITweaks
 			{
 				if (Main.config.bulkCrafting.enabled)
 					init(uGUI_Tooltip.main); // in case we enable it after tooltip awake
+#if GAME_SN
 				else
 					setActionText(AmountActionHint.None);
-
+#endif
 				return Main.config.bulkCrafting.enabled;
 			}
 
@@ -32,10 +36,10 @@ namespace UITweaks
 
 			[HarmonyPostfix, HarmonyPatch(typeof(uGUI_Tooltip), "Awake")]
 			static void awakePatch(uGUI_Tooltip __instance) => init(__instance);
-
+#if GAME_SN
 			[HarmonyPrefix, HarmonyPatch(typeof(uGUI_Tooltip), "Set")]
 			static void resetText() => setActionText(AmountActionHint.None);
-
+#endif
 			[HarmonyPostfix, HarmonyPatch(typeof(uGUI_Tooltip), "OnUpdate")]
 			static void checkVisible()
 			{
@@ -50,8 +54,12 @@ namespace UITweaks
 				currentPowerRelay = Main.config.bulkCrafting.changePowerConsumption? (receiver as GhostCrafter)?.powerRelay: null;
 			}
 
-			[HarmonyPrefix, HarmonyPatch(typeof(TooltipFactory), Mod.Consts.isGameSN? "Recipe": "CraftRecipe")]
+			[HarmonyPostfix, HarmonyPatch(typeof(TooltipFactory), Mod.Consts.isGameSN? "Recipe": "CraftRecipe")]
+#if GAME_SN
 			static void updateRecipe(TechType techType)
+#elif GAME_BZ
+			static void updateRecipe(TechType techType, TooltipData data)
+#endif
 			{
 				if (currentTreeType == CraftTree.Type.Constructor)
 					return;
@@ -63,10 +71,16 @@ namespace UITweaks
 					init(techType);
 
 				changeAmount(Math.Sign(InputHelper.getMouseWheelValue()));
-				//updateActionHint(); // TODO
+#if GAME_SN
+				updateActionHint();
+#elif GAME_BZ
+				string action = getActionText();
+				if (action != "")
+					data.postfix.AppendLine(action);
+#endif
 			}
-
-			//[HarmonyPostfix, HarmonyPatch(typeof(uGUI_Tooltip), "Rebuild")] // TODO
+#if GAME_SN
+			[HarmonyPostfix, HarmonyPatch(typeof(uGUI_Tooltip), "Rebuild")]
 			static void rebuildTooltip(uGUI_Tooltip __instance, CanvasUpdate executing) // TODO BRANCH_EXP: most of this code is unneeded on exp branch
 			{
 				const float tooltipOffsetX = 30f;
@@ -86,6 +100,7 @@ namespace UITweaks
 				float textPosY = __instance.iconCanvas.transform.localPosition.y -__instance.iconCanvas.rectTransform.sizeDelta.y;
 				text.rectTransform.localPosition = new Vector2(textPosX, textPosY);
 			}
+#endif
 		}
 	}
 }

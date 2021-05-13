@@ -2,19 +2,23 @@
 using System.Linq;
 
 using UnityEngine;
-using UnityEngine.UI;
 
 using Common;
 using Common.Crafting;
 using Common.Reflection;
 
+#if GAME_SN
+using UnityEngine.UI;
+#endif
+
 namespace UITweaks
 {
 	static partial class BulkCraftingTooltip
 	{
+#if GAME_SN
 		static Text text;
 		static float textPosX;
-
+#endif
 		static TechType currentTechType;
 		static TechInfo currentTechInfo, originalTechInfo;
 		static int currentCraftAmount, currentCraftAmountMax;
@@ -46,7 +50,7 @@ namespace UITweaks
 				return;
 
 			tooltip.gameObject.AddComponent<BulkCraftingInitedTag>();
-#if GAME_SN // TODO for BZ
+#if GAME_SN
 			var textGO = tooltip.gameObject.getChild(Mod.Consts.isBranchStable? "Text": "Container/Text");
 			var textGOBottom = textGO.getParent().createChild(textGO, "BottomText");
 
@@ -62,7 +66,6 @@ namespace UITweaks
 			text.text = _writeAction("tmp"); // adding temporary text to update rect size
 #endif
 		}
-
 
 		static void init(TechType techType)
 		{
@@ -102,7 +105,6 @@ namespace UITweaks
 			return maxAmount;
 		}
 
-
 		static void reset()
 		{
 			if (originalTechInfo != null)
@@ -112,6 +114,15 @@ namespace UITweaks
 			originalTechInfo = currentTechInfo = null;
 		}
 
+		static AmountActionHint getActionHint()
+		{
+			if		(currentCraftAmountMax <= 1)				  return AmountActionHint.None;
+			else if (currentCraftAmount == 1)					  return AmountActionHint.Increase;
+			else if (currentCraftAmount == currentCraftAmountMax) return AmountActionHint.Decrease;
+			else												  return AmountActionHint.Both;
+		}
+
+#if GAME_SN
 		static void setActionText(AmountActionHint hintType)
 		{
 			if (!text)
@@ -121,7 +132,10 @@ namespace UITweaks
 			text.gameObject.SetActive(hintType != AmountActionHint.None);
 		}
 
-
+		static void updateActionHint() => setActionText(getActionHint());
+#elif GAME_BZ
+		static string getActionText() => actions[(int)getActionHint()];
+#endif
 		static void changeAmount(int delta)
 		{
 			if (delta == 0 || currentCraftAmount == 0)
@@ -141,15 +155,6 @@ namespace UITweaks
 			};
 
 			TechInfoUtils.setTechInfo(currentTechType, currentTechInfo);
-		}
-
-
-		static void updateActionHint()
-		{
-			if		(currentCraftAmountMax <= 1)				  setActionText(AmountActionHint.None);
-			else if (currentCraftAmount == 1)					  setActionText(AmountActionHint.Increase);
-			else if (currentCraftAmount == currentCraftAmountMax) setActionText(AmountActionHint.Decrease);
-			else												  setActionText(AmountActionHint.Both);
 		}
 	}
 }

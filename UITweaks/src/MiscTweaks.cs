@@ -16,14 +16,24 @@ namespace UITweaks
 		{
 			static bool prepare() => Main.config.builderMenuTabHotkeysEnabled;
 
-#if GAME_SN // TODO: fix for BZ
 			[HarmonyPostfix, HarmonyPatch(typeof(uGUI_BuilderMenu), "GetToolbarTooltip")]
+#if GAME_SN
 			static void modifyTooltip(int index, ref string tooltipText)
-			{
-				if (Main.config.showToolbarHotkeys)
-					tooltipText = $"<size=25><color=#ADF8FFFF>{index + 1}</color> - </size>{tooltipText}";
-			}
+#elif GAME_BZ
+			static void modifyTooltip(int index, TooltipData data)
 #endif
+			{
+				if (!Main.config.showToolbarHotkeys)
+					return;
+
+				string text = $"<size=25><color=#ADF8FFFF>{index + 1}</color> - </size>";
+#if GAME_SN
+				tooltipText = text + tooltipText;
+#elif GAME_BZ
+				data.prefix.Insert(0, text);
+#endif
+			}
+
 			[HarmonyPostfix, HarmonyPatch(typeof(uGUI_BuilderMenu), "Open")]
 			static void openMenu()
 			{

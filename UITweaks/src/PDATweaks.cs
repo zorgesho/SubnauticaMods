@@ -42,7 +42,7 @@ namespace UITweaks
 			}
 		}
 
-		static void modifyTooltip(int tabIndex, ref string tooltip)
+		static string modifyTooltip(int tabIndex, string tooltip)
 		{
 			NMGroup group = getGroupByTabIndex(tabIndex);
 
@@ -84,6 +84,8 @@ namespace UITweaks
 					tooltip += $"{nextline}<size={tooltipSmallTextSize}>{hint}</size>";
 				}
 			}
+
+			return tooltip;
 		}
 
 		static IEnumerator tabHotkeys(bool ignoreFirstKey)
@@ -123,11 +125,18 @@ namespace UITweaks
 					removeNotifications(getGroupByTabIndex(index));
 			}
 
-#if GAME_SN // TODO: fix for BZ
 			[HarmonyPostfix, HarmonyPatch(typeof(uGUI_PDA), "GetToolbarTooltip")]
+#if GAME_SN
 			static void getTooltip(int index, ref string tooltipText)
 			{
-				modifyTooltip(index, ref tooltipText);
+				tooltipText = modifyTooltip(index, tooltipText);
+			}
+#elif GAME_BZ
+			static void getTooltip(int index, TooltipData data)
+			{
+				string tooltip = data.prefix.ToString();
+				data.prefix.Clear();
+				data.prefix.Append(modifyTooltip(index, tooltip));
 			}
 #endif
 			[HarmonyPostfix, HarmonyPatch(typeof(uGUI_PDA), "OnOpenPDA")]

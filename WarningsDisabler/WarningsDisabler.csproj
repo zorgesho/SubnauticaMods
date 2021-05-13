@@ -145,6 +145,10 @@
       <HintPath>$(ProjectDependencies)\Newtonsoft.Json.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="QModInstaller">
+      <HintPath>$(ProjectDependencies)\QModInstaller.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="SMLHelper">
       <HintPath>$(ProjectDependencies)\SMLHelper.dll</HintPath>
       <Private>False</Private>

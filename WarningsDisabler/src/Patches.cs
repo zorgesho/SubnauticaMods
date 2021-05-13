@@ -45,22 +45,15 @@ namespace WarningsDisabler
 	}
 
 #if GAME_BZ
-	[OptionalPatch, PatchClass]
-	static class DisclaimerPatches
+	// Disabling disclaimer on startup
+	[HarmonyPatch(typeof(EarlyAccessDisclaimer), "Start")]
+	static class EarlyAccessDisclaimer_Start_Patch
 	{
-		static bool prepare() => !Main.config.showDisclaimers;
+		static bool Prepare() => !Main.config.showDisclaimer;
 
-		[HarmonyPrefix, HarmonyPatch(typeof(EarlyAccessDisclaimer), "OnEnable")]
-		static bool EarlyAccessDisclaimer_OnEnable_Prefix(EarlyAccessDisclaimer __instance)
+		static bool Prefix(EarlyAccessDisclaimer __instance)
 		{
-			UnityEngine.Object.Destroy(__instance.gameObject);
-			return false;
-		}
-
-		[HarmonyPrefix, HarmonyPatch(typeof(uGUI_MainMenu), "OnButtonLoad")]
-		static bool uGUIMainMenu_OnButtonLoad_Prefix(uGUI_MainMenu __instance)
-		{
-			__instance.rightSide.OpenGroup("SavedGames");
+			__instance.gameObject.SetActive(false);
 			return false;
 		}
 	}

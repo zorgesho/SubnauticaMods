@@ -8,7 +8,6 @@
   "Enable": true,
   "Game": "BelowZero",
   "AssemblyName": "WarningsDisabler.dll",
-  "EntryMethod": "WarningsDisabler.Main.patch",
   "UpdateCheck": true,
   "VersionURL": "https://raw.githubusercontent.com/zorgesho/SubnauticaMods/master/WarningsDisabler/mod.BZ.json"
 }

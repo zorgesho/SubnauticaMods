@@ -18,8 +18,8 @@ namespace PrawnSuitSettings
 #if GAME_SN
 			CraftData.energyCost[techType] = energyCost;
 #elif GAME_BZ
-			if (TechData.TryGetValue(techType, out JsonValue value)) // TODO: check for BZ
-				value.SetDouble(energyCost);
+			if (TechData.TryGetValue(techType, out JsonValue value))
+				value.setDouble(TechData.propertyEnergyCost, energyCost);
 #endif
 		}
 
@@ -37,7 +37,7 @@ namespace PrawnSuitSettings
 		}
 
 		static bool consumeArmEnergy(MonoBehaviour exosuitArm, float energyPerSec)
-		{																				$"ArmsEnergyUsage: trying to consume {energyPerSec} energy for {exosuitArm}".logDbg();
+		{																													$"ArmsEnergyUsage: trying to consume {energyPerSec} energy for {exosuitArm}".logDbg();
 			return exosuitArm.GetComponentInParent<Exosuit>().ConsumeEnergy(energyPerSec * Time.deltaTime);
 		}
 
@@ -65,6 +65,25 @@ namespace PrawnSuitSettings
 					if (!consumeArmEnergy(__instance, Main.config.armsEnergyUsage.grapplingArmPull))
 						(__instance as IExosuitArm).OnUseUp(out _);
 			}
+#if GAME_BZ
+			[HarmonyPostfix, HarmonyPatch(typeof(TechData), "Initialize")]
+			static void TechData_Initialize_Postfix() => refresh();
+#endif
 		}
+#if GAME_BZ
+		static void setDouble(this JsonValue jv, int id, double val)
+		{
+			if (!jv.CheckType(JsonValue.Type.Object))
+				return;
+
+			if (!jv.dataObject.TryGetValue(id, out JsonValue doubleValue))
+			{
+				doubleValue = new JsonValue(JsonValue.Type.Double);
+				jv.Add(id, doubleValue);
+			}
+
+			doubleValue.SetDouble(val);
+		}
+#endif
 	}
 }

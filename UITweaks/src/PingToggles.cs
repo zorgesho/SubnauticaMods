@@ -335,7 +335,7 @@ namespace UITweaks
 			// compatibility patch for SubnauticaMap mod
 			// hide ping icons from the map for disabled pings
 			[HarmonyHelper.Patch(HarmonyHelper.PatchOptions.CanBeAbsent)]
-			[HarmonyPostfix, HarmonyHelper.Patch("SubnauticaMap.Controller, SubnauticaMap", "UpdateIcons")]
+			[HarmonyPostfix, HarmonyHelper.Patch("SubnauticaMap.Controller, SubnauticaMap" + (Mod.Consts.isGameBZ? "_BZ": ""), "UpdateIcons")]
 			static void updateMapPings(object __instance)
 			{
 				if (!PingToggleToolbar.instance)

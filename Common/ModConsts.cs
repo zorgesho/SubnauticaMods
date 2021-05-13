@@ -30,6 +30,12 @@
 #else
 				false;
 #endif
+			public const bool isGameSNExp =
+#if GAME_SN && BRANCH_EXP
+				true;
+#else
+				false;
+#endif
 
 			public const bool isGameBZ =
 #if GAME_BZ

@@ -84,7 +84,7 @@ namespace UITweaks
 
 		// if EasyCraft mod is installed we will use it to get count of available ingredients
 		static readonly MethodWrapper<Func<TechType, int>> EasyCraft_GetPickupCount =
-			Type.GetType("EasyCraft.ClosestItemContainers, EasyCraft")?.method("GetPickupCount").wrap<Func<TechType, int>>();
+			Type.GetType($"EasyCraft.ClosestItemContainers, EasyCraft{(Mod.Consts.isGameBZ? "_BZ": "")}")?.method("GetPickupCount").wrap<Func<TechType, int>>();
 
 		static int getCountAvailable(TechType techType) =>
 			EasyCraft_GetPickupCount?.invoke(techType) ?? Inventory.main.GetPickupCount(techType);
@@ -148,7 +148,7 @@ namespace UITweaks
 
 			TechInfo.Ing[] ingsCurrent = originalTechInfo.ingredients.Select(ing => new TechInfo.Ing(ing.techType, ing.amount * currentCraftAmount)).ToArray();
 
-			currentTechInfo = new TechInfo(ingsCurrent)
+			currentTechInfo = new (ingsCurrent)
 			{
 				craftAmount = originalCraftAmount * currentCraftAmount,
 				linkedItems = new (originalTechInfo.linkedItems)

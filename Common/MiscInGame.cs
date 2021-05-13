@@ -76,7 +76,7 @@ namespace Common
 #if GAME_SN
 				return fader?.state == true;
 #elif GAME_BZ
-				return fader?.sequence.active == true;
+				return fader?.sequence.target == true;
 #endif
 			}
 		}

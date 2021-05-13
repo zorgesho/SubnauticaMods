@@ -2,10 +2,15 @@
 
 using Harmony;
 using UnityEngine;
-using UnityEngine.UI;
 
 using Common;
 using Common.Harmony;
+
+#if GAME_SN
+	using Text = UnityEngine.UI.Text;
+#elif GAME_BZ
+	using Text = TMPro.TextMeshProUGUI;
+#endif
 
 namespace UITweaks
 {
@@ -57,7 +62,7 @@ namespace UITweaks
 		[OptionalPatch, HarmonyPatch(typeof(MainMenuLoadPanel), "UpdateLoadButtonState")]
 		public static class MainMenuLoadPanel_UpdateLoadButtonState_Patch
 		{
-			const string textPath = (Mod.Consts.isBranchStable? "": "SaveDetails/") + "SaveGameLength"; // TODO: fix for BZ
+			const string textPath = (Mod.Consts.isGameSNExp? "SaveDetails/": "") + "SaveGameLength";
 
 			static bool Prepare() => Main.config.showSaveSlotID;
 

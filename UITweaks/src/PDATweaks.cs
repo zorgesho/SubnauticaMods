@@ -147,10 +147,12 @@ namespace UITweaks
 					UWE.CoroutineHost.StartCoroutine(tabHotkeys(Main.config.pdaTweaks.tabHotkeys.Values.Any(key => Input.GetKeyDown(key))));
 			}
 
+			const string idSlotExtender = "SlotExtender" + (Mod.Consts.isGameBZ? "Zero": "");
+
 			// compatibility patch for SlotExtender mod
 			// don't close PDA when tab hotkey is pressed while inside a vehicle
 			[HarmonyHelper.Patch(HarmonyHelper.PatchOptions.CanBeAbsent)]
-			[HarmonyPrefix, HarmonyHelper.Patch("SlotExtender.SlotExtender, SlotExtender", "TryUseSlotItem")]
+			[HarmonyPrefix, HarmonyHelper.Patch(idSlotExtender + "." + idSlotExtender + ", " + idSlotExtender, "TryUseSlotItem")]
 			static bool keepPDAOpen() => !(Main.config.pdaTweaks.tabHotkeysEnabled && Player.main?.GetPDA()?.isOpen == true);
 		}
 	}

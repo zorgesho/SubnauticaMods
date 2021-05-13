@@ -29,11 +29,11 @@ namespace UITweaks
 			}
 
 			static CraftTree.Type currentTreeType;
-
-			// prevents SMLHelper from restoring techdata to original state // TODO check for BZ
-			//[HarmonyPrefix, HarmonyHelper.Patch("SMLHelper.V2.Patchers.CraftDataPatcher, SMLHelper", "NeedsPatchingCheckPrefix")]
-			//static bool SMLPatchCheck(TechType techType) => currentTechType != techType || !CraftData.techData.ContainsKey(techType);
-
+#if GAME_SN
+			// prevents SMLHelper from restoring techdata to original state (for modded items)
+			[HarmonyPrefix, HarmonyHelper.Patch("SMLHelper.V2.Patchers.CraftDataPatcher, SMLHelper", "NeedsPatchingCheckPrefix")]
+			static bool SMLPatchCheck(TechType techType) => currentTechType != techType || !CraftData.techData.ContainsKey(techType);
+#endif
 			[HarmonyPostfix, HarmonyPatch(typeof(uGUI_Tooltip), "Awake")]
 			static void awakePatch(uGUI_Tooltip __instance) => init(__instance);
 #if GAME_SN

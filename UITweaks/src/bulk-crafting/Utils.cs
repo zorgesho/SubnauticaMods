@@ -1,11 +1,14 @@
-﻿using System.Linq;
+﻿using SMLHelper.V2.Handlers;
+using Common.Crafting;
+
+#if GAME_BZ
+using System.Linq;
 using System.Collections.ObjectModel;
 
 using Harmony;
-using SMLHelper.V2.Handlers;
 
 using Common.Harmony;
-using Common.Crafting;
+#endif
 
 namespace UITweaks
 {

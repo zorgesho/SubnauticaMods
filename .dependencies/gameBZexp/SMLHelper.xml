@@ -644,7 +644,7 @@
         </member>
         <member name="P:SMLHelper.V2.Assets.Spawnable.HasSprite">
             <summary>
-            Gets a value indicating whether if we should be looking for a Sprite.
+            Gets a value indicating whether if we should be looking for a Sprite when NOT overriding <see cref="M:SMLHelper.V2.Assets.Spawnable.GetItemSprite"/>.
             </summary>
         </member>
         <member name="M:SMLHelper.V2.Assets.Spawnable.#ctor(System.String,System.String,System.String)">
@@ -768,9 +768,9 @@
             
             <para>If the method has a return type, it will be printed to both the screen and the log.</para>
             </remarks>
-            <seealso cref="M:SMLHelper.V2.Interfaces.IConsoleCommandsHandler.RegisterConsoleCommand(System.String,System.Type,System.String,System.Type[])"/>
-            <seealso cref="M:SMLHelper.V2.Interfaces.IConsoleCommandsHandler.RegisterConsoleCommand``1(System.String,``0)"/>
-            <seealso cref="M:SMLHelper.V2.Interfaces.IConsoleCommandsHandler.RegisterConsoleCommands(System.Type)"/>
+            <seealso cref="M:SMLHelper.V2.Interfaces.IConsoleCommandHandler.RegisterConsoleCommand(System.String,System.Type,System.String,System.Type[])"/>
+            <seealso cref="M:SMLHelper.V2.Interfaces.IConsoleCommandHandler.RegisterConsoleCommand``1(System.String,``0)"/>
+            <seealso cref="M:SMLHelper.V2.Interfaces.IConsoleCommandHandler.RegisterConsoleCommands(System.Type)"/>
             <seealso cref="T:SMLHelper.V2.Handlers.ConsoleCommandsHandler"/>
         </member>
         <member name="P:SMLHelper.V2.Commands.ConsoleCommandAttribute.Command">
@@ -794,9 +794,9 @@
             </remarks>
             <param name="command">The unique, case-insensitive command that when entered into the dev console will call the
             decorated method.</param>
-            <seealso cref="M:SMLHelper.V2.Interfaces.IConsoleCommandsHandler.RegisterConsoleCommand(System.String,System.Type,System.String,System.Type[])"/>
-            <seealso cref="M:SMLHelper.V2.Interfaces.IConsoleCommandsHandler.RegisterConsoleCommand``1(System.String,``0)"/>
-            <seealso cref="M:SMLHelper.V2.Interfaces.IConsoleCommandsHandler.RegisterConsoleCommands(System.Type)"/>
+            <seealso cref="M:SMLHelper.V2.Interfaces.IConsoleCommandHandler.RegisterConsoleCommand(System.String,System.Type,System.String,System.Type[])"/>
+            <seealso cref="M:SMLHelper.V2.Interfaces.IConsoleCommandHandler.RegisterConsoleCommand``1(System.String,``0)"/>
+            <seealso cref="M:SMLHelper.V2.Interfaces.IConsoleCommandHandler.RegisterConsoleCommands(System.Type)"/>
             <seealso cref="T:SMLHelper.V2.Handlers.ConsoleCommandsHandler"/>
         </member>
         <member name="T:SMLHelper.V2.Crafting.ModCraftTreeCraft">
@@ -1040,6 +1040,63 @@
             </summary>
             <param name="index">The index.</param>
             <returns>The <see cref="T:TechType"/> at the requested the index if the index is value; Otherwise returns null.</returns>
+        </member>
+        <member name="T:SMLHelper.V2.Handlers.BackgroundTypeHandler">
+            <summary>
+            A handler for everything related to creating new BackgroundTypes.
+            </summary>
+        </member>
+        <member name="P:SMLHelper.V2.Handlers.BackgroundTypeHandler.Main">
+            <summary>
+            Main entry point for all calls to this handler.
+            </summary>
+        </member>
+        <member name="M:SMLHelper.V2.Handlers.BackgroundTypeHandler.SMLHelper#V2#Interfaces#IBackgroundTypeHandler#AddBackgroundType(System.String,UnityEngine.Sprite)">
+            <summary>
+            adds a new <see cref="T:CraftData.BackgroundType"/> into the game.
+            </summary>
+            <param name="backgroundTypeName">the name of the BackgroundType, should not contain special characters.</param>
+            <param name="backgroundSprite">The sprite for this BackgroundType.</param>
+            <returns>The new <see cref="T:CraftData.BackgroundType"/> that's created.</returns>
+        </member>
+        <member name="M:SMLHelper.V2.Handlers.BackgroundTypeHandler.SMLHelper#V2#Interfaces#IBackgroundTypeHandler#TryGetModdedBackgroundType(System.String,CraftData.BackgroundType@)">
+            <summary>
+            Safely looks for a modded Background Type from another mod in the SMLHelper BackgroundTypeCache and outputs its <see cref="T:CraftData.BackgroundType" /> value when found.
+            </summary>
+            <param name="backgroundTypeString">The string used to define the BackgroundType</param>
+            <param name="modBackgroundType">The BackgroundType enum value of the modded. Defaults to <see cref="F:CraftData.BackgroundType.Normal" /> when the item was not found.</param>
+            <returns><see langword="true"/> if the item was found; otherwise <see langword="false"/>.</returns>
+        </member>
+        <member name="M:SMLHelper.V2.Handlers.BackgroundTypeHandler.SMLHelper#V2#Interfaces#IBackgroundTypeHandler#ModdedBackgroundTypeExists(System.String)">
+            <summary>
+            Safely looks for a modded Background Type from another mod in the SMLHelper BackgroundTypeCache.
+            </summary>
+            <param name="backgroundTypeString">The string used to define the BackgroundType.</param>
+            <returns><see langword="true"/> if the item was found; otherwise <see langword="false"/>.</returns>
+        </member>
+        <member name="M:SMLHelper.V2.Handlers.BackgroundTypeHandler.AddBackgroundType(System.String,UnityEngine.Sprite)">
+            <summary>
+            adds a new <see cref="T:CraftData.BackgroundType"/> into the game.
+            </summary>
+            <param name="backgroundTypeName">the name of the BackgroundType, should not contain special characters.</param>
+            <param name="backgroundSprite">The sprite for this BackgroundType.</param>
+            <returns>The new <see cref="T:CraftData.BackgroundType"/> that's created.</returns>
+            <returns></returns>
+        </member>
+        <member name="M:SMLHelper.V2.Handlers.BackgroundTypeHandler.TryGetModdedBackgroundType(System.String,CraftData.BackgroundType@)">
+            <summary>
+            Safely looks for a modded Background Type from another mod in the SMLHelper BackgroundTypeCache and outputs its <see cref="T:CraftData.BackgroundType" /> value when found.
+            </summary>
+            <param name="backgroundTypeString">The string used to define the BackgroundType</param>
+            <param name="modBackgroundType">The BackgroundType enum value of the modded. Defaults to <see cref="F:CraftData.BackgroundType.Normal" /> when the item was not found.</param>
+            <returns><see langword="true"/> if the item was found; otherwise <see langword="false"/>.</returns>
+        </member>
+        <member name="M:SMLHelper.V2.Handlers.BackgroundTypeHandler.ModdedBackgroundTypeExists(System.String)">
+            <summary>
+            Safely looks for a modded Background Type from another mod in the SMLHelper BackgroundTypeCache.
+            </summary>
+            <param name="backgroundTypeString">The string used to define the BackgroundType.</param>
+            <returns><see langword="true"/> if the item was found; otherwise <see langword="false"/>.</returns>
         </member>
         <member name="T:SMLHelper.V2.Handlers.CoordinatedSpawnsHandler">
             <summary>
@@ -2816,6 +2873,34 @@
             Main entry point for all calls to this handler.
             </summary>
         </member>
+        <member name="T:SMLHelper.V2.Interfaces.IBackgroundTypeHandler">
+            <summary>
+            A handler interface for everything related to creating new BackgroundTypes.
+            </summary>
+        </member>
+        <member name="M:SMLHelper.V2.Interfaces.IBackgroundTypeHandler.AddBackgroundType(System.String,UnityEngine.Sprite)">
+            <summary>
+            adds a new <see cref="T:CraftData.BackgroundType"/> into the game.
+            </summary>
+            <param name="backgroundTypeName">the name of the BackgroundType, should not contain special characters.</param>
+            <param name="backgroundSprite">The sprite for this BackgroundType.</param>
+            <returns>The new <see cref="T:CraftData.BackgroundType"/> that's created.</returns>
+        </member>
+        <member name="M:SMLHelper.V2.Interfaces.IBackgroundTypeHandler.TryGetModdedBackgroundType(System.String,CraftData.BackgroundType@)">
+            <summary>
+            Safely looks for a modded Background Type from another mod in the SMLHelper BackgroundTypeCache and outputs its <see cref="T:CraftData.BackgroundType" /> value when found.
+            </summary>
+            <param name="backgroundTypeString">The string used to define the BackgroundType</param>
+            <param name="modBackgroundType">The BackgroundType enum value of the modded. Defaults to <see cref="F:CraftData.BackgroundType.Normal" /> when the item was not found.</param>
+            <returns><see langword="true"/> if the item was found; otherwise <see langword="false"/>.</returns>
+        </member>
+        <member name="M:SMLHelper.V2.Interfaces.IBackgroundTypeHandler.ModdedBackgroundTypeExists(System.String)">
+            <summary>
+            Safely looks for a modded Background Type from another mod in the SMLHelper BackgroundTypeCache.
+            </summary>
+            <param name="backgroundTypeString">The string used to define the BackgroundType.</param>
+            <returns><see langword="true"/> if the item was found; otherwise <see langword="false"/>.</returns>
+        </member>
         <member name="T:SMLHelper.V2.Interfaces.ICoordinatedSpawnHandler">
             <summary>
             a Handler interface that handles and registers Coordinated (<see cref="T:UnityEngine.Vector3"/> spawns).
@@ -2889,12 +2974,12 @@
             The name of the method to invoke.
             </summary>
         </member>
-        <member name="T:SMLHelper.V2.Interfaces.IConsoleCommandsHandler">
+        <member name="T:SMLHelper.V2.Interfaces.IConsoleCommandHandler">
             <summary>
             A handler class for registering your custom console commands.
             </summary>
         </member>
-        <member name="M:SMLHelper.V2.Interfaces.IConsoleCommandsHandler.RegisterConsoleCommand(System.String,System.Type,System.String,System.Type[])">
+        <member name="M:SMLHelper.V2.Interfaces.IConsoleCommandHandler.RegisterConsoleCommand(System.String,System.Type,System.String,System.Type[])">
             <summary>
             Registers your custom console command by targeting a <see langword="public"/> <see langword="static"/> method.
             </summary>
@@ -2912,11 +2997,11 @@
             <param name="methodName">The name of the method to call within the declaring type when the command is entered. 
             Method must be <see langword="static"/>.</param>
             <param name="parameters">The parameter types the method receives, for targeting overloads.</param>
-            <seealso cref="M:SMLHelper.V2.Interfaces.IConsoleCommandsHandler.RegisterConsoleCommand``1(System.String,``0)"/>
-            <seealso cref="M:SMLHelper.V2.Interfaces.IConsoleCommandsHandler.RegisterConsoleCommands(System.Type)"/>
+            <seealso cref="M:SMLHelper.V2.Interfaces.IConsoleCommandHandler.RegisterConsoleCommand``1(System.String,``0)"/>
+            <seealso cref="M:SMLHelper.V2.Interfaces.IConsoleCommandHandler.RegisterConsoleCommands(System.Type)"/>
             <seealso cref="T:SMLHelper.V2.Commands.ConsoleCommandAttribute"/>
         </member>
-        <member name="M:SMLHelper.V2.Interfaces.IConsoleCommandsHandler.RegisterConsoleCommand``1(System.String,``0)">
+        <member name="M:SMLHelper.V2.Interfaces.IConsoleCommandHandler.RegisterConsoleCommand``1(System.String,``0)">
             <summary>
             Registers your custom console command by passing a <see langword="delegate"/>.
             </summary>
@@ -2929,11 +3014,11 @@
             <typeparam name="T">The delegate type.</typeparam>
             <param name="command">The case-insensitive command to register.</param>
             <param name="callback">The callback to handle the command.</param>
-            <seealso cref="M:SMLHelper.V2.Interfaces.IConsoleCommandsHandler.RegisterConsoleCommand(System.String,System.Type,System.String,System.Type[])"/>
-            <seealso cref="M:SMLHelper.V2.Interfaces.IConsoleCommandsHandler.RegisterConsoleCommands(System.Type)"/>
+            <seealso cref="M:SMLHelper.V2.Interfaces.IConsoleCommandHandler.RegisterConsoleCommand(System.String,System.Type,System.String,System.Type[])"/>
+            <seealso cref="M:SMLHelper.V2.Interfaces.IConsoleCommandHandler.RegisterConsoleCommands(System.Type)"/>
             <seealso cref="T:SMLHelper.V2.Commands.ConsoleCommandAttribute"/>
         </member>
-        <member name="M:SMLHelper.V2.Interfaces.IConsoleCommandsHandler.RegisterConsoleCommands(System.Type)">
+        <member name="M:SMLHelper.V2.Interfaces.IConsoleCommandHandler.RegisterConsoleCommands(System.Type)">
             <summary>
             Registers <see langword="public"/> <see langword="static"/> methods decorated with the
             <see cref="T:SMLHelper.V2.Commands.ConsoleCommandAttribute"/> within the <paramref name="type"/> as console commands.
@@ -2947,8 +3032,8 @@
             
             <para>If a decorated method has a return type, it will be printed to both the screen and the log.</para>
             </remarks>
-            <seealso cref="M:SMLHelper.V2.Interfaces.IConsoleCommandsHandler.RegisterConsoleCommand(System.String,System.Type,System.String,System.Type[])"/>
-            <seealso cref="M:SMLHelper.V2.Interfaces.IConsoleCommandsHandler.RegisterConsoleCommand``1(System.String,``0)"/>
+            <seealso cref="M:SMLHelper.V2.Interfaces.IConsoleCommandHandler.RegisterConsoleCommand(System.String,System.Type,System.String,System.Type[])"/>
+            <seealso cref="M:SMLHelper.V2.Interfaces.IConsoleCommandHandler.RegisterConsoleCommand``1(System.String,``0)"/>
             <seealso cref="T:SMLHelper.V2.Commands.ConsoleCommandAttribute"/>
         </member>
         <member name="T:SMLHelper.V2.Interfaces.IPingHandler">
@@ -4382,6 +4467,11 @@
         <member name="P:SMLHelper.V2.Handler.PingHandler">
             <summary>
             A handler related to PingTypes
+            </summary>
+        </member>
+        <member name="P:SMLHelper.V2.Handler.BackgroundTypeHandler">
+            <summary>
+            A handler for everything related to creating new BackgroundTypes.
             </summary>
         </member>
         <member name="T:SMLHelper.V2.Initializer">

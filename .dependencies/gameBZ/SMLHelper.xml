@@ -555,12 +555,8 @@
         </member>
         <member name="P:SMLHelper.V2.Assets.PdaItem.UnlockedAtStart">
             <summary>
-            Gets a value indicating whether <see cref="P:SMLHelper.V2.Assets.PdaItem.RequiredForUnlock"/> has been set to lock this blueprint behind another <see cref="T:TechType"/>.
+            Override this property to assign whether or not the <see cref="T:TechType"/> should be unlocked at the start, defaulted to <c><see cref="P:SMLHelper.V2.Assets.PdaItem.RequiredForUnlock"/> == <see cref="F:TechType.None"/></c>
             </summary>
-            <value>
-              Returns <c>true</c> if will be unlocked from the start of the game; otherwise, <c>false</c>.
-            </value>
-            <seealso cref="P:SMLHelper.V2.Assets.PdaItem.RequiredForUnlock"/>
         </member>
         <member name="P:SMLHelper.V2.Assets.PdaItem.DiscoverMessage">
             <summary>
@@ -628,6 +624,12 @@
             By default this will be 1x1. Override to change the size.
             </summary>
         </member>
+        <member name="P:SMLHelper.V2.Assets.Spawnable.CoordinatedSpawns">
+            <summary>
+            Returns the list of <see cref="T:UnityEngine.Vector3"/>s that specify the prefab's Coordinated Spawns.<br/>
+            By default this will be null.
+            </summary>
+        </member>
         <member name="P:SMLHelper.V2.Assets.Spawnable.BiomesToSpawnIn">
             <summary>
             Returns the List of BiomeData that handles what Biomes this prefab will spawn, how probable it is to spawn there and how many per spawn.
@@ -638,6 +640,11 @@
             <summary>
             Returns the <see cref="T:UWE.WorldEntityInfo"/> of this object if it has one.
             By default this will be null. Override to change this.
+            </summary>
+        </member>
+        <member name="P:SMLHelper.V2.Assets.Spawnable.HasSprite">
+            <summary>
+            Gets a value indicating whether if we should be looking for a Sprite when NOT overriding <see cref="M:SMLHelper.V2.Assets.Spawnable.GetItemSprite"/>.
             </summary>
         </member>
         <member name="M:SMLHelper.V2.Assets.Spawnable.#ctor(System.String,System.String,System.String)">
@@ -1034,6 +1041,146 @@
             <param name="index">The index.</param>
             <returns>The <see cref="T:TechType"/> at the requested the index if the index is value; Otherwise returns null.</returns>
         </member>
+        <member name="T:SMLHelper.V2.Handlers.BackgroundTypeHandler">
+            <summary>
+            A handler for everything related to creating new BackgroundTypes.
+            </summary>
+        </member>
+        <member name="P:SMLHelper.V2.Handlers.BackgroundTypeHandler.Main">
+            <summary>
+            Main entry point for all calls to this handler.
+            </summary>
+        </member>
+        <member name="M:SMLHelper.V2.Handlers.BackgroundTypeHandler.SMLHelper#V2#Interfaces#IBackgroundTypeHandler#AddBackgroundType(System.String,UnityEngine.Sprite)">
+            <summary>
+            adds a new <see cref="T:CraftData.BackgroundType"/> into the game.
+            </summary>
+            <param name="backgroundTypeName">the name of the BackgroundType, should not contain special characters.</param>
+            <param name="backgroundSprite">The sprite for this BackgroundType.</param>
+            <returns>The new <see cref="T:CraftData.BackgroundType"/> that's created.</returns>
+        </member>
+        <member name="M:SMLHelper.V2.Handlers.BackgroundTypeHandler.SMLHelper#V2#Interfaces#IBackgroundTypeHandler#TryGetModdedBackgroundType(System.String,CraftData.BackgroundType@)">
+            <summary>
+            Safely looks for a modded Background Type from another mod in the SMLHelper BackgroundTypeCache and outputs its <see cref="T:CraftData.BackgroundType" /> value when found.
+            </summary>
+            <param name="backgroundTypeString">The string used to define the BackgroundType</param>
+            <param name="modBackgroundType">The BackgroundType enum value of the modded. Defaults to <see cref="F:CraftData.BackgroundType.Normal" /> when the item was not found.</param>
+            <returns><see langword="true"/> if the item was found; otherwise <see langword="false"/>.</returns>
+        </member>
+        <member name="M:SMLHelper.V2.Handlers.BackgroundTypeHandler.SMLHelper#V2#Interfaces#IBackgroundTypeHandler#ModdedBackgroundTypeExists(System.String)">
+            <summary>
+            Safely looks for a modded Background Type from another mod in the SMLHelper BackgroundTypeCache.
+            </summary>
+            <param name="backgroundTypeString">The string used to define the BackgroundType.</param>
+            <returns><see langword="true"/> if the item was found; otherwise <see langword="false"/>.</returns>
+        </member>
+        <member name="M:SMLHelper.V2.Handlers.BackgroundTypeHandler.AddBackgroundType(System.String,UnityEngine.Sprite)">
+            <summary>
+            adds a new <see cref="T:CraftData.BackgroundType"/> into the game.
+            </summary>
+            <param name="backgroundTypeName">the name of the BackgroundType, should not contain special characters.</param>
+            <param name="backgroundSprite">The sprite for this BackgroundType.</param>
+            <returns>The new <see cref="T:CraftData.BackgroundType"/> that's created.</returns>
+            <returns></returns>
+        </member>
+        <member name="M:SMLHelper.V2.Handlers.BackgroundTypeHandler.TryGetModdedBackgroundType(System.String,CraftData.BackgroundType@)">
+            <summary>
+            Safely looks for a modded Background Type from another mod in the SMLHelper BackgroundTypeCache and outputs its <see cref="T:CraftData.BackgroundType" /> value when found.
+            </summary>
+            <param name="backgroundTypeString">The string used to define the BackgroundType</param>
+            <param name="modBackgroundType">The BackgroundType enum value of the modded. Defaults to <see cref="F:CraftData.BackgroundType.Normal" /> when the item was not found.</param>
+            <returns><see langword="true"/> if the item was found; otherwise <see langword="false"/>.</returns>
+        </member>
+        <member name="M:SMLHelper.V2.Handlers.BackgroundTypeHandler.ModdedBackgroundTypeExists(System.String)">
+            <summary>
+            Safely looks for a modded Background Type from another mod in the SMLHelper BackgroundTypeCache.
+            </summary>
+            <param name="backgroundTypeString">The string used to define the BackgroundType.</param>
+            <returns><see langword="true"/> if the item was found; otherwise <see langword="false"/>.</returns>
+        </member>
+        <member name="T:SMLHelper.V2.Handlers.CoordinatedSpawnsHandler">
+            <summary>
+            a Handler that handles and registers Coordinated (<see cref="T:UnityEngine.Vector3"/> spawns).
+            </summary>
+        </member>
+        <member name="P:SMLHelper.V2.Handlers.CoordinatedSpawnsHandler.Main">
+            <summary>
+            Main entry point for all calls to this handler.
+            </summary>
+        </member>
+        <member name="M:SMLHelper.V2.Handlers.CoordinatedSpawnsHandler.SMLHelper#V2#Interfaces#ICoordinatedSpawnHandler#RegisterCoordinatedSpawnsForOneTechType(TechType,System.Collections.Generic.List{UnityEngine.Vector3})">
+            <summary>
+            Registers Multiple Coordinated spawns for one single passed TechType
+            </summary>
+            <param name="techTypeToSpawn">The TechType to spawn</param>
+            <param name="coordinatesToSpawnTo">the coordinates the <see cref="T:TechType"/> should spawn to</param>
+        </member>
+        <member name="M:SMLHelper.V2.Handlers.CoordinatedSpawnsHandler.SMLHelper#V2#Interfaces#ICoordinatedSpawnHandler#RegisterCoordinatedSpawn(SMLHelper.V2.Handlers.SpawnInfo)">
+            <summary>
+            Registers a Coordinated Spawn
+            </summary>
+            <param name="spawnInfo">the SpawnInfo to spawn</param>
+        </member>
+        <member name="M:SMLHelper.V2.Handlers.CoordinatedSpawnsHandler.SMLHelper#V2#Interfaces#ICoordinatedSpawnHandler#RegisterCoordinatedSpawns(System.Collections.Generic.List{SMLHelper.V2.Handlers.SpawnInfo})">
+            <summary>
+            registers Many Coordinated Spawns.
+            </summary>
+            <param name="spawnInfos">The SpawnInfos to spawn.</param>
+        </member>
+        <member name="M:SMLHelper.V2.Handlers.CoordinatedSpawnsHandler.RegisterCoordinatedSpawn(SMLHelper.V2.Handlers.SpawnInfo)">
+            <summary>
+            Registers a Coordinated Spawn
+            </summary>
+            <param name="spawnInfo">the SpawnInfo to spawn</param>
+        </member>
+        <member name="M:SMLHelper.V2.Handlers.CoordinatedSpawnsHandler.RegisterCoordinatedSpawns(System.Collections.Generic.List{SMLHelper.V2.Handlers.SpawnInfo})">
+            <summary>
+            registers Many Coordinated Spawns.
+            </summary>
+            <param name="spawnInfos">The SpawnInfo to spawn.</param>
+        </member>
+        <member name="M:SMLHelper.V2.Handlers.CoordinatedSpawnsHandler.RegisterCoordinatedSpawnsForOneTechType(TechType,System.Collections.Generic.List{UnityEngine.Vector3})">
+            <summary>
+            Registers Multiple Coordinated spawns for one single passed TechType
+            </summary>
+            <param name="techTypeToSpawn">The TechType to spawn</param>
+            <param name="coordinatesToSpawnTo">the coordinates the <see cref="T:TechType"/> should spawn to</param>
+        </member>
+        <member name="T:SMLHelper.V2.Handlers.SpawnInfo">
+            <summary>
+            a basic class that provides enough info for the <see cref="T:SMLHelper.V2.Handlers.CoordinatedSpawnsHandler"/> System to function.
+            </summary>
+        </member>
+        <member name="M:SMLHelper.V2.Handlers.SpawnInfo.#ctor(TechType,UnityEngine.Vector3)">
+            <summary>
+            Initializes a new <see cref="T:SMLHelper.V2.Handlers.SpawnInfo"/>.
+            </summary>
+            <param name="techType">TechType to spawn.</param>
+            <param name="spawnPosition">Position to spawn into.</param>
+        </member>
+        <member name="M:SMLHelper.V2.Handlers.SpawnInfo.#ctor(System.String,UnityEngine.Vector3)">
+            <summary>
+            Initializes a new <see cref="T:SMLHelper.V2.Handlers.SpawnInfo"/>.
+            </summary>
+            <param name="classId">ClassID to spawn.</param>
+            <param name="spawnPosition">Position to spawn into.</param>
+        </member>
+        <member name="M:SMLHelper.V2.Handlers.SpawnInfo.#ctor(TechType,UnityEngine.Vector3,UnityEngine.Quaternion)">
+            <summary>
+            Initializes a new <see cref="T:SMLHelper.V2.Handlers.SpawnInfo"/>.
+            </summary>
+            <param name="techType">TechType to spawn.</param>
+            <param name="spawnPosition">Position to spawn into.</param>
+            <param name="rotation">Rotation to spawn at.</param>
+        </member>
+        <member name="M:SMLHelper.V2.Handlers.SpawnInfo.#ctor(System.String,UnityEngine.Vector3,UnityEngine.Quaternion)">
+            <summary>
+            Initializes a new <see cref="T:SMLHelper.V2.Handlers.SpawnInfo"/>.
+            </summary>
+            <param name="classId">ClassID to spawn.</param>
+            <param name="spawnPosition">Position to spawn into.</param>
+            <param name="rotation">Rotation to spawn at.</param>
+        </member>
         <member name="T:SMLHelper.V2.Handlers.PingHandler">
             <summary>
             A handler related to PingTypes
@@ -1075,6 +1222,143 @@
             <param name="pingTypeString">The string used to define the modded PingType</param>
             <param name="moddedPingType">The PingType enum value. Defaults to <see cref="F:PingType.None"/> when the PingType was not found.</param>
             <returns><c>True</c> if the PingType was found; Otherwise <c>false</c></returns>
+        </member>
+        <member name="T:SMLHelper.V2.Handlers.SurvivalHandler">
+            <summary>
+            a common handler for uses specified to the Survival component
+            </summary>
+        </member>
+        <member name="P:SMLHelper.V2.Handlers.SurvivalHandler.Main">
+            <summary>
+            Main entry point for all calls to this handler.
+            </summary>
+        </member>
+        <member name="M:SMLHelper.V2.Handlers.SurvivalHandler.SMLHelper#V2#Interfaces#ISurvivalHandler#GiveOxygenOnConsume(TechType,System.Single,System.Boolean)">
+            <summary>
+            <para>makes the item gives oxygen on use.</para>
+            </summary>
+            <param name="techType">the TechType that you want to make it give oxygen on use</param>
+            <param name="oxygenGiven">the oxygen amount the item gives</param>
+            <param name="isEdible">set it to <see langword="true" /> if the item is edible and has the <see cref="T:Eatable"/> component attached to it. 
+            <para>defaults to <see langword="false" /></para>
+            </param>
+        </member>
+        <member name="M:SMLHelper.V2.Handlers.SurvivalHandler.SMLHelper#V2#Interfaces#ISurvivalHandler#GiveHealthOnConsume(TechType,System.Single,System.Boolean)">
+            <summary>
+            <para>makes the item Heal the player on consume.</para>
+            </summary>
+            <param name="techType">the TechType that you want it to heal back</param>
+            <param name="healthBack">amount to heal the player</param>
+            <param name="isEdible">set it to <see langword="true" /> if the item is edible and has the <see cref="T:Eatable"/> component attached to it. 
+            <para>defaults to <see langword="false" /></para>
+            </param>
+        </member>
+        <member name="M:SMLHelper.V2.Handlers.SurvivalHandler.GiveOxygenOnConsume(TechType,System.Single,System.Boolean)">
+            <summary>
+            <para>makes the item gives oxygen on use.</para>
+            </summary>
+            <param name="techType">the TechType that you want to make it give oxygen on use</param>
+            <param name="oxygenGiven">the oxygen amount the item gives</param>
+            <param name="isEdible">set it to <see langword="true" /> if the item is edible and has the <see cref="T:Eatable"/> component attached to it. 
+            <para>defaults to <see langword="false" /></para>
+            </param>
+        </member>
+        <member name="M:SMLHelper.V2.Handlers.SurvivalHandler.GiveHealthOnConsume(TechType,System.Single,System.Boolean)">
+            <summary>
+            <para>makes the item Heal the player on consume.</para>
+            </summary>
+            <param name="techType">the TechType that you want it to heal back</param>
+            <param name="healthBack">amount to heal the player</param>
+            <param name="isEdible">set it to <see langword="true" /> if the item is edible and has the <see cref="T:Eatable"/> component attached to it. 
+            <para>defaults to <see langword="false" /></para>
+            </param>
+        </member>
+        <member name="T:SMLHelper.V2.Handlers.TechCategoryHandler">
+            <summary>
+            A handler class for everything related to creating new TechCategories.
+            </summary>
+            <seealso cref="T:SMLHelper.V2.Interfaces.ITechCategoryHandler" />
+        </member>
+        <member name="P:SMLHelper.V2.Handlers.TechCategoryHandler.Main">
+            <summary>
+            Main entry point for all calls to this handler.
+            </summary>
+        </member>
+        <member name="M:SMLHelper.V2.Handlers.TechCategoryHandler.AddTechCategory(System.String,System.String)">
+            <summary>
+            Adds a new <see cref="T:TechCategory" /> into the game.
+            </summary>
+            <param name="techCatagoryName">The name of the TechCategory. Should not contain special characters.</param>
+            <param name="displayName">The display name of the TechCategory. Can be anything.</param>
+            <returns>
+            The new <see cref="T:TechCategory" /> that is created.
+            </returns>
+        </member>
+        <member name="M:SMLHelper.V2.Handlers.TechCategoryHandler.ModdedTechCategoryExists(System.String)">
+            <summary>
+            Safely looks for a modded category from another mod in the SMLHelper TechCategoryCache.
+            </summary>
+            <param name="techCategoryString">The string used to define the techcategory.</param>
+            <returns>
+              <c>True</c> if the item was found; Otherwise <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:SMLHelper.V2.Handlers.TechCategoryHandler.TryGetModdedTechCategory(System.String,TechCategory@)">
+            <summary>
+            Safely looks for a modded category from another mod in the SMLHelper TechCategoryCache and outputs its <see cref="T:TechCategory" /> value when found.
+            </summary>
+            <param name="techCategoryString">The string used to define the techcategory.</param>
+            <param name="modTechCategory">The TechCategory enum value of the modded. Defaults to <see cref="F:TechCategory.Misc" /> when the item was not found.</param>
+            <returns>
+              <c>True</c> if the item was found; Otherwise <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:SMLHelper.V2.Handlers.TechCategoryHandler.TryRegisterTechCategoryToTechGroup(TechGroup,TechCategory)">
+            <summary>
+            Registers the TechCategory to a TechGroup in CraftData.groups.
+            </summary>
+            <param name="techGroup">The tech group.</param>
+            <param name="techCategory">The tech category.</param>
+            <returns></returns>
+        </member>
+        <member name="T:SMLHelper.V2.Handlers.TechGroupHandler">
+            <summary>
+            A handler class for everything related to creating new TechGroups.
+            </summary>
+        </member>
+        <member name="P:SMLHelper.V2.Handlers.TechGroupHandler.Main">
+            <summary>
+            Main entry point for all calls to this handler.
+            </summary>
+        </member>
+        <member name="M:SMLHelper.V2.Handlers.TechGroupHandler.AddTechGroup(System.String,System.String)">
+            <summary>
+            Adds a new <see cref="T:TechGroup" /> into the game.
+            </summary>
+            <param name="techGroupName">The name of the TechGroup. Should not contain special characters.</param>
+            <param name="displayName">The display name of the TechGroup. Can be anything.</param>
+            <returns>
+            The new <see cref="T:TechGroup" /> that is created.
+            </returns>
+        </member>
+        <member name="M:SMLHelper.V2.Handlers.TechGroupHandler.ModdedTechGroupExists(System.String)">
+            <summary>
+            Safely looks for a modded group from another mod in the SMLHelper TechGroupCache.
+            </summary>
+            <param name="techGroupString">The string used to define the techgroup.</param>
+            <returns>
+              <c>True</c> if the item was found; Otherwise <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:SMLHelper.V2.Handlers.TechGroupHandler.TryGetModdedTechGroup(System.String,TechGroup@)">
+            <summary>
+            Safely looks for a modded item from another mod in the SMLHelper TechGroupCache and outputs its <see cref="T:TechGroup" /> value when found.
+            </summary>
+            <param name="techGroupString">The string used to define the techgroup.</param>
+            <param name="modTechGroup">The TechGroup enum value of the modded. Defaults to <see cref="F:TechGroup.Uncategorized" /> when the item was not found.</param>
+            <returns>
+              <c>True</c> if the item was found; Otherwise <c>false</c>.
+            </returns>
         </member>
         <member name="T:SMLHelper.V2.Handlers.BioReactorHandler">
             <summary>
@@ -1126,7 +1410,7 @@
         <member name="M:SMLHelper.V2.Handlers.CraftDataHandler.SetQuickSlotType(TechType,QuickSlotType)">
             <summary>
             <para>Allows you to edit QuickSlotType for TechTypes. Can be used for existing TechTypes too.</para>
-            <para>Careful: This has to be called after <see cref="M:SMLHelper.V2.Handlers.CraftDataHandler.SetTechData(TechType,SMLHelper.V2.Crafting.RecipeData)"/> and <see cref="M:SMLHelper.V2.Handlers.CraftDataHandler.SetTechData(TechType,JsonValue)"/>.</para>
+            <para>Careful: This has to be called after <see cref="M:SMLHelper.V2.Handlers.CraftDataHandler.SetTechData(TechType,SMLHelper.V2.Crafting.RecipeData)"/>.</para>
             </summary>
             <param name="techType">The TechType whose QuickSlotType you want to edit.</param>
             <param name="slotType">The QuickSlotType for that TechType.</param>
@@ -1232,7 +1516,7 @@
         <member name="M:SMLHelper.V2.Handlers.CraftDataHandler.SMLHelper#V2#Interfaces#ICraftDataHandler#AddToGroup(TechGroup,TechCategory,TechType)">
             <summary>
             Allows you to add items to the game's internal grouping system.
-            Required if you want to make buildable items show up in the Habitat Builder.
+            Required if you want to make buildable items show up in the Habitat Builder or show in the Blueprints Tab of the PDA.
             </summary>
             <param name="group">The TechGroup you want to add your TechType to.</param>
             <param name="category">The TechCategory (in the TechGroup) you want to add your TechType to.</param>
@@ -1241,7 +1525,7 @@
         <member name="M:SMLHelper.V2.Handlers.CraftDataHandler.SMLHelper#V2#Interfaces#ICraftDataHandler#AddToGroup(TechGroup,TechCategory,TechType,TechType)">
             <summary>
             Allows you to add items to the game's internal grouping system.
-            Required if you want to make buildable items show up in the Habitat Builder.
+            Required if you want to make buildable items show up in the Habitat Builder or show in the Blueprints Tab of the PDA.
             </summary>
             <param name="group">The TechGroup you want to add your TechType to.</param>
             <param name="category">The TechCategory (in the TechGroup) you want to add your TechType to.</param>
@@ -1265,16 +1549,7 @@
             <param name="recipeData">The TechData for that TechType.</param>
             <seealso cref="T:SMLHelper.V2.Crafting.RecipeData"/>
         </member>
-        <member name="M:SMLHelper.V2.Handlers.CraftDataHandler.SetTechData(TechType,JsonValue)">
-            <summary>
-            <para>Allows you to edit recipes, i.e. TechData for TechTypes.</para>
-            <para>Can be used for existing TechTypes too.</para>
-            </summary>
-            <param name="techType">The TechType whose TechData you want to edit.</param>
-            <param name="jsonValue">The JsonValue for that TechType.</param>
-            <seealso cref="F:TechData.defaults"/>
-        </member>
-        <member name="M:SMLHelper.V2.Handlers.CraftDataHandler.AddIngredients(TechType,System.Collections.Generic.ICollection{Ingredient})">
+        <member name="M:SMLHelper.V2.Handlers.CraftDataHandler.SetIngredients(TechType,System.Collections.Generic.ICollection{Ingredient})">
             <summary>
             <para>Allows you to add ingredients for a TechType crafting recipe.</para>
             <para>Can be used for existing TechTypes too.</para>
@@ -1283,7 +1558,15 @@
             <param name="ingredients">The collection of Ingredients for that TechType.</param>
             <seealso cref="T:Ingredient"/>
         </member>
-        <member name="M:SMLHelper.V2.Handlers.CraftDataHandler.AddLinkedItems(TechType,System.Collections.Generic.ICollection{TechType})">
+        <member name="M:SMLHelper.V2.Handlers.CraftDataHandler.SetColdResistance(TechType,System.Int32)">
+            <summary>
+            <para>Allows you to edit the Cold Resistance for TechTypes.</para>
+            <para>Can be used for existing TechTypes too.</para>
+            </summary>
+            <param name="techType">The TechType whose Cold Resistance you want to edit.</param>
+            <param name="resistance">The int value for the Cold Resistance.</param>
+        </member>
+        <member name="M:SMLHelper.V2.Handlers.CraftDataHandler.SetLinkedItems(TechType,System.Collections.Generic.ICollection{TechType})">
             <summary>
             <para>Allows you to add linked items for a TechType crafting recipe.</para>
             <para>Can be used for existing TechTypes too.</para>
@@ -1292,6 +1575,15 @@
             <param name="linkedItems">The collection of linked items for that TechType</param>
         </member>
         <member name="M:SMLHelper.V2.Handlers.CraftDataHandler.GetRecipeData(TechType)">
+            <summary>
+            Safely accesses the crafting data from a modded or vanilla item.<para/>
+            WARNING: This method is highly dependent on mod load order. 
+            Make sure your mod is loading after the mod whose TechData you are trying to access.
+            </summary>
+            <param name="techType">The TechType whose TechData you want to access.</param>
+            <returns>The JsonValue from the modded item if it exists; Otherwise, returns <c>null</c>.</returns>
+        </member>
+        <member name="M:SMLHelper.V2.Handlers.CraftDataHandler.GetTechData(TechType)">
             <summary>
             Safely accesses the crafting data from a modded or vanilla item.<para/>
             WARNING: This method is highly dependent on mod load order. 
@@ -1309,6 +1601,36 @@
             <param name="techType">The TechType whose TechData you want to access.</param>
             <returns>The JsonValue from the modded item if it exists; Otherwise, returns <c>null</c>.</returns>
         </member>
+        <member name="M:SMLHelper.V2.Handlers.CraftDataHandler.GetModdedTechData(TechType)">
+            <summary>
+            Safely accesses the crafting data from a modded item.<para/>
+            WARNING: This method is highly dependent on mod load order. 
+            Make sure your mod is loading after the mod whose TechData you are trying to access.
+            </summary>
+            <param name="techType">The TechType whose TechData you want to access.</param>
+            <returns>The JsonValue from the modded item if it exists; Otherwise, returns <c>null</c>.</returns>
+        </member>
+        <member name="M:SMLHelper.V2.Handlers.CraftDataHandler.SetMaxCharge(TechType,System.Single)">
+            <summary>
+            Sets the maximum charge.
+            </summary>
+            <param name="techType">The TechType whose MaxCharge you want to edit.</param>
+            <param name="maxCharge">The maximum charge.</param>
+        </member>
+        <member name="M:SMLHelper.V2.Handlers.CraftDataHandler.SetEnergyCost(TechType,System.Single)">
+            <summary>
+            Sets the energy cost.
+            </summary>
+            <param name="techType">The TechType whose EnergyCost you want to edit.</param>
+            <param name="energyCost">The energy cost.</param>
+        </member>
+        <member name="M:SMLHelper.V2.Handlers.CraftDataHandler.SetSoundType(TechType,TechData.SoundType)">
+            <summary>
+            Sets the type of the sound.
+            </summary>
+            <param name="techType">Type of the tech.</param>
+            <param name="soundType">Type of the sound.</param>
+        </member>
         <member name="M:SMLHelper.V2.Handlers.CraftDataHandler.SMLHelper#V2#Interfaces#ICraftDataHandler#SetTechData(TechType,SMLHelper.V2.Crafting.RecipeData)">
             <summary>
             <para>Allows you to add or edit RecipeData for TechTypes.</para>
@@ -1318,16 +1640,7 @@
             <param name="recipeData">The TechData for that TechType.</param>
             <seealso cref="T:SMLHelper.V2.Crafting.RecipeData"/>
         </member>
-        <member name="M:SMLHelper.V2.Handlers.CraftDataHandler.SMLHelper#V2#Interfaces#ICraftDataHandler#SetTechData(TechType,JsonValue)">
-            <summary>
-            <para>Allows you to add or edit TechData for TechTypes.</para>
-            <para>Can be used for existing TechTypes too.</para>
-            </summary>
-            <param name="techType">The TechType whose TechData you want to edit.</param>
-            <param name="jsonValue">The TechData for that TechType.</param>
-            <seealso cref="F:TechData.defaults"/>
-        </member>
-        <member name="M:SMLHelper.V2.Handlers.CraftDataHandler.SMLHelper#V2#Interfaces#ICraftDataHandler#AddIngredients(TechType,System.Collections.Generic.ICollection{Ingredient})">
+        <member name="M:SMLHelper.V2.Handlers.CraftDataHandler.SMLHelper#V2#Interfaces#ICraftDataHandler#SetIngredients(TechType,System.Collections.Generic.ICollection{Ingredient})">
             <summary>
             <para>Allows you to edit recipes for TechTypes.</para>
             <para>Can be used for existing TechTypes too.</para>
@@ -1336,7 +1649,7 @@
             <param name="ingredients">The collection of Ingredients for that TechType.</param>
             <seealso cref="T:Ingredient"/>
         </member>
-        <member name="M:SMLHelper.V2.Handlers.CraftDataHandler.SMLHelper#V2#Interfaces#ICraftDataHandler#AddLinkedItems(TechType,System.Collections.Generic.ICollection{TechType})">
+        <member name="M:SMLHelper.V2.Handlers.CraftDataHandler.SMLHelper#V2#Interfaces#ICraftDataHandler#SetLinkedItems(TechType,System.Collections.Generic.ICollection{TechType})">
             <summary>
             <para>Allows you to edit Linked Items for TechTypes.</para>
             <para>Can be used for existing TechTypes too.</para>
@@ -1374,7 +1687,7 @@
         <member name="M:SMLHelper.V2.Handlers.CraftDataHandler.SMLHelper#V2#Interfaces#ICraftDataHandler#SetQuickSlotType(TechType,QuickSlotType)">
             <summary>
             <para>Allows you to edit QuickSlotType for TechTypes. Can be used for existing TechTypes too.</para>
-            <para>Careful: This has to be called after <see cref="M:SMLHelper.V2.Handlers.CraftDataHandler.SetTechData(TechType,SMLHelper.V2.Crafting.RecipeData)"/> and <see cref="M:SMLHelper.V2.Handlers.CraftDataHandler.SetTechData(TechType,JsonValue)"/>.</para>
+            <para>Careful: This has to be called after <see cref="M:SMLHelper.V2.Handlers.CraftDataHandler.SetTechData(TechType,SMLHelper.V2.Crafting.RecipeData)"/>.</para>
             </summary>
             <param name="techType">The TechType whose QuickSlotType you want to edit.</param>
             <param name="slotType">The QuickSlotType for that TechType.</param>
@@ -1436,6 +1749,14 @@
             <param name="uncooked">The TechType whose cooked creature counterpart to edit.</param>
             <param name="cooked">The cooked creature counterpart for that TechType.</param>
         </member>
+        <member name="M:SMLHelper.V2.Handlers.CraftDataHandler.SMLHelper#V2#Interfaces#ICraftDataHandler#SetColdResistance(TechType,System.Int32)">
+            <summary>
+            <para>Allows you to edit the Cold Resistance of a TechType.</para>
+            <para>Can be used for existing TechTypes too.</para>
+            </summary>
+            <param name="uncooked">The TechType whose Cold Resistance to edit.</param>
+            <param name="resistance">The Cold Resistance for that TechType.</param>
+        </member>
         <member name="M:SMLHelper.V2.Handlers.CraftDataHandler.SMLHelper#V2#Interfaces#ICraftDataHandler#SetBackgroundType(TechType,CraftData.BackgroundType)">
             <summary>
             <para>Allows you to edit inventory background colors for TechTypes.</para>
@@ -1449,6 +1770,27 @@
             Allows you to add items to the buildable list.
             </summary>
             <param name="techType">The TechType which you want to add to the buildable list.</param>
+        </member>
+        <member name="M:SMLHelper.V2.Handlers.CraftDataHandler.SMLHelper#V2#Interfaces#ICraftDataHandler#SetMaxCharge(TechType,System.Single)">
+            <summary>
+            Sets the maximum charge.
+            </summary>
+            <param name="techType">The TechType whose MaxCharge you want to edit.</param>
+            <param name="maxCharge">The maximum charge.</param>
+        </member>
+        <member name="M:SMLHelper.V2.Handlers.CraftDataHandler.SMLHelper#V2#Interfaces#ICraftDataHandler#SetEnergyCost(TechType,System.Single)">
+            <summary>
+            Sets the energy cost.
+            </summary>
+            <param name="techType">The TechType whose EnergyCost you want to edit.</param>
+            <param name="energyCost">The energy cost.</param>
+        </member>
+        <member name="M:SMLHelper.V2.Handlers.CraftDataHandler.SMLHelper#V2#Interfaces#ICraftDataHandler#SetSoundType(TechType,TechData.SoundType)">
+            <summary>
+            Sets the type of the sound.
+            </summary>
+            <param name="techType">Type of the tech.</param>
+            <param name="soundType">Type of the sound.</param>
         </member>
         <member name="T:SMLHelper.V2.Handlers.CraftTreeHandler">
             <summary>
@@ -2336,9 +2678,30 @@
             Main entry point for all calls to this handler.
             </summary>
         </member>
+        <member name="M:SMLHelper.V2.Handlers.TechTypeHandler.AddTechType(System.Reflection.Assembly,System.String,System.String,System.String)">
+            <summary>
+            Adds a new <see cref="T:TechType"/> into the game. This new <see cref="T:TechType"/> will be unlocked at the start of a game.
+            </summary>
+            <param name="addedByAssembly">The assembly this TechType is getting added by.</param>
+            <param name="internalName">The internal name of the TechType. Should not contain special characters</param>
+            <param name="displayName">The display name of the TechType. Can be anything.</param>
+            <param name="tooltip">The tooltip, displayed when hovered in an inventory. Can be anything.</param>
+            <returns>The new <see cref="T:TechType"/> that is created.</returns>
+        </member>
+        <member name="M:SMLHelper.V2.Handlers.TechTypeHandler.AddTechType(System.Reflection.Assembly,System.String,System.String,System.String,System.Boolean)">
+            <summary>
+            Adds a new <see cref="T:TechType"/> into the game.
+            </summary>
+            <param name="addedByAssembly">The assembly this TechType is getting added by.</param>
+            <param name="internalName">The internal name of the TechType. Should not contain special characters</param>
+            <param name="displayName">The display name of the TechType. Can be anything.</param>
+            <param name="tooltip">The tooltip, displayed when hovered in an inventory. Can be anything.</param>
+            <param name="unlockAtStart">Whether this TechType should be unlocked on game start, or not. By default, <see langword="true"/>.</param>
+            <returns>The new <see cref="T:TechType"/> that is created.</returns>
+        </member>
         <member name="M:SMLHelper.V2.Handlers.TechTypeHandler.AddTechType(System.String,System.String,System.String)">
             <summary>
-            Adds a new <see cref="T:TechType"/> into the game. This new techtype will be unlocked at the start of a the game.
+            Adds a new <see cref="T:TechType"/> into the game. This new <see cref="T:TechType"/> will be unlocked at the start of a game.
             </summary>
             <param name="internalName">The internal name of the TechType. Should not contain special characters.</param>
             <param name="displayName">The display name of the TechType. Can be anything.</param>
@@ -2352,7 +2715,7 @@
             <param name="internalName">The internal name of the TechType. Should not contain special characters.</param>
             <param name="displayName">The display name of the TechType. Can be anything.</param>
             <param name="tooltip">The tooltip, displayed when hovered in an inventory. Can be anything.</param>
-            <param name="unlockAtStart">Whether this TechType should be unlocked on game start, or not. By default, <c>true</c>.</param>
+            <param name="unlockAtStart">Whether this TechType should be unlocked on game start, or not. By default, <see langword="true"/>.</param>
             <returns>The new <see cref="T:TechType"/> that is created.</returns>
         </member>
         <member name="M:SMLHelper.V2.Handlers.TechTypeHandler.AddTechType(System.String,System.String,System.String,UnityEngine.Sprite)">
@@ -2373,7 +2736,7 @@
             <param name="displayName">The display name of the TechType. Can be anything.</param>
             <param name="tooltip">The tooltip, displayed when hovered in an inventory. Can be anything.</param>
             <param name="sprite">The sprite that will related to this TechType.</param>
-            <param name="unlockAtStart">Whether this TechType should be unlocked on game start, or not. By default, <c>true</c>.</param>
+            <param name="unlockAtStart">Whether this TechType should be unlocked on game start, or not. By default, <see langword="true"/>.</param>
             <returns>The new <see cref="T:TechType"/> that is created.</returns>
         </member>
         <member name="M:SMLHelper.V2.Handlers.TechTypeHandler.TryGetModdedTechType(System.String,TechType@)">
@@ -2383,7 +2746,7 @@
             <param name="techtypeString">The string used to define the modded item's new techtype.</param>
             <param name="modTechType">The TechType enum value of the modded. Defaults to <see cref="F:TechType.None" /> when the item was not found.</param>
             <returns>
-              <c>True</c> if the item was found; Otherwise <c>false</c>.
+              <see langword="true"/> if the item was found; Otherwise <see langword="false"/>.
             </returns>
             <remarks>
             There's no guarantee in which order SMLHelper dependent mods are loaded,
@@ -2394,9 +2757,9 @@
             <summary>
             Safely looks for a modded item from another mod in the SMLHelper TechTypeCache.
             </summary>
-            <param name="techtypeString">The string used to define the modded item's new techtype.</param>
+            <param name="techtypeString">The string used to define the modded item's new <see cref="T:TechType"/>.</param>
             <returns>
-              <c>True</c> if the item was found; Otherwise <c>false</c>.
+              <c>True</c> if the item was found; Otherwise <see langword="false"/>.
             </returns>
             <remarks>
             There's no guarantee in which order SMLHelper dependent mods are loaded,
@@ -2410,7 +2773,7 @@
             <param name="internalName">The internal name of the TechType. Should not contain special characters.</param>
             <param name="displayName">The display name of the TechType. Can be anything.</param>
             <param name="tooltip">The tooltip, displayed when hovered in an inventory. Can be anything.</param>
-            <param name="unlockAtStart">Whether this TechType should be unlocked on game start, or not. By default, <c>true</c>.</param>
+            <param name="unlockAtStart">Whether this TechType should be unlocked on game start, or not. By default, <see langword="true"/>.</param>
             <returns>The new <see cref="T:TechType"/> that is created.</returns>
         </member>
         <member name="M:SMLHelper.V2.Handlers.TechTypeHandler.SMLHelper#V2#Interfaces#ITechTypeHandler#AddTechType(System.String,System.String,System.String)">
@@ -2509,6 +2872,58 @@
             <summary>
             Main entry point for all calls to this handler.
             </summary>
+        </member>
+        <member name="T:SMLHelper.V2.Interfaces.IBackgroundTypeHandler">
+            <summary>
+            A handler interface for everything related to creating new BackgroundTypes.
+            </summary>
+        </member>
+        <member name="M:SMLHelper.V2.Interfaces.IBackgroundTypeHandler.AddBackgroundType(System.String,UnityEngine.Sprite)">
+            <summary>
+            adds a new <see cref="T:CraftData.BackgroundType"/> into the game.
+            </summary>
+            <param name="backgroundTypeName">the name of the BackgroundType, should not contain special characters.</param>
+            <param name="backgroundSprite">The sprite for this BackgroundType.</param>
+            <returns>The new <see cref="T:CraftData.BackgroundType"/> that's created.</returns>
+        </member>
+        <member name="M:SMLHelper.V2.Interfaces.IBackgroundTypeHandler.TryGetModdedBackgroundType(System.String,CraftData.BackgroundType@)">
+            <summary>
+            Safely looks for a modded Background Type from another mod in the SMLHelper BackgroundTypeCache and outputs its <see cref="T:CraftData.BackgroundType" /> value when found.
+            </summary>
+            <param name="backgroundTypeString">The string used to define the BackgroundType</param>
+            <param name="modBackgroundType">The BackgroundType enum value of the modded. Defaults to <see cref="F:CraftData.BackgroundType.Normal" /> when the item was not found.</param>
+            <returns><see langword="true"/> if the item was found; otherwise <see langword="false"/>.</returns>
+        </member>
+        <member name="M:SMLHelper.V2.Interfaces.IBackgroundTypeHandler.ModdedBackgroundTypeExists(System.String)">
+            <summary>
+            Safely looks for a modded Background Type from another mod in the SMLHelper BackgroundTypeCache.
+            </summary>
+            <param name="backgroundTypeString">The string used to define the BackgroundType.</param>
+            <returns><see langword="true"/> if the item was found; otherwise <see langword="false"/>.</returns>
+        </member>
+        <member name="T:SMLHelper.V2.Interfaces.ICoordinatedSpawnHandler">
+            <summary>
+            a Handler interface that handles and registers Coordinated (<see cref="T:UnityEngine.Vector3"/> spawns).
+            </summary>
+        </member>
+        <member name="M:SMLHelper.V2.Interfaces.ICoordinatedSpawnHandler.RegisterCoordinatedSpawn(SMLHelper.V2.Handlers.SpawnInfo)">
+            <summary>
+            Registers a Coordinated Spawn
+            </summary>
+            <param name="spawnInfo">the SpawnInfo to spawn</param>
+        </member>
+        <member name="M:SMLHelper.V2.Interfaces.ICoordinatedSpawnHandler.RegisterCoordinatedSpawns(System.Collections.Generic.List{SMLHelper.V2.Handlers.SpawnInfo})">
+            <summary>
+            registers Many Coordinated Spawns.
+            </summary>
+            <param name="spawnInfos">The SpawnInfos to spawn.</param>
+        </member>
+        <member name="M:SMLHelper.V2.Interfaces.ICoordinatedSpawnHandler.RegisterCoordinatedSpawnsForOneTechType(TechType,System.Collections.Generic.List{UnityEngine.Vector3})">
+            <summary>
+            Registers Multiple Coordinated spawns for one single passed TechType
+            </summary>
+            <param name="techTypeToSpawn">The TechType to spawn</param>
+            <param name="coordinatesToSpawnTo">the coordinates the <see cref="T:TechType"/> should spawn to</param>
         </member>
         <member name="T:SMLHelper.V2.Interfaces.IModOptionAttribute">
             <summary>
@@ -2642,6 +3057,103 @@
             <param name="moddedPingType">The PingType enum value. Defaults to <see cref="F:PingType.None"/> when the PingType was not found.</param>
             <returns><c>True</c> if the PingType was found; Otherwise <c>false</c></returns>
         </member>
+        <member name="T:SMLHelper.V2.Interfaces.ISurvivalHandler">
+            <summary>
+            a handler for common uses to the Survival component
+            </summary>
+        </member>
+        <member name="M:SMLHelper.V2.Interfaces.ISurvivalHandler.GiveOxygenOnConsume(TechType,System.Single,System.Boolean)">
+            <summary>
+            <para>makes the item gives oxygen on use.</para>
+            </summary>
+            <param name="techType">the TechType that you want to make it give oxygen on use</param>
+            <param name="oxygenGiven">the oxygen amount the item gives</param>
+            <param name="isEdible">set it to <see langword="true" /> if the item is edible and has the <see cref="T:Eatable"/> component attached to it. 
+            <para>defaults to <see langword="false" /></para>
+            </param>
+        </member>
+        <member name="M:SMLHelper.V2.Interfaces.ISurvivalHandler.GiveHealthOnConsume(TechType,System.Single,System.Boolean)">
+            <summary>
+            <para>makes the item Heal the player on consume.</para>
+            </summary>
+            <param name="techType">the TechType that you want it to heal back</param>
+            <param name="healthBack">amount to heal the player</param>
+            <param name="isEdible">set it to <see langword="true" /> if the item is edible and has the <see cref="T:Eatable"/> component attached to it. 
+            <para>defaults to <see langword="false" /></para>
+            </param>
+        </member>
+        <member name="T:SMLHelper.V2.Interfaces.ITechCategoryHandler">
+            <summary>
+            A handler class for everything related to creating new TechCategorys.
+            </summary>
+        </member>
+        <member name="M:SMLHelper.V2.Interfaces.ITechCategoryHandler.AddTechCategory(System.String,System.String)">
+            <summary>
+            Adds a new <see cref="T:TechCategory"/> into the game. 
+            </summary>
+            <param name="techCatagoryName">The name of the TechCategory. Should not contain special characters.</param>
+            <param name="displayName">The display name of the TechCategory. Can be anything.</param>
+            <returns>The new <see cref="T:TechCategory"/> that is created.</returns>
+        </member>
+        <member name="M:SMLHelper.V2.Interfaces.ITechCategoryHandler.TryGetModdedTechCategory(System.String,TechCategory@)">
+            <summary>
+            Safely looks for a modded item from another mod in the SMLHelper TechCategoryCache and outputs its <see cref="T:TechCategory" /> value when found.
+            </summary>
+            <param name="techCategoryString">The string used to define the techcategory.</param>
+            <param name="modTechCategory">The TechCategory enum value of the modded. Defaults to <see cref="F:TechCategory.Misc" /> when the item was not found.</param>
+            <returns>
+              <c>True</c> if the item was found; Otherwise <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:SMLHelper.V2.Interfaces.ITechCategoryHandler.ModdedTechCategoryExists(System.String)">
+            <summary>
+            Safely looks for a modded item from another mod in the SMLHelper TechCategoryCache.
+            </summary>
+            <param name="techCategoryString">The string used to define the techcategory.</param>
+            <returns>
+              <c>True</c> if the item was found; Otherwise <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:SMLHelper.V2.Interfaces.ITechCategoryHandler.TryRegisterTechCategoryToTechGroup(TechGroup,TechCategory)">
+            <summary>
+            Registers the TechCategory to a TechGroup.
+            </summary>
+            <param name="techGroup">The tech group.</param>
+            <param name="techCategory">The tech category.</param>
+            <returns></returns>
+        </member>
+        <member name="T:SMLHelper.V2.Interfaces.ITechGroupHandler">
+            <summary>
+            A handler class for everything related to creating new TechGroups.
+            </summary>
+        </member>
+        <member name="M:SMLHelper.V2.Interfaces.ITechGroupHandler.AddTechGroup(System.String,System.String)">
+            <summary>
+            Adds a new <see cref="T:TechGroup"/> into the game. 
+            </summary>
+            <param name="techGroupName">The name of the TechGroup. Should not contain special characters.</param>
+            <param name="displayName">The display name of the TechGroup. Can be anything.</param>
+            <returns>The new <see cref="T:TechGroup"/> that is created.</returns>
+        </member>
+        <member name="M:SMLHelper.V2.Interfaces.ITechGroupHandler.TryGetModdedTechGroup(System.String,TechGroup@)">
+            <summary>
+            Safely looks for a modded item from another mod in the SMLHelper TechGroupCache and outputs its <see cref="T:TechGroup" /> value when found.
+            </summary>
+            <param name="techGroupString">The string used to define the techgroup.</param>
+            <param name="modTechGroup">The TechGroup enum value of the modded. Defaults to <see cref="F:TechGroup.Uncategorized" /> when the item was not found.</param>
+            <returns>
+              <c>True</c> if the item was found; Otherwise <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:SMLHelper.V2.Interfaces.ITechGroupHandler.ModdedTechGroupExists(System.String)">
+            <summary>
+            Safely looks for a modded item from another mod in the SMLHelper TechGroupCache.
+            </summary>
+            <param name="techGroupString">The string used to define the techgroup.</param>
+            <returns>
+              <c>True</c> if the item was found; Otherwise <c>false</c>.
+            </returns>
+        </member>
         <member name="T:SMLHelper.V2.Interfaces.IBioReactorHandler">
             <summary>
             A handler with common methods for updating BioReactor values.
@@ -2671,7 +3183,7 @@
         <member name="M:SMLHelper.V2.Interfaces.ICraftDataHandler.SetQuickSlotType(TechType,QuickSlotType)">
             <summary>
             <para>Allows you to edit QuickSlotType for TechTypes. Can be used for existing TechTypes too.</para>
-            <para>Careful: This has to be called after <see cref="M:SMLHelper.V2.Interfaces.ICraftDataHandler.SetTechData(TechType,SMLHelper.V2.Crafting.RecipeData)"/> and <see cref="M:SMLHelper.V2.Interfaces.ICraftDataHandler.SetTechData(TechType,JsonValue)"/>.</para>
+            <para>Careful: This has to be called after <see cref="M:SMLHelper.V2.Interfaces.ICraftDataHandler.SetTechData(TechType,SMLHelper.V2.Crafting.RecipeData)"/>.</para>
             </summary>
             <param name="techType">The TechType whose QuickSlotType you want to edit.</param>
             <param name="slotType">The QuickSlotType for that TechType.</param>
@@ -2783,15 +3295,6 @@
             <param name="techData">The TechData for that TechType.</param>
             <seealso cref="T:SMLHelper.V2.Crafting.RecipeData"/>
         </member>
-        <member name="M:SMLHelper.V2.Interfaces.ICraftDataHandler.SetTechData(TechType,JsonValue)">
-            <summary>
-            <para>Allows you to edit JsonValues Directly for TechTypes.</para>
-            <para>Can be used for existing TechTypes too.</para>
-            </summary>
-            <param name="techType">The TechType whose TechData you want to edit.</param>
-            <param name="jsonValue">The JsonValue for that TechType.</param>
-            <seealso cref="F:TechData.defaults"/>
-        </member>
         <member name="M:SMLHelper.V2.Interfaces.ICraftDataHandler.GetRecipeData(TechType)">
             <summary>
             Safely accesses the crafting data from a modded item.<para/>
@@ -2799,7 +3302,7 @@
             Make sure your mod is loading after the mod whose TechData you are trying to access.
             </summary>
             <param name="techType">The TechType whose TechData you want to access.</param>
-            <returns>The JsonValue from the modded item if it exists; Otherwise, returns <c>null</c>.</returns>
+            <returns>The RecipeData from the modded item if it exists; Otherwise, returns <c>null</c>.</returns>
         </member>
         <member name="M:SMLHelper.V2.Interfaces.ICraftDataHandler.GetModdedRecipeData(TechType)">
             <summary>
@@ -2808,24 +3311,53 @@
             Make sure your mod is loading after the mod whose TechData you are trying to access.
             </summary>
             <param name="techType">The TechType whose TechData you want to access.</param>
-            <returns>The JsonValue from the modded item if it exists; Otherwise, returns <c>null</c>.</returns>
+            <returns>The RecipeData from the modded item if it exists; Otherwise, returns <c>null</c>.</returns>
         </member>
-        <member name="M:SMLHelper.V2.Interfaces.ICraftDataHandler.AddIngredients(TechType,System.Collections.Generic.ICollection{Ingredient})">
+        <member name="M:SMLHelper.V2.Interfaces.ICraftDataHandler.SetIngredients(TechType,System.Collections.Generic.ICollection{Ingredient})">
             <summary>
-            <para>Allows you to add ingredients for a TechType crafting recipe.</para>
+            <para>Allows you to set ingredients for a TechType crafting recipe.</para>
             <para>Can be used for existing TechTypes too.</para>
             </summary>
             <param name="techType">The TechType whose ingredient list you want to edit.</param>
             <param name="ingredients">The collection of Ingredients for that TechType.</param>
             <seealso cref="T:Ingredient"/>
         </member>
-        <member name="M:SMLHelper.V2.Interfaces.ICraftDataHandler.AddLinkedItems(TechType,System.Collections.Generic.ICollection{TechType})">
+        <member name="M:SMLHelper.V2.Interfaces.ICraftDataHandler.SetLinkedItems(TechType,System.Collections.Generic.ICollection{TechType})">
             <summary>
-            <para>Allows you to add linked items for a TechType crafting recipe.</para>
+            <para>Allows you to set linked items for a TechType crafting recipe.</para>
             <para>Can be used for existing TechTypes too.</para>
             </summary>
             <param name="techType">The TechType whose ingredient list you want to edit.</param>
             <param name="linkedItems">The collection of linked items for that TechType</param>
+        </member>
+        <member name="M:SMLHelper.V2.Interfaces.ICraftDataHandler.SetColdResistance(TechType,System.Int32)">
+            <summary>
+            <para>Allows you to edit the Cold Resistance for TechTypes.</para>
+            <para>Can be used for existing TechTypes too.</para>
+            </summary>
+            <param name="techType">The TechType whose Cold Resistance you want to edit.</param>
+            <param name="resistance">The int value for the Cold Resistance.</param>
+        </member>
+        <member name="M:SMLHelper.V2.Interfaces.ICraftDataHandler.SetMaxCharge(TechType,System.Single)">
+            <summary>
+            Sets the maximum charge.
+            </summary>
+            <param name="techType">The TechType whose MaxCharge you want to edit.</param>
+            <param name="maxCharge">The maximum charge.</param>
+        </member>
+        <member name="M:SMLHelper.V2.Interfaces.ICraftDataHandler.SetEnergyCost(TechType,System.Single)">
+            <summary>
+            Sets the energy cost.
+            </summary>
+            <param name="techType">The TechType whose EnergyCost you want to edit.</param>
+            <param name="energyCost">The energy cost.</param>
+        </member>
+        <member name="M:SMLHelper.V2.Interfaces.ICraftDataHandler.SetSoundType(TechType,TechData.SoundType)">
+            <summary>
+            Sets the type of the sound.
+            </summary>
+            <param name="techType">Type of the tech.</param>
+            <param name="soundType">Type of the sound.</param>
         </member>
         <member name="T:SMLHelper.V2.Interfaces.ICraftTreeHandler">
             <summary>
@@ -3391,6 +3923,121 @@
             The ID of the <see cref="T:SMLHelper.V2.Options.ModOption"/> this event corresponds to.
             </summary>
         </member>
+        <member name="T:SMLHelper.V2.Interfaces.IBasicText">
+            <summary>
+            <para>
+            Places a simple text object on the screen and keeps it there until either hidden (or a designated fade-to-black timer has passed). 
+            By default uses the same font/size/color as the "Press Any Button To Begin" message at the beginning of the game, and appears 
+            centered about 1/3 down the screen, but all parameters can be reconfigured.
+            </para>
+            <para>
+            The idea of the defaults is that new modders don't have to bootstrap a bunch of irritating Unity stuff -- don't have to understand
+            what a "Material" is or how to make one, don't have to know to initialize a font, or even a color. Can just start adding text and
+            then can always custom and configure on further revision.
+            </para>
+            </summary>
+            <example>
+            SIMPLE USAGE EXAMPLE:
+            BasicText message = new BasicText();
+            message.ShowMessage("This Message Will Fade In 10 Seconds", 10);
+            
+            COMPLEX USAGE EXAMPLE:
+            BasicText message = new BasicText(TextAnchor.UpperLeft); // Note many other properties could also be set as constructor parameters
+            message.setColor(Color.red); // Set Color
+            message.setSize(20);         // Set Font Size
+            message.setLoc(200, 400);    // Set x/y position (0,0 is center of screen)
+            message.setFontStyle(FontStyle.Bold); // Bold 
+            message.ShowMessage("This message stays on screen until hidden"); // Display message; if fadeout seconds not specified, it just keeps showing
+            ... // other things happen, time goes by
+            message.Hide(); // Hides the message
+            </example>
+        </member>
+        <member name="M:SMLHelper.V2.Interfaces.IBasicText.ClearAlign">
+            <summary>
+            Resets to using "cloned" font style of Subnautica default
+            </summary>
+        </member>
+        <member name="M:SMLHelper.V2.Interfaces.IBasicText.ClearColor">
+            <summary>
+            Resets to using "cloned" color of Subnautica default.
+            </summary>
+        </member>
+        <member name="M:SMLHelper.V2.Interfaces.IBasicText.ClearFont">
+            <summary>
+            Resets to using "cloned" font of Subnautica default.
+            </summary>
+        </member>
+        <member name="M:SMLHelper.V2.Interfaces.IBasicText.ClearFontStyle">
+            <summary>
+            Resets to using "cloned" font style of Subnautica default.
+            </summary>
+        </member>
+        <member name="M:SMLHelper.V2.Interfaces.IBasicText.ClearSize">
+            <summary>
+            Resets to using "cloned" size of Subnautica default.
+            </summary>
+        </member>
+        <member name="M:SMLHelper.V2.Interfaces.IBasicText.GetText">
+            <summary>
+            Returns our current text.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:SMLHelper.V2.Interfaces.IBasicText.Hide">
+            <summary>
+            Hides our text item if it is displaying.
+            </summary>
+        </member>
+        <member name="M:SMLHelper.V2.Interfaces.IBasicText.SetAlign(UnityEngine.TextAnchor)">
+            <summary>
+            Sets the text anchor.
+            </summary>
+            <param name="useAlign">The text anchor to align to</param>
+        </member>
+        <member name="M:SMLHelper.V2.Interfaces.IBasicText.SetColor(UnityEngine.Color)">
+            <summary>
+            Sets the text color
+            </summary>
+            <param name="useColor">The text color to use</param>
+        </member>
+        <member name="M:SMLHelper.V2.Interfaces.IBasicText.SetFont(TMPro.TMP_FontAsset)">
+            <summary>
+            Sets the font 
+            </summary>
+            <param name="useFont">The font to render the text as.</param>
+        </member>
+        <member name="M:SMLHelper.V2.Interfaces.IBasicText.SetFontStyle(TMPro.FontStyles)">
+            <summary>
+            Sets the font style.
+            </summary>
+            <param name="useStyle">The text font style to use</param>
+        </member>
+        <member name="M:SMLHelper.V2.Interfaces.IBasicText.SetLocation(System.Single,System.Single)">
+            <summary>
+            Sets screen display location (position relative to the actual text is determined by the alignment)
+            </summary>
+            <param name="set_x">The x coordinate to set</param>
+            <param name="set_y">The y coordinate to set</param>
+        </member>
+        <member name="M:SMLHelper.V2.Interfaces.IBasicText.SetSize(System.Int32)">
+            <summary>
+            Sets the font size.
+            </summary>
+            <param name="useSize">The text size to use</param>
+        </member>
+        <member name="M:SMLHelper.V2.Interfaces.IBasicText.ShowMessage(System.String)">
+            <summary>
+            Shows our text item, with no schedule fade (i.e. indefinitely)
+            </summary>
+            <param name="s">The text to display</param>
+        </member>
+        <member name="M:SMLHelper.V2.Interfaces.IBasicText.ShowMessage(System.String,System.Single)">
+            <summary>
+            Shows our text item, fading after a specified number of seconds (or stays on indefinitely if 0 seconds)
+            </summary>
+            <param name="s">The text to display</param>
+            <param name="seconds">The duration to hold before fading</param>
+        </member>
         <member name="T:SMLHelper.V2.Json.ConfigFileAttribute">
             <summary>
             Attribute used to specify the filename and subfolder for a <see cref="T:SMLHelper.V2.Json.ConfigFile"/>.
@@ -3792,6 +4439,41 @@
             A handler for registering Unity prefabs associated to a <see cref="T:TechType"/>.
             </summary>
         </member>
+        <member name="P:SMLHelper.V2.Handler.SurvivalHandler">
+            <summary>
+            a handler for common uses to the Survival component
+            </summary>
+        </member>
+        <member name="P:SMLHelper.V2.Handler.CoordinatedSpawnHandler">
+            <summary>
+            A handler to making coordinated Vector3 spawns ingame.
+            </summary>
+        </member>
+        <member name="P:SMLHelper.V2.Handler.TechGroupHandler">
+            <summary>
+            A handler class for adding custom TechGroups into the game.
+            </summary>
+        </member>
+        <member name="P:SMLHelper.V2.Handler.TechCategoryHandler">
+            <summary>
+            A handler class for adding custom TechCategories into the game.
+            </summary>
+        </member>
+        <member name="P:SMLHelper.V2.Handler.ConsoleCommandsHandler">
+            <summary>
+            A handler class for registering your custom console commands.
+            </summary>
+        </member>
+        <member name="P:SMLHelper.V2.Handler.PingHandler">
+            <summary>
+            A handler related to PingTypes
+            </summary>
+        </member>
+        <member name="P:SMLHelper.V2.Handler.BackgroundTypeHandler">
+            <summary>
+            A handler for everything related to creating new BackgroundTypes.
+            </summary>
+        </member>
         <member name="T:SMLHelper.V2.Initializer">
             <summary>
             WARNING: This class is for use only by QModManager.
@@ -3918,6 +4600,210 @@
             <param name="sound">The sound which should be played</param>
             <param name="volumeControl">Which volume control to adjust sound levels by. How loud sound is.</param>
             <returns>The channel on which the sound was created</returns>
+        </member>
+        <member name="T:SMLHelper.V2.Utility.BasicText">
+            <summary>
+            <para>
+            Places a simple text object on the screen and keeps it there until either hidden (or a designated fade-to-black timer has passed). 
+            By default uses the same font/size/color as the "Press Any Button To Begin" message at the beginning of the game, and appears 
+            centered about 1/3 down the screen, but all parameters can be reconfigured.
+            </para>
+            <para>
+            The idea of the defaults is that new modders don't have to bootstrap a bunch of irritating Unity stuff -- don't have to understand
+            what a "Material" is or how to make one, don't have to know to initialize a font, or even a color. Can just start adding text and
+            then can always custom and configure on further revision.
+            </para>
+            </summary>
+            <example>
+            SIMPLE USAGE EXAMPLE:
+            BasicText message = new BasicText();
+            message.ShowMessage("This Message Will Fade In 10 Seconds", 10);
+            
+            COMPLEX USAGE EXAMPLE:
+            BasicText message = new BasicText(TextAnchor.UpperLeft); // Note many other properties could also be set as constructor parameters
+            message.setColor(Color.red); // Set Color
+            message.setSize(20);         // Set Font Size
+            message.setLoc(200, 400);    // Set x/y position (0,0 is center of screen)
+            message.setFontStyle(FontStyle.Bold); // Bold 
+            message.ShowMessage("This message stays on screen until hidden"); // Display message; if fadeout seconds not specified, it just keeps showing
+            ... // other things happen, time goes by
+            message.Hide(); // Hides the message
+            </example>
+        </member>
+        <member name="M:SMLHelper.V2.Utility.BasicText.#ctor">
+            <summary>
+            Creates a new instances of <see cref="T:SMLHelper.V2.Interfaces.IBasicText"/> with all default options.
+            </summary>
+        </member>
+        <member name="M:SMLHelper.V2.Utility.BasicText.#ctor(System.Int32,System.Int32)">
+            <summary>
+            Creates a new instances of <see cref="T:SMLHelper.V2.Interfaces.IBasicText"/> at the specified origin point.
+            </summary>
+            <param name="set_x">The x coordinate to set</param>
+            <param name="set_y">The y coordinate to set</param>
+        </member>
+        <member name="M:SMLHelper.V2.Utility.BasicText.#ctor(UnityEngine.TextAnchor)">
+            <summary>
+            Creates a new instances of <see cref="T:SMLHelper.V2.Interfaces.IBasicText"/> at a specified <see cref="T:UnityEngine.TextAnchor"/>.
+            </summary>
+            <param name="useAlign">The text anchor to align to</param>
+        </member>
+        <member name="M:SMLHelper.V2.Utility.BasicText.#ctor(UnityEngine.Color)">
+            <summary>
+            Creates a new instances of <see cref="T:SMLHelper.V2.Interfaces.IBasicText"/> with a specified <see cref="T:UnityEngine.Color"/>.
+            </summary>
+            <param name="useColor">The text color to use</param>
+        </member>
+        <member name="M:SMLHelper.V2.Utility.BasicText.#ctor(System.Int32)">
+            <summary>
+            Creates a new instances of <see cref="T:SMLHelper.V2.Interfaces.IBasicText"/> with a specified size.
+            </summary>
+            <param name="useSize">The text size to uset</param>
+        </member>
+        <member name="M:SMLHelper.V2.Utility.BasicText.#ctor(System.Int32,UnityEngine.Color)">
+            <summary>
+            Creates a new instances of <see cref="T:SMLHelper.V2.Interfaces.IBasicText"/> with a specified size and <see cref="T:UnityEngine.Color"/>.
+            </summary>
+            <param name="useSize">The text size to use</param>
+            <param name="useColor">The text color to use</param>
+        </member>
+        <member name="M:SMLHelper.V2.Utility.BasicText.#ctor(System.Int32,UnityEngine.TextAnchor)">
+            <summary>
+            Creates a new instances of <see cref="T:SMLHelper.V2.Interfaces.IBasicText"/> with a specified size and <see cref="T:UnityEngine.TextAnchor"/>.
+            </summary>
+            <param name="useSize">The text size to use</param>
+            <param name="useAlign">The text anchor to align to</param>
+        </member>
+        <member name="M:SMLHelper.V2.Utility.BasicText.#ctor(System.Int32,UnityEngine.Color,UnityEngine.TextAnchor)">
+            <summary>
+            Creates a new instances of <see cref="T:SMLHelper.V2.Interfaces.IBasicText"/> with a specified size, <see cref="T:UnityEngine.Color"/>, and <see cref="T:UnityEngine.TextAnchor"/>.
+            </summary>
+            <param name="useSize">The text size to use</param>
+            <param name="useColor">The text color to use</param>
+            <param name="useAlign">The text anchor to align to</param>
+        </member>
+        <member name="M:SMLHelper.V2.Utility.BasicText.#ctor(System.Int32,System.Int32,System.Int32,UnityEngine.Color,UnityEngine.TextAnchor)">
+            <summary>
+            Creates a new instances of <see cref="T:SMLHelper.V2.Interfaces.IBasicText"/> with a specified origin point, size, <see cref="T:UnityEngine.Color"/>, and <see cref="T:UnityEngine.TextAnchor"/>.
+            </summary>
+            <param name="set_x">The x coordinate to set</param>
+            <param name="set_y">The y coordinate to set</param>
+            <param name="useSize">The text size to use</param>
+            <param name="useColor">The text color to use</param>
+            <param name="useAlign">The text anchor to align to</param>
+        </member>
+        <member name="M:SMLHelper.V2.Utility.BasicText.#ctor(System.Int32,System.Int32,System.Int32,UnityEngine.Color)">
+            <summary>
+            Creates a new instances of <see cref="T:SMLHelper.V2.Interfaces.IBasicText"/> with a specified origin point, size, and <see cref="T:UnityEngine.Color"/>.
+            </summary>
+            <param name="set_x">The x coordinate to set</param>
+            <param name="set_y">The y coordinate to set</param>
+            <param name="useSize">The text size to use</param>
+            <param name="useColor">The text color to use</param>
+        </member>
+        <member name="M:SMLHelper.V2.Utility.BasicText.#ctor(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Creates a new instances of <see cref="T:SMLHelper.V2.Interfaces.IBasicText"/> with a specified origin point and size.
+            </summary>
+            <param name="set_x">The x coordinate to set</param>
+            <param name="set_y">The y coordinate to set</param>
+            <param name="useSize">The text size to use</param>
+        </member>
+        <member name="M:SMLHelper.V2.Utility.BasicText.ShowMessage(System.String)">
+            <summary>
+            Shows our text item, with no schedule fade (i.e. indefinitely)
+            </summary>
+            <param name="s">The text to display</param>
+        </member>
+        <member name="M:SMLHelper.V2.Utility.BasicText.ShowMessage(System.String,System.Single)">
+            <summary>
+            Shows our text item, fading after a specified number of seconds (or stays on indefinitely if 0 seconds)
+            </summary>
+            <param name="s">The text to display</param>
+            <param name="seconds">The duration to hold before fading</param>
+        </member>
+        <member name="M:SMLHelper.V2.Utility.BasicText.Hide">
+            <summary>
+            Hides our text item if it is displaying.
+            </summary>
+        </member>
+        <member name="M:SMLHelper.V2.Utility.BasicText.GetText">
+            <summary>
+            Returns our current text.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:SMLHelper.V2.Utility.BasicText.SetLocation(System.Single,System.Single)">
+            <summary>
+            Sets screen display location (position relative to the actual text is determined by the alignment)
+            </summary>
+            <param name="set_x">The x coordinate to set</param>
+            <param name="set_y">The y coordinate to set</param>
+        </member>
+        <member name="M:SMLHelper.V2.Utility.BasicText.SetColor(UnityEngine.Color)">
+            <summary>
+            Sets the text color
+            </summary>
+            <param name="useColor">The text color to use</param>
+        </member>
+        <member name="M:SMLHelper.V2.Utility.BasicText.ClearColor">
+            <summary>
+            Resets to using "cloned" color of Subnautica default.
+            </summary>
+        </member>
+        <member name="M:SMLHelper.V2.Utility.BasicText.SetSize(System.Int32)">
+            <summary>
+            Sets the font size.
+            </summary>
+            <param name="useSize">The text size to use</param>
+        </member>
+        <member name="M:SMLHelper.V2.Utility.BasicText.ClearSize">
+            <summary>
+            Resets to using "cloned" size of Subnautica default.
+            </summary>
+        </member>
+        <member name="M:SMLHelper.V2.Utility.BasicText.SetFont(TMPro.TMP_FontAsset)">
+            <summary>
+            Sets the font 
+            </summary>
+            <param name="useFont">The font to render the text as.</param>
+        </member>
+        <member name="M:SMLHelper.V2.Utility.BasicText.ClearFont">
+            <summary>
+            Resets to using "cloned" font of Subnautica default.
+            </summary>
+        </member>
+        <member name="M:SMLHelper.V2.Utility.BasicText.SetFontStyle(TMPro.FontStyles)">
+            <summary>
+            Sets the font style.
+            </summary>
+            <param name="useStyle">The text font style to use</param>
+        </member>
+        <member name="M:SMLHelper.V2.Utility.BasicText.ClearFontStyle">
+            <summary>
+            Resets to using "cloned" font style of Subnautica default.
+            </summary>
+        </member>
+        <member name="M:SMLHelper.V2.Utility.BasicText.SetAlign(UnityEngine.TextAnchor)">
+            <summary>
+            Sets the text anchor.
+            </summary>
+            <param name="useAlign">The text anchor to align to</param>
+        </member>
+        <member name="M:SMLHelper.V2.Utility.BasicText.ClearAlign">
+            <summary>
+            Resets to using "cloned" font style of Subnautica default
+            </summary>
+        </member>
+        <member name="M:SMLHelper.V2.Utility.BasicText.DoAlignment">
+            <summary>
+            Computes proper transform position based on alignment and size of text.
+            </summary>
+        </member>
+        <member name="M:SMLHelper.V2.Utility.BasicText.InitializeText">
+            <summary>
+            Sets up all of our objects/components, when we are ready to actually display text for the first time.
+            </summary>
         </member>
         <member name="T:SMLHelper.V2.Utility.ExtBannedIdManager">
             <summary>

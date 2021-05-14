@@ -7,5 +7,7 @@
   "Enable": true,
   "Game": "BelowZero",
   "AssemblyName": "MiscPrototypes.dll",
-  "EntryMethod": "MiscPrototypes.Main.patch"
+  "EntryMethod": "MiscPrototypes.Main.patch",
+  "UpdateCheck": true,
+  "VersionURL": "https://raw.githubusercontent.com/zorgesho/SubnauticaMods/master/MiscPrototypes/mod.BZ.json"
 }

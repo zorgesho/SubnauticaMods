@@ -1,10 +1,15 @@
-﻿using System;
+﻿//#define TEST_UPDATE // for local testing (don't forget to enable version checking in Mod.cs)
+
+using System;
 using System.IO;
-using System.Net;
 using System.Threading;
 using System.Collections;
 
 using UnityEngine;
+
+#if !TEST_UPDATE
+using System.Net;
+#endif
 
 namespace Common.Utils
 {
@@ -62,8 +67,11 @@ namespace Common.Utils
 		const float checkPeriodHours	= Mod.Consts.isDevBuild? 0f: 1f;
 
 		static readonly string versionFilePath = Paths.modRootPath + "latest-version.txt";
-
+#if TEST_UPDATE
+		static readonly string updatedManifestPath = Paths.modRootPath + "mod.test.json";
+#else
 		static string versionURL;
+#endif
 		static GameObject go;
 
 		public static Version getLatestVersion(string url)
@@ -76,8 +84,9 @@ namespace Common.Utils
 
 		static void init(string url)
 		{
+#if !TEST_UPDATE
 			versionURL = url;
-
+#endif
 			if (!url.isNullOrEmpty() && !go)
 				go = UnityHelper.createPersistentGameObject<CheckVersion>($"{Mod.id}.VersionChecker");
 		}
@@ -105,14 +114,25 @@ namespace Common.Utils
 					// checking version file's timestamp
 					if (File.Exists(versionFilePath) && DateTime.Now.Subtract(File.GetLastWriteTime(versionFilePath)).TotalHours < checkPeriodHours)
 						return;
-
-					// downloading mod.json and updating version file
+#if TEST_UPDATE
+					// reading local test mod.json
+					string manifestText = File.ReadAllText(updatedManifestPath);
+#else
+					// downloading mod.json
 					using WebClient client = new();
-
-					var manifest = SimpleJSON.Parse(client.DownloadString(versionURL));
-					Version version = new (manifest["Version"]);											$"VersionChecker: latest version retrieved: {version}".logDbg();
-
-					File.WriteAllText(versionFilePath, version.ToString()); // using Version to make sure it's valid version string
+					string manifestText = client.DownloadString(versionURL);
+#endif
+					// updating version file
+					var manifest = SimpleJSON.Parse(manifestText);
+					if (manifest["__HideUpdateNotification"].AsBool) // just in case, we can hide update notifications via remote mod.json
+					{																							$"VersionChecker: notifications are hidden via remote manifest".logDbg();
+						File.Delete(versionFilePath);
+					}
+					else
+					{
+						Version version = new (manifest["Version"]);											$"VersionChecker: latest version retrieved: {version}".logDbg();
+						File.WriteAllText(versionFilePath, version.ToString()); // using Version to make sure it's valid version string
+					}
 				}
 				catch (Exception e) { $"Error while trying to check for update: {e.Message}".logError(); }
 			}

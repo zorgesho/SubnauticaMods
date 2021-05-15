@@ -73,6 +73,22 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>9.0</LangVersion>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'BZ.dev|AnyCPU' ">
+    <DefineConstants>DEBUG;TRACE;GAME_BZ;BRANCH_STABLE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'BZ.publish|AnyCPU' ">
+    <DefineConstants>GAME_BZ;BRANCH_STABLE</DefineConstants>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'BZ.testbuild|AnyCPU' ">
+    <DefineConstants>DEBUG;TRACE;GAME_BZ;BRANCH_STABLE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'BZexp.dev|AnyCPU' ">
+    <DefineConstants>DEBUG;TRACE;GAME_BZ;BRANCH_EXP</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'BZexp.testbuild|AnyCPU' ">
+    <DefineConstants>DEBUG;TRACE;GAME_BZ;BRANCH_EXP</DefineConstants>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony-1.2.0.1">
       <HintPath>$(ProjectDependencies)\0Harmony-1.2.0.1.dll</HintPath>
@@ -126,7 +142,10 @@
     <Compile Include="src\Patches.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="mod.SN.json">
+    <None Include="mod.BZ.json" Condition="$(Configuration.Contains('BZ'))">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="mod.SN.json" Condition="$(Configuration.Contains('SN'))">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

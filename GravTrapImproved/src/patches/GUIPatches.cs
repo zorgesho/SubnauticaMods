@@ -74,7 +74,7 @@ namespace GravTrapImproved
 			static void Pickupable_OnHandHover_Postfix(Pickupable __instance)
 			{
 				if (__instance.GetTechType().isGravTrap())
-					HandReticle.main.setText(textUseSubscript: GravTrapObjectsType.getFrom(__instance.gameObject).techTypeListName);
+					HandReticle.main.setText(textHandSubscript: GravTrapObjectsType.getFrom(__instance.gameObject).techTypeListName);
 			}
 		}
 	}

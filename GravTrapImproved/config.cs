@@ -44,8 +44,9 @@ namespace GravTrapImproved
 		[Field.BindConsole("gt_mk2")]
 		[Field.Action(typeof(GravTrapMK2Patches.UpdateRanges))]
 		public readonly float mk2Range = 30f; // default: 17f
-
+#if GAME_SN
 		public readonly float treaderChunkSpawnFactor = 1f;
+#endif
 		public readonly bool raysVisible = true;
 		public readonly bool extraGUIText = true;
 		public readonly LargeWorldEntity.CellLevel _changeTrapCellLevel = LargeWorldEntity.CellLevel.Near;
@@ -121,19 +122,19 @@ namespace GravTrapImproved
 				TechType.Stalker,
 #elif GAME_BZ
 				TechType.ArcticPeeper,
+				TechType.ArcticRay,
 				TechType.ArrowRay,
+				TechType.Brinewing,
+				TechType.DiscusFish,
 				TechType.FeatherFish,
 				TechType.FeatherFishRed,
+				TechType.NootFish,
+				TechType.Pinnacarid,
+				TechType.SeaMonkey,
 				TechType.SeaMonkeyBaby,
 				TechType.SpinnerFish,
 				TechType.Symbiote,
 				TechType.Triops,
-				TechType.DiscusFish,
-				TechType.Pinnacarid,
-				TechType.ArcticRay,
-				TechType.NootFish,
-				TechType.SeaMonkey,
-				TechType.Brinewing,
 #endif
 				TechType.Bladderfish,
 				TechType.Boomerang,
@@ -159,7 +160,6 @@ namespace GravTrapImproved
 				TechType.AluminumOxide,
 				TechType.AramidFibers,
 				TechType.Benzene,
-				TechType.ComputerChip,
 				TechType.Copper,
 				TechType.DepletedReactorRod,
 				TechType.Diamond,
@@ -177,7 +177,6 @@ namespace GravTrapImproved
 				TechType.Nickel,
 				TechType.PlasteelIngot,
 				TechType.Polyaniline,
-				TechType.PowerCell,
 				TechType.PrecursorIonCrystal,
 				TechType.Quartz,
 				TechType.ReactorRod,
@@ -220,20 +219,34 @@ namespace GravTrapImproved
 				TechType.ReefbackEggUndiscovered,
 				TechType.SandsharkEgg,
 				TechType.SandsharkEggUndiscovered,
+				TechType.ShockerEgg,
+				TechType.ShockerEggUndiscovered,
 				TechType.SpadefishEgg,
 				TechType.SpadefishEggUndiscovered,
 				TechType.StalkerEgg,
 				TechType.StalkerEggUndiscovered,
 #elif GAME_BZ
-				TechType.SeaMonkeyEgg,
 				TechType.ArcticRayEgg,
 				TechType.ArcticRayEggUndiscovered,
+				TechType.BrinewingEgg,
+				TechType.BrinewingEggUndiscovered,
 				TechType.BruteSharkEgg,
 				TechType.BruteSharkEggUndiscovered,
+				TechType.CryptosuchusEgg,
+				TechType.CryptosuchusEggUndiscovered,
+				TechType.GlowWhaleEgg,
+				TechType.GlowWhaleEggUndiscovered,
+				TechType.JellyfishEgg,
+				TechType.JellyfishEggUndiscovered,
 				TechType.LilyPaddlerEgg,
 				TechType.LilyPaddlerEggUndiscovered,
+				TechType.PenguinEgg,
+				TechType.PenguinEggUndiscovered,
 				TechType.PinnacaridEgg,
 				TechType.PinnacaridEggUndiscovered,
+				TechType.RockPuncherEgg,
+				TechType.RockPuncherEggUndiscovered,
+				TechType.SeaMonkeyEgg,
 				TechType.SquidSharkEgg,
 				TechType.SquidSharkEggUndiscovered,
 				TechType.TitanHolefishEgg,
@@ -242,22 +255,11 @@ namespace GravTrapImproved
 				TechType.TrivalveBlueEggUndiscovered,
 				TechType.TrivalveYellowEgg,
 				TechType.TrivalveYellowEggUndiscovered,
-				TechType.BrinewingEgg,
-				TechType.BrinewingEggUndiscovered,
-				TechType.CryptosuchusEgg,
-				TechType.CryptosuchusEggUndiscovered,
-				TechType.GlowWhaleEgg,
-				TechType.GlowWhaleEggUndiscovered,
-				TechType.JellyfishEgg,
-				TechType.JellyfishEggUndiscovered,
-				TechType.PenguinEgg,
-				TechType.PenguinEggUndiscovered,
-				TechType.RockPuncherEgg,
-				TechType.RockPuncherEggUndiscovered,
 #endif
-				TechType.GenericEgg,
-				TechType.ShockerEgg,
-				TechType.ShockerEggUndiscovered
+#pragma warning disable CS0612 // for some reason it's marked obsolete in BZ
+				TechType.CrashEgg,
+				TechType.CrashEggUndiscovered
+#pragma warning restore CS0612
 			),
 #if DEBUG
 			new

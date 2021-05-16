@@ -2,6 +2,7 @@
 
 namespace GravTrapImproved
 {
+#if GAME_SN
 	// change treader chunks probability
 	[HarmonyPatch(typeof(SeaTreaderSounds), "SpawnChunks")]
 	static class SeaTreaderSounds_SpawnChunks_Patch
@@ -10,7 +11,7 @@ namespace GravTrapImproved
 
 		static bool Prefix() => UnityEngine.Random.value <= Main.config.treaderChunkSpawnFactor;
 	}
-
+#endif
 	// change grav trap cell level
 	[HarmonyPatch(typeof(Gravsphere), "Start")]
 	static class Gravsphere_Start_Patch_CellLevel

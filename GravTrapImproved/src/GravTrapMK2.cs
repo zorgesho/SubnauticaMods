@@ -52,13 +52,15 @@ namespace GravTrapImproved
 			TechType = register(L10n.ids_GravTrapMK2, L10n.ids_GravTrapMK2Description, TechType.Gravsphere);
 
 			addToGroup(TechGroup.Workbench, TechCategory.Workbench);
-
+#if GAME_SN
 			CraftNodesCustomOrder.addNode(CraftTree.Type.Workbench, "GravTrap", L10n.ids_GravTrapMenu, "", "FinsMenu", TechType.Gravsphere);
 			addCraftingNodeTo(CraftTree.Type.Workbench, "GravTrap", TechType.None);
-
+#elif GAME_BZ
+			addCraftingNodeTo(CraftTree.Type.Workbench, "");
+#endif
 			setItemSize(2, 2);
 			setCraftingTime(5f);
-			setEquipmentType(EquipmentType.Hand);
+			setEquipmentType(EquipmentType.Hand, QuickSlotType.Selectable);
 
 			if (Main.config.mk2.fragmentCountToUnlock > 0)
 				setFragmentToUnlock(TechType.GravSphereFragment, Main.config.mk2.fragmentCountToUnlock, 5f);

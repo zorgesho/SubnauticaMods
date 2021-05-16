@@ -49,8 +49,9 @@ namespace Common.Configuration
 			#region base tooltip
 			public class Tooltip: MonoBehaviour, ITooltip
 			{
+#if GAME_SN // BZ has bigger tooltips, so we don't need that
 				const int defaultTextSize = 19;
-
+#endif
 				public class Add: ModOption.IOnGameObjectChangeHandler
 				{
 					string tooltip;
@@ -80,11 +81,11 @@ namespace Common.Configuration
 
 						if (tooltip == null)
 							return;
-
+#if GAME_SN
 						// adjust text size for default tooltip (before we registering string with LanguageHelper)
 						if (tooltipCmpType == null)
 							tooltip = $"<size={defaultTextSize}>" + tooltip + "</size>";
-
+#endif
 						if (localizeAllow)
 						{
 							string stringID = option.id + ".tooltip";

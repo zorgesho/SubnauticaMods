@@ -191,6 +191,7 @@ namespace Common
 
 	static class InputHelper
 	{
+		public static int getMouseWheelDir() => Math.Sign(getMouseWheelValue());
 		public static float getMouseWheelValue() => getAxis? getAxis.invoke("Mouse ScrollWheel"): 0f;
 
 		static readonly MethodWrapper<Func<string, float>> getAxis =

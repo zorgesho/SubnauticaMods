@@ -1,5 +1,8 @@
 ﻿using System.Collections.Generic;
+
 using UnityEngine;
+
+using Common;
 using Common.GameSerialization;
 
 namespace GravTrapImproved
@@ -38,7 +41,7 @@ namespace GravTrapImproved
 		public int techTypeListIndex
 		{
 			get => _techTypeListIndex;
-			set => _techTypeListIndex = value < 0? Types.listCount: value % (Types.listCount + 1);
+			set => _techTypeListIndex = MathUtils.mod(value, Types.listCount + 1);
 		}
 		int _techTypeListIndex = 0;
 

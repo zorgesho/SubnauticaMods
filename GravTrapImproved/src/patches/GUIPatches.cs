@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 
 using Harmony;
 using UnityEngine;
@@ -22,7 +21,7 @@ namespace GravTrapImproved
 					return;
 
 				if (Main.config.useWheelScroll && InputHelper.getMouseWheelValue() != 0f) // not exactly right to do it here, but I didn't find a better way
-					GravTrapObjectsType.getFrom(obj).techTypeListIndex += Math.Sign(InputHelper.getMouseWheelValue());
+					GravTrapObjectsType.getFrom(obj).techTypeListIndex += InputHelper.getMouseWheelDir();
 
 				TooltipFactory.WriteDescription(sb, GravTrapObjectsType.getFrom(obj).techTypeListName);
 			}

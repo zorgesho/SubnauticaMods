@@ -111,6 +111,14 @@ namespace Common
 		static string _formatFileName(string filename) => Paths.formatFileName(filename, "txt");
 	}
 
+	static class MathUtils
+	{
+		// allows to cycle in [0, n - 1] in both directions
+		public static int mod(int x, int n) => (x % n + n) % n;
+
+		public static bool isInRange(int x, int max) => isInRange(x, 0, max);
+		public static bool isInRange(int x, int min, int max) => x >= min && x <= max;
+	}
 
 	class UniqueIDs
 	{

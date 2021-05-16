@@ -1,6 +1,4 @@
-﻿using System;
-
-using Harmony;
+﻿using Harmony;
 
 using Common;
 using Common.Harmony;
@@ -70,7 +68,7 @@ namespace UITweaks
 				if (currentTechType == TechType.None)
 					init(techType);
 
-				changeAmount(Math.Sign(InputHelper.getMouseWheelValue()));
+				changeAmount(InputHelper.getMouseWheelDir());
 #if GAME_SN
 				updateActionHint();
 #elif GAME_BZ

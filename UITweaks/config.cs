@@ -85,7 +85,11 @@ namespace UITweaks
 		[Options.Field("Rename beacons in the inventory", "Use middle mouse button (or custom hotkey) to rename beacons that are in the inventory")]
 		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 		public bool renameBeacons = true;
-
+#if GAME_BZ
+		[Options.Field("Switch targets for mineral detectors", "Use mouse wheel while hovering over a mineral detector in the inventory to switch between target objects")]
+		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
+		public bool switchMetalDetectorTarget = true;
+#endif
 		[Options.Field("Hotkeys for builder menu tabs", "Switch between the tabs in the builder menu with 1-5 keys")]
 		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 		public readonly bool builderMenuTabHotkeysEnabled = true;
@@ -131,9 +135,11 @@ namespace UITweaks
 
 		public static readonly string ids_beaconName = "Name";
 		public static readonly string ids_beaconRename = "rename";
-
 #if GAME_SN
 		public static readonly string ids_modMerged = "<b>RenameBeacons</b> mod is now merged into <b>UI Tweaks</b> mod, you can safely delete it.";
+#elif GAME_BZ
+		public static readonly string ids_metalDetectorTarget = "Target: ";
+		public static readonly string ids_metalDetectorSwitchTarget = "switch target";
 #endif
 	}
 }

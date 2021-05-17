@@ -12,6 +12,10 @@ using Common.Harmony;
 	using Text = TMPro.TextMeshProUGUI;
 #endif
 
+#if GAME_BZ
+using System.Text;
+#endif
+
 namespace UITweaks
 {
 	static class MiscTweaks
@@ -80,5 +84,47 @@ namespace UITweaks
 			static bool Prepare() => Main.config.hideMessagesWhileLoading;
 			static bool Prefix() => !GameUtils.isLoadingState;
 		}
+
+#if GAME_BZ
+		[OptionalPatch, PatchClass]
+		static class MetalDetectorTargetSwitcher
+		{
+			static bool prepare() => Main.config.switchMetalDetectorTarget;
+
+			static readonly string buttons = Strings.Mouse.scrollUp + "/" + Strings.Mouse.scrollDown;
+
+			static void changeTarget(MetalDetector md, int dir)
+			{
+				if (dir != 0)
+					md.targetTechTypeIndex = MathUtils.mod(md.targetTechTypeIndex + dir, md.detectableTechTypes.Count);
+			}
+
+			static string getCurrentTarget(MetalDetector md)
+			{
+				bool indexValid = MathUtils.isInRange(md.targetTechTypeIndex, md.detectableTechTypes.Count - 1);
+				return !indexValid? "": Language.main.Get(md.detectableTechTypes[md.targetTechTypeIndex].AsString());
+			}
+
+			[HarmonyPostfix, HarmonyPatch(typeof(TooltipFactory), "ItemCommons")]
+			static void TooltipFactory_ItemCommons_Postfix(StringBuilder sb, TechType techType, GameObject obj)
+			{
+				if (techType != TechType.MetalDetector)
+					return;
+
+				if (obj.GetComponent<MetalDetector>() is MetalDetector md && md.energyMixin?.charge > 0)
+				{
+					changeTarget(md, InputHelper.getMouseWheelDir());
+					TooltipFactory.WriteDescription(sb, L10n.str("ids_metalDetectorTarget") + getCurrentTarget(md));
+				}
+			}
+
+			[HarmonyPostfix, HarmonyPatch(typeof(TooltipFactory), "ItemActions")]
+			static void TooltipFactory_ItemActions_Postfix(StringBuilder sb, InventoryItem item)
+			{
+				if (item.item.GetTechType() == TechType.MetalDetector && item.item.GetComponent<MetalDetector>()?.energyMixin?.charge > 0)
+					TooltipFactory.WriteAction(sb, buttons, L10n.str("ids_metalDetectorSwitchTarget"));
+			}
+		}
+#endif
 	}
 }

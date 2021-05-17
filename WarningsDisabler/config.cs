@@ -53,9 +53,9 @@ namespace WarningsDisabler
 					string title = L10n.str(msgList.messages.Count == 1? "ids_thisMessage": "ids_theseMessages");
 					title = title.format(L10n.str(msgList.enabled? "ids_enabled": "ids_disabled"));
 
-					sb.AppendLine("<size=20><color=#ffffffff>" + title + "</color></size>");
+					sb.Append(Mod.Consts.isGameSN? "<size=19>": null);
+					sb.AppendLine($"<color=#ffffffff>{title}</color>");
 
-					sb.Append("<size=19>");
 					int i = 0;
 					foreach (var msg in msgList.messages)
 					{
@@ -63,7 +63,7 @@ namespace WarningsDisabler
 						if (i++ != msgList.messages.Count - 1)
 							sb.AppendLine();
 					}
-					sb.Append("</size>");
+					sb.Append(Mod.Consts.isGameSN? "</size>": null);
 
 					return sb.ToString();
 				}

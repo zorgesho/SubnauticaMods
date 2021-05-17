@@ -39,22 +39,22 @@ namespace UITweaks
 			{
 				static bool prepare() => Main.config.bulkCrafting.enabled;
 
-				[HarmonyPriority(Priority.High)]
+				[HarmonyPriority(Priority.Low)]
 				[HarmonyPrefix, HarmonyHelper.Patch(typeof(TechData), "GetCraftAmount")]
 				static bool TechData_GetCraftAmount_Prefix(TechType techType, ref int __result)
 				{
-					if (techType != currentTechType)
+					if (!isAmountChanged(techType))
 						return true;
 
 					__result = originalCraftAmount * currentCraftAmount;
 					return false;
 				}
 
-				[HarmonyPriority(Priority.High)]
+				[HarmonyPriority(Priority.Low)]
 				[HarmonyPrefix, HarmonyHelper.Patch(typeof(TechData), "GetIngredients")]
 				static bool TechData_GetIngredients_Prefix(TechType techType, ref ReadOnlyCollection<Ingredient> __result)
 				{
-					if (techType != currentTechType)
+					if (!isAmountChanged(techType))
 						return true;
 
 					__result = currentTechInfo.ingredients.Select(ing => new Ingredient(ing.techType, ing.amount)).ToList().AsReadOnly();

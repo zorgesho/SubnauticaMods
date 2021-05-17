@@ -82,12 +82,13 @@ namespace UITweaks
 			currentTechInfo = new TechInfo(techInfo);
 		}
 
+		static bool isAmountChanged(TechType techType) => techType == currentTechType && currentCraftAmount > 1;
+
 		// if EasyCraft mod is installed we will use it to get count of available ingredients
 		static readonly MethodWrapper<Func<TechType, int>> EasyCraft_GetPickupCount =
 			Type.GetType($"EasyCraft.ClosestItemContainers, EasyCraft{(Mod.Consts.isGameBZ? "_BZ": "")}")?.method("GetPickupCount").wrap<Func<TechType, int>>();
 
-		static int getCountAvailable(TechType techType) =>
-			EasyCraft_GetPickupCount?.invoke(techType) ?? Inventory.main.GetPickupCount(techType);
+		static int getCountAvailable(TechType techType) => EasyCraft_GetPickupCount?.invoke(techType) ?? Inventory.main.GetPickupCount(techType);
 
 		static int getMaxAmount(TechInfo techInfo)
 		{

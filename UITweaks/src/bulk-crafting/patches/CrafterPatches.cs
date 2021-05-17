@@ -21,39 +21,36 @@ namespace UITweaks
 
 			static readonly Dictionary<CrafterLogic, TechInfo> crafterCache = new();
 
-			static bool _isAmountChanged(TechType techType) =>
-				techType == currentTechType && currentCraftAmount > 1;
-
 			[HarmonyPriority(Priority.HigherThanNormal)] // just in case
 			[HarmonyPrefix, HarmonyHelper.Patch(typeof(Crafter), "Craft")]
 			static void craftFixDuration(TechType techType, ref float duration)
 			{
-				if (Main.config.bulkCrafting.changeCraftDuration && _isAmountChanged(techType))
+				if (Main.config.bulkCrafting.changeCraftDuration && isAmountChanged(techType))
 					duration *= currentCraftAmount;
 			}
 
 			[HarmonyPrefix, HarmonyPatch(typeof(CrafterLogic), "Craft")]
 			static void craftUpdateCache(CrafterLogic __instance, TechType techType)
 			{
-				if (_isAmountChanged(techType))
+				if (isAmountChanged(techType))
 					crafterCache[__instance] = currentTechInfo;
 			}
 
 			[HarmonyPostfix, HarmonyPatch(typeof(CrafterLogic), "Craft")]
 			static void craftFixAmount(CrafterLogic __instance, TechType techType)
 			{
-				if (_isAmountChanged(techType) && originalTechInfo.craftAmount == 0)
+				if (isAmountChanged(techType) && originalTechInfo.craftAmount == 0)
 					__instance.numCrafted = 0;
 			}
 
 			[HarmonyPriority(Priority.HigherThanNormal)]
-			[HarmonyPrefix, HarmonyPatch(typeof(GhostCrafter), "Craft")]
+			[HarmonyPrefix, HarmonyHelper.Patch(typeof(GhostCrafter), "Craft")]
 			static void craftFixEnergyConsumption(GhostCrafter __instance, TechType techType)
 			{
 				if (!Main.config.bulkCrafting.changePowerConsumption)
 					return;
 
-				if (_isAmountChanged(techType))
+				if (isAmountChanged(techType))
 					CrafterLogic.ConsumeEnergy(__instance.powerRelay, (currentCraftAmount - 1) * 5f); // and 5f also consumed in the vanilla method
 			}
 

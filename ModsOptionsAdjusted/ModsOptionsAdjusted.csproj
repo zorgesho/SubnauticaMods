@@ -3,80 +3,29 @@
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <Import Project="..\project.props" />
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">SN.dev</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{E808117C-7ABE-4140-A1D3-FEA6B1E2F7F0}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ModsOptionsAdjusted</RootNamespace>
     <AssemblyName>ModsOptionsAdjusted</AssemblyName>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'SN.dev|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\SN.dev\</OutputPath>
     <DefineConstants>DEBUG;TRACE;GAME_SN;BRANCH_STABLE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <LangVersion>9.0</LangVersion>
-    <NoWarn>IDE0051</NoWarn>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'SN.publish|AnyCPU'">
-    <OutputPath>bin\SN.publish\</OutputPath>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'SN.publish|AnyCPU' ">
     <DefineConstants>GAME_SN;BRANCH_STABLE</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <LangVersion>9.0</LangVersion>
-    <Optimize>true</Optimize>
-    <NoWarn>IDE0051</NoWarn>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'SN.testbuild|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\SN.testbuild\</OutputPath>
     <DefineConstants>DEBUG;TRACE;GAME_SN;BRANCH_STABLE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <NoWarn>IDE0051</NoWarn>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <LangVersion>9.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="0Harmony-1.2.0.1">
-      <HintPath>$(ProjectDependencies)\0Harmony-1.2.0.1.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Assembly-CSharp.pb">
-      <HintPath>$(ProjectDependencies)\Assembly-CSharp.pb.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>$(ProjectDependencies)\Newtonsoft.Json.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
+    <Reference Include="0Harmony-1.2.0.1" />
+    <Reference Include="Assembly-CSharp.pb" />
+    <Reference Include="Newtonsoft.Json" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="UnityEngine">
-      <HintPath>$(ProjectDependencies)\UnityEngine.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine.CoreModule">
-      <HintPath>..\.dependencies\gameSN\UnityEngine.CoreModule.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine.UI">
-      <HintPath>..\.dependencies\gameSN\UnityEngine.UI.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
+    <Reference Include="UnityEngine" />
+    <Reference Include="UnityEngine.CoreModule" />
+    <Reference Include="UnityEngine.UI" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="config.cs" />
@@ -95,7 +44,5 @@
   <Import Project="..\Common\Common.projitems" Label="Shared" />
   <Import Project="..\Common\Common.Config\Common.Config.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>$(SolutionDir)post-build.bat $(ConfigurationName) $(ProjectName) $(ProjectDir) $(TargetPath) $(TargetDir)</PostBuildEvent>
-  </PropertyGroup>
+  <Import Project="..\post-build.props" />
 </Project>

@@ -1,18 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <DependenciesFolder>$(SolutionDir).dependencies</DependenciesFolder>
   </PropertyGroup>
   <PropertyGroup Condition="$(Configuration.Contains('SN.'))">
-    <ProjectDependencies>..\.dependencies\gameSN</ProjectDependencies>
+    <ProjectDependencies>$(DependenciesFolder)\gameSN</ProjectDependencies>
   </PropertyGroup>
   <PropertyGroup Condition="$(Configuration.Contains('SNexp.'))">
-    <ProjectDependencies>..\.dependencies\gameSNexp</ProjectDependencies>
+    <ProjectDependencies>$(DependenciesFolder)\gameSNexp</ProjectDependencies>
   </PropertyGroup>
   <PropertyGroup Condition="$(Configuration.Contains('BZ.'))">
-    <ProjectDependencies>..\.dependencies\gameBZ</ProjectDependencies>
+    <ProjectDependencies>$(DependenciesFolder)\gameBZ</ProjectDependencies>
   </PropertyGroup>
   <PropertyGroup Condition="$(Configuration.Contains('BZexp.'))">
-    <ProjectDependencies>..\.dependencies\gameBZexp</ProjectDependencies>
+    <ProjectDependencies>$(DependenciesFolder)\gameBZexp</ProjectDependencies>
   </PropertyGroup>
+  <PropertyGroup>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <LangVersion>9.0</LangVersion>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <Optimize>true</Optimize>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>IDE0051</NoWarn>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <ReferencePath>$(ProjectDependencies)\</ReferencePath>
+    <Configuration Condition=" '$(Configuration)' == '' ">SN.dev</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <Reference>
+      <Private>False</Private>
+    </Reference>
+  </ItemDefinitionGroup>
 </Project>

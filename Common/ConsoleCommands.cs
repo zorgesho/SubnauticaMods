@@ -16,18 +16,11 @@ namespace Common
 	{
 		protected class CommandAttribute: Attribute
 		{
-			public bool caseSensitive = false;
-			public bool combineArgs = false;
+			public bool caseSensitive { get; init; }
+			public bool combineArgs { get; init; }
 		}
 
-		class CommandInfo
-		{
-			public MethodInfo method;
-			public ParameterInfo[] paramInfo;
-			public int requiredParamCount;
-
-			public bool caseSensitive, combineArgs;
-		}
+		record CommandInfo(MethodInfo method, ParameterInfo[] paramInfo, int requiredParamCount, bool caseSensitive, bool combineArgs);
 
 		static GameObject hostGO;
 
@@ -70,15 +63,7 @@ namespace Common
 			}
 
 			var cmdAttr = method.getAttr<CommandAttribute>();
-
-			commands[method.Name] = new CommandInfo()
-			{
-				method = method,
-				paramInfo = paramInfo,
-				requiredParamCount = requiredParamCount,
-				caseSensitive = cmdAttr?.caseSensitive ?? false,
-				combineArgs =  cmdAttr?.combineArgs ?? false
-			};															$"PersistentConsoleCommands: command added: '{method.Name}', required params count: {requiredParamCount}".logDbg();
+			commands[method.Name] = new (method, paramInfo, requiredParamCount, cmdAttr?.caseSensitive ?? false, cmdAttr?.combineArgs ?? false);			$"PersistentConsoleCommands: command added: '{method.Name}', required params count: {requiredParamCount}".logDbg();
 		}
 
 		void registerCommands() // double registration is checked inside DevConsole

@@ -28,11 +28,11 @@ namespace Common.Configuration
 
 		public class SerializerSettingsAttribute: Attribute
 		{
-			public bool verboseErrors = false;
-			public bool ignoreNullValues = false;
-			public bool ignoreDefaultValues = false;
+			public bool verboseErrors { get; init; }
+			public bool ignoreNullValues { get; init; }
+			public bool ignoreDefaultValues { get; init; }
 
-			public Type[] converters = null;
+			public Type[] converters { get; init; }
 		}
 
 		class ConfigContractResolver: DefaultContractResolver

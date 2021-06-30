@@ -5,4 +5,5 @@ obj/
 
 .vs/
 
+.dependencies/packages
 .dependencies/*/Assembly-CSharp*.dll

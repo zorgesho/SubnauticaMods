@@ -21,8 +21,8 @@ namespace ConsoleImproved
 				return strings?.FindAll(predicate);
 			}
 
-			public List<string> find(string str)			=> find(s => s.IndexOf(str) >= 0);
-			public List<string> findByPrefix(string prefix) => find(s => s.StartsWith(prefix));
+			public List<string> find(string str)			=> find(s => s.Contains(str));
+			public List<string> findByPrefix(string prefix) => find(s => s.startsWith(prefix));
 		}
 
 		// console commands

@@ -54,7 +54,7 @@ namespace ConsoleImproved
 
 				foreach (var s in strings)
 				{
-					if (s.StartsWith(prefix))
+					if (s.startsWith(prefix))
 						continue;
 
 					res = false;

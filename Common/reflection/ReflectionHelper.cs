@@ -33,6 +33,6 @@ namespace Common.Reflection
 
 		// for getting mod's defined types, don't include any of Common projects types (or types without namespace)
 		public static readonly List<Type> definedTypes =
-			Assembly.GetExecutingAssembly().GetTypes().Where(type => type.Namespace?.StartsWith(nameof(Common)) == false).ToList();
+			Assembly.GetExecutingAssembly().GetTypes().Where(type => type.Namespace?.startsWith(nameof(Common)) == false).ToList();
 	}
 }

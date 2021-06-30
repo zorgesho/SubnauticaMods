@@ -16,7 +16,7 @@ namespace Common
 		// adds extension if it's absent
 		public static string ensureExtension(string filename, string ext)
 		{
-			return filename.isNullOrEmpty()? filename: (Path.HasExtension(filename)? filename: filename + (ext.StartsWith(".")? "": ".") + ext);
+			return filename.isNullOrEmpty()? filename: (Path.HasExtension(filename)? filename: filename + (ext.startsWith(".")? "": ".") + ext);
 		}
 
 		// checks path for filename and creates intermediate directories if needed

@@ -39,7 +39,7 @@ namespace SeamothStorageSlots
 		{
 			TechType techType = pickupable.GetTechType();
 
-			if (techType != TechType.VehicleStorageModule || !slot.StartsWith("SeamothModule"))
+			if (techType != TechType.VehicleStorageModule || !slot.startsWith("SeamothModule"))
 				return true;
 
 			SeaMoth seamoth = __instance.owner.GetComponent<SeaMoth>();

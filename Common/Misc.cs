@@ -88,6 +88,8 @@ namespace Common
 		public static string format(this string s, object arg0, object arg1, object arg2) => string.Format(s, arg0, arg1, arg2);
 		public static string format(this string s, params object[] args) => string.Format(s, args);
 
+		public static bool startsWith(this string s, string str) => s.StartsWith(str, StringComparison.Ordinal);
+
 		public static string clampLength(this string s, int length)
 		{
 			if (length < 5 || s.Length <= length)

@@ -45,7 +45,7 @@ namespace Common
 				if (prefixEnd > 0)
 				{
 					string prefix = messageText.Substring(0, prefixEnd + 1);
-					var msg = __instance.messages.Find(m => m.messageText.StartsWith(prefix));
+					var msg = __instance.messages.Find(m => m.messageText.startsWith(prefix));
 
 					if (msg != null)
 					{

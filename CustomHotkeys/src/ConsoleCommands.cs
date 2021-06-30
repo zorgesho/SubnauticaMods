@@ -235,7 +235,7 @@ namespace CustomHotkeys
 
 		static Vehicle findNearestVehicle(float maxDistance)
 		{
-			if (UnityHelper.findNearestToPlayer<Vehicle>(out float distSq) is Vehicle vehicle)
+			if (GameUtils.findNearestToPlayer<Vehicle>(out float distSq) is Vehicle vehicle)
 				return distSq < maxDistance * maxDistance? vehicle: null;
 
 			return null;

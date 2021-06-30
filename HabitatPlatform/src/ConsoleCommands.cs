@@ -12,7 +12,7 @@ namespace HabitatPlatform
 {
 	class ConsoleCommands: PersistentConsoleCommands
 	{
-		static GameObject _platform => UnityHelper.findNearestToCam<HabitatPlatform.Tag>()?.gameObject;
+		static GameObject _platform => GameUtils.findNearestToCam<HabitatPlatform.Tag>()?.gameObject;
 
 		public void hbpl_move(float dx, float dy)
 		{

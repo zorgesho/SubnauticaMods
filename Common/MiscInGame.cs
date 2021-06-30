@@ -108,5 +108,15 @@ namespace Common
 			if (textHandSubscript != null)	hand.textHandSubscript = textHandSubscript;
 #endif
 		}
+
+		// findNearest* methods are for use in non-performance critical code
+		public static C findNearestToCam<C>() where C: Component =>
+			UnityHelper.findNearest<C>(LargeWorldStreamer.main?.cachedCameraPosition, out _);
+
+		public static C findNearestToPlayer<C>() where C: Component =>
+			UnityHelper.findNearest<C>(Player.main?.transform.position, out _);
+
+		public static C findNearestToPlayer<C>(out float distSq) where C: Component =>
+			UnityHelper.findNearest<C>(Player.main?.transform.position, out distSq);
 	}
 }

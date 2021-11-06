@@ -89,10 +89,11 @@ namespace Common.Configuration
 
 				static readonly List<Hider> hiders = new();
 
-				static void register(Hider cmp) => hiders.Add(cmp);
-				static void unregister(Hider cmp) => hiders.Remove(cmp);
-
-				static IEnumerable<Hider> getHiders(string id) => hiders.Where(cmp => cmp.id == id || cmp.groupID == id);
+				static IEnumerable<Hider> getHiders(string id)
+				{
+					hiders.RemoveAll(cmp => cmp == null); // cleaning up deleted objects
+					return hiders.Where(cmp => cmp.id == id || cmp.groupID == id);
+				}
 
 				public static void refresh(string id) => getHiders(id).forEach(cmp => cmp.refresh());
 				public static void setVisible(string id, bool val) => getHiders(id).forEach(cmp => cmp.setVisible(val));
@@ -100,8 +101,7 @@ namespace Common.Configuration
 				public void refresh() => setVisible(visChecker.visible);
 				public void setVisible(bool val) => gameObject.SetActive(visible = val);
 
-				void Awake() => register(this);
-				void OnDestroy() => unregister(this);
+				Hider(): base() => hiders.Add(this); // we can't use Awake and OnDestroy here (hiders can be added to inactive objects)
 
 				void OnEnable()
 				{

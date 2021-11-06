@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -40,9 +39,7 @@ namespace CustomHotkeys
 					modInputIndex = getInputIndex(_key.modifier);
 
 					modIndexes ??= initModIndexes();
-
-					if (modIndexes != null)
-						isJustModifier = modIndexes.contains(keyInputIndex);
+					isJustModifier = modIndexes?.contains(keyInputIndex) ?? false;
 				}
 			}
 			KeyWithModifier _key;

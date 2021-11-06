@@ -6,15 +6,15 @@ namespace Common.UnityDebug
 	{
 		static readonly Vector3[] verts =
 		{
-			new Vector3(-0.5f, -0.5f, -0.5f), // 0
-			new Vector3( 0.5f, -0.5f, -0.5f), // 1
-			new Vector3( 0.5f, -0.5f,  0.5f), // 2
-			new Vector3(-0.5f, -0.5f,  0.5f), // 3
+			new (-0.5f, -0.5f, -0.5f), // 0
+			new ( 0.5f, -0.5f, -0.5f), // 1
+			new ( 0.5f, -0.5f,  0.5f), // 2
+			new (-0.5f, -0.5f,  0.5f), // 3
 
-			new Vector3(-0.5f,  0.5f, -0.5f), // 4
-			new Vector3( 0.5f,  0.5f, -0.5f), // 5
-			new Vector3( 0.5f,  0.5f,  0.5f), // 6
-			new Vector3(-0.5f,  0.5f,  0.5f)  // 7
+			new (-0.5f,  0.5f, -0.5f), // 4
+			new ( 0.5f,  0.5f, -0.5f), // 5
+			new ( 0.5f,  0.5f,  0.5f), // 6
+			new (-0.5f,  0.5f,  0.5f)  // 7
 		};
 
 		public void setProps(Vector3 center, Vector3 size)

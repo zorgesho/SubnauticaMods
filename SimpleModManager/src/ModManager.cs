@@ -38,7 +38,7 @@ namespace SimpleModManager
 
 				bool enable = enabled ?? !mod.toggleField.value.cast<bool>();
 				mod.toggleField.value = enable;
-				$"{(enable? "<color=lime>enabled</color>": "<color=red>disabled</color>")}".onScreen(mod.modName);
+				$"<color={(enable? "lime>enabled": "red>disabled")}</color>".onScreen(mod.modName);
 			}
 		}
 
@@ -82,11 +82,11 @@ namespace SimpleModManager
 					Field cfgField = new (this, nameof(enabled));
 
 					Options.nonUniqueOptionsIDsWarning = false;
-					string optionName = $"{(hidden? "<color=silver>": "")}{modJson.Property("DisplayName").Value}{(hidden? "</color>": "")}";
+					string optionName = $"{(hidden? "<color=#aaaaaa>": "")}{modJson.Property("DisplayName").Value}{(hidden? "</color>": "")}";
 					Options.ToggleOption option = new (cfgField, optionName);
 					Options.nonUniqueOptionsIDsWarning = true;
 
-					if (hidden)		 option.addHandler(new Options.Components.Hider.Add(new HideHidden(), "hidden-mod"));
+					if (hidden) option.addHandler(new Options.Components.Hider.Add(new HideHidden(), "hidden-mod"));
 					if (blacklisted) option.addHandler(new Options.Components.Hider.Add(new HideBlacklisted(), "blacklist-mod"));
 
 					option.addHandler(new Options.Components.Tooltip.Add($"Version: {modJson.Property("Version").Value}"));

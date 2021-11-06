@@ -85,8 +85,7 @@ namespace Common.Configuration
 
 		public void save(string savePath = null)
 		{
-			string path = savePath ?? configPath;
-			if (path == null)
+			if ((savePath ?? configPath) is not string path)
 				return;
 
 			try { File.WriteAllText(path, serialize()); }

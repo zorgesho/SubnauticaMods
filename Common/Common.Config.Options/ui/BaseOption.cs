@@ -47,16 +47,14 @@ namespace Common.Configuration
 			public abstract void addOption(Options options);
 
 			public abstract void onValueChange(EventArgs e);
-			public virtual  void onGameObjectChange(GameObject go)
+
+			public virtual void onGameObjectChange(GameObject go)
 			{
 				gameObject = go;
 				handlers.ForEach(h => h.handle(gameObject));
 			}
 
 			public void onRemove() => uniqueIDs.freeID(id);
-#if DEBUG
-			~ModOption() => $"ModOption '{id}' is gc'ed".logDbg();
-#endif
 		}
 	}
 }

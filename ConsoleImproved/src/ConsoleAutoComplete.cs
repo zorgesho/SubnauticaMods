@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
+using System.Collections.Generic;
 
 using Common;
 
@@ -51,15 +52,7 @@ namespace ConsoleImproved
 			while (res && pos < maxPos)
 			{
 				prefix += strings[0][pos++];				$"getCommonPrefix: testing {prefix}".logDbg();
-
-				foreach (var s in strings)
-				{
-					if (s.startsWith(prefix))
-						continue;
-
-					res = false;
-					break;
-				}
+				res = strings.All(s => s.startsWith(prefix));
 			}
 
 			return res? prefix: prefix.Remove(prefix.Length - 1);

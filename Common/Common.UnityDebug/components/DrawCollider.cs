@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 
 using UnityEngine;
@@ -58,18 +57,18 @@ namespace Common.UnityDebug
 
 		readonly List<Component> wires = new();
 
-		static readonly (Type colliderType, Type componentType)[] types =
+		static readonly Dictionary<Type, Type> types = new() // key: colliderType, value: componentType
 		{
-			(typeof(BoxCollider), typeof(DrawColliderBox)),
-			(typeof(SphereCollider), typeof(DrawColliderSphere)),
-			(typeof(CapsuleCollider), typeof(DrawColliderCapsule))
+			{ typeof(BoxCollider), typeof(DrawColliderBox) },
+			{ typeof(SphereCollider), typeof(DrawColliderSphere) },
+			{ typeof(CapsuleCollider), typeof(DrawColliderCapsule) }
 		};
 
 		void Start()
 		{
-			foreach (var collider in gameObject.GetAllComponentsInChildren<Collider>())
+			foreach (var collider in gameObject.GetComponentsInChildren<Collider>(true))
 			{
-				if (types.FirstOrDefault(pair => collider.GetType() == pair.colliderType).componentType is not Type componentType)
+				if (!types.TryGetValue(collider.GetType(), out Type componentType))
 					continue;
 
 				var wire = collider.gameObject.AddComponent(componentType);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text;
 using System.Reflection;
 using System.Collections.Generic;
@@ -59,7 +60,7 @@ namespace WarningsDisabler
 					int i = 0;
 					foreach (var msg in msgList.messages)
 					{
-						sb.Append("\"" + Language.main.Get(msg) + "\"");
+						sb.Append($"\"{Language.main.Get(msg)}\"");
 						if (i++ != msgList.messages.Count - 1)
 							sb.AppendLine();
 					}
@@ -99,7 +100,7 @@ namespace WarningsDisabler
 		[NonSerialized, NoInnerFieldsAttrProcessing]
 		readonly List<Messages> allMessages = new();
 
-		public bool isMessageAllowed(string message) => !allMessages.Exists(list => !list.isMessageAllowed(message));
+		public bool isMessageAllowed(string message) => allMessages.All(list => list.isMessageAllowed(message));
 
 
 		[Options.Field("Oxygen warnings", tooltipType: typeof(OxygenTooltip))]

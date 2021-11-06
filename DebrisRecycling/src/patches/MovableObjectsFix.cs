@@ -13,30 +13,26 @@ namespace DebrisRecycling
 		{
 			var lwe = go.GetComponent<LargeWorldEntity>();
 
-			if	(lwe && (lwe.cellLevel == LargeWorldEntity.CellLevel.Medium || lwe.cellLevel == LargeWorldEntity.CellLevel.Far) &&
-				 go.GetComponent<Rigidbody>()?.isKinematic == true &&
+			if (lwe?.cellLevel is LargeWorldEntity.CellLevel.Medium or LargeWorldEntity.CellLevel.Far &&
+				go.GetComponent<Rigidbody>()?.isKinematic == true &&
 				!go.GetComponent<ImmuneToPropulsioncannon>())
-			{																												$"Cell level switched for {go.name}".logDbg();
+			{																											$"Cell level switched for {go.name}".logDbg();
 				lwe.cellLevel = LargeWorldEntity.CellLevel.Near;
 			}
 		}
 
-		[HarmonyPrefix, HarmonyPatch(typeof(PropulsionCannon), "GrabObject")]
-		static void PropulsionCannon_GrabObject_Prefix(GameObject target)
+		static void fixObject(GameObject go)
 		{
 			if (Main.config.fixLandscapeCollisions)
-				trySwitchCellLevel(target);
+				trySwitchCellLevel(go);
 
-			target.GetComponent<ResourceTracker>()?.StartUpdatePosition();
+			go.GetComponent<ResourceTracker>()?.StartUpdatePosition();
 		}
+
+		[HarmonyPrefix, HarmonyPatch(typeof(PropulsionCannon), "GrabObject")]
+		static void PropulsionCannon_GrabObject_Prefix(GameObject target) => fixObject(target);
 
 		[HarmonyPrefix, HarmonyPatch(typeof(RepulsionCannon), "ShootObject")]
-		static void RepulsionCannon_ShootObject_Prefix(Rigidbody rb)
-		{
-			if (Main.config.fixLandscapeCollisions)
-				trySwitchCellLevel(rb.gameObject);
-
-			rb.gameObject.GetComponent<ResourceTracker>()?.StartUpdatePosition();
-		}
+		static void RepulsionCannon_ShootObject_Prefix(Rigidbody rb) => fixObject(rb.gameObject);
 	}
 }

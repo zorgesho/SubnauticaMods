@@ -156,7 +156,8 @@ namespace Common.Crafting
 			return c;
 		}
 
-		public static void initVFXFab(GameObject prefab,
+		public static void initVFXFab(
+			GameObject prefab,
 			Vector3? posOffset = null,
 			Vector3? eulerOffset = null,
 			float? localMinY = null,
@@ -165,8 +166,11 @@ namespace Common.Crafting
 		{
 			var vfxFab = prefab.GetComponentInChildren<VFXFabricating>();
 
-			if (!vfxFab && $"VFXFabricating for {prefab?.name} not found".logError())
+			if (!vfxFab)
+			{
+				$"VFXFabricating for {prefab?.name} not found".logError();
 				return;
+			}
 
 			if (posOffset != null)	 vfxFab.posOffset	= (Vector3)posOffset;
 			if (eulerOffset != null) vfxFab.eulerOffset	= (Vector3)eulerOffset;

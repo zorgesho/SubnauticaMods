@@ -9,10 +9,9 @@ namespace Common
 {
 	static partial class StringExtensions
 	{
-		// can be used in conditions -> if (checkForError() && "write error to log".logError()) return;
-		public static bool log(this string s)		 { Log.msg(s, Log.MsgType.INFO);	return true; }
-		public static bool logWarning(this string s) { Log.msg(s, Log.MsgType.WARNING);	return true; }
-		public static bool logError(this string s)	 { Log.msg(s, Log.MsgType.ERROR);	return true; }
+		public static void log(this string s)		 => Log.msg(s, Log.MsgType.INFO);
+		public static void logWarning(this string s) => Log.msg(s, Log.MsgType.WARNING);
+		public static void logError(this string s)	 => Log.msg(s, Log.MsgType.ERROR);
 
 		[Conditional("TRACE")]
 		public static void logDbg(this string s) => Log.msg(s, Log.MsgType.DBG);
@@ -21,14 +20,14 @@ namespace Common
 		public static void logDbg(this string s, bool condition) // for removing condition check if !TRACE
 		{
 			if (condition)
-				Log.msg(s, Log.MsgType.DBG);
+				s.logDbg();
 		}
 
 		[Conditional("TRACE")]
 		public static void logDbgError(this string s, bool condition) // for removing condition check if !TRACE
 		{
 			if (condition)
-				Log.msg(s, Log.MsgType.ERROR);
+				s.logError();
 		}
 	}
 

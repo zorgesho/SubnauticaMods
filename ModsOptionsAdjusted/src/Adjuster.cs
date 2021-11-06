@@ -56,8 +56,11 @@ namespace ModsOptionsAdjusted
 			{
 				caption = gameObject.getChild(gameObjectPath);
 
-				if (!caption && $"AdjustModOption: caption gameobject '{gameObjectPath}' not found".logError())
+				if (!caption)
+				{
+					$"AdjustModOption: caption gameobject '{gameObjectPath}' not found".logError();
 					return;
+				}
 
 				caption.AddComponent<LayoutElement>().minWidth = OptionsPanelInfo.isMainMenu? minCaptionWidth_MainMenu: minCaptionWidth_InGame;
 				caption.AddComponent<ContentSizeFitter>().horizontalFit = ContentSizeFitter.FitMode.PreferredSize; // for autosizing captions

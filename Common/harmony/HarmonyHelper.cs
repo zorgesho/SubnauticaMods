@@ -41,8 +41,11 @@ namespace Common.Harmony
 			static string _dbg(string type, MethodInfo method) => method != null? $"{type}:{method} ": "";
 			Debug.assert(original != null);										$"HarmonyHelper.patch: patching '{original.fullName()}' with {_dbg("prefix", prefix)}{_dbg("postfix", postfix)}{_dbg("transpiler", transpiler)}".logDbg();
 
-			if (original == null && "HarmonyHelper.patch: target method is null".logError())
+			if (original == null)
+			{
+				"HarmonyHelper.patch: target method is null".logError();
 				return;
+			}
 
 			try
 			{

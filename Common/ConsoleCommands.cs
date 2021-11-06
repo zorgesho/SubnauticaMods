@@ -76,8 +76,11 @@ namespace Common
 		{
 			var cmdInfo = commands[cmd];
 
-			if ((data?.Count ?? 0) < cmdInfo.requiredParamCount && $"Not enough parameters for console command '{cmd}'".logError())
+			if ((data?.Count ?? 0) < cmdInfo.requiredParamCount)
+			{
+				$"Not enough parameters for console command '{cmd}'".logError();
 				return;
+			}
 
 			ParameterInfo[] paramInfo = cmdInfo.paramInfo;
 			object[] cmdParams = new object[paramInfo.Length];

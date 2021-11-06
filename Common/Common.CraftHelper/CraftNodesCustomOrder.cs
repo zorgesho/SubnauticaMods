@@ -10,8 +10,11 @@ namespace Common.Crafting
 	{
 		public static TreeNode insertNode(this TreeNode parent, string idAfter, TreeNode child)
 		{
-			if (parent == null || child == null || parent[child.id] != null && $"TreeNode.insertNode failed: '{parent}' '{child}'".logError())
+			if (parent == null || child == null || parent[child.id] != null)
+			{
+				$"TreeNode.insertNode failed: '{parent}' '{child}'".logError();
 				return parent;
+			}
 
 			// if idAfter is null we adding new node as first node
 			int indexAfter = idAfter == null? -1: parent.nodes.FindIndex(n => n.id == idAfter);

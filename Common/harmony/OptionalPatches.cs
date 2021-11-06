@@ -48,8 +48,11 @@ namespace Common.Harmony
 		{																									$"OptionalPatches: setEnabled {patchType} => {enabled}".logDbg();
 			var method = patch.info.getTargetMethod();
 
-			if (method == null && $"OptionalPatches: method is null!".logError())
+			if (method == null)
+			{
+				"OptionalPatches: method is null!".logError();
 				return;
+			}
 
 			var prefix = patchType.method("Prefix");
 			var postfix = patchType.method("Postfix");

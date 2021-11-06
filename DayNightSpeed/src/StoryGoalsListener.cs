@@ -27,8 +27,9 @@ namespace DayNightSpeed
 
 			void Awake()
 			{
-				if (instance != null && $"StoryGoalsListener already created!".logError())
+				if (instance != null)
 				{
+					"StoryGoalsListener already created!".logError();
 					Destroy(this);
 					return;
 				}

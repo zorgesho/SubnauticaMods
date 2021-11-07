@@ -167,10 +167,10 @@ namespace Common.Crafting
 		class PrefabInfo
 		{
 			public bool copy { get; init; } // create prefab copy
+			public string filename { get; init; }
 
-			// get prefab either by techType or filepath
-			public TechType techType { get; init; }
-			public string filepath { get; init; }
+			public PrefabInfo(string filename) => this.filename = filename;
+			public PrefabInfo(TechType techType): this(PrefabUtils.getPrefabFilename(techType)) {}
 		}
 
 		List<PrefabInfo> poolPrefabInfo;
@@ -178,48 +178,35 @@ namespace Common.Crafting
 		protected PoolCraftableObject(): base() {}
 		protected PoolCraftableObject(string classID): base(classID) {}
 
-		protected int addPrefabToPool(TechType techType, bool copy = true)
+		int addPrefabToPool(PrefabInfo info)
 		{
 			Debug.assert(poolPrefabInfo != null);
 
-			poolPrefabInfo.Add(new() { techType = techType, copy = copy });
+			poolPrefabInfo.Add(info);
 			return poolPrefabInfo.Count;
 		}
 
-		protected int addPrefabToPool(string filepath, bool copy = true)
-		{
-			Debug.assert(poolPrefabInfo != null);
-
-			poolPrefabInfo.Add(new() { filepath = filepath, copy = copy });
-			return poolPrefabInfo.Count;
-		}
+		protected int addPrefabToPool(string filepath, bool copy = true) => addPrefabToPool(new (filepath) { copy = copy });
+		protected int addPrefabToPool(TechType techType, bool copy = true) => addPrefabToPool(new (techType) { copy = copy });
 
 		GameObject preparePrefab(PrefabInfo info)
 		{
 #if BRANCH_EXP
 			return null;
 #elif BRANCH_STABLE
-			Debug.assert(info.techType != default || info.filepath != null);
-
-			if (info.techType != default)
-				return info.copy? PrefabUtils.getPrefabCopy(info.techType): PrefabUtils.getPrefab(info.techType);
-			else
-				return info.copy? PrefabUtils.getPrefabCopy(info.filepath): PrefabUtils.getPrefab(info.filepath);
+			Debug.assert(info.filename != null);
+			return info.copy? PrefabUtils.getPrefabCopy(info.filename): PrefabUtils.getPrefab(info.filename);
 #endif
 		}
 
 		IEnumerator preparePrefabAsync(PrefabInfo info, IOut<GameObject> result)
 		{
-			Debug.assert(info.techType != default || info.filepath != null);
+			Debug.assert(info.filename != null);
 
-			CoroutineTask<GameObject> task;
-
-			if (info.techType != default)
-				task = info.copy? PrefabUtils.getPrefabCopyAsync(info.techType): PrefabUtils.getPrefabAsync(info.techType);
-			else
-				task = info.copy? PrefabUtils.getPrefabCopyAsync($"{info.filepath}.prefab"): PrefabUtils.getPrefabAsync($"{info.filepath}.prefab");
-
+			var filename = Paths.ensureExtension(info.filename, "prefab");
+			var task = info.copy? PrefabUtils.getPrefabCopyAsync(filename): PrefabUtils.getPrefabAsync(filename);
 			yield return task;
+
 			result.Set(task.GetResult());
 		}
 
@@ -244,7 +231,7 @@ namespace Common.Crafting
 		{
 			preparePool();
 
-			var prefabs = poolPrefabInfo.Select(info => preparePrefab(info)).ToArray();
+			var prefabs = poolPrefabInfo.Select(preparePrefab).ToArray();
 			return _processPrefabs(prefabs);
 		}
 

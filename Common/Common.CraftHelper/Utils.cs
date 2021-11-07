@@ -24,6 +24,11 @@ namespace Common.Crafting
 			Default = AutoRemove | UseCache
 		}
 
+		public static string getPrefabClassId(TechType techType) => CraftData.GetClassIdForTechType(techType);
+
+		public static string getPrefabFilename(string classId) => PrefabDatabase.TryGetPrefabFilename(classId, out string filename)? filename: null;
+		public static string getPrefabFilename(TechType techType) => getPrefabFilename(getPrefabClassId(techType));
+
 		// BRANCH_EXP TODO: remove for SN after async update
 		#region sync 'getPrefab' methods
 		public static GameObject getPrefab(TechType techType)

@@ -17,7 +17,7 @@ using Common.Reflection;
 
 namespace MiscPatches
 {
-	//Adjusting whirlpool torpedo punch force
+	// adjusting whirlpool torpedo punch force
 	[HarmonyPatch(typeof(SeamothTorpedoWhirlpool), "Awake")]
 	static class SeamothTorpedoWhirlpool_Awake_Patch
 	{

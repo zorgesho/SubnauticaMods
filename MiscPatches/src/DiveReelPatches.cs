@@ -26,15 +26,12 @@ namespace MiscPatches
 
 		static bool Prefix(DiveReel __instance)
 		{
-			if (GameUtils.getTarget(2f) is GameObject gameObject)
+			if (GameUtils.getTarget(2f)?.GetComponent<DiveReelNode>() is DiveReelNode reelNode)
 			{
-				var reelNode = gameObject.GetComponent<DiveReelNode>();
-
-				if (reelNode && reelNode.firstArrow)
-				{
+				if (!reelNode.firstArrow)
 					removeDiveReelNode(__instance, reelNode);
-					return false;
-				}
+
+				return false;
 			}
 
 			return true;

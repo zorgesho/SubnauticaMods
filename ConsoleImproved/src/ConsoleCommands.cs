@@ -196,7 +196,7 @@ namespace ConsoleImproved
 								prevValues[varName] = (varValue, 0f);
 							}
 
-							sb.AppendLine($"{(changeColor?"<color=magenta>":"")}{varName} = {varValue ?? "<color=red>[null]</color>"}{(changeColor?"</color>":"")}");
+							sb.AppendLine($"{(changeColor?"<color=#ff00ff>":"")}{varName} = {varValue ?? "<color=red>[null]</color>"}{(changeColor?"</color>":"")}");
 						}
 
 						sb.ToString().onScreen($"cfg vars: {(prefix == ""? "all": prefix)}");

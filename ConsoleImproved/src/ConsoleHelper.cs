@@ -24,7 +24,12 @@ namespace ConsoleImproved
 		static void init()
 		{
 			PersistentConsoleCommands.register<ConsoleCommands>();
+
+#if GAME_SN && BRANCH_STABLE
 			DevConsole.disableConsole = !Main.config.consoleEnabled;
+#else
+			PlatformUtils.SetDevToolsEnabled(Main.config.consoleEnabled);
+#endif
 		}
 
 		static void showMessages(List<string> msgs, string msg)

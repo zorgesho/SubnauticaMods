@@ -3,6 +3,7 @@
 using Harmony;
 using UnityEngine;
 
+using Common;
 using Common.Harmony;
 
 #if GAME_BZ
@@ -25,7 +26,7 @@ namespace ConsoleImproved
 #endif
 			[HarmonyPostfix, HarmonyPatch(typeof(DevConsole), "Awake")]
 			static void DevConsole_Awake_Postfix()
-			{
+			{																													"DevConsole.Awake".logDbg();
 				init();
 				loadHistory();
 			}

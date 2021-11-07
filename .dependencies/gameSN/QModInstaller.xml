@@ -136,6 +136,22 @@
             <param name="color">The color of the text.</param>
             <param name="autoformat">Whether or not to apply formatting tags to the message, or show it as it is.</param>
         </member>
+        <member name="P:QModManager.API.IQModServices.CurrentlyRunningGame">
+            <summary>
+            Gets the currently running game.
+            </summary>
+            <value>
+            The currently running game.
+            </value>
+        </member>
+        <member name="P:QModManager.API.IQModServices.NitroxRunning">
+            <summary>
+            Gets a value indicating whether Nitrox is being used.
+            </summary>
+            <value>
+              <c>true</c> if Nitrox is being used; otherwise, <c>false</c>.
+            </value>
+        </member>
         <member name="T:QModManager.API.ModLoading.QModCoreAttribute">
             <summary>
             Identifies the patching class for your QMod.
@@ -321,6 +337,22 @@
             <param name="size">The size of the text.</param>
             <param name="color">The color of the text.</param>
             <param name="autoformat">Whether or not to apply formatting tags to the message, or show it as it is.</param>
+        </member>
+        <member name="P:QModManager.API.QModServices.CurrentlyRunningGame">
+            <summary>
+            Gets the currently running game.
+            </summary>
+            <value>
+            The currently running game.
+            </value>
+        </member>
+        <member name="P:QModManager.API.QModServices.NitroxRunning">
+            <summary>
+            Gets a value indicating whether Nitrox is being used.
+            </summary>
+            <value>
+              <c>true</c> if Nitrox is being used; otherwise, <c>false</c>.
+            </value>
         </member>
         <member name="T:QModManager.API.RequiredQMod">
             <summary>
@@ -555,14 +587,19 @@
             <param name="version">The version to check.</param>
             <returns>True if this matches version 0.0.0.0</returns>
         </member>
-        <member name="T:QModInstaller.QMMLoader">
+        <member name="T:QModInstaller.BepInEx.Plugins.LogFilter">
+            <summary>
+            Handles filtering noisy logs from the QModManager logs.
+            </summary>
+        </member>
+        <member name="T:QModInstaller.BepInEx.Plugins.QMMLoader">
             <summary>
             QMMLoader - simply fires up the QModManager entry point.
             </summary>
         </member>
-        <member name="M:QModInstaller.QMMLoader.#ctor">
+        <member name="M:QModInstaller.BepInEx.Plugins.QMMLoader.Awake">
             <summary>
-            Prevents a default instance of the <see cref="T:QModInstaller.QMMLoader"/> class from being created 
+            Prevents a default instance of the <see cref="T:QModInstaller.BepInEx.Plugins.QMMLoader"/> class from being created 
             Also ensures the root bepinex object does not get destroyed if the game reloads for steam.
             </summary>
         </member>

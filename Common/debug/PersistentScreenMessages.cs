@@ -2,7 +2,6 @@
 using System.Reflection;
 
 using Harmony;
-using UnityEngine;
 
 namespace Common
 {
@@ -49,7 +48,12 @@ namespace Common
 
 					if (msg != null)
 					{
-						msg.timeEnd = Time.time + __instance.timeFadeOut + __instance.timeDelay;
+#if GAME_SN
+						float time = UnityEngine.Time.time;
+#elif GAME_BZ
+						float time = PDA.time;
+#endif
+						msg.timeEnd = time + __instance.timeFadeOut + __instance.timeDelay;
 						text.set(messageEntry.GetValue(msg), messageText);
 
 						return false;

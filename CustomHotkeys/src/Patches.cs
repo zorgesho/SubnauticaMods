@@ -29,11 +29,11 @@ namespace CustomHotkeys
 		static CIEnumerable F1_F3_disabler(CIEnumerable cins)
 		{
 			var list = cins.ToList();
-			var isShipping = typeof(PlatformUtils).method("get_isShippingRelease");
+			var checkProp = typeof(PlatformUtils).method(Mod.Consts.isGameSN? "get_isShippingRelease": "get_isConsolePlatform");
 
-			int[] i = list.ciFindIndexes(ci => ci.isOp(OpCodes.Call, isShipping),
-										 ci => ci.isOp(OpCodes.Call, isShipping),
-										 ci => ci.isOp(OpCodes.Blt));
+			int[] i = list.ciFindIndexes(ci => ci.isOp(OpCodes.Call, checkProp),
+										 ci => ci.isOp(OpCodes.Call, checkProp),
+										 ci => ci.isOp(Mod.Consts.isGameSN? OpCodes.Blt: OpCodes.Ret));
 
 			return i == null? cins: list.ciRemoveRange(i[0], i[2]);
 		}
@@ -180,6 +180,7 @@ namespace CustomHotkeys
 		}
 	}
 
+#if GAME_SN // doesn't needed for BZ
 	static class GameInput_AutoForward_Patch
 	{
 		static bool patched = false;
@@ -202,4 +203,5 @@ namespace CustomHotkeys
 				__result.z = 1f;
 		}
 	}
+#endif
 }

@@ -150,6 +150,7 @@ namespace CustomHotkeys
 		#endregion
 
 		#region gameplay commands
+#if GAME_SN // doesn't needed for BZ
 		public void autoforward(bool? enabled)
 		{
 			if (enabled == null)
@@ -157,7 +158,7 @@ namespace CustomHotkeys
 			else
 				GameInput_AutoForward_Patch.setAutoForward((bool)enabled);
 		}
-
+#endif
 		public void bindslot(int slotID, TechType? techType)
 		{
 			if (!Inventory.main)

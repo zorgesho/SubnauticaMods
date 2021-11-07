@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 
+using UWE;
 using UnityEngine;
 
 using Common;
@@ -9,6 +9,8 @@ using Common.Configuration;
 
 namespace CustomHotkeys
 {
+	using Math = System.Math;
+
 	class ConsoleCommands: PersistentConsoleCommands
 	{
 		#region dev tools & debug commands
@@ -213,6 +215,65 @@ namespace CustomHotkeys
 		public void vehicle_upgrades()
 		{
 			getProperVehicle(4f)?.GetComponentInChildren<VehicleUpgradeConsoleInput>().OnHandClick(null);
+		}
+		#endregion
+
+		#region game* commands
+#pragma warning disable CS0618 // obsolete
+		public void game_startnew(GameMode gameMode = GameMode.Creative)
+		{
+			if (uGUI_MainMenu.main)
+				CoroutineHost.StartCoroutine(uGUI_MainMenu.main.StartNewGame(gameMode));
+		}
+#pragma warning restore CS0618
+
+		public void game_load(int slotID = -1)
+		{
+			if (!uGUI_MainMenu.main)
+				return;
+
+			string slotToLoad = null;
+			SaveLoadManager.GameInfo gameinfoToLoad = null;
+
+			if (slotID == -1) // loading most recent save
+			{
+				foreach (var slot in SaveLoadManager.main.GetActiveSlotNames())
+				{
+					var gameinfo = SaveLoadManager.main.GetGameInfo(slot);
+					gameinfoToLoad ??= gameinfo;
+
+					if (gameinfoToLoad.dateTicks < gameinfo.dateTicks)
+					{
+						slotToLoad = slot;
+						gameinfoToLoad = gameinfo;
+					}
+				}
+			}
+			else
+			{
+				slotToLoad = $"slot{slotID:D4}";
+				gameinfoToLoad = SaveLoadManager.main.GetGameInfo(slotToLoad);
+			}
+
+			if (gameinfoToLoad != null)
+#if GAME_SN
+				CoroutineHost.StartCoroutine(uGUI_MainMenu.main.LoadGameAsync(slotToLoad, gameinfoToLoad.changeSet, gameinfoToLoad.gameMode));
+#elif GAME_BZ
+				CoroutineHost.StartCoroutine(uGUI_MainMenu.main.LoadGameAsync(slotToLoad, "", gameinfoToLoad.changeSet, gameinfoToLoad.gameMode, 2));
+#endif
+		}
+
+		public void game_save()
+		{
+			CoroutineHost.StartCoroutine(IngameMenu.main?.SaveGameAsync());
+		}
+
+		public void game_quit(bool quitToDesktop = false)
+		{
+			if (uGUI_MainMenu.main && quitToDesktop)
+				Application.Quit();
+			else
+				IngameMenu.main?.QuitGame(quitToDesktop);
 		}
 		#endregion
 

@@ -50,6 +50,10 @@ namespace MiscPatches
 		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 		public readonly bool fixFog = false;
 
+		[Options.Field("Builder repeat last tech", "Builder reusing last tech after constructing (vanilla behaviour)")]
+		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
+		public readonly bool builderRepeat = true;
+
 		public class Debug
 		{
 			public readonly bool buildAnywhere = true;

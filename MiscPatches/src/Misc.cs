@@ -203,6 +203,15 @@ namespace MiscPatches
 		static void Prefix(ref bool cameraInside) => cameraInside = false;
 	}
 
+#if GAME_BZ
+	[OptionalPatch, HarmonyPatch(typeof(Builder), "Begin")]
+	static class BuidlerRepeatPatch
+	{
+		static bool Prepare() => !Main.config.builderRepeat;
+		static void Postfix() => Builder.ResetLast();
+	}
+#endif
+
 	static class MiscStuff
 	{
 		public static void init()

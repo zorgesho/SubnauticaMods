@@ -19,7 +19,7 @@ namespace CustomHotkeys
 
 		public void devtools_toggleterrain()	=> toggleComponent<TerrainDebugGUI>();
 		public void devtools_togglegraphics()	=> toggleComponent<GraphicsDebugGUI>();
-		public void devtools_toggleframegraph()	=> toggleComponent<UWE.FrameTimeOverlay>();
+		public void devtools_toggleframegraph()	=> toggleComponent<FrameTimeOverlay>();
 
 		public void devtools_hidegui(GUIController.HidePhase? hidePhase)
 		{
@@ -209,13 +209,40 @@ namespace CustomHotkeys
 
 		public void vehicle_enter(float distance = 6f)
 		{
-			getProperVehicle(distance)?.EnterVehicle(Player.main, true, true);
+			if (getProperVehicle(distance) is Vehicle vehicle)
+			{
+				vehicle.EnterVehicle(Player.main, true, true);
+			}
+#if GAME_BZ
+			else if (getProperSeaTruck(distance) is SeaTruckSegment truck)
+			{
+				truck.motor.StartPiloting();
+				truck.seatruckanimation.currentAnimation = SeaTruckAnimation.Animation.EnterPilot;
+				truck.Enter(Player.main);
+				Utils.PlayFMODAsset(truck.enterSound, Player.main.transform);
+			}
+#endif
 		}
 
 		public void vehicle_upgrades()
 		{
-			getProperVehicle(4f)?.GetComponentInChildren<VehicleUpgradeConsoleInput>().OnHandClick(null);
+			MonoBehaviour vehicle = getProperVehicle(4f);
+#if GAME_BZ
+			vehicle ??= getProperSeaTruck(4f);
+#endif
+			vehicle?.GetComponentInChildren<VehicleUpgradeConsoleInput>().OnHandClick(null);
 		}
+#if GAME_BZ
+		public void seatruck_forcedexit()
+		{
+			SeaTruckForcedExit.exitFrom(getPilotedSeaTruck()?.motor);
+		}
+
+		public void seatruck_dropmodules()
+		{
+			getPilotedSeaTruck()?.Detach();
+		}
+#endif
 		#endregion
 
 		#region game* commands
@@ -302,6 +329,32 @@ namespace CustomHotkeys
 
 			return null;
 		}
+
+#if GAME_BZ
+		static SeaTruckSegment getProperSeaTruck(float maxDistance)
+		{
+			if (Player.main?.currentInterior != null)
+				return null;
+
+			if (findNearestSeaTruckCabin(maxDistance) is SeaTruckSegment truck && truck.CanEnter())
+				return truck.GetComponent<Dockable>()?.isDocked == true? null: truck;
+
+			return null;
+		}
+
+		static SeaTruckSegment findNearestSeaTruckCabin(float maxDistance)
+		{
+			if (GameUtils.findNearestToPlayer<SeaTruckSegment>(out float distSq, sts => sts.isMainCab) is SeaTruckSegment truck)
+				return distSq < maxDistance * maxDistance? truck: null;
+
+			return null;
+		}
+
+		static SeaTruckSegment getPilotedSeaTruck()
+		{
+			return Player.main?.inSeatruckPilotingChair != true? null: Player.main.GetComponentInParent<SeaTruckSegment>();
+		}
+#endif
 		#endregion
 	}
 }

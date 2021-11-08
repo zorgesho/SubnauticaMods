@@ -204,4 +204,43 @@ namespace CustomHotkeys
 		}
 	}
 #endif
+
+#if GAME_BZ
+	static class SeaTruckForcedExit
+	{
+		static bool patched = false;
+		static bool forcedExit = false; // HACK
+
+		public static void exitFrom(SeaTruckMotor truck)
+		{
+			if (!patched && (patched = true))
+				HarmonyHelper.patch();
+
+			forcedExit = true;
+			truck?.StopPiloting();
+			forcedExit = false;
+		}
+
+		// TODO: use reverse patch instead
+		[HarmonyTranspiler, HarmonyPatch(typeof(SeaTruckMotor), "StopPiloting")]
+		static CIEnumerable SeaTruckMotor_StopPiloting_Transpiler(CIEnumerable cins)
+		{
+			var list = cins.ToList();
+
+			var isWalkable = typeof(SeaTruckSegment).method("IsWalkable");
+			int index = list.ciFindIndexForLast(ci => ci.isOp(OpCodes.Callvirt, isWalkable));
+
+			if (index == -1)
+				return list;
+
+			Common.Debug.assert(list[index + 2].labels.Count > 0);
+
+			list.ciInsert(0,
+				OpCodes.Ldsfld, typeof(SeaTruckForcedExit).field(nameof(forcedExit)),
+				OpCodes.Brtrue_S, list[index + 2].labels[0]);
+
+			return list;
+		}
+	}
+#endif
 }

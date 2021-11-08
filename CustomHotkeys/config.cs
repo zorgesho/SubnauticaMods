@@ -171,7 +171,11 @@ namespace CustomHotkeys
 			new() { command = "warpforward 1", key = new KeyWithModifier(KeyCode.W, KeyCode.LeftAlt), mode = Hotkey.Mode.Hold, label = "Warp forward" },
 #else
 			new() { command = "useitem firstaidkit", label = "Use medkit", key = KeyCode.H },
-			new() { command = "vehicle_enter", label = "Enter nearby vehicle", key = KeyCode.E },
+			new() { command = "vehicle_enter", label = "Enter nearby vehicle" },
+#if GAME_BZ
+			new() { command = "seatruck_forcedexit", label = "Exit from Seatruck" },
+			new() { command = "seatruck_dropmodules", label = "Detach modules from Seatruck" },
+#endif
 			new() { command = "showmodoptions", label = "Open mod options", key = new KeyWithModifier(KeyCode.O, KeyCode.RightAlt) },
 #endif
 

@@ -154,8 +154,10 @@ namespace Common
 			setSelectedGameObject.invoke(currentEventSystem.get(), null);
 
 		// for use in non-performance critical code
-		public static C findNearest<C>(Vector3? pos, out float distSq) where C: Component
+		public static C findNearest<C>(Vector3? pos, out float distSq, Predicate<C> condition = null) where C: Component
 		{
+			using var _ = Debug.profiler($"UnityHelper.findNearest({typeof(C).Name})");
+
 			distSq = float.MaxValue;
 
 			if (pos == null)
@@ -166,6 +168,9 @@ namespace Common
 
 			foreach (var c in Object.FindObjectsOfType<C>())
 			{
+				if (condition != null && !condition(c))
+					continue;
+
 				float tmpDistSq = (c.transform.position - validPos).sqrMagnitude;
 
 				if (tmpDistSq < distSq)

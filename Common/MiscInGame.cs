@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -110,13 +111,13 @@ namespace Common
 		}
 
 		// findNearest* methods are for use in non-performance critical code
-		public static C findNearestToCam<C>() where C: Component =>
-			UnityHelper.findNearest<C>(LargeWorldStreamer.main?.cachedCameraPosition, out _);
+		public static C findNearestToCam<C>(Predicate<C> condition = null) where C: Component =>
+			UnityHelper.findNearest(LargeWorldStreamer.main?.cachedCameraPosition, out _, condition);
 
-		public static C findNearestToPlayer<C>() where C: Component =>
-			UnityHelper.findNearest<C>(Player.main?.transform.position, out _);
+		public static C findNearestToPlayer<C>(Predicate<C> condition = null) where C: Component =>
+			UnityHelper.findNearest(Player.main?.transform.position, out _, condition);
 
-		public static C findNearestToPlayer<C>(out float distSq) where C: Component =>
-			UnityHelper.findNearest<C>(Player.main?.transform.position, out distSq);
+		public static C findNearestToPlayer<C>(out float distSq, Predicate<C> condition = null) where C: Component =>
+			UnityHelper.findNearest(Player.main?.transform.position, out distSq, condition);
 	}
 }

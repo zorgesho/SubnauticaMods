@@ -20,14 +20,20 @@ namespace FloatingCargoCrate
 		{
 			TechType = register(L10n.ids_crateName, L10n.ids_crateDesc);
 
-			addToGroup(TechGroup.ExteriorModules, TechCategory.ExteriorOther);
 			setTechTypeForUnlock(TechType.AirBladder);
+#if GAME_SN
+			addToGroup(TechGroup.ExteriorModules, TechCategory.ExteriorOther);
+#elif GAME_BZ
+			addToGroup(TechGroup.ExteriorModules, TechCategory.ExteriorModule);
+#endif
 		}
 
 		protected override void initPrefabPool()
 		{
 			addPrefabToPool(TechType.SmallStorage);
-			addPrefabToPool("WorldEntities/Doodads/Debris/Wrecks/Decoration/" + Main.config.crateModelName, false);
+
+			string prefabPath = $"WorldEntities/{(Mod.Consts.isGameSN? "Doodads/Debris/Wrecks/Decoration": "Alterra/Base")}/";
+			addPrefabToPool(prefabPath + Main.config.crateModelName, false);
 		}
 
 		protected override GameObject getGameObject(GameObject[] prefabs)
@@ -52,11 +58,14 @@ namespace FloatingCargoCrate
 			prefab.destroyComponent<FPModel>();
 
 			prefab.destroyComponent<LiveMixin>();
+#if GAME_SN
 			prefab.destroyComponentInChildren<SmallStorage>();
-
+#endif
 
 			var storageContainer = PrefabUtils.initStorage(prefab, Main.config.storageWidth, Main.config.storageHeight, L10n.str(L10n.ids_hoverText), L10n.str(L10n.ids_storageLabel));
+#if GAME_SN // TODO fix for BZ
 			storageContainer.modelSizeRadius *= 3f;
+#endif
 			storageContainer.enabled = false; // disable until fully constructed
 
 

@@ -18,16 +18,11 @@ namespace Common.Crafting
 		// key - tech for unlocking, value - tech for unlockPopup sprite (can be tech type or fragment type)
 		static readonly Dictionary<TechType, TechType> unlockPopups = new();
 
-		static bool inited = false;
-		static void init()
-		{
-			if (!inited && (inited = true))
-				HarmonyHelper.patch();
-		}
+		static readonly HarmonyHelper.LazyPatcher patcher = new();
 
 		public static void setFragmentTypeToUnlock(TechType unlockTechType, TechType origFragTechType, TechType substFragTechType, int fragCount, float scanTime)
 		{
-			init();
+			patcher.patch();
 
 			PDAHandler.AddCustomScannerEntry(new PDAScanner.EntryData()
 			{

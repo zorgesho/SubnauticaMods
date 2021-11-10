@@ -94,7 +94,7 @@ namespace Common.Harmony
 		// patchStatus - null: patch without checking patched status (with call of 'prepare' method), true: patch, if not already patched, false: unpatch, if already patched
 		public static void patch(Type typeWithPatchMethods = null, bool? patchStatus = null)
 		{
-			typeWithPatchMethods ??= ReflectionHelper.getCallingType();
+			typeWithPatchMethods ??= ReflectionHelper.getCallingType();															$"HarmonyHelper.patch: target class = {typeWithPatchMethods}".logDbg();
 
 			if (patchStatus == null && typeWithPatchMethods.method("prepare")?.wrap().invoke<bool>() == false)
 				return; // if patchStatus != null, 'prepare' probably called in OptionalPatches already, but we also can call this method directly

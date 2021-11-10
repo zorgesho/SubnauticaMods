@@ -13,23 +13,17 @@ namespace Common
 		/// messages with the same prefix will stay in the same message slot (also <see cref="StringExtensions.onScreen(string, string)"/>)
 		public static void addMessage(string message, string prefix)
 		{
-			PersistentScreenMessages.patch();
+			PersistentScreenMessages.patcher.patch();
 			ErrorMessage.AddDebug($"[{prefix}] {message}");
 		}
 
 		static class PersistentScreenMessages
 		{
-			static bool patched = false;
+			public static readonly HarmonyHelper.LazyPatcher patcher = new();
 
 			static readonly FieldInfo messageEntry = typeof(ErrorMessage._Message).field("entry");
 			static readonly PropertyWrapper text =
 				Type.GetType(Mod.Consts.isGameSN? "UnityEngine.UI.Text, UnityEngine.UI": "TMPro.TextMeshProUGUI, Unity.TextMeshPro").property("text").wrap();
-
-			public static void patch()
-			{
-				if (!patched && (patched = true))
-					HarmonyHelper.patch();
-			}
 
 			[HarmonyPrefix]
 			[HarmonyHelper.Patch(typeof(ErrorMessage), "_AddMessage")]

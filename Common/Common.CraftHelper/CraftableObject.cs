@@ -23,14 +23,9 @@ namespace Common.Crafting
 	// blocks SMLHelper from processing prefab (so we can use exact prefab)
 	static class PrefabProcessingBlocker
 	{
-		public static bool block = false;
+		public static readonly HarmonyHelper.LazyPatcher patcher = new();
 
-		static bool inited = false;
-		public static void init()
-		{
-			if (!inited && (inited = true))
-				HarmonyHelper.patch();
-		}
+		public static bool block = false;
 
 		[HarmonyPrefix, HarmonyHelper.Patch("SMLHelper.V2.Assets.ModPrefab, SMLHelper", "ProcessPrefab")]
 		static bool blockPrefabProcessing() => !block || (block = false);
@@ -72,7 +67,7 @@ namespace Common.Crafting
 		protected void useExactPrefab()
 		{
 			isUsingExactPrefab = true;
-			PrefabProcessingBlocker.init();
+			PrefabProcessingBlocker.patcher.patch();
 		}
 
 

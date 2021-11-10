@@ -182,17 +182,13 @@ namespace CustomHotkeys
 
 	static class GameInput_AutoForward_Patch
 	{
-		static bool patched = false;
+#pragma warning disable IDE0052
+		static readonly HarmonyHelper.LazyPatcher _ = new (true);
+#pragma warning restore IDE0052
+
 		static bool autoforward = false;
 
-		public static void setAutoForward(bool val)
-		{
-			if (!patched && (patched = true))
-				HarmonyHelper.patch();
-
-			autoforward = val;
-		}
-
+		public static void setAutoForward(bool val) => autoforward = val;
 		public static void toggleAutoForward() => setAutoForward(!autoforward);
 
 		[HarmonyPostfix, HarmonyPatch(typeof(GameInput), "GetMoveDirection")]

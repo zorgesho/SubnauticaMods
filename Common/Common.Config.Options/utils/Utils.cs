@@ -75,14 +75,13 @@ namespace Common.Configuration
 				UIUtils.ScrollToShowItemInCenter(instance.modOptions[index].gameObject.transform);
 			}
 
-			static bool patched = false;
+			static readonly HarmonyHelper.LazyPatcher patcher = new();
 			static float optionsSpacing;
 
 			// set vertical spacing in pixels between options in the 'Mods' tab
 			public static void setOptionsSpacing(float spacing)
 			{
-				if (!patched && (patched = true))
-					HarmonyHelper.patch();
+				patcher.patch();
 
 				optionsSpacing = spacing;
 

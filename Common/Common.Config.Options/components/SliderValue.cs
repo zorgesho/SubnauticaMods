@@ -32,26 +32,10 @@ namespace Common.Configuration
 				// needed only for NonLinear custom slider value for now (both converters are overrided)
 				static class SliderCallbackPatch
 				{
-					static bool patched = false;
-
-					// TODO: make a separate class for such a patching
-					static void patch()
-					{
-						if (!patched && (patched = true))
-							HarmonyHelper.patch();
-					}
-
-					public static bool callbacksEnabled
-					{
-						get => _callbacksEnabled;
-
-						set
-						{
-							patch();
-							_callbacksEnabled = value;
-						}
-					}
-					static bool _callbacksEnabled = true;
+#pragma warning disable IDE0052
+					static readonly HarmonyHelper.LazyPatcher _ = new (true);
+#pragma warning restore IDE0052
+					public static bool callbacksEnabled = true;
 
 					[HarmonyPrefix, HarmonyPatch(typeof(uGUI_SnappingSlider), "Set")]
 					static void callbackDisabler(ref bool sendCallback) => sendCallback &= callbacksEnabled;

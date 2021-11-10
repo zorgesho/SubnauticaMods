@@ -17,7 +17,7 @@ using Common.Reflection;
 
 namespace MiscPatches
 {
-	//Adjusting whirlpool torpedo punch force
+	// adjusting whirlpool torpedo punch force
 	[HarmonyPatch(typeof(SeamothTorpedoWhirlpool), "Awake")]
 	static class SeamothTorpedoWhirlpool_Awake_Patch
 	{
@@ -202,6 +202,15 @@ namespace MiscPatches
 		static bool Prepare() => Main.config.fixFog;
 		static void Prefix(ref bool cameraInside) => cameraInside = false;
 	}
+
+#if GAME_BZ
+	[OptionalPatch, HarmonyPatch(typeof(Builder), "Begin")]
+	static class BuidlerRepeatPatch
+	{
+		static bool Prepare() => !Main.config.builderRepeat;
+		static void Postfix() => Builder.ResetLast();
+	}
+#endif
 
 	static class MiscStuff
 	{

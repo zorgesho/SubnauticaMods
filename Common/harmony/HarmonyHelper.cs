@@ -98,6 +98,29 @@ namespace Common.Harmony
 				set => fiCurrent.SetValue(obj, value);
 			}
 		}
+
+		// helper for lazy patching
+		public class LazyPatcher
+		{
+			bool patched = false;
+			readonly Type target;
+
+			// 'autopatch' is true: patch target class on first access
+			// 'target' is null: use parent class as target
+			public LazyPatcher(bool autopatch = false, Type target = null)
+			{
+				this.target = target ?? ReflectionHelper.getCallingType();							$"HarmonyHelper.LazyPatcher created: target = {this.target}".logDbg();
+
+				if (autopatch)
+					patch();
+			}
+
+			public void patch()
+			{
+				if (!patched && (patched = true))
+					HarmonyHelper.patch(target);
+			}
+		}
 	}
 
 	static partial class HarmonyExtensions

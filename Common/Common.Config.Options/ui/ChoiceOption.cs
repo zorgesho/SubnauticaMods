@@ -61,7 +61,7 @@ namespace Common.Configuration
 					registerLabel($"{id}.{i}", ref choices[i]);
 
 				if (id.IndexOf('.') != -1)
-					ValidatorPatch.patch();
+					ValidatorPatch.patcher.patch();
 			}
 
 			public override void addOption(Options options)
@@ -80,12 +80,7 @@ namespace Common.Configuration
 			// for some reason SMLHelper doesn't allow periods in ChoiceOption's id and we need them for nested classes
 			static class ValidatorPatch
 			{
-				static bool patched = false;
-				public static void patch()
-				{
-					if (!patched && (patched = true))
-						HarmonyHelper.patch();
-				}
+				public static readonly HarmonyHelper.LazyPatcher patcher = new();
 
 				[HarmonyPrefix]
 				[HarmonyHelper.Patch(HarmonyHelper.PatchOptions.PatchOnce)]

@@ -32,9 +32,9 @@ namespace MiscPatches
 
 		public readonly bool additionalPropRepImmunity = true; // propulsion/repulsion cannon immunity for some additional objects
 
-		public readonly bool  changeChargersSpeed   = true;
-		public readonly bool  chargersAbsoluteSpeed = true;    // charge speed is not linked to capacity (default false)
-		public readonly float batteryChargerSpeed   = 0.0015f; // 0.0015f
+		public readonly bool changeChargersSpeed = true;
+		public readonly bool chargersAbsoluteSpeed = true; // charge speed is not linked to capacity (default false)
+		public readonly float batteryChargerSpeed = 0.0015f; // 0.0015f
 		public readonly float powerCellChargerSpeed = 0.0025f; // 0.0025f
 
 		[Field.Range(min: 0f)]
@@ -49,6 +49,10 @@ namespace MiscPatches
 		[Options.Field("Fix fog", "Fix fog underwater while in vehicles")]
 		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 		public readonly bool fixFog = false;
+
+		[Options.Field("Builder repeat last tech", "Builder reusing last tech after constructing (vanilla behaviour)")]
+		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
+		public readonly bool builderRepeat = true;
 
 		public class Debug
 		{
@@ -91,7 +95,7 @@ namespace MiscPatches
 			{
 #if GAME_SN
 				class Hider: Options.Components.Hider.Simple
-				{ public Hider(): base("loadEscapePod", () => Main.config.dbg.fastStart.enabled) {} }
+				{ public Hider(): base("dbg.fastStart.loadEscapePod", () => Main.config.dbg.fastStart.enabled) {} }
 
 				[Field.Action(typeof(Hider))]
 #endif

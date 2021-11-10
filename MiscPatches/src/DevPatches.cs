@@ -14,8 +14,12 @@ using Common.Harmony;
 using Common.Reflection;
 using Common.Configuration;
 
-#if BRANCH_EXP
+#if GAME_BZ || BRANCH_EXP
 using System.Linq;
+#endif
+
+#if GAME_BZ
+using System.Reflection;
 #endif
 
 namespace MiscPatches
@@ -80,21 +84,28 @@ namespace MiscPatches
 	[OptionalPatch, PatchClass]
 	static class ScannerRoomCheat
 	{
+		const float scanRange = 500f;
 		static bool prepare() => Main.config.dbg.scannerRoomCheat;
+#if GAME_SN
+		[HarmonyPostfix, HarmonyPatch(typeof(MapRoomFunctionality), "GetScanRange")]
+		static void MRF_GetScanRange_Postfix(ref float __result) => __result = scanRange;
 
-		[HarmonyPrefix, HarmonyPatch(typeof(MapRoomFunctionality), "GetScanRange")]
-		static bool MRF_GetScanRange_Prefix(ref float __result)
+		[HarmonyPostfix, HarmonyPatch(typeof(MapRoomFunctionality), "GetScanInterval")]
+		static void MRF_GetScanInterval_Postfix(ref float __result) => __result = 0f;
+#elif GAME_BZ
+		[HarmonyTranspiler, HarmonyPatch(typeof(MapRoomFunctionality), "UpdateScanRangeAndInterval")]
+		static IEnumerable<CodeInstruction> MRF_UpdateScanRangeAndInterval_Transpiler(IEnumerable<CodeInstruction> cins)
 		{
-			__result = 500f;
-			return false;
-		}
+			var list = cins.ToList();
 
-		[HarmonyPrefix, HarmonyPatch(typeof(MapRoomFunctionality), "GetScanInterval")]
-		static bool MRF_GetScanInterval_Prefix(ref float __result)
-		{
-			__result = 0f;
-			return false;
+			void _replaceVal(FieldInfo field, float val) => list.ciInsert(ci => ci.isOp(OpCodes.Stfld, field), 0, 1, OpCodes.Pop, OpCodes.Ldc_R4, val);
+
+			_replaceVal(typeof(MapRoomFunctionality).field("scanRange"), scanRange);
+			_replaceVal(typeof(MapRoomFunctionality).field("scanInterval"), 0f);
+
+			return list;
 		}
+#endif
 	}
 
 	[OptionalPatch, PatchClass]
@@ -140,7 +151,9 @@ namespace MiscPatches
 		[HarmonyPrefix]
 		[HarmonyPatch(typeof(PlayerWorldArrows), "ArrowUpdate")]
 		[HarmonyPatch(typeof(TemperatureDamage), "OnCollisionStay")]
+#if GAME_SN
 		[HarmonyPatch(typeof(uGUI_OptionsPanel), "SyncTerrainChangeRequiresRestartText")]
+#endif
 		static bool methodDisabler() => false;
 
 		[HarmonyPrefix, HarmonyPatch(typeof(Pickupable), "Activate")]
@@ -152,8 +165,11 @@ namespace MiscPatches
 	static class FreezeTime_Begin_Patch
 	{
 		static bool Prepare() => !Main.config.dbg.ingameMenuPause;
-
+#if GAME_SN
 		static bool Prefix(string userId) => userId != "IngameMenu";
+#elif GAME_BZ
+		static bool Prefix(UWE.FreezeTime.Id id) => id != UWE.FreezeTime.Id.IngameMenu;
+#endif
 	}
 
 	// change initial equipment in creative mode

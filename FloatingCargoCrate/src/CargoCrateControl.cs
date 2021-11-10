@@ -119,6 +119,9 @@ namespace FloatingCargoCrate
 				animFixer = null;
 		}
 
+#if GAME_BZ
+		public bool IsDeconstructionObstacle() => false; // TODO
+#endif
 		public bool CanDeconstruct(out string reason)
 		{
 			if (animFixer != null) // don't deconstruct while deploy animation is played
@@ -126,10 +129,14 @@ namespace FloatingCargoCrate
 				reason = null;
 				return false;
 			}
-
+#if GAME_SN // TODO fix for BZ
 			if (!beaconAttached)
 				return storageContainer.CanDeconstruct(out reason);
-
+#elif GAME_BZ
+			reason = "";
+			if (!beaconAttached)
+				return true;
+#endif
 			reason = L10n.str(L10n.ids_removeBeaconFirst);
 			return false;
 		}

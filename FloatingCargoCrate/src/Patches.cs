@@ -10,10 +10,15 @@ namespace FloatingCargoCrate
 	{
 		static void Postfix(StorageContainer __instance)
 		{
-			var fccControl = __instance.GetComponentInParent<FloatingCargoCrateControl>();
-
-			if (fccControl && fccControl.needShowBeaconText && HandReticle.main.interactText1 != "")
-				HandReticle.main.interactText1 += L10n.str(L10n.ids_attachBeaconToCrate).format(uGUI.FormatButton(GameInput.Button.RightHand));
+			if (__instance.GetComponentInParent<FloatingCargoCrateControl>()?.needShowBeaconText != true)
+				return;
+#if GAME_SN
+			var textHand = HandReticle.main.interactText1;
+#elif GAME_BZ
+			var textHand = HandReticle.main.textHand;
+#endif
+			if (textHand != "")
+				HandReticle.main.setText(textHand: textHand + L10n.str(L10n.ids_attachBeaconToCrate).format(uGUI.FormatButton(GameInput.Button.RightHand)));
 		}
 	}
 

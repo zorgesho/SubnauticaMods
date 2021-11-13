@@ -5,7 +5,6 @@ using System.Collections.Generic;
 
 using Harmony;
 using UnityEngine;
-using UnityEngine.UI;
 
 using Common;
 using Common.Harmony;
@@ -14,6 +13,12 @@ using Common.Configuration;
 
 namespace ConsoleImproved
 {
+#if GAME_SN
+	using Text = UnityEngine.UI.Text;
+#elif GAME_BZ
+	using Text = TMPro.TextMeshProUGUI;
+#endif
+
 	[HarmonyPatch(typeof(ErrorMessage), "Awake")]
 	static class ErrorMessageSettings
 	{
@@ -35,6 +40,7 @@ namespace ConsoleImproved
 		static void Postfix(ErrorMessage __instance)
 		{
 			var em = __instance;
+			var text = em.prefabMessage.GetComponent<Text>(); // for GAME_SN it's just 'prefabMessage'
 
 			defaultSettings ??= new ModConfig.MessagesSettings()
 			{
@@ -44,11 +50,9 @@ namespace ConsoleImproved
 				timeDelay = em.timeDelay,
 				timeFadeOut = em.timeFadeOut,
 				timeInvisible = em.timeInvisible,
-#if GAME_SN
-				fontSize = em.prefabMessage.fontSize,
-				textLineSpacing = em.prefabMessage.lineSpacing,
-				textWidth = em.prefabMessage.rectTransform.sizeDelta.x
-#endif
+				fontSize = (int)text.fontSize, // in GAME_BZ 'fontSize' is float
+				textWidth = text.rectTransform.sizeDelta.x,
+				textLineSpacing = text.lineSpacing
 			};
 
 			if (Main.config.msgsSettings.customize)
@@ -66,10 +70,10 @@ namespace ConsoleImproved
 			em.timeDelay = settings.timeDelay;
 			em.timeFadeOut = settings.timeFadeOut;
 			em.timeInvisible = settings.timeInvisible;
-#if GAME_SN
+
 			List<Text> texts = new (em.pool);
 			em.messages.ForEach(message => texts.Add(message.entry));
-			texts.Add(em.prefabMessage);
+			texts.Add(em.prefabMessage.GetComponent<Text>());
 
 			if (sampleMessage)
 				texts.Add(sampleMessage.GetComponent<Text>());
@@ -80,7 +84,6 @@ namespace ConsoleImproved
 				text.rectTransform.sizeDelta = new Vector2(settings.textWidth, 0f);
 				text.fontSize = settings.fontSize;
 			}
-#endif
 		}
 
 		public static float messageSlotHeight

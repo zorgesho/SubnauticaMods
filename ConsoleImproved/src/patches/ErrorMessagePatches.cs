@@ -151,16 +151,28 @@ namespace ConsoleImproved
 #elif GAME_BZ
 			MethodInfo setAlpha = typeof(TMProExtensions).method("SetAlpha");
 #endif
-			MethodInfo setLocalPosition = typeof(Transform).method("set_localPosition");
+			FieldInfo messageEntry = typeof(ErrorMessage._Message).field("entry");
+			MethodInfo setLocalPosition = typeof(Transform).property("localPosition").GetSetMethod();
 
 			int[] i = list.ciFindIndexes(ci => ci.isLDC(7f), // -2, jump index
+										 ci => ci.isOp(OpCodes.Ldfld, messageEntry), // for next Stloc_S
+										 ci => ci.isOp(OpCodes.Stloc_S), // local var 'entry'
 										 ci => ci.isOp(OpCodes.Callvirt, setLocalPosition), // +1, inject index
 										 ci => ci.isOp(Mod.Consts.isGameSN? OpCodes.Callvirt: OpCodes.Call, setAlpha)); // +1, jump index
 			if (i == null)
 				return cins;
+#if GAME_BZ
+			CIHelper.LabelClipboard.__enabled = false;
 
+			// setting alpha to 1.0f
+			list.ciInsert(i[4] + 1,
+				OpCodes.Br, list.ciDefineLabel(i[4] + 1, ilg),
+				OpCodes.Ldloc_S, list[i[2]].operand,
+				OpCodes.Ldc_R4, 1.0f,
+				OpCodes.Callvirt, typeof(Text).property("alpha").GetSetMethod());
+#endif
 			// ignoring alpha changes for message entry if console is visible (last two lines in the second loop)
-			_injectStateCheck(i[1] + 1, i[2] + 1);
+			_injectStateCheck(i[3] + 1, i[4] + (Mod.Consts.isGameSN? 1: 2));
 
 			// ignoring (time > message.timeEnd) loop if console is visible (just jumping to "float num = this.offsetY * 7f" line)
 			_injectStateCheck(2, i[0] - 2);

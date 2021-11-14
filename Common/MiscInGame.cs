@@ -68,18 +68,7 @@ namespace Common
 
 		public static TechType getHeldToolType() => Inventory.main?.GetHeld()?.GetTechType() ?? TechType.None;
 
-		public static bool isLoadingState
-		{
-			get
-			{
-				var fader = uGUI._main?.loading.loadingBackground;
-#if GAME_SN
-				return fader?.state == true;
-#elif GAME_BZ
-				return fader?.sequence.target == true;
-#endif
-			}
-		}
+		public static bool isLoadingState => uGUI._main?.loading.IsLoading == true;
 
 		public static void clearScreenMessages() => // expire all messages except QMM main menu messages
 			ErrorMessage.main?.messages.Where(m => m.timeEnd - Time.time < 1e3f).forEach(m => m.timeEnd = Time.time - 1f);

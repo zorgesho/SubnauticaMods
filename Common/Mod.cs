@@ -69,6 +69,9 @@ namespace Common
 
 		public static void addCriticalMessage(string msg, int size = MainMenuMessages.defaultSize, string color = MainMenuMessages.defaultColor)
 		{
+#if GAME_BZ
+			MainMenuMessages.BZFixPatches.patcher.patch();
+#endif
 			if (qmmAddMessage)
 				qmmAddMessage.invoke(qmmServicesMain.get(), msg, size, color, true);
 			else

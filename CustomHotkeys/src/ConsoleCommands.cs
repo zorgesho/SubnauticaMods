@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 
+using UWE;
 using UnityEngine;
 
 using Common;
@@ -9,6 +9,8 @@ using Common.Configuration;
 
 namespace CustomHotkeys
 {
+	using Math = System.Math;
+
 	class ConsoleCommands: PersistentConsoleCommands
 	{
 		#region dev tools & debug commands
@@ -17,7 +19,7 @@ namespace CustomHotkeys
 
 		public void devtools_toggleterrain()	=> toggleComponent<TerrainDebugGUI>();
 		public void devtools_togglegraphics()	=> toggleComponent<GraphicsDebugGUI>();
-		public void devtools_toggleframegraph()	=> toggleComponent<UWE.FrameTimeOverlay>();
+		public void devtools_toggleframegraph()	=> toggleComponent<FrameTimeOverlay>();
 
 		public void devtools_hidegui(GUIController.HidePhase? hidePhase)
 		{
@@ -150,6 +152,7 @@ namespace CustomHotkeys
 		#endregion
 
 		#region gameplay commands
+#if GAME_SN // doesn't needed for BZ
 		public void autoforward(bool? enabled)
 		{
 			if (enabled == null)
@@ -157,7 +160,7 @@ namespace CustomHotkeys
 			else
 				GameInput_AutoForward_Patch.setAutoForward((bool)enabled);
 		}
-
+#endif
 		public void bindslot(int slotID, TechType? techType)
 		{
 			if (!Inventory.main)
@@ -206,12 +209,98 @@ namespace CustomHotkeys
 
 		public void vehicle_enter(float distance = 6f)
 		{
-			getProperVehicle(distance)?.EnterVehicle(Player.main, true, true);
+			if (getProperVehicle(distance) is Vehicle vehicle)
+			{
+				vehicle.EnterVehicle(Player.main, true, true);
+			}
+#if GAME_BZ
+			else if (getProperSeaTruck(distance) is SeaTruckSegment truck)
+			{
+				truck.motor.StartPiloting();
+				truck.seatruckanimation.currentAnimation = SeaTruckAnimation.Animation.EnterPilot;
+				truck.Enter(Player.main);
+				Utils.PlayFMODAsset(truck.enterSound, Player.main.transform);
+			}
+#endif
 		}
 
 		public void vehicle_upgrades()
 		{
-			getProperVehicle(4f)?.GetComponentInChildren<VehicleUpgradeConsoleInput>().OnHandClick(null);
+			MonoBehaviour vehicle = getProperVehicle(4f);
+#if GAME_BZ
+			vehicle ??= getProperSeaTruck(4f);
+#endif
+			vehicle?.GetComponentInChildren<VehicleUpgradeConsoleInput>().OnHandClick(null);
+		}
+#if GAME_BZ
+		public void seatruck_forcedexit()
+		{
+			SeaTruckForcedExit.exitFrom(getPilotedSeaTruck()?.motor);
+		}
+
+		public void seatruck_dropmodules()
+		{
+			getPilotedSeaTruck()?.Detach();
+		}
+#endif
+		#endregion
+
+		#region game* commands
+#pragma warning disable CS0618 // obsolete
+		public void game_startnew(GameMode gameMode = GameMode.Creative)
+		{
+			if (uGUI_MainMenu.main)
+				CoroutineHost.StartCoroutine(uGUI_MainMenu.main.StartNewGame(gameMode));
+		}
+#pragma warning restore CS0618
+
+		public void game_load(int slotID = -1)
+		{
+			if (!uGUI_MainMenu.main)
+				return;
+
+			string slotToLoad = null;
+			SaveLoadManager.GameInfo gameinfoToLoad = null;
+
+			if (slotID == -1) // loading most recent save
+			{
+				foreach (var slot in SaveLoadManager.main.GetActiveSlotNames())
+				{
+					var gameinfo = SaveLoadManager.main.GetGameInfo(slot);
+					gameinfoToLoad ??= gameinfo;
+
+					if (gameinfoToLoad.dateTicks < gameinfo.dateTicks)
+					{
+						slotToLoad = slot;
+						gameinfoToLoad = gameinfo;
+					}
+				}
+			}
+			else
+			{
+				slotToLoad = $"slot{slotID:D4}";
+				gameinfoToLoad = SaveLoadManager.main.GetGameInfo(slotToLoad);
+			}
+
+			if (gameinfoToLoad != null)
+#if GAME_SN
+				CoroutineHost.StartCoroutine(uGUI_MainMenu.main.LoadGameAsync(slotToLoad, gameinfoToLoad.changeSet, gameinfoToLoad.gameMode));
+#elif GAME_BZ
+				CoroutineHost.StartCoroutine(uGUI_MainMenu.main.LoadGameAsync(slotToLoad, "", gameinfoToLoad.changeSet, gameinfoToLoad.gameMode, 2));
+#endif
+		}
+
+		public void game_save()
+		{
+			CoroutineHost.StartCoroutine(IngameMenu.main?.SaveGameAsync());
+		}
+
+		public void game_quit(bool quitToDesktop = false)
+		{
+			if (uGUI_MainMenu.main && quitToDesktop)
+				Application.Quit();
+			else
+				IngameMenu.main?.QuitGame(quitToDesktop);
 		}
 		#endregion
 
@@ -240,6 +329,32 @@ namespace CustomHotkeys
 
 			return null;
 		}
+
+#if GAME_BZ
+		static SeaTruckSegment getProperSeaTruck(float maxDistance)
+		{
+			if (Player.main?.currentInterior != null)
+				return null;
+
+			if (findNearestSeaTruckCabin(maxDistance) is SeaTruckSegment truck && truck.CanEnter())
+				return truck.GetComponent<Dockable>()?.isDocked == true? null: truck;
+
+			return null;
+		}
+
+		static SeaTruckSegment findNearestSeaTruckCabin(float maxDistance)
+		{
+			if (GameUtils.findNearestToPlayer<SeaTruckSegment>(out float distSq, sts => sts.isMainCab) is SeaTruckSegment truck)
+				return distSq < maxDistance * maxDistance? truck: null;
+
+			return null;
+		}
+
+		static SeaTruckSegment getPilotedSeaTruck()
+		{
+			return Player.main?.inSeatruckPilotingChair != true? null: Player.main.GetComponentInParent<SeaTruckSegment>();
+		}
+#endif
 		#endregion
 	}
 }

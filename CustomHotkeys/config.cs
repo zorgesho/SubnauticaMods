@@ -105,10 +105,10 @@ namespace CustomHotkeys
 				{
 					bool hidden = hotkey.hidden == true;
 					Field cfgField = new (hotkey, nameof(Hotkey.key), this, $"hotkey.{id++:D2}");
-					var label = !string.IsNullOrWhiteSpace(hotkey.label)? hotkey.label: hotkey.command.clampLength(30).Replace("...", "<color=silver>...</color>");
+					var label = !string.IsNullOrWhiteSpace(hotkey.label)? hotkey.label: hotkey.command.clampLength(30).Replace("...", "<color=#aaaaaa>...</color>");
 
 					if (hidden)
-						label = $"<color=silver>{label}</color>";
+						label = $"<color=#aaaaaa>{label}</color>";
 
 					KeyWModBindOption option = new (cfgField, label);
 
@@ -153,8 +153,10 @@ namespace CustomHotkeys
 		[AddHotkeys, Field.Reloadable, NoInnerFieldsAttrProcessing]
 		public readonly List<Hotkey> hotkeys = new()
 		{
-#if DEBUG && !GENERATE_SAMPLE_CONFIG
+#if GAME_SN
 			new() { command = "autoforward", label = "Autoforward", key = KeyCode.LeftAlt },
+#endif
+#if DEBUG && !GENERATE_SAMPLE_CONFIG
 			new() { command = "setresolution 1280 720 false; setwindowpos 10 10 | setresolution 2560 1440", key = KeyCode.F1, label = "Toggle fullscreen" },
 			new() { command = "spawn seamoth; warpforward 10; speed 10; vehicle_enter; wait 2; speed 1; clearmessages", key = KeyCode.None, label = "Spawn seamoth" },
 			new() { command = "showmodoptions", label = "Open mod options", key = KeyCode.F3 },
@@ -168,9 +170,12 @@ namespace CustomHotkeys
 			new() { command = "devtools_hidegui mask; fov 5 | fov 60; devtools_hidegui none", label = "Zoom in", key = KeyCode.V, mode = Hotkey.Mode.PressRelease },
 			new() { command = "warpforward 1", key = new KeyWithModifier(KeyCode.W, KeyCode.LeftAlt), mode = Hotkey.Mode.Hold, label = "Warp forward" },
 #else
-			new() { command = "autoforward", label = "Autoforward", key = KeyCode.LeftAlt },
 			new() { command = "useitem firstaidkit", label = "Use medkit", key = KeyCode.H },
-			new() { command = "vehicle_enter", label = "Enter nearby vehicle", key = KeyCode.E },
+			new() { command = "vehicle_enter", label = "Enter nearby vehicle" },
+#if GAME_BZ
+			new() { command = "seatruck_forcedexit", label = "Exit from Seatruck" },
+			new() { command = "seatruck_dropmodules", label = "Detach modules from Seatruck" },
+#endif
 			new() { command = "showmodoptions", label = "Open mod options", key = new KeyWithModifier(KeyCode.O, KeyCode.RightAlt) },
 #endif
 

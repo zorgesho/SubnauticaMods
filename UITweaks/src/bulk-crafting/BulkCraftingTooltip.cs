@@ -97,7 +97,7 @@ namespace UITweaks
 				foreach (var ing in techInfo.ingredients)
 					maxAmount = Math.Min(maxAmount, getCountAvailable(ing.techType) / ing.amount);
 
-				if (currentPowerRelay != null)
+				if (currentPowerRelay?.GetPower() > 5f)
 					maxAmount = Math.Min(maxAmount, (int)(currentPowerRelay.GetPower() / 5f - 1f));
 			}
 

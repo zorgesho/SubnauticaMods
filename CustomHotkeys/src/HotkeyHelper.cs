@@ -17,6 +17,26 @@ namespace CustomHotkeys
 	{
 		abstract class Hotkey
 		{
+			// on some keyboard layouts RightAlt works as AltGr = 'RightAlt + LeftControl'
+			// it's not because of Unity, it's how Windows works, so there is no easy way around it (if any)
+			// this hack will ignore pressed LeftControl if hotkey modifier is RightAlt
+			static class AltGrHack
+			{
+				static int indexRightAlt;
+				static int indexLeftControl;
+
+				public static void init()
+				{
+					indexRightAlt = getInputIndex(KeyCode.RightAlt);
+					indexLeftControl = getInputIndex(KeyCode.LeftControl);
+				}
+
+				public static bool shouldIgnore(int heldIndex, int checkIndex)
+				{
+					return heldIndex == indexRightAlt && checkIndex == indexLeftControl;
+				}
+			}
+
 			protected Hotkey(KeyWithModifier key, bool up, bool held)
 			{
 				this.key = key;
@@ -61,7 +81,9 @@ namespace CustomHotkeys
 				if (GameInput.inputs.Count == 0)
 					return null;
 
-				return KeyWithModifier.modifiers.Select(keyCode => getInputIndex(keyCode)).ToArray();
+				AltGrHack.init();
+
+				return KeyWithModifier.modifiers.Select(getInputIndex).ToArray();
 			}
 
 			bool getModState() // check that only necessary modifier is held down
@@ -72,6 +94,9 @@ namespace CustomHotkeys
 
 				foreach (var index in modIndexes)
 				{
+					if (AltGrHack.shouldIgnore(heldIndex, index))
+						continue;
+
 					if (index != heldIndex)
 					{
 						if (getKeyState(index) != 0u) // checking other modifiers

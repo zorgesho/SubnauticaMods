@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Linq;
 
-using UnityEngine;
-
 using Common;
 using Common.Crafting;
 using Common.Reflection;
 
 #if GAME_SN
+using UnityEngine;
 using UnityEngine.UI;
 #endif
 
@@ -41,7 +40,7 @@ namespace UITweaks
 		};
 
 		enum AmountActionHint { None = 0, Increase = 1, Decrease = 2, Both = 3 } // used as index for actions array
-
+#if GAME_SN
 		class BulkCraftingInitedTag: MonoBehaviour {}
 
 		static void init(uGUI_Tooltip tooltip)
@@ -50,7 +49,7 @@ namespace UITweaks
 				return;
 
 			tooltip.gameObject.AddComponent<BulkCraftingInitedTag>();
-#if GAME_SN
+
 			var textGO = tooltip.gameObject.getChild(Mod.Consts.isBranchStable? "Text": "Container/Text");
 			var textGOBottom = textGO.getParent().createChild(textGO, "BottomText");
 
@@ -64,9 +63,8 @@ namespace UITweaks
 			textPosX = text.rectTransform.localPosition.x;
 
 			text.text = _writeAction("tmp"); // adding temporary text to update rect size
-#endif
 		}
-
+#endif
 		static void init(TechType techType)
 		{
 			currentCraftAmount = 0;

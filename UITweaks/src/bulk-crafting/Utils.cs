@@ -5,7 +5,7 @@ using Common.Crafting;
 using System.Linq;
 using System.Collections.ObjectModel;
 
-using Harmony;
+using HarmonyLib;
 
 using Common.Harmony;
 #endif

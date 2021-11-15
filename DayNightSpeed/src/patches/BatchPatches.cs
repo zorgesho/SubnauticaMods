@@ -2,7 +2,7 @@
 using System.Reflection.Emit;
 using System.Collections.Generic;
 
-using Harmony;
+using HarmonyLib;
 
 using Common.Harmony;
 using Common.Reflection;

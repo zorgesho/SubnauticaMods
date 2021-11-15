@@ -3,7 +3,7 @@ using System.Linq;
 using System.Reflection.Emit;
 using System.Collections.Generic;
 
-using Harmony;
+using HarmonyLib;
 using SMLHelper.V2.Handlers;
 
 namespace Common.Crafting

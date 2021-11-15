@@ -6,7 +6,7 @@ using System.Reflection.Emit;
 using System.Diagnostics;
 using System.Collections.Generic;
 
-using Harmony;
+using HarmonyLib;
 
 namespace Common.Harmony
 {

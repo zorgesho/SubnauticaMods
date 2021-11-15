@@ -1,6 +1,6 @@
 ﻿using System;
 
-using Harmony;
+using HarmonyLib;
 
 using Common;
 using Common.Harmony;

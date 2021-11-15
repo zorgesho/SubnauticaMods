@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
 
-using Harmony;
+using HarmonyLib;
 using UnityEngine;
 using SMLHelper.V2.Options;
 

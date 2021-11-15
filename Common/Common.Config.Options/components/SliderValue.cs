@@ -9,7 +9,7 @@ using SMLHelper.V2.Options;
 using System.Linq;
 using System.Reflection.Emit;
 
-using Harmony;
+using HarmonyLib;
 #endif
 
 namespace Common.Configuration

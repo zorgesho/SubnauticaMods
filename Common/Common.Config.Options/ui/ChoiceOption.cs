@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 
-using Harmony;
+using HarmonyLib;
 using SMLHelper.V2.Options;
 
 namespace Common.Configuration

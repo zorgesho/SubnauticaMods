@@ -17,9 +17,9 @@ namespace UITweaks
 		{
 			static bool prepare()
 			{
+#if GAME_SN
 				if (Main.config.bulkCrafting.enabled)
 					init(uGUI_Tooltip.main); // in case we enable it after tooltip awake
-#if GAME_SN
 				else
 					setActionText(AmountActionHint.None);
 #endif
@@ -31,10 +31,10 @@ namespace UITweaks
 			// prevents SMLHelper from restoring techdata to original state (for modded items)
 			[HarmonyPrefix, HarmonyHelper.Patch("SMLHelper.V2.Patchers.CraftDataPatcher, SMLHelper", "NeedsPatchingCheckPrefix")]
 			static bool SMLPatchCheck(TechType techType) => currentTechType != techType || !CraftData.techData.ContainsKey(techType);
-#endif
+
 			[HarmonyPostfix, HarmonyPatch(typeof(uGUI_Tooltip), "Awake")]
 			static void awakePatch(uGUI_Tooltip __instance) => init(__instance);
-#if GAME_SN
+
 			[HarmonyPrefix, HarmonyPatch(typeof(uGUI_Tooltip), "Set")]
 			static void resetText() => setActionText(AmountActionHint.None);
 #endif

@@ -16,14 +16,14 @@ namespace DayNightSpeed
 	using CIEnumerable = IEnumerable<CodeInstruction>;
 	using static CIHelper;
 
-	// fixing hunger/thrist timers
+	// fixing hunger/thirst timers
 	[HarmonyPatch(typeof(Survival), "UpdateStats")]
 	static class Survival_UpdateStats_Patch
 	{
 		static CIEnumerable Transpiler(CIEnumerable cins) =>
 			cins.ciInsert(ci => ci.isLDC(100f), +1, 2,
 				_codeForCfgVar(nameof(ModConfig.dayNightSpeed)), OpCodes.Mul,
-				_codeForCfgVar(nameof(ModConfig.auxSpeedHungerThrist)), OpCodes.Mul);
+				_codeForCfgVar(nameof(ModConfig.auxSpeedHungerThirst)), OpCodes.Mul);
 
 #if DEBUG // debug patch
 		static void Postfix(Survival __instance)

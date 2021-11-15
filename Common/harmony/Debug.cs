@@ -163,7 +163,7 @@ namespace Common.Harmony
 						sb.Append($"[{patch.priority}] ");
 
 					if (!omitNames)
-						sb.Append(patch.patch.fullName());
+						sb.Append(patch.PatchMethod.fullName());
 
 					sb.AppendLine();
 				}

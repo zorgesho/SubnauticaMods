@@ -110,7 +110,12 @@ namespace Common.Harmony
 
 				foreach (var targetMethod in targetMethods)
 				{
-					if (patchStatus == null || (patchStatus == true && !_isPatched(targetMethod)))
+					if (method.checkAttr<HarmonyReversePatch>())
+					{
+						Debug.assert(patchStatus != false); // can't unpatch reverse patch
+						harmonyInstance.CreateReversePatcher(targetMethod, new HarmonyMethod(method)).Patch();
+					}
+					else if (patchStatus == null || (patchStatus == true && !_isPatched(targetMethod)))
 					{
 						MethodInfo _method_if<H>() where H: Attribute => method.checkAttr<H>()? method: null;
 						patch(targetMethod, _method_if<HarmonyPrefix>(), _method_if<HarmonyPostfix>(), _method_if<HarmonyTranspiler>());

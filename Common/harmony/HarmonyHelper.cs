@@ -10,10 +10,11 @@ using HarmonyLib;
 namespace Common.Harmony
 {
 	using Reflection;
+	using Harmony = HarmonyLib.Harmony;
 
 	static partial class HarmonyHelper
 	{
-		public static HarmonyInstance harmonyInstance { get; } = HarmonyInstance.Create(Mod.id);
+		public static Harmony harmonyInstance { get; } = new (Mod.id);
 
 		public static void patchAll(bool searchForPatchClasses = false)
 		{
@@ -63,7 +64,7 @@ namespace Common.Harmony
 
 		public static void unpatch(MethodBase original, MethodInfo patch) => harmonyInstance.Unpatch(original, patch);
 
-		public static Patches getPatchInfo(MethodBase method) => harmonyInstance.GetPatchInfo(method);
+		public static Patches getPatchInfo(MethodBase method) => Harmony.GetPatchInfo(method);
 
 		// checkByName - comparing patches by method's names (for use with shared projects)
 		public static bool isPatchedBy(MethodBase original, MethodBase patch, bool checkByName = false)
@@ -112,7 +113,12 @@ namespace Common.Harmony
 				this.target = target ?? ReflectionHelper.getCallingType();							$"HarmonyHelper.LazyPatcher created: target = {this.target}".logDbg();
 
 				if (autopatch)
-					patch();
+				{
+					// we don't want any exceptions in constructor
+					// in case of failed patching we will not try it again
+					try { patch(); }
+					catch (Exception e) { Log.msg(e); }
+				}
 			}
 
 			public void patch()
@@ -144,7 +150,7 @@ namespace Common.Harmony
 			string patchFullName = checkByName? patch.fullName(): null;
 
 			bool _contains(IList<Patch> list) => list.Count > 0 &&
-				list.Any(p => (checkByName && p.patch?.fullName() == patchFullName) || (!checkByName && Equals(p.patch, patch)));
+				list.Any(p => (checkByName && p.PatchMethod?.fullName() == patchFullName) || (!checkByName && Equals(p.PatchMethod, patch)));
 
 			return _contains(patches.Prefixes) || _contains(patches.Postfixes) || _contains(patches.Transpilers);
 		}

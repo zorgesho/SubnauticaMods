@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+﻿using System;
 using System.Reflection.Emit;
 using System.Collections.Generic;
 
@@ -23,7 +23,6 @@ namespace DayNightSpeed
 			cins.ciInsert(ci => ci.isLDC(1f), _codeForCfgVar(nameof(ModConfig.speedEggsHatching)), OpCodes.Div);
 	}
 
-#if GAME_SN // TODO: fix for BZ
 	// modifying creature grow and breed time (breed time is half of grow time)
 	[OptionalPatch, PatchClass]
 	static class WaterParkCreaturePatch
@@ -31,17 +30,20 @@ namespace DayNightSpeed
 		static bool prepare() => Main.config.useAuxSpeeds && Main.config.speedCreaturesGrow != 1.0f;
 
 		[HarmonyTranspiler]
-		[HarmonyPatch(typeof(WaterParkCreature), "Update")]
 		[HarmonyPatch(typeof(WaterParkCreature), "SetMatureTime")]
+		[HarmonyPatch(typeof(WaterParkCreature), Mod.Consts.isGameSN? "Update": "ManagedUpdate")]
 		static CIEnumerable WaterParkCreature_Transpiler(CIEnumerable cins)
 		{
-			FieldInfo growingPeriod = typeof(WaterParkCreatureParameters).field("growingPeriod");
-
-			return cins.ciInsert(ci => ci.isOp(OpCodes.Ldfld, growingPeriod), +1, 0,
-				_codeForCfgVar(nameof(ModConfig.speedCreaturesGrow)), OpCodes.Div);
+#if GAME_SN
+			var growingPeriod = typeof(WaterParkCreatureParameters).field("growingPeriod");
+			Predicate<CodeInstruction> targetCI = new (ci => ci.isOp(OpCodes.Ldfld, growingPeriod));
+#elif GAME_BZ
+			var get_growingPeriod = typeof(WaterParkCreatureData).property("growingPeriod").GetGetMethod();
+			Predicate<CodeInstruction> targetCI = new (ci => ci.isOp(OpCodes.Callvirt, get_growingPeriod));
+#endif
+			return cins.ciInsert(targetCI, +1, 0, _codeForCfgVar(nameof(ModConfig.speedCreaturesGrow)), OpCodes.Div);
 		}
 	}
-#endif
 
 	// modifying plants grow time and fruits grow time (on lantern tree)
 	[OptionalPatch, PatchClass]
@@ -126,7 +128,7 @@ namespace DayNightSpeed
 				$"{__instance.energyMixin?.charge} {__instance.energyPerSecond}".onScreen($"energy {__instance.name}");
 		}
 
-		[HarmonyPostfix, HarmonyPatch(typeof(WaterParkCreature), "Update")]
+		[HarmonyPostfix, HarmonyPatch(typeof(WaterParkCreature), Mod.Consts.isGameSN? "Update": "ManagedUpdate")]
 		static void WaterParkCreature_Update_Postfix(WaterParkCreature __instance)
 		{
 			if (Main.config.dbgCfg.showWaterParkCreatures)

@@ -1,7 +1,4 @@
 ﻿using System;
-#if DEBUG
-using System.Collections.Generic;
-#endif
 
 using Harmony;
 using UnityEngine;
@@ -9,6 +6,10 @@ using UnityEngine;
 using Common;
 using Common.Harmony;
 using Common.Configuration;
+
+#if DEBUG
+using System.Collections.Generic;
+#endif
 
 namespace DayNightSpeed
 {

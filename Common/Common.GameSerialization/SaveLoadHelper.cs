@@ -15,6 +15,9 @@ namespace Common.GameSerialization
 
 		public void update()
 		{
+			if (!SaveLoadManager.main)
+				return;
+
 			if (onLoad != null)
 			{
 				if (!SaveLoadManager.main.isLoading)

@@ -7,19 +7,23 @@ using Harmony;
 using Common;
 using Common.Harmony;
 
+#if GAME_BZ
+using Common.Reflection;
+#endif
+
 namespace DayNightSpeed
 {
 	using CIEnumerable = IEnumerable<CodeInstruction>;
 	using static CIHelper;
 
-	// fixing hunger/thrist timers
+	// fixing hunger/thirst timers
 	[HarmonyPatch(typeof(Survival), "UpdateStats")]
 	static class Survival_UpdateStats_Patch
 	{
 		static CIEnumerable Transpiler(CIEnumerable cins) =>
 			cins.ciInsert(ci => ci.isLDC(100f), +1, 2,
 				_codeForCfgVar(nameof(ModConfig.dayNightSpeed)), OpCodes.Mul,
-				_codeForCfgVar(nameof(ModConfig.auxSpeedHungerThrist)), OpCodes.Mul);
+				_codeForCfgVar(nameof(ModConfig.auxSpeedHungerThirst)), OpCodes.Mul);
 
 #if DEBUG // debug patch
 		static void Postfix(Survival __instance)
@@ -55,11 +59,18 @@ namespace DayNightSpeed
 #endif
 
 	// fixing maproom scan times
-	[HarmonyPatch(typeof(MapRoomFunctionality), "GetScanInterval")]
-	static class MapRoomFunctionality_GetScanInterval_Patch
+	[HarmonyPatch(typeof(MapRoomFunctionality), Mod.Consts.isGameSN? "GetScanInterval": "UpdateScanRangeAndInterval")]
+	static class MapRoomFunctionality_ScanInterval_Patch
 	{
-		static CIEnumerable Transpiler(CIEnumerable cins) =>
-			cins.ciInsert(ci => ci.isOp(OpCodes.Call), _dnsClamped01.ci, OpCodes.Mul);
+		static CIEnumerable Transpiler(CIEnumerable cins)
+		{
+#if GAME_SN
+			return cins.ciInsert(ci => ci.isOp(OpCodes.Call), _dnsClamped01.ci, OpCodes.Mul);
+#elif GAME_BZ
+			var scanInterval = typeof(MapRoomFunctionality).field("scanInterval");
+			return cins.ciInsert(ci => ci.isOp(OpCodes.Stfld, scanInterval), 0, 1, _dnsClamped01.ci, OpCodes.Mul);
+#endif
+		}
 	}
 
 	// fixing sunbeam counter so it shows realtime seconds regardless of daynightspeed
@@ -86,15 +97,28 @@ namespace DayNightSpeed
 			cins.ciInsert(ci => ci.isLDC(500f), _dnsClamped01.ci, OpCodes.Div);
 	}
 
-#if GAME_SN // TODO: fix for BZ
 	// fixed lifetime for current
+#if GAME_SN
 	[HarmonyPatch(typeof(WorldForces), "AddCurrent")]
+#elif GAME_BZ
+	[HarmonyPatch(typeof(WorldForces), "AddCurrent", typeof(WorldForces.Current))]
+#endif
 	static class WorldForces_AddCurrent_Patch
 	{
+#if GAME_SN
 		static CIEnumerable Transpiler(CIEnumerable cins) =>
 			cins.ciInsert(ci => ci.isOp(OpCodes.Ldarg_S, (byte)5), _dnsClamped01.ci, OpCodes.Mul);
-	}
+#elif GAME_BZ
+		static void Prefix(WorldForces.Current current)
+		{
+			if (double.IsPositiveInfinity(current.endTime))
+				return;
+
+			double lifeTime = (current.endTime - current.startTime) * DayNightSpeedControl.getDayNightSpeedClamped01();
+			current.endTime = current.startTime + lifeTime;
+		}
 #endif
+	}
 
 	// fixes for explosions and currents
 	[HarmonyPatch(typeof(WorldForces), "DoFixedUpdate")]

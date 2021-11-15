@@ -1,8 +1,21 @@
-﻿using System;
+﻿#if GAME_SN
+#define CFG_UPDATE_V110
+#define CFG_UPDATE_V120
+#endif
+
+using System;
 
 using Common;
 using Common.Configuration;
 using Common.Configuration.Actions;
+
+#if CFG_UPDATE_V120
+using System.Linq;
+#endif
+
+#if CFG_UPDATE_V110 || CFG_UPDATE_V120
+using Common.Reflection;
+#endif
 
 namespace DayNightSpeed
 {
@@ -325,6 +338,76 @@ namespace DayNightSpeed
 			}
 			#endregion
 		}
+
+		#region version updates
+#if CFG_UPDATE_V110 || CFG_UPDATE_V120
+		int __cfgVer = 0;
+#endif
+		protected override void onLoad()
+		{
+#if CFG_UPDATE_V110
+			_updateTo110();
+#endif
+#if CFG_UPDATE_V120
+			_updateTo120();
+#endif
+		}
+
+		#region update to v1.1.0
+#if CFG_UPDATE_V110
+#pragma warning disable CS0414 // unused field
+		// obsolete inverted multipliers (v1.0.0)
+		[Field.LoadOnly, Field.Range(min:0.01f)] readonly float multHungerThrist   = 1.0f;
+		[Field.LoadOnly, Field.Range(min:0.01f)] readonly float multPlantsGrow     = 1.0f;
+		[Field.LoadOnly, Field.Range(min:0.01f)] readonly float multEggsHatching   = 1.0f;
+		[Field.LoadOnly, Field.Range(min:0.01f)] readonly float multCreaturesGrow  = 1.0f;
+		[Field.LoadOnly, Field.Range(min:0.01f)] readonly float multMedkitInterval = 1.0f;
+#pragma warning restore CS0414
+
+		// variables are renamed (mult* -> speed*) and inverted (new = 1.0f/old)
+		void _updateTo110()
+		{
+			if (__cfgVer >= 110)
+				return;
+
+			__cfgVer = 110;
+
+			try
+			{
+				// using reflection to avoid copy/paste and keep new params readonly
+				foreach (var varName in new[] { "HungerThrist", "PlantsGrow", "EggsHatching", "CreaturesGrow", "MedkitInterval" })
+				{
+					float val = this.getFieldValue<float>("mult" + varName);
+
+					if (val != 1.0f)
+						this.setFieldValue("speed" + varName, 1.0f / val);
+				}
+			}
+			catch (Exception e) { Log.msg(e); }
+		}
+#endif // CFG_UPDATE_V110
+		#endregion
+
+		#region update to v1.2.0
+#if CFG_UPDATE_V120
+		// if we loading this config for the first time and some speed variable is not default then we enabling useAuxSpeeds
+		void _updateTo120()
+		{
+			if (__cfgVer >= 120)
+				return;
+
+			__cfgVer = 120;
+
+			try
+			{
+				if (GetType().fields().Where(field => field.Name.StartsWith("speed") && !field.GetValue(this).Equals(1.0f)).Count() > 0)
+					this.setFieldValue(nameof(useAuxSpeeds) , true);
+			}
+			catch (Exception e) { Log.msg(e); }
+		}
+#endif // CFG_UPDATE_V120
+		#endregion
+		#endregion
 
 		#region debug config
 #if DEBUG

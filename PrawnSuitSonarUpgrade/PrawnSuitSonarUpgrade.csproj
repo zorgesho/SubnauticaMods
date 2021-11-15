@@ -40,7 +40,7 @@
     <DefineConstants>DEBUG;TRACE;GAME_BZ;BRANCH_EXP</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="0Harmony-1.2.0.1" />
+    <Reference Include="0Harmony" />
     <Reference Include="Assembly-CSharp-firstpass" />
     <Reference Include="Assembly-CSharp.pb" />
     <Reference Include="SMLHelper" />

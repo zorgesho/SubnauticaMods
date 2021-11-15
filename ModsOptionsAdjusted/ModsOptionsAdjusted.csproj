@@ -18,7 +18,7 @@
     <DefineConstants>DEBUG;TRACE;GAME_SN;BRANCH_STABLE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="0Harmony-1.2.0.1" />
+    <Reference Include="0Harmony" />
     <Reference Include="Assembly-CSharp.pb" />
     <Reference Include="Newtonsoft.Json" />
     <Reference Include="System" />

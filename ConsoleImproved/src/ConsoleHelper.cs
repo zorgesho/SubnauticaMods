@@ -24,16 +24,18 @@ namespace ConsoleImproved
 		static void init()
 		{
 			PersistentConsoleCommands.register<ConsoleCommands>();
+
+#if GAME_SN && BRANCH_STABLE
 			DevConsole.disableConsole = !Main.config.consoleEnabled;
+#else
+			PlatformUtils.SetDevToolsEnabled(Main.config.consoleEnabled);
+#endif
 		}
 
 		static void showMessages(List<string> msgs, string msg)
 		{
-#if GAME_SN
 			int maxCount = ErrorMessageSettings.getSlotCount(true);
-#else
-			int maxCount = 30; // HACK
-#endif
+
 			if (Main.config.maxListSize > 0)
 				maxCount = Math.Min(maxCount, Main.config.maxListSize);
 

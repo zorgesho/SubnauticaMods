@@ -204,39 +204,46 @@ namespace CustomHotkeys
 #if GAME_BZ
 	static class SeaTruckForcedExit
 	{
-		static bool patched = false;
-		static bool forcedExit = false; // HACK
+#pragma warning disable IDE0052
+		static readonly HarmonyHelper.LazyPatcher __ = new (true);
+#pragma warning restore IDE0052
 
 		public static void exitFrom(SeaTruckMotor truck)
 		{
-			if (!patched && (patched = true))
-				HarmonyHelper.patch();
-
-			forcedExit = true;
-			truck?.StopPiloting();
-			forcedExit = false;
+			if (truck)
+				SeaTruckMotor_StopPiloting_ReversePatch(truck);
 		}
 
-		// TODO: use reverse patch instead
-		[HarmonyTranspiler, HarmonyPatch(typeof(SeaTruckMotor), "StopPiloting")]
-		static CIEnumerable SeaTruckMotor_StopPiloting_Transpiler(CIEnumerable cins)
+		[HarmonyReversePatch, HarmonyPatch(typeof(SeaTruckMotor), "StopPiloting")]
+		static bool SeaTruckMotor_StopPiloting_ReversePatch(SeaTruckMotor truck)
 		{
-			var list = cins.ToList();
+			_ = truck; _ = transpiler(null); // make compiler happy
+			return false;
 
-			var isWalkable = typeof(SeaTruckSegment).method("IsWalkable");
-			int index = list.ciFindIndexForLast(ci => ci.isOp(OpCodes.Callvirt, isWalkable));
+			// no checks for indexes here, can't just return 'cins' anyway
+			static CIEnumerable transpiler(CIEnumerable cins)
+			{
+				var list = cins.ToList();
 
-			if (index == -1)
+				var isWalkable = typeof(SeaTruckSegment).method("IsWalkable");
+				int i = list.FindIndex(ci => ci.isOp(OpCodes.Callvirt, isWalkable));
+
+				// removing all code before first 'IsWalkable' check and putting 'truck.Unsubscribe()' instead
+				// now we can ignore 'skipUnsubscribe' parameter
+				list.ciRemoveRange(0, i + 1);
+				list.ciInsert(0, OpCodes.Ldarg_0, OpCodes.Call, typeof(SeaTruckMotor).method("Unsubscribe"));
+
+				// removing 'forceStop' parameter check, now we can ignore it
+				list.ciRemove(ci => ci.isOp(OpCodes.Ldarg_2), +0, 2);
+
+				// removing code between second and third 'flag' assignment (first assignment is already removed)
+				// now we can ignore 'waitForDocking' parameter
+				int[] ii = list.ciFindIndexes(OpCodes.Stloc_0, OpCodes.Stloc_0);
+				list.ciRemoveRange(ii[0] + 1, ii[1]);
+
 				return list;
-
-			Common.Debug.assert(list[index + 2].labels.Count > 0);
-
-			list.ciInsert(0,
-				OpCodes.Ldsfld, typeof(SeaTruckForcedExit).field(nameof(forcedExit)),
-				OpCodes.Brtrue_S, list[index + 2].labels[0]);
-
-			return list;
+			}
 		}
 	}
-#endif
+#endif // GAME_BZ
 }

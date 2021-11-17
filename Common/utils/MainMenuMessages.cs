@@ -19,7 +19,6 @@ namespace Common.Utils
 #if GAME_BZ
 	using Reflection;
 #endif
-
 	static class MainMenuMessages
 	{
 		public const int defaultSize = 25;
@@ -99,7 +98,7 @@ namespace Common.Utils
 				static float _getVal(float val, ErrorMessage._Message message) => messages.Contains(message)? 1f: val;
 
 				return CIHelper.ciInsert(cins,
-					cin => cin.isOpLoc(OpCodes.Stloc_S, 11), +0, 1,
+					ci => ci.isOpLoc(OpCodes.Stloc_S, 11), +0, 1,
 						OpCodes.Ldloc_S, 6,
 						CIHelper.emitCall<Func<float, ErrorMessage._Message, float>>(_getVal));
 			}
@@ -117,7 +116,7 @@ namespace Common.Utils
 			static IEnumerable<CodeInstruction> MainMenuMessages_OnSceneLoaded_Transpiler(IEnumerable<CodeInstruction> cins)
 			{
 				var list = cins.ToList();
-				int i = list.FindIndex(ci => ci.isOp(OpCodes.Call, typeof(Time).property("time").GetGetMethod()));
+				int i = list.FindIndex(new CIHelper.OpMatch(OpCodes.Call, typeof(Time).property("time").GetGetMethod()));
 
 				if (i == -1)
 				{																								"QModManager.Utility.MainMenuMessages.OnSceneLoaded doesn't need to be patched".logDbg();

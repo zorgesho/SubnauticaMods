@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Reflection;
 using System.Reflection.Emit;
 using System.Collections.Generic;
 
@@ -41,11 +40,11 @@ namespace HabitatPlatform
 		{
 			var list = cins.ToList();
 
-			MethodInfo getSubRoot = typeof(GameObject).method<SubRoot>("GetComponentInParent", new Type[0]);
-
 			// adding check there -> SubRoot componentInParent2 = Builder.placementTarget.GetComponentInParent<SubRoot>();
-			int index = list.ciFindIndexForLast(cin => cin.isOp(OpCodes.Callvirt, getSubRoot),
-												cin => cin.isOp(OpCodes.Brfalse));
+			int index = list.ciFindIndexForLast(
+				new CIHelper.OpMatch(OpCodes.Callvirt, typeof(GameObject).method<SubRoot>("GetComponentInParent", new Type[0])),
+				ci => ci.isOp(OpCodes.Brfalse));
+
 			if (index == -1)
 				return cins;
 

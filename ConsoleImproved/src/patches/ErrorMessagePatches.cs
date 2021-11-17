@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using System.Reflection;
 using System.Reflection.Emit;
 using System.Collections.Generic;
 
@@ -146,19 +145,13 @@ namespace ConsoleImproved
 					OpCodes.Brtrue_S, label);
 			}
 
-#if GAME_SN
-			MethodInfo setAlpha = typeof(CanvasRenderer).method("SetAlpha");
-#elif GAME_BZ
-			MethodInfo setAlpha = typeof(TMProExtensions).method("SetAlpha");
-#endif
-			FieldInfo messageEntry = typeof(ErrorMessage._Message).field("entry");
-			MethodInfo setLocalPosition = typeof(Transform).property("localPosition").GetSetMethod();
+			int[] i = list.ciFindIndexes(
+				ci => ci.isLDC(7f), // -2, jump index
+				new CIHelper.MemberMatch(OpCodes.Ldfld, nameof(ErrorMessage._Message.entry)), // for next Stloc_S
+				ci => ci.isOp(OpCodes.Stloc_S), // local var 'entry'
+				new CIHelper.MemberMatch($"set_{nameof(Transform.localPosition)}"), // +1, inject index
+				new CIHelper.MemberMatch("SetAlpha")); // +1, jump index
 
-			int[] i = list.ciFindIndexes(ci => ci.isLDC(7f), // -2, jump index
-										 ci => ci.isOp(OpCodes.Ldfld, messageEntry), // for next Stloc_S
-										 ci => ci.isOp(OpCodes.Stloc_S), // local var 'entry'
-										 ci => ci.isOp(OpCodes.Callvirt, setLocalPosition), // +1, inject index
-										 ci => ci.isOp(Mod.Consts.isGameSN? OpCodes.Callvirt: OpCodes.Call, setAlpha)); // +1, jump index
 			if (i == null)
 				return cins;
 #if GAME_BZ

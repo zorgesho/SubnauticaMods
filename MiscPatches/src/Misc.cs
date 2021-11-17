@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Text;
 using System.Linq;
-using System.Reflection;
 using System.Reflection.Emit;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,7 +12,6 @@ using UnityEngine.Events;
 using Common;
 using Common.Harmony;
 using Common.Crafting;
-using Common.Reflection;
 
 namespace MiscPatches
 {
@@ -188,11 +186,8 @@ namespace MiscPatches
 		{
 			static bool Prepare() => prepare() && Main.config.chargersAbsoluteSpeed;
 
-			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins)
-			{
-				FieldInfo chargeSpeed = typeof(Charger).field("chargeSpeed");
-				return CIHelper.ciRemove(cins, ci => ci.isOp(OpCodes.Ldfld, chargeSpeed), +2, 2); // remove "*capacity"
-			}
+			static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins) =>
+				cins.ciRemove(new CIHelper.MemberMatch(OpCodes.Ldfld, nameof(Charger.chargeSpeed)), +2, 2); // remove "*capacity"
 		}
 	}
 

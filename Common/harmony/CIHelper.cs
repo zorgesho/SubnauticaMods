@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
 using System.Reflection.Emit;
 using System.Collections.Generic;
 
@@ -25,6 +26,29 @@ namespace Common.Harmony
 
 	static partial class CIHelper // CodeInstruction sequences manipulation methods
 	{
+		// helper class for operand caching
+		public record OpMatch(OpCode opcode, object operand)
+		{
+			public static implicit operator CIPredicate(OpMatch match) =>
+				ci => ci.isOp(match.opcode, match.operand);
+		}
+
+		// helper class for operations with class members (fields & methods)
+		public record MemberMatch(OpCode opcode, string memberName)
+		{
+			public MemberMatch(string memberName): this(OpCodes.Nop, memberName) {}
+
+			bool compareOperand(CodeInstruction ci) => (ci.operand as MemberInfo)?.Name == memberName;
+
+			public static implicit operator CIPredicate(MemberMatch match)
+			{
+				if (match.opcode == OpCodes.Nop)
+					return match.compareOperand;
+				else
+					return ci => ci.isOp(match.opcode) && match.compareOperand(ci);
+			}
+		}
+
 		public static CodeInstruction emitCall<T>(T func) where T: Delegate
 		{
 			Debug.assert(func?.Method != null);

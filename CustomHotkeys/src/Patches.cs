@@ -29,11 +29,9 @@ namespace CustomHotkeys
 		static CIEnumerable F1_F3_disabler(CIEnumerable cins)
 		{
 			var list = cins.ToList();
-			var checkProp = typeof(PlatformUtils).method(Mod.Consts.isGameSN? "get_isShippingRelease": "get_isConsolePlatform");
 
-			int[] i = list.ciFindIndexes(ci => ci.isOp(OpCodes.Call, checkProp),
-										 ci => ci.isOp(OpCodes.Call, checkProp),
-										 ci => ci.isOp(Mod.Consts.isGameSN? OpCodes.Blt: OpCodes.Ret));
+			CIHelper.MemberMatch match = new (OpCodes.Call, Mod.Consts.isGameSN? "get_isShippingRelease": "get_isConsolePlatform");
+			int[] i = list.ciFindIndexes(match, match, ci => ci.isOp(Mod.Consts.isGameSN? OpCodes.Blt: OpCodes.Ret));
 
 			return i == null? cins: list.ciRemoveRange(i[0], i[2]);
 		}
@@ -103,16 +101,14 @@ namespace CustomHotkeys
 				var list = cins.ToList();
 
 				// saving binded keycode to check later in GameInput.UpdateKeyInputs patch
-				var GameInput_ClearInput = typeof(GameInput).method("ClearInput");
-				CIHelper.ciInsert(list, ci => ci.isOp(OpCodes.Call, GameInput_ClearInput), CIHelper.emitCall<Action>(saveLastBind));
+				list.ciInsert(new CIHelper.MemberMatch(nameof(GameInput.ClearInput)), CIHelper.emitCall<Action>(saveLastBind));
 #if GAME_SN
 				if (Main.config.easyBindRemove)
 				{
-					var toReplace = typeof(EventSystem).method("get_current");
-					int index = list.FindIndex(ci => ci.isOp(OpCodes.Call, toReplace));
+					int index = list.FindIndex(new CIHelper.MemberMatch($"get_{nameof(EventSystem.current)}"));
 					Common.Debug.assert(index != -1);
 
-					var get_hoveredObject = typeof(BindCheckPointer).method("get_" + nameof(BindCheckPointer.hoveredObject));
+					var get_hoveredObject = typeof(BindCheckPointer).property(nameof(BindCheckPointer.hoveredObject)).GetGetMethod();
 					list.RemoveRange(index, 2);
 					list.Insert(index, new CodeInstruction(OpCodes.Call, get_hoveredObject));
 				}
@@ -145,17 +141,15 @@ namespace CustomHotkeys
 				var list = cins.ToList();
 				var field_lastBindedIndex = typeof(BindingPatches).field(nameof(lastBindedIndex));
 #if GAME_SN && BRANCH_STABLE
-				var Input_GetKey = typeof(Input).method("GetKey", typeof(KeyCode));
 				var cinsCompare = CIHelper.toCIList(OpCodes.Ldloc_S, 4,
 													OpCodes.Ldsfld, field_lastBindedIndex);
 #else
-				object Input_GetKey = null; // exp branch uses InputUtils, but we don't really need to check method in GetInputState
 				var cinsCompare = CIHelper.toCIList(OpCodes.Ldarg_1, CIHelper.emitCall<Func<KeyCode>>(_lastBindedKeyCode));
 
 				static KeyCode _lastBindedKeyCode() =>
 					lastBindedIndex == -1 || GameInput.inputs.Count == 0? default: GameInput.inputs[lastBindedIndex].keyCode;
 #endif
-				int[] i = list.ciFindIndexes(ci => ci.isOp(OpCodes.Call, Input_GetKey),
+				int[] i = list.ciFindIndexes(new CIHelper.MemberMatch("GetKey"),
 											 ci => ci.isOp(OpCodes.Call),
 											 ci => ci.isOp(OpCodes.Call));
 				if (i == null)
@@ -225,11 +219,9 @@ namespace CustomHotkeys
 			{
 				var list = cins.ToList();
 
-				var isWalkable = typeof(SeaTruckSegment).method("IsWalkable");
-				int i = list.FindIndex(ci => ci.isOp(OpCodes.Callvirt, isWalkable));
-
 				// removing all code before first 'IsWalkable' check and putting 'truck.Unsubscribe()' instead
 				// now we can ignore 'skipUnsubscribe' parameter
+				int i = list.FindIndex(new CIHelper.MemberMatch(nameof(SeaTruckSegment.IsWalkable)));
 				list.ciRemoveRange(0, i + 1);
 				list.ciInsert(0, OpCodes.Ldarg_0, OpCodes.Call, typeof(SeaTruckMotor).method("Unsubscribe"));
 

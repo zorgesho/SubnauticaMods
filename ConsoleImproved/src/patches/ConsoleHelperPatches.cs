@@ -6,11 +6,6 @@ using UnityEngine;
 using Common;
 using Common.Harmony;
 
-#if GAME_BZ
-using System.Reflection.Emit;
-using Common.Reflection;
-#endif
-
 namespace ConsoleImproved
 {
 	static partial class ConsoleHelper
@@ -57,20 +52,15 @@ namespace ConsoleImproved
 			[HarmonyTranspiler]
 			[HarmonyPatch(typeof(ConsoleInput), "ProcessUpKey")]
 			[HarmonyPatch(typeof(ConsoleInput), "ProcessDownKey")]
-			static IEnumerable<CodeInstruction> ConsoleInput_ProcessUpDownKey_Transpiler(IEnumerable<CodeInstruction> cins)
-			{
-				var selectAll = typeof(TMPro.TMP_InputField).method("SelectAll");
-				return CIHelper.ciRemove(cins, cin => cin.isOp(OpCodes.Call, selectAll), -1, 2); // remove call to SelectAll
-			}
+			static IEnumerable<CodeInstruction> ConsoleInput_ProcessUpDownKey_Transpiler(IEnumerable<CodeInstruction> cins) =>
+				cins.ciRemove(new CIHelper.MemberMatch("SelectAll"), -1, 2); // remove call to SelectAll
 
 			// put caret to the end of text when going up/down
 			[HarmonyPostfix]
 			[HarmonyPatch(typeof(ConsoleInput), "ProcessUpKey")]
 			[HarmonyPatch(typeof(ConsoleInput), "ProcessDownKey")]
-			static void ConsoleInput_ProcessUpDownKey_Postfix(ConsoleInput __instance)
-			{
+			static void ConsoleInput_ProcessUpDownKey_Postfix(ConsoleInput __instance) =>
 				__instance.caretPosition = __instance.text.Length;
-			}
 #endif
 		}
 	}

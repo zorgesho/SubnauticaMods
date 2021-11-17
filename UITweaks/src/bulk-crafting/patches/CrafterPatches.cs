@@ -8,7 +8,6 @@ using HarmonyLib;
 using Common;
 using Common.Harmony;
 using Common.Crafting;
-using Common.Reflection;
 
 namespace UITweaks
 {
@@ -66,9 +65,9 @@ namespace UITweaks
 			{
 				var list = cins.ToList();
 
-				var numCrafted = typeof(CrafterLogic).field("numCrafted");
-				int index = list.ciFindIndexForLast(ci => ci.isOp(OpCodes.Stfld, numCrafted),
-													ci => ci.isOp(OpCodes.Stfld, numCrafted));
+				CIHelper.MemberMatch stfld_numCrafted = new (OpCodes.Stfld, nameof(CrafterLogic.numCrafted));
+				int index = list.ciFindIndexForLast(stfld_numCrafted, stfld_numCrafted);
+
 				return index == -1? cins:
 					list.ciReplace(index - 1,
 						Mod.Consts.isGameSNStable? OpCodes.Ldarg_0: OpCodes.Ldloc_1,

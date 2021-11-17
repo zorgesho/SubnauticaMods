@@ -51,14 +51,13 @@ namespace Common.Configuration
 						var sliderValue = ilg.DeclareLocal(typeof(float));
 						Debug.assert(sliderValue.LocalIndex == 3);
 
-						var initConverters = typeof(ModSliderOption.SliderValue).method("InitConverters");
 						var sliderValueGetter = Type.GetType("UnityEngine.UI.Slider, UnityEngine.UI").property("value").GetGetMethod();
 
 						// restoring saved value
 						list.ciReplace(ci => ci.isOp(OpCodes.Callvirt, sliderValueGetter), OpCodes.Pop, OpCodes.Ldloc_3);
 
 						// saving slider value to local var
-						list.ciInsert(ci => ci.isOp(OpCodes.Callvirt, initConverters), OpCodes.Ldloc_2, OpCodes.Callvirt, sliderValueGetter, OpCodes.Stloc_3);
+						list.ciInsert(new CIHelper.MemberMatch("InitConverters"), OpCodes.Ldloc_2, OpCodes.Callvirt, sliderValueGetter, OpCodes.Stloc_3);
 
 						return list;
 					}

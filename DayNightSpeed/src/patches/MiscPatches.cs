@@ -7,10 +7,6 @@ using HarmonyLib;
 using Common;
 using Common.Harmony;
 
-#if GAME_BZ
-using Common.Reflection;
-#endif
-
 namespace DayNightSpeed
 {
 	using CIEnumerable = IEnumerable<CodeInstruction>;
@@ -62,15 +58,12 @@ namespace DayNightSpeed
 	[HarmonyPatch(typeof(MapRoomFunctionality), Mod.Consts.isGameSN? "GetScanInterval": "UpdateScanRangeAndInterval")]
 	static class MapRoomFunctionality_ScanInterval_Patch
 	{
-		static CIEnumerable Transpiler(CIEnumerable cins)
-		{
+		static CIEnumerable Transpiler(CIEnumerable cins) =>
 #if GAME_SN
-			return cins.ciInsert(ci => ci.isOp(OpCodes.Call), _dnsClamped01.ci, OpCodes.Mul);
+			cins.ciInsert(ci => ci.isOp(OpCodes.Call), _dnsClamped01.ci, OpCodes.Mul);
 #elif GAME_BZ
-			var scanInterval = typeof(MapRoomFunctionality).field("scanInterval");
-			return cins.ciInsert(ci => ci.isOp(OpCodes.Stfld, scanInterval), 0, 1, _dnsClamped01.ci, OpCodes.Mul);
+			cins.ciInsert(new MemberMatch(nameof(MapRoomFunctionality.scanInterval)), 0, 1, _dnsClamped01.ci, OpCodes.Mul);
 #endif
-		}
 	}
 
 	// fixing sunbeam counter so it shows realtime seconds regardless of daynightspeed

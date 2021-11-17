@@ -1,12 +1,10 @@
-﻿using System;
-using System.Reflection.Emit;
+﻿using System.Reflection.Emit;
 using System.Collections.Generic;
 
 using HarmonyLib;
 
 using Common;
 using Common.Harmony;
-using Common.Reflection;
 
 namespace DayNightSpeed
 {
@@ -34,14 +32,8 @@ namespace DayNightSpeed
 		[HarmonyPatch(typeof(WaterParkCreature), Mod.Consts.isGameSN? "Update": "ManagedUpdate")]
 		static CIEnumerable WaterParkCreature_Transpiler(CIEnumerable cins)
 		{
-#if GAME_SN
-			var growingPeriod = typeof(WaterParkCreatureParameters).field("growingPeriod");
-			Predicate<CodeInstruction> targetCI = new (ci => ci.isOp(OpCodes.Ldfld, growingPeriod));
-#elif GAME_BZ
-			var get_growingPeriod = typeof(WaterParkCreatureData).property("growingPeriod").GetGetMethod();
-			Predicate<CodeInstruction> targetCI = new (ci => ci.isOp(OpCodes.Callvirt, get_growingPeriod));
-#endif
-			return cins.ciInsert(targetCI, +1, 0, _codeForCfgVar(nameof(ModConfig.speedCreaturesGrow)), OpCodes.Div);
+			string growingPeriod = $"{(Mod.Consts.isGameSN? "": "get_")}growingPeriod";
+			return cins.ciInsert(new MemberMatch(growingPeriod), +1, 0, _codeForCfgVar(nameof(ModConfig.speedCreaturesGrow)), OpCodes.Div);
 		}
 	}
 

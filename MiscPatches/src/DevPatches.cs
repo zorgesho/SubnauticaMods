@@ -18,10 +18,6 @@ using Common.Configuration;
 using System.Linq;
 #endif
 
-#if GAME_BZ
-using System.Reflection;
-#endif
-
 namespace MiscPatches
 {
 	using Object = UnityEngine.Object;
@@ -98,10 +94,11 @@ namespace MiscPatches
 		{
 			var list = cins.ToList();
 
-			void _replaceVal(FieldInfo field, float val) => list.ciInsert(ci => ci.isOp(OpCodes.Stfld, field), 0, 1, OpCodes.Pop, OpCodes.Ldc_R4, val);
+			void _replaceVal(string field, float val) =>
+				list.ciInsert(new CIHelper.MemberMatch(OpCodes.Stfld, field), 0, 1, OpCodes.Pop, OpCodes.Ldc_R4, val);
 
-			_replaceVal(typeof(MapRoomFunctionality).field("scanRange"), scanRange);
-			_replaceVal(typeof(MapRoomFunctionality).field("scanInterval"), 0f);
+			_replaceVal(nameof(MapRoomFunctionality.scanRange), scanRange);
+			_replaceVal(nameof(MapRoomFunctionality.scanInterval), 0f);
 
 			return list;
 		}
@@ -218,10 +215,10 @@ namespace MiscPatches
 		static IEnumerable<CodeInstruction> SetupSingleton_Transpiler(IEnumerable<CodeInstruction> cins)
 		{
 			var list = cins.ToList();
-			var getSentrySDK = typeof(GameObject).method<SentrySdk>("GetComponent");
 
-			int[] i = list.ciFindIndexes(ci => ci.isOp(OpCodes.Callvirt, getSentrySDK),
-										 ci => ci.isOp(OpCodes.Ldc_I4_0));
+			int[] i = list.ciFindIndexes(
+				new CIHelper.OpMatch(OpCodes.Callvirt, typeof(GameObject).method<SentrySdk>("GetComponent")),
+				ci => ci.isOp(OpCodes.Ldc_I4_0));
 
 			return i == null? cins: list.ciRemoveRange(i[0] - 2, i[1] - 1);
 		}
@@ -243,9 +240,7 @@ namespace MiscPatches
 				sb.ToString().onScreen("raycast result");
 			}
 
-			var raycastAll = typeof(EventSystem).method("RaycastAll");
-
-			return cins.ciInsert(ci => ci.isOp(OpCodes.Callvirt, raycastAll),
+			return cins.ciInsert(new CIHelper.OpMatch(OpCodes.Callvirt, typeof(EventSystem).method("RaycastAll")),
 				OpCodes.Ldarg_0,
 				OpCodes.Ldfld, typeof(BaseInputModule).field("m_RaycastResultCache"),
 				CIHelper.emitCall<Action<List<RaycastResult>>>(_printRaycastResults));

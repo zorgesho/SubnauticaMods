@@ -276,6 +276,28 @@ namespace CustomHotkeys
 			}
 		}
 	}
+
+	static class SeaTruckForcedConnect
+	{
+#pragma warning disable IDE0052
+		static readonly HarmonyHelper.LazyPatcher __ = new (true);
+#pragma warning restore IDE0052
+
+		public static void connect(SeaTruckSegment rearSegment, SeaTruckSegment looseSegment)
+		{
+			if (rearSegment?.rearConnection && looseSegment?.frontConnection)
+				SeaTruckConnection_OnTriggerEnter_ReversePatch(rearSegment.rearConnection, looseSegment.frontConnection);
+		}
+
+		[HarmonyReversePatch, HarmonyPatch(typeof(SeaTruckConnection), "OnTriggerEnter")]
+		static void SeaTruckConnection_OnTriggerEnter_ReversePatch(SeaTruckConnection rearConnection, SeaTruckConnection frontConnection)
+		{
+			_ = rearConnection; _ = frontConnection; _ = transpiler(null); // make compiler happy
+
+			// using SeaTruckConnection from the parameter, not from the collider
+			static CIEnumerable transpiler(CIEnumerable cins) => cins.ciRemove(1, 2);
+		}
+	}
 #pragma warning restore IDE0079
 #endif // GAME_BZ
 }

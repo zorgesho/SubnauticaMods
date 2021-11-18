@@ -8,6 +8,7 @@ using Common.Reflection;
 using Common.Configuration;
 
 #if GAME_BZ
+using System;
 using System.Collections.Generic;
 #endif
 
@@ -251,7 +252,23 @@ namespace CustomHotkeys
 			if (dropModules > 0)
 				SeaTruckDetachModules.detachFrom(getSegmentInChain(getPilotedSeaTruck(), -1 - dropModules));
 		}
-#endif
+
+		public void seatruck_forcedconnect(float distance = 10f, float angle = 30f)
+		{
+			if (getPilotedSeaTruck() is not SeaTruckSegment truck)
+				return;
+
+			var rearSegment = getSegmentInChain(truck, -1);
+
+			Predicate<SeaTruckSegment> condition = new (sts => sts.frontConnection?.occupied == false);
+			var looseSegment = UnityHelper.findNearest(rearSegment.transform.position, out float segmentDistance, condition);
+
+			float segmentAngle = Vector3.Angle(rearSegment.transform.forward, looseSegment.transform.forward);
+																																		$"seatruck_forcedconnect: distance = {segmentDistance}, angle = {segmentAngle}".logDbg();
+			if (looseSegment && segmentDistance < distance && segmentAngle < angle)
+				SeaTruckForcedConnect.connect(rearSegment, looseSegment);
+		}
+#endif // GAME_BZ
 		#endregion
 
 		#region game* commands
@@ -339,7 +356,8 @@ namespace CustomHotkeys
 			if (Player.main?.currentInterior != null)
 				return null;
 
-			if (GameUtils.findNearestToPlayer<SeaTruckSegment>(out float distance, sts => sts.isMainCab && sts.CanEnter()) is not SeaTruckSegment truck)
+			Predicate<SeaTruckSegment> condition = new (sts => sts.isMainCab && sts.CanEnter());
+			if (GameUtils.findNearestToPlayer(out float distance, condition) is not SeaTruckSegment truck)
 				return null;
 
 			return (distance < maxDistance && truck.GetComponent<Dockable>()?.isDocked != true)? truck: null;

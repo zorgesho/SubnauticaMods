@@ -196,6 +196,9 @@ namespace CustomHotkeys
 #endif
 
 #if GAME_BZ
+// some 'disable IDE0052' pragmas are considered unnecessary by VS for some reason
+#pragma warning disable IDE0079 // unnecessary suppression
+
 	static class SeaTruckForcedExit
 	{
 #pragma warning disable IDE0052
@@ -237,5 +240,42 @@ namespace CustomHotkeys
 			}
 		}
 	}
+
+	static class SeaTruckDetachModules
+	{
+#pragma warning disable IDE0052
+		static readonly HarmonyHelper.LazyPatcher __ = new (true);
+#pragma warning restore IDE0052
+
+		public static void detachFrom(SeaTruckSegment segment)
+		{
+			if (segment?.rearConnection?.occupied == true)
+				SeaTruckSegment_OnClickDetachLever_ReversePatch(segment);
+		}
+
+		[HarmonyReversePatch, HarmonyPatch(typeof(SeaTruckSegment), "OnClickDetachLever")]
+		static void SeaTruckSegment_OnClickDetachLever_ReversePatch(SeaTruckSegment segment)
+		{
+			_ = segment; _ = transpiler(null); // make compiler happy
+
+			static CIEnumerable transpiler(CIEnumerable cins)
+			{
+				var list = cins.ToList();
+
+				list.ciReplace(new CIHelper.MemberMatch(nameof(SeaTruckSegment.Detach)),
+					OpCodes.Ldfld, typeof(SeaTruckSegment).field("rearConnection"),
+					OpCodes.Callvirt, typeof(SeaTruckConnection).method("Disconnect"));
+
+				int[] i = list.ciFindIndexes(
+					new CIHelper.MemberMatch(nameof(SeaTruckSegment.CanAnimate)),
+					ci => ci.isOp(OpCodes.Ret));
+
+				list.ciRemoveRange(i[0] - 1, i[1] - 1);
+
+				return list;
+			}
+		}
+	}
+#pragma warning restore IDE0079
 #endif // GAME_BZ
 }

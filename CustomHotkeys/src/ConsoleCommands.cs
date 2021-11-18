@@ -7,6 +7,10 @@ using Common;
 using Common.Reflection;
 using Common.Configuration;
 
+#if GAME_BZ
+using System.Collections.Generic;
+#endif
+
 namespace CustomHotkeys
 {
 	using Math = System.Math;
@@ -236,9 +240,16 @@ namespace CustomHotkeys
 			SeaTruckForcedExit.exitFrom(getPilotedSeaTruck()?.motor);
 		}
 
-		public void seatruck_dropmodules()
+		public void seatruck_dropmodules(int keepModules = 0)
 		{
-			getPilotedSeaTruck()?.Detach();
+			if (keepModules >= 0)
+				SeaTruckDetachModules.detachFrom(getSegmentInChain(getPilotedSeaTruck(), keepModules));
+		}
+
+		public void seatruck_dropmodules_end(int dropModules = 1)
+		{
+			if (dropModules > 0)
+				SeaTruckDetachModules.detachFrom(getSegmentInChain(getPilotedSeaTruck(), -1 - dropModules));
 		}
 #endif
 		#endregion
@@ -345,6 +356,21 @@ namespace CustomHotkeys
 			truck.seatruckanimation.currentAnimation = SeaTruckAnimation.Animation.EnterPilot;
 			truck.Enter(Player.main);
 			Utils.PlayFMODAsset(truck.enterSound, Player.main.transform);
+		}
+
+		// negative indexes for segments from the end (-1 for last)
+		static SeaTruckSegment getSegmentInChain(SeaTruckSegment truck, int index)
+		{
+			if (truck == null)
+				return null;
+
+			List<SeaTruckSegment> chain = new();
+			truck.GetTruckChain(chain);
+
+			if (index < 0)
+				index += chain.Count;
+
+			return (index >= 0 && index < chain.Count)? chain[index]: null;
 		}
 #endif
 		#endregion

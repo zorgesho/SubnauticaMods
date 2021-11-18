@@ -161,6 +161,9 @@ namespace CustomHotkeys
 				GameInput_AutoForward_Patch.setAutoForward((bool)enabled);
 		}
 #endif
+		#endregion
+
+		#region slots/items commands
 		public void bindslot(int slotID, TechType? techType)
 		{
 			if (!Inventory.main)
@@ -206,21 +209,16 @@ namespace CustomHotkeys
 				}
 			}
 		}
+		#endregion
 
+		#region vehicle commands
 		public void vehicle_enter(float distance = 6f)
 		{
 			if (getProperVehicle(distance) is Vehicle vehicle)
-			{
 				vehicle.EnterVehicle(Player.main, true, true);
-			}
 #if GAME_BZ
 			else if (getProperSeaTruck(distance) is SeaTruckSegment truck)
-			{
-				truck.motor.StartPiloting();
-				truck.seatruckanimation.currentAnimation = SeaTruckAnimation.Animation.EnterPilot;
-				truck.Enter(Player.main);
-				Utils.PlayFMODAsset(truck.enterSound, Player.main.transform);
-			}
+				enterSeaTruck(truck);
 #endif
 		}
 
@@ -319,40 +317,34 @@ namespace CustomHotkeys
 			if (!Player.main || Player.main.GetVehicle())
 				return null;
 
-			return (findNearestVehicle(maxDistance) is Vehicle vehicle && !vehicle.docked)? vehicle: null;
+			if (GameUtils.findNearestToPlayer<Vehicle>(out float distance, v => !v.docked) is not Vehicle vehicle)
+				return null;
+
+			return distance < maxDistance? vehicle: null;
 		}
-
-		static Vehicle findNearestVehicle(float maxDistance)
-		{
-			if (GameUtils.findNearestToPlayer<Vehicle>(out float distSq) is Vehicle vehicle)
-				return distSq < maxDistance * maxDistance? vehicle: null;
-
-			return null;
-		}
-
 #if GAME_BZ
 		static SeaTruckSegment getProperSeaTruck(float maxDistance)
 		{
 			if (Player.main?.currentInterior != null)
 				return null;
 
-			if (findNearestSeaTruckCabin(maxDistance) is SeaTruckSegment truck && truck.CanEnter())
-				return truck.GetComponent<Dockable>()?.isDocked == true? null: truck;
+			if (GameUtils.findNearestToPlayer<SeaTruckSegment>(out float distance, sts => sts.isMainCab && sts.CanEnter()) is not SeaTruckSegment truck)
+				return null;
 
-			return null;
-		}
-
-		static SeaTruckSegment findNearestSeaTruckCabin(float maxDistance)
-		{
-			if (GameUtils.findNearestToPlayer<SeaTruckSegment>(out float distSq, sts => sts.isMainCab) is SeaTruckSegment truck)
-				return distSq < maxDistance * maxDistance? truck: null;
-
-			return null;
+			return (distance < maxDistance && truck.GetComponent<Dockable>()?.isDocked != true)? truck: null;
 		}
 
 		static SeaTruckSegment getPilotedSeaTruck()
 		{
 			return Player.main?.inSeatruckPilotingChair != true? null: Player.main.GetComponentInParent<SeaTruckSegment>();
+		}
+
+		static void enterSeaTruck(SeaTruckSegment truck)
+		{
+			truck.motor.StartPiloting();
+			truck.seatruckanimation.currentAnimation = SeaTruckAnimation.Animation.EnterPilot;
+			truck.Enter(Player.main);
+			Utils.PlayFMODAsset(truck.enterSound, Player.main.transform);
 		}
 #endif
 		#endregion

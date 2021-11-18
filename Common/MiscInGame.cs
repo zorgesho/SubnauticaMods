@@ -106,7 +106,7 @@ namespace Common
 		public static C findNearestToPlayer<C>(Predicate<C> condition = null) where C: Component =>
 			UnityHelper.findNearest(Player.main?.transform.position, out _, condition);
 
-		public static C findNearestToPlayer<C>(out float distSq, Predicate<C> condition = null) where C: Component =>
-			UnityHelper.findNearest(Player.main?.transform.position, out distSq, condition);
+		public static C findNearestToPlayer<C>(out float distance, Predicate<C> condition = null) where C: Component =>
+			UnityHelper.findNearest(Player.main?.transform.position, out distance, condition);
 	}
 }

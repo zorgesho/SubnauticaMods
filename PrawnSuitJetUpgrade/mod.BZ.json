@@ -2,7 +2,7 @@
   "Id": "PrawnSuitJetUpgrade",
   "DisplayName": "Prawn Suit Jet Upgrade",
   "Author": "zorgesho",
-  "Version": "1.1.0",
+  "Version": "1.1.1",
   "Dependencies": [ "SMLHelper" ],
   "VersionDependencies": { "SMLHelper": "2.9.0" },
   "Enable": true,

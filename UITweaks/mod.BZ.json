@@ -1,9 +1,8 @@
 {
-  "__HideUpdateNotification": true,
   "Id": "UITweaks",
   "DisplayName": "UI Tweaks",
   "Author": "zorgesho",
-  "Version": "1.0.3",
+  "Version": "1.0.4",
   "Dependencies": [ "SMLHelper" ],
   "VersionDependencies": { "SMLHelper": "2.6.0" },
   "Enable": true,

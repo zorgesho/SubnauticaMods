@@ -37,6 +37,12 @@ namespace MiscPatches
 		public readonly float batteryChargerSpeed = 0.0015f; // 0.0015f
 		public readonly float powerCellChargerSpeed = 0.0025f; // 0.0025f
 
+		[Field.Action(typeof(UpdateOptionalPatches))]
+		public readonly float cameraDroneNoiseRange = 250f;
+
+		[Field.Action(typeof(UpdateOptionalPatches))]
+		public readonly float cameraDroneMaxRange = 620f;
+
 		[Field.Range(min: 0f)]
 		[Options.Field("Objects movement step", "Use <i>setmovetarget</i> and <i>moveobject</i> console commands for moving constructed objects")]
 		[Options.Choice("Moving is disabled", 0f, "0.01", 0.01f, "0.05", 0.05f, "0.1", 0.1f, "0.5", 0.5f, "1", 1f)]
@@ -54,6 +60,22 @@ namespace MiscPatches
 		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 		public readonly bool builderRepeat = true;
 
+		[Options.Field("Ignore console for achievements", "Console usage disables achievements in vanilla")]
+		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
+		public readonly bool ignoreConsoleForAchievements = false;
+
+		[Field.Action(typeof(UpdateOptionalPatches))]
+		public readonly bool useItemsOnPickup = false;
+
+		[Field.Action(typeof(UpdateOptionalPatches))]
+		public readonly bool useEatSounds = false;
+
+#if GAME_BZ
+		public readonly bool pickupNonEmptyStorages = true;
+
+		[Field.Action(typeof(UpdateOptionalPatches))]
+		public readonly bool fixGlow = true;
+#endif
 		public class Debug
 		{
 			public readonly bool buildAnywhere = true;

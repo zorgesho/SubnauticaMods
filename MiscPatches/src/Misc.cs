@@ -207,6 +207,101 @@ namespace MiscPatches
 	}
 #endif
 
+	// unlock achievements even if console was used
+	[OptionalPatch, HarmonyPatch(typeof(GameAchievements), "Unlock")]
+	static class GameAchievements_Unlock_Patch
+	{
+		static bool Prepare() => Main.config.ignoreConsoleForAchievements;
+
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins) =>
+			cins.ciInsert(new CIHelper.MemberMatch(nameof(DevConsole.HasUsedConsole)), +1, 0, OpCodes.Pop, OpCodes.Ldc_I4_0);
+	}
+
+	// change ranges for camera drones (noise range and max range)
+	[OptionalPatch, HarmonyPatch(typeof(uGUI_CameraDrone), "LateUpdate")]
+	static class uGUICameraDrone_LateUpdate_Patch
+	{
+		static bool Prepare() => Main.config.cameraDroneNoiseRange != 250f || Main.config.cameraDroneNoiseRange != 620f;
+
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins)
+		{
+			var list = cins.ToList();
+
+			CIHelper.constToCfgVar(list, 250f, nameof(Main.config.cameraDroneNoiseRange));
+			CIHelper.constToCfgVar(list, 250f, nameof(Main.config.cameraDroneNoiseRange));
+
+			list.ciReplace(ci => ci.isLDC(520f),
+				CIHelper._codeForCfgVar(nameof(Main.config.cameraDroneMaxRange)),
+				OpCodes.Ldc_R4, 100f,
+				OpCodes.Sub);
+
+			return list;
+		}
+	}
+
+	// don't use items on pickup
+	[OptionalPatch, HarmonyPatch(typeof(QuickSlots), "OnAddItem")]
+	static class QuickSlots_OnAddItem_Patch
+	{
+		static bool Prepare() => !Main.config.useItemsOnPickup;
+
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> cins) =>
+			cins.ciRemove(new CIHelper.MemberMatch(nameof(QuickSlots.Select)), -2, 3);
+	}
+#if GAME_BZ
+	// disable various eat sounds
+	[OptionalPatch, HarmonyPatch(typeof(TechSoundData), "GetUseSound")]
+	static class TechSoundData_GetUseSound_Patch
+	{
+		static bool Prepare() => !Main.config.useEatSounds;
+
+		static readonly TechData.SoundType[] restrictedSounds = new[]
+		{
+			TechData.SoundType.Fish,
+			TechData.SoundType.Food,
+			TechData.SoundType.Meat,
+			TechData.SoundType.Bleach,
+			TechData.SoundType.Liquid,
+			TechData.SoundType.FilteredWater,
+			TechData.SoundType.BigWaterBottle,
+			TechData.SoundType.DisinfectedWater,
+		};
+
+		static void Prefix(ref TechData.SoundType type)
+		{																					$"Trying to play use sound: {type}".logDbg();
+			if (restrictedSounds.contains(type))
+				type = TechData.SoundType.Default;
+		}
+	}
+
+	// be able to pick up non-empty storages
+	[OptionalPatch, HarmonyPatch(typeof(PickupableStorage), "OnHandHover")]
+	static class PickupableStorage_OnHandHover_Patch
+	{
+		static bool Prepare() => Main.config.pickupNonEmptyStorages;
+		static void Prefix(PickupableStorage __instance) => __instance.allowPickupWhenNonEmpty = true;
+	}
+
+	// fix for glowing constructed objects
+	[OptionalPatch, HarmonyPatch(typeof(SkyApplier), "Initialize")]
+	static class GlowFixPatch
+	{
+		static bool Prepare() => Main.config.fixGlow;
+
+		static void Postfix(SkyApplier __instance)
+		{
+			if (!__instance.initialized)
+				return;
+
+			uGUI_BuilderMenu.EnsureTechGroupTechTypeDataInitialized();
+			var techType = __instance.GetComponent<Constructable>()?.techType ?? TechType.None;
+
+			if (uGUI_BuilderMenu.groupsTechTypes[1].Contains(techType))
+				__instance.OnEnvironmentChanged(null);
+		}
+	}
+#endif
+
 	static class MiscStuff
 	{
 		public static void init()

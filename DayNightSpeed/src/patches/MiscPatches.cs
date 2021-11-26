@@ -24,7 +24,7 @@ namespace DayNightSpeed
 #if DEBUG // debug patch
 		static void Postfix(Survival __instance)
 		{
-			if (Main.config.dbgCfg.showSurvivalStats)
+			if (Main.config.dbgCfg.enabled && Main.config.dbgCfg.showSurvivalStats)
 				$"food: {__instance.food} water: {__instance.water}".onScreen("survival stats");
 		}
 #endif
@@ -42,18 +42,6 @@ namespace DayNightSpeed
 		}
 	}
 
-#if GAME_SN
-	// fixing stillsuit water capture speed
-	[HarmonyPatch(typeof(Stillsuit), "UpdateEquipped")]
-	static class Stillsuit_UpdateEquipped_Patch
-	{
-		static CIEnumerable Transpiler(CIEnumerable cins) =>
-			cins.ciInsert(ci => ci.isLDC(100f),
-				_codeForCfgVar(nameof(ModConfig.dayNightSpeed)), OpCodes.Mul,
-				_codeForCfgVar(nameof(ModConfig.speedStillsuitWater)), OpCodes.Mul);
-	}
-#endif
-
 	// fixing maproom scan times
 	[HarmonyPatch(typeof(MapRoomFunctionality), Mod.Consts.isGameSN? "GetScanInterval": "UpdateScanRangeAndInterval")]
 	static class MapRoomFunctionality_ScanInterval_Patch
@@ -64,14 +52,6 @@ namespace DayNightSpeed
 #elif GAME_BZ
 			cins.ciInsert(new MemberMatch(nameof(MapRoomFunctionality.scanInterval)), 0, 1, _dnsClamped01.ci, OpCodes.Mul);
 #endif
-	}
-
-	// fixing sunbeam counter so it shows realtime seconds regardless of daynightspeed
-	[HarmonyPatch(typeof(uGUI_SunbeamCountdown), "UpdateInterface")]
-	static class uGUISunbeamCountdown_UpdateInterface_Patch
-	{
-		static CIEnumerable Transpiler(CIEnumerable cins) =>
-			cins.ciInsert(ci => ci.isOp(OpCodes.Sub), _codeForCfgVar(nameof(ModConfig.dayNightSpeed)), OpCodes.Div);
 	}
 
 	// we can use object with propulsion cannon after shot in 3 seconds
@@ -141,6 +121,24 @@ namespace DayNightSpeed
 
 			__instance.rechargeInterval = rechargeIntervalInitial * Main.config.dayNightSpeed;
 		}
+	}
+
+	// fixing stillsuit water capture speed
+	[HarmonyPatch(typeof(Stillsuit), "UpdateEquipped")]
+	static class Stillsuit_UpdateEquipped_Patch
+	{
+		static CIEnumerable Transpiler(CIEnumerable cins) =>
+			cins.ciInsert(ci => ci.isLDC(100f),
+				_codeForCfgVar(nameof(ModConfig.dayNightSpeed)), OpCodes.Mul,
+				_codeForCfgVar(nameof(ModConfig.speedStillsuitWater)), OpCodes.Mul);
+	}
+
+	// fixing sunbeam counter so it shows realtime seconds regardless of daynightspeed
+	[HarmonyPatch(typeof(uGUI_SunbeamCountdown), "UpdateInterface")]
+	static class uGUISunbeamCountdown_UpdateInterface_Patch
+	{
+		static CIEnumerable Transpiler(CIEnumerable cins) =>
+			cins.ciInsert(ci => ci.isOp(OpCodes.Sub), _codeForCfgVar(nameof(ModConfig.dayNightSpeed)), OpCodes.Div);
 	}
 #endif
 }

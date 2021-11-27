@@ -31,9 +31,12 @@ namespace Common
 				forEach(field => field.SetValue(null, add(field.Name, field.GetValue(null) as string))); // changing value of string to its name, so we can use it as a string id for 'str' method
 		}
 
+		// in BZ 'Language.main' is a property and throws exception when accessed during shutting down
+		static Language Language_main => Mod.isShuttingDown? null: Language.main;
+
 		// get string by id from Language.main
 		public static string str(string ids) =>
-			(ids == null || !Language.main)? ids: (Language.main.TryGet(prefix + ids, out string result)? result: ids);
+			(ids == null || !Language_main)? ids: (Language.main.TryGet(prefix + ids, out string result)? result: ids);
 
 		// add string to LanguageHandler, use getFullID if you need to get ids with prefix (e.g. for UI labels)
 		public static string add(string ids, string str, bool getFullID = false)
@@ -44,7 +47,7 @@ namespace Common
 			string fullID = prefix + ids;
 			addString.invoke(fullID, str);
 
-			if (Language.main)
+			if (Language_main)
 			{
 #if DEBUG
 				if (Language.main.strings.TryGetValue(fullID, out string currStr) && currStr != str)

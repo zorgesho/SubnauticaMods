@@ -96,6 +96,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "hidden", "hidden", "{ED9426
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Common.UnityDebug", "Common\Common.UnityDebug\Common.UnityDebug.shproj", "{70F1D5D2-31DA-471D-9504-3FF971CB6A96}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StasisTorpedo", "StasisTorpedo\StasisTorpedo.csproj", "{D896AE9C-C9A4-48F9-8027-DB351AB38E19}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Common\Common.Config.Options\Common.Config.Options.projitems*{0610f2c1-4b75-45f9-b517-9d747e3edd41}*SharedItemsImports = 13
@@ -178,6 +180,9 @@ Global
 		Common\Common.Config.Options\Common.Config.Options.projitems*{cb025d20-0b16-4e80-95e6-3c3fc77935fb}*SharedItemsImports = 4
 		Common\Common.Config\Common.Config.projitems*{cb025d20-0b16-4e80-95e6-3c3fc77935fb}*SharedItemsImports = 4
 		Common\Common.projitems*{cb025d20-0b16-4e80-95e6-3c3fc77935fb}*SharedItemsImports = 4
+		Common\Common.Config\Common.Config.projitems*{d896ae9c-c9a4-48f9-8027-db351ab38e19}*SharedItemsImports = 4
+		Common\Common.CraftHelper\Common.CraftHelper.projitems*{d896ae9c-c9a4-48f9-8027-db351ab38e19}*SharedItemsImports = 4
+		Common\Common.projitems*{d896ae9c-c9a4-48f9-8027-db351ab38e19}*SharedItemsImports = 4
 		Common\Common.projitems*{d90fc3b6-6eaa-492d-927f-c7068da63bd9}*SharedItemsImports = 4
 		Common\Common.CraftHelper\Common.CraftHelper.projitems*{e30903df-6f81-41bc-ada2-9f50188aaff5}*SharedItemsImports = 13
 		Common\Common.Config\Common.Config.projitems*{e808117c-7abe-4140-a1d3-fea6b1e2f7f0}*SharedItemsImports = 4
@@ -623,6 +628,26 @@ Global
 		{C049D169-7634-404A-9121-0436A68FA319}.SNexp.dev|Any CPU.Build.0 = SNexp.dev|Any CPU
 		{C049D169-7634-404A-9121-0436A68FA319}.SNexp.testbuild|Any CPU.ActiveCfg = SNexp.testbuild|Any CPU
 		{C049D169-7634-404A-9121-0436A68FA319}.SNexp.testbuild|Any CPU.Build.0 = SNexp.testbuild|Any CPU
+		{D896AE9C-C9A4-48F9-8027-DB351AB38E19}.BZ.dev|Any CPU.ActiveCfg = BZ.dev|Any CPU
+		{D896AE9C-C9A4-48F9-8027-DB351AB38E19}.BZ.dev|Any CPU.Build.0 = BZ.dev|Any CPU
+		{D896AE9C-C9A4-48F9-8027-DB351AB38E19}.BZ.publish|Any CPU.ActiveCfg = BZ.publish|Any CPU
+		{D896AE9C-C9A4-48F9-8027-DB351AB38E19}.BZ.publish|Any CPU.Build.0 = BZ.publish|Any CPU
+		{D896AE9C-C9A4-48F9-8027-DB351AB38E19}.BZ.testbuild|Any CPU.ActiveCfg = BZ.testbuild|Any CPU
+		{D896AE9C-C9A4-48F9-8027-DB351AB38E19}.BZ.testbuild|Any CPU.Build.0 = BZ.testbuild|Any CPU
+		{D896AE9C-C9A4-48F9-8027-DB351AB38E19}.BZexp.dev|Any CPU.ActiveCfg = BZexp.dev|Any CPU
+		{D896AE9C-C9A4-48F9-8027-DB351AB38E19}.BZexp.dev|Any CPU.Build.0 = BZexp.dev|Any CPU
+		{D896AE9C-C9A4-48F9-8027-DB351AB38E19}.BZexp.testbuild|Any CPU.ActiveCfg = BZexp.testbuild|Any CPU
+		{D896AE9C-C9A4-48F9-8027-DB351AB38E19}.BZexp.testbuild|Any CPU.Build.0 = BZexp.testbuild|Any CPU
+		{D896AE9C-C9A4-48F9-8027-DB351AB38E19}.SN.dev|Any CPU.ActiveCfg = SN.dev|Any CPU
+		{D896AE9C-C9A4-48F9-8027-DB351AB38E19}.SN.dev|Any CPU.Build.0 = SN.dev|Any CPU
+		{D896AE9C-C9A4-48F9-8027-DB351AB38E19}.SN.publish|Any CPU.ActiveCfg = SN.publish|Any CPU
+		{D896AE9C-C9A4-48F9-8027-DB351AB38E19}.SN.publish|Any CPU.Build.0 = SN.publish|Any CPU
+		{D896AE9C-C9A4-48F9-8027-DB351AB38E19}.SN.testbuild|Any CPU.ActiveCfg = SN.testbuild|Any CPU
+		{D896AE9C-C9A4-48F9-8027-DB351AB38E19}.SN.testbuild|Any CPU.Build.0 = SN.testbuild|Any CPU
+		{D896AE9C-C9A4-48F9-8027-DB351AB38E19}.SNexp.dev|Any CPU.ActiveCfg = SNexp.dev|Any CPU
+		{D896AE9C-C9A4-48F9-8027-DB351AB38E19}.SNexp.dev|Any CPU.Build.0 = SNexp.dev|Any CPU
+		{D896AE9C-C9A4-48F9-8027-DB351AB38E19}.SNexp.testbuild|Any CPU.ActiveCfg = SNexp.testbuild|Any CPU
+		{D896AE9C-C9A4-48F9-8027-DB351AB38E19}.SNexp.testbuild|Any CPU.Build.0 = SNexp.testbuild|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -658,6 +683,7 @@ Global
 		{C049D169-7634-404A-9121-0436A68FA319} = {C49BC122-0A68-48A8-8EA3-737FB7553D8B}
 		{ED942635-A471-4B33-8140-3F453A4A0869} = {C49BC122-0A68-48A8-8EA3-737FB7553D8B}
 		{70F1D5D2-31DA-471D-9504-3FF971CB6A96} = {EE6D7B7D-F20A-439A-8C01-97B6A16F9B52}
+		{D896AE9C-C9A4-48F9-8027-DB351AB38E19} = {51F4A336-ADD0-4AD9-BBCF-336DAAB8EF4D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0A745472-1C11-4AB7-B6C4-79A169E0FB35}

@@ -1,0 +1,14 @@
+{
+  "Id": "StasisTorpedo",
+  "DisplayName": "Stasis Torpedo",
+  "Author": "zorgesho",
+  "Version": "1.0.0",
+  "Dependencies": [ "SMLHelper" ],
+  "VersionDependencies": { "SMLHelper": "2.9.0" },
+  "Enable": true,
+  "Game": "BelowZero",
+  "AssemblyName": "StasisTorpedo.dll",
+  "EntryMethod": "StasisTorpedo.Main.patch",
+  "UpdateCheck": true,
+  "VersionURL": "https://raw.githubusercontent.com/zorgesho/SubnauticaMods/master/StasisTorpedo/mod.BZ.json"
+}

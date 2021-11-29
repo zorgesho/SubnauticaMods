@@ -1,14 +1,10 @@
 ﻿using UnityEngine;
-using SMLHelper.V2.Assets;
-
 using Common.Crafting;
 
 namespace StasisTorpedo
 {
-	class StasisTorpedo: PoolCraftableObject
+	partial class StasisTorpedo: PoolCraftableObject
 	{
-		static GameObject stasisSpherePrefab;
-
 		public static new TechType TechType { get; private set; } = 0;
 
 		protected override TechInfo getTechInfo() => new // TODO
@@ -25,7 +21,7 @@ namespace StasisTorpedo
 
 		protected override GameObject getGameObject(GameObject[] prefabs)
 		{
-			stasisSpherePrefab ??= ModPrefabCache.AddPrefabCopy(prefabs[1].GetComponent<StasisRifle>().effectSpherePrefab, false);
+			StasisExplosion.initPrefab(prefabs[1]);
 			return prefabs[0];
 		}
 

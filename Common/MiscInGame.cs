@@ -65,7 +65,7 @@ namespace Common
 	static class GameUtils
 	{
 		// can't use vanilla GetVehicle in OnPlayerModeChange after 06.11 update :(
-		public static Vehicle getVehicle(this Player player) => player?.GetComponentInParent<Vehicle>();
+		public static Vehicle getVehicle(this Player player) => player? player.GetComponentInParent<Vehicle>(): null; // don't use null-conditional here
 
 		public static TechType getHeldToolType() => Inventory.main?.GetHeld()?.GetTechType() ?? TechType.None;
 

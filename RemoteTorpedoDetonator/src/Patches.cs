@@ -34,15 +34,18 @@ namespace RemoteTorpedoDetonator
 	static class Vehicle_OnUpgradeModuleUse_Patch
 	{
 		[HarmonyPostfix]
+#if GAME_SN
 		[HarmonyPatch(typeof(SeaMoth), "OnUpgradeModuleUse")]
+#endif
 		[HarmonyPatch(typeof(Vehicle), "OnUpgradeModuleUse")]
 		static void OnUpgradeModuleUse_Postfix(Vehicle __instance, TechType techType, int slotID)
 		{
 			if (techType == TorpedoDetonatorModule.TechType)
 				__instance.gameObject.GetComponent<TorpedoDetonatorControl>()?.detonateTorpedoes();
-
+#if GAME_SN
 			if (techType == TechType.SeamothTorpedoModule && __instance.quickSlotCooldown[slotID] > Main.config.torpedoCooldown)
 				__instance.quickSlotCooldown[slotID] = Main.config.torpedoCooldown;
+#endif
 		}
 	}
 

@@ -16,7 +16,13 @@ namespace StasisTorpedo
 		protected override void initPrefabPool()
 		{
 			addPrefabToPool(TechType.GasTorpedo);
+#if GAME_BZ
+#pragma warning disable CS0612
+#endif
 			addPrefabToPool(TechType.StasisRifle);
+#if GAME_BZ
+#pragma warning restore CS0612
+#endif
 		}
 
 		protected override GameObject getGameObject(GameObject[] prefabs)
@@ -29,8 +35,13 @@ namespace StasisTorpedo
 		{
 			TechType = register(); // TODO
 
-			addToGroup(TechGroup.VehicleUpgrades, TechCategory.VehicleUpgrades); // TODO check for BZ
+			addToGroup(TechGroup.VehicleUpgrades, TechCategory.VehicleUpgrades, TechType.GasTorpedo);
+#if GAME_SN
 			addCraftingNodeTo(CraftTree.Type.SeamothUpgrades, "Torpedoes");
+#elif GAME_BZ
+			addCraftingNodeTo(CraftTree.Type.SeamothUpgrades, "ExosuitModules", TechType.GasTorpedo);
+			addCraftingNodeTo(CraftTree.Type.Fabricator, "Upgrades/ExosuitUpgrades", TechType.GasTorpedo);
+#endif
 			unlockOnStart(); // TODO
 		}
 	}

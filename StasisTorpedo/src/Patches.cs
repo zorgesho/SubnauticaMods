@@ -48,7 +48,7 @@ namespace StasisTorpedo
 				OpCodes.Ret,
 				new CodeInstruction(OpCodes.Nop) { labels = { label } });
 		}
-
+#if GAME_SN
 		// allow to put stasis torpedoes to the seamoth torpedo storage
 		[HarmonyTranspiler, HarmonyPatch(typeof(SeaMoth), "OpenTorpedoStorage")]
 		static IEnumerable<CodeInstruction> SeaMoth_OpenTorpedoStorage_Transpiler(IEnumerable<CodeInstruction> cins)
@@ -57,7 +57,7 @@ namespace StasisTorpedo
 				OpCodes.Dup,
 				ensureTorpedoAllowed());
 		}
-
+#endif
 		// allow to put stasis torpedoes to the prawn suit torpedo arm
 		[HarmonyTranspiler, HarmonyPatch(typeof(ExosuitTorpedoArm), "OpenTorpedoStorageExternal")]
 		static IEnumerable<CodeInstruction> ExosuitTorpedoArm_OpenTorpedoStorageExternal_Transpiler(IEnumerable<CodeInstruction> cins)

@@ -20,6 +20,58 @@ namespace StasisTorpedo
 			__instance.torpedoTypes = __instance.torpedoTypes.append(new[] { StasisTorpedo.torpedoType });
 		}
 
+		// to fix vanilla bug with torpedoes double explosions
+		[HarmonyPrefix, HarmonyPatch(typeof(SeamothTorpedo), "OnEnergyDepleted")]
+		static bool SeamothTorpedo_OnEnergyDepleted_Prefix(SeamothTorpedo __instance)
+		{
+			return __instance._active;
+		}
+
+		// stasis spheres will ignore vehicles
+		// TODO transpiler
+		[HarmonyPrefix, HarmonyPatch(typeof(StasisSphere), "Freeze")]
+		static bool Freeze(StasisSphere __instance, Collider other, ref Rigidbody target, ref bool __result)
+		{
+			target = other.GetComponentInParent<Rigidbody>();
+			if (target == null)
+			{
+				__result = false;
+				return false;
+			}
+			//--- vvv
+
+			if (target.gameObject.GetComponent<Vehicle>())
+			{
+				__result = false;
+				return false;
+			}
+
+			//---^^^
+			if (__instance.targets.Contains(target))
+			{
+				__result = true;
+				return false;
+			}
+			if (target.isKinematic)
+			{
+				__result = false;
+				return false;
+			}
+			if ((bool)other.GetComponentInParent<Player>())
+			{
+				__result = false;
+				return false;
+			}
+			target.isKinematic = true;
+			__instance.targets.Add(target);
+			Utils.PlayOneShotPS(__instance.vfxFreeze, target.GetComponent<Transform>().position, Quaternion.identity);
+			FMODUWE.PlayOneShot(__instance.soundEnter, __instance.tr.position);
+			target.SendMessage("OnFreeze", SendMessageOptions.DontRequireReceiver);
+			__result = true;
+
+			return false;
+		}
+
 		// TODO transpiler
 		[HarmonyPrefix, HarmonyPatch(typeof(SeaMoth), "OpenTorpedoStorage")]
 		static bool OpenTorpedoStorage(SeaMoth __instance, Transform useTransform)

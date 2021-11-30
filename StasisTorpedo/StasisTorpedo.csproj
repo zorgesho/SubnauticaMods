@@ -49,6 +49,7 @@
     <Reference Include="System.Core" />
     <Reference Include="UnityEngine" />
     <Reference Include="UnityEngine.CoreModule" />
+    <Reference Include="UnityEngine.PhysicsModule" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="config.cs" />

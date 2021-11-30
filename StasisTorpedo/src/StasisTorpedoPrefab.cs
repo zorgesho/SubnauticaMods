@@ -39,8 +39,8 @@ namespace StasisTorpedo
 
 				sphere = gameObject.createChild(stasisSpherePrefab).GetComponent<StasisSphere>();
 
-				sphere.time = 10f; // vanilla: min = 4, max = 20
-				sphere.radius = 5f; // vanilla: min = 1, max = 10
+				sphere.time = Main.config.stasisTime;
+				sphere.radius = Main.config.stasisRadius;
 				sphere.fieldEnergy = 1f;
 
 				sphere.go.SetActive(true); // 'go' is deactivated in Bullet.Awake

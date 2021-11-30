@@ -49,6 +49,13 @@ namespace Common.Crafting
 #endif
 		}
 
+		public static GameObject storePrefabCopy(GameObject prefab)
+		{
+			var copiedPrefab = _instantiate(prefab, CopyOptions.UseCache);
+			copiedPrefab.name = copiedPrefab.name.Replace("(Clone)", "");
+			return copiedPrefab;
+		}
+
 		public static GameObject getPrefabCopy(TechType techType, CopyOptions options = CopyOptions.Default)
 		{																												$"PrefabUtils: getPrefabCopy(TechType.{techType})".logDbg();
 			return _instantiate(getPrefab(techType), options);

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
-using SMLHelper.V2.Assets;
 
 using Common;
+using Common.Crafting;
 
 namespace StasisTorpedo
 {
@@ -23,7 +23,7 @@ namespace StasisTorpedo
 					return;
 				}
 
-				stasisSpherePrefab = ModPrefabCache.AddPrefabCopy(stasisRiflePrefab.GetComponent<StasisRifle>().effectSpherePrefab, false);
+				stasisSpherePrefab = PrefabUtils.storePrefabCopy(stasisRiflePrefab.GetComponent<StasisRifle>().effectSpherePrefab);
 				stasisSpherePrefab.transform.position = Vector3.zero;
 			}
 
@@ -70,10 +70,10 @@ namespace StasisTorpedo
 				return;
 			}
 
-			var torpedoPrefab = ModPrefabCache.AddPrefabCopy(gasTorpedoPrefab, false);
+			var torpedoPrefab = PrefabUtils.storePrefabCopy(gasTorpedoPrefab);
 			var seamothTorpedo = torpedoPrefab.GetComponent<SeamothTorpedo>();
 
-			var explosionPrefab = ModPrefabCache.AddPrefabCopy(seamothTorpedo.explosionPrefab, false);
+			var explosionPrefab = PrefabUtils.storePrefabCopy(seamothTorpedo.explosionPrefab);
 			explosionPrefab.destroyComponent<GasPod>();
 			explosionPrefab.AddComponent<StasisExplosion>();
 

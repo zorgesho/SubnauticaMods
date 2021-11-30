@@ -1,10 +1,14 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Reflection.Emit;
+using System.Collections.Generic;
 
 using HarmonyLib;
 using UnityEngine;
 
 using Common;
 using Common.Harmony;
+using Common.Reflection;
 
 namespace StasisTorpedo
 {
@@ -28,82 +32,48 @@ namespace StasisTorpedo
 		}
 
 		// stasis spheres will ignore vehicles
-		// TODO transpiler
-		[HarmonyPrefix, HarmonyPatch(typeof(StasisSphere), "Freeze")]
-		static bool Freeze(StasisSphere __instance, Collider other, ref Rigidbody target, ref bool __result)
+		[HarmonyTranspiler, HarmonyPatch(typeof(StasisSphere), "Freeze")]
+		static IEnumerable<CodeInstruction> StasisSphere_Freeze_Transpiler(IEnumerable<CodeInstruction> cins, ILGenerator ilg)
 		{
-			target = other.GetComponentInParent<Rigidbody>();
-			if (target == null)
-			{
-				__result = false;
-				return false;
-			}
-			//--- vvv
+			static bool _isVehicle(Rigidbody target) => target.gameObject.GetComponent<Vehicle>();
 
-			if (target.gameObject.GetComponent<Vehicle>())
-			{
-				__result = false;
-				return false;
-			}
+			var label = ilg.DefineLabel();
 
-			//---^^^
-			if (__instance.targets.Contains(target))
-			{
-				__result = true;
-				return false;
-			}
-			if (target.isKinematic)
-			{
-				__result = false;
-				return false;
-			}
-			if ((bool)other.GetComponentInParent<Player>())
-			{
-				__result = false;
-				return false;
-			}
-			target.isKinematic = true;
-			__instance.targets.Add(target);
-			Utils.PlayOneShotPS(__instance.vfxFreeze, target.GetComponent<Transform>().position, Quaternion.identity);
-			FMODUWE.PlayOneShot(__instance.soundEnter, __instance.tr.position);
-			target.SendMessage("OnFreeze", SendMessageOptions.DontRequireReceiver);
-			__result = true;
-
-			return false;
+			return cins.ciInsert(ci => ci.isOp(OpCodes.Ret), // right after null check
+				OpCodes.Ldarg_2,
+				OpCodes.Ldind_Ref,
+				CIHelper.emitCall<Func<Rigidbody, bool>>(_isVehicle),
+				OpCodes.Brfalse, label,
+				OpCodes.Ldc_I4_0,
+				OpCodes.Ret,
+				new CodeInstruction(OpCodes.Nop) { labels = { label } });
 		}
 
-		// TODO transpiler
-		[HarmonyPrefix, HarmonyPatch(typeof(SeaMoth), "OpenTorpedoStorage")]
-		static bool OpenTorpedoStorage(SeaMoth __instance, Transform useTransform)
+		// allow to put stasis torpedoes to the seamoth torpedo storage
+		[HarmonyTranspiler, HarmonyPatch(typeof(SeaMoth), "OpenTorpedoStorage")]
+		static IEnumerable<CodeInstruction> SeaMoth_OpenTorpedoStorage_Transpiler(IEnumerable<CodeInstruction> cins)
 		{
-			if (__instance.modules.GetCount(TechType.SeamothTorpedoModule) > 0)
-			{
-				Inventory.main.ClearUsedStorage();
-				int num = __instance.slotIDs.Length;
-				for (int i = 0; i < num; i++)
-				{
-					ItemsContainer storageInSlot = __instance.GetStorageInSlot(i, TechType.SeamothTorpedoModule);
-					storageInSlot?.SetAllowedTechTypes(new[] { TechType.GasTorpedo, TechType.WhirlpoolTorpedo, StasisTorpedo.TechType }); // TODO
-					Inventory.main.SetUsedStorage(storageInSlot, append: true);
-				}
-				Player.main.GetPDA().Open(PDATab.Inventory, useTransform);
-			}
-
-			return false;
+			return cins.ciInsert(new CIHelper.MemberMatch(nameof(SeaMoth.GetStorageInSlot)),
+				OpCodes.Dup,
+				ensureTorpedoAllowed());
 		}
 
-		// TODO transpiler
-		[HarmonyPrefix, HarmonyPatch(typeof(ExosuitTorpedoArm), "OpenTorpedoStorageExternal")]
-		static bool OpenTorpedoStorageExternal(ExosuitTorpedoArm __instance, Transform useTransform)
+		// allow to put stasis torpedoes to the prawn suit torpedo arm
+		[HarmonyTranspiler, HarmonyPatch(typeof(ExosuitTorpedoArm), "OpenTorpedoStorageExternal")]
+		static IEnumerable<CodeInstruction> ExosuitTorpedoArm_OpenTorpedoStorageExternal_Transpiler(IEnumerable<CodeInstruction> cins)
 		{
-			if (__instance.container != null)
-			{
-				__instance.container.SetAllowedTechTypes(new[] { TechType.GasTorpedo, TechType.WhirlpoolTorpedo, StasisTorpedo.TechType }); // TODO
-				Inventory.main.SetUsedStorage(__instance.container);
-				Player.main.GetPDA().Open(PDATab.Inventory, useTransform);
-			}
+			return cins.ciInsert(ci => ci.isOp(OpCodes.Ret),
+				OpCodes.Ldarg_0,
+				OpCodes.Ldfld, typeof(ExosuitTorpedoArm).field("container"),
+				ensureTorpedoAllowed());
+		}
 
-			return false;
+		static CodeInstruction ensureTorpedoAllowed()
+		{
+			static void _ensureTorpedoAllowed(ItemsContainer container) =>
+				container?.allowedTech.Add(StasisTorpedo.TechType);
+
+			return CIHelper.emitCall<Action<ItemsContainer>>(_ensureTorpedoAllowed);
 		}
 	}
 }

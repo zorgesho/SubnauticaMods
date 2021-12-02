@@ -1,0 +1,14 @@
+{
+  "Id": "StasisModule",
+  "DisplayName": "StasisModule",
+  "Author": "zorgesho",
+  "Version": "1.0.0",
+  "Dependencies": [],
+  "VersionDependencies": {},
+  "Enable": true,
+  "Game": "Subnautica",
+  "AssemblyName": "StasisModule.dll",
+  "EntryMethod": "StasisModule.Main.patch",
+  "UpdateCheck": true,
+  "VersionURL": "https://raw.githubusercontent.com/zorgesho/SubnauticaMods/master/StasisModule/mod.SN.json"
+}

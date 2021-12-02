@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <Import Project="..\project.props" />
+  <PropertyGroup>
+    <ProjectGuid>{F5827694-E586-454E-AF1A-03EA17115B03}</ProjectGuid>
+    <RootNamespace>StasisModule</RootNamespace>
+    <AssemblyName>StasisModule</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'SN.dev|AnyCPU' ">
+    <DefineConstants>DEBUG;TRACE;GAME_SN;BRANCH_STABLE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'SN.publish|AnyCPU' ">
+    <DefineConstants>GAME_SN;BRANCH_STABLE</DefineConstants>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'SN.testbuild|AnyCPU' ">
+    <DefineConstants>DEBUG;TRACE;GAME_SN;BRANCH_STABLE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'SNexp.dev|AnyCPU' ">
+    <DefineConstants>DEBUG;TRACE;GAME_SN;BRANCH_EXP</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'SNexp.testbuild|AnyCPU' ">
+    <DefineConstants>DEBUG;TRACE;GAME_SN;BRANCH_EXP</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'BZ.dev|AnyCPU' ">
+    <DefineConstants>DEBUG;TRACE;GAME_BZ;BRANCH_STABLE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'BZ.publish|AnyCPU' ">
+    <DefineConstants>GAME_BZ;BRANCH_STABLE</DefineConstants>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'BZ.testbuild|AnyCPU' ">
+    <DefineConstants>DEBUG;TRACE;GAME_BZ;BRANCH_STABLE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'BZexp.dev|AnyCPU' ">
+    <DefineConstants>DEBUG;TRACE;GAME_BZ;BRANCH_EXP</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'BZexp.testbuild|AnyCPU' ">
+    <DefineConstants>DEBUG;TRACE;GAME_BZ;BRANCH_EXP</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="0Harmony" />
+    <Reference Include="Assembly-CSharp-firstpass.pb" />
+    <Reference Include="Assembly-CSharp.pb" />
+    <Reference Include="Newtonsoft.Json" />
+    <Reference Include="SMLHelper" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="UnityEngine" />
+    <Reference Include="UnityEngine.CoreModule" />
+    <Reference Include="UnityEngine.PhysicsModule" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="config.cs" />
+    <Compile Include="main.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="mod.BZ.json" Condition="$(Configuration.Contains('BZ'))">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="mod.SN.json" Condition="$(Configuration.Contains('SN'))">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="src\" />
+  </ItemGroup>
+  <Import Project="..\Common\Common.projitems" Label="Shared" />
+  <Import Project="..\Common\Common.Config\Common.Config.projitems" Label="Shared" />
+  <Import Project="..\Common\Common.CraftHelper\Common.CraftHelper.projitems" Label="Shared" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\post-build.props" />
+</Project>

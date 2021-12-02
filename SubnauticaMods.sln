@@ -98,6 +98,8 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Common.UnityDebug", "Common
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StasisTorpedo", "StasisTorpedo\StasisTorpedo.csproj", "{D896AE9C-C9A4-48F9-8027-DB351AB38E19}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StasisModule", "StasisModule\StasisModule.csproj", "{F5827694-E586-454E-AF1A-03EA17115B03}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Common\Common.Config.Options\Common.Config.Options.projitems*{0610f2c1-4b75-45f9-b517-9d747e3edd41}*SharedItemsImports = 13
@@ -191,6 +193,9 @@ Global
 		Common\Common.Config\Common.Config.projitems*{ec26571a-5a2b-4b0b-9431-93f9b6e639d4}*SharedItemsImports = 4
 		Common\Common.CraftHelper\Common.CraftHelper.projitems*{ec26571a-5a2b-4b0b-9431-93f9b6e639d4}*SharedItemsImports = 4
 		Common\Common.projitems*{ec26571a-5a2b-4b0b-9431-93f9b6e639d4}*SharedItemsImports = 4
+		Common\Common.Config\Common.Config.projitems*{f5827694-e586-454e-af1a-03ea17115b03}*SharedItemsImports = 4
+		Common\Common.CraftHelper\Common.CraftHelper.projitems*{f5827694-e586-454e-af1a-03ea17115b03}*SharedItemsImports = 4
+		Common\Common.projitems*{f5827694-e586-454e-af1a-03ea17115b03}*SharedItemsImports = 4
 		Common\Common.AssetsHelper\Common.AssetsHelper.projitems*{f93d86ee-3055-407b-8af2-5f2a06319af8}*SharedItemsImports = 4
 		Common\Common.CraftHelper\Common.CraftHelper.projitems*{f93d86ee-3055-407b-8af2-5f2a06319af8}*SharedItemsImports = 4
 		Common\Common.projitems*{f93d86ee-3055-407b-8af2-5f2a06319af8}*SharedItemsImports = 4
@@ -648,6 +653,26 @@ Global
 		{D896AE9C-C9A4-48F9-8027-DB351AB38E19}.SNexp.dev|Any CPU.Build.0 = SNexp.dev|Any CPU
 		{D896AE9C-C9A4-48F9-8027-DB351AB38E19}.SNexp.testbuild|Any CPU.ActiveCfg = SNexp.testbuild|Any CPU
 		{D896AE9C-C9A4-48F9-8027-DB351AB38E19}.SNexp.testbuild|Any CPU.Build.0 = SNexp.testbuild|Any CPU
+		{F5827694-E586-454E-AF1A-03EA17115B03}.BZ.dev|Any CPU.ActiveCfg = BZ.dev|Any CPU
+		{F5827694-E586-454E-AF1A-03EA17115B03}.BZ.dev|Any CPU.Build.0 = BZ.dev|Any CPU
+		{F5827694-E586-454E-AF1A-03EA17115B03}.BZ.publish|Any CPU.ActiveCfg = BZ.publish|Any CPU
+		{F5827694-E586-454E-AF1A-03EA17115B03}.BZ.publish|Any CPU.Build.0 = BZ.publish|Any CPU
+		{F5827694-E586-454E-AF1A-03EA17115B03}.BZ.testbuild|Any CPU.ActiveCfg = BZ.testbuild|Any CPU
+		{F5827694-E586-454E-AF1A-03EA17115B03}.BZ.testbuild|Any CPU.Build.0 = BZ.testbuild|Any CPU
+		{F5827694-E586-454E-AF1A-03EA17115B03}.BZexp.dev|Any CPU.ActiveCfg = BZexp.dev|Any CPU
+		{F5827694-E586-454E-AF1A-03EA17115B03}.BZexp.dev|Any CPU.Build.0 = BZexp.dev|Any CPU
+		{F5827694-E586-454E-AF1A-03EA17115B03}.BZexp.testbuild|Any CPU.ActiveCfg = BZexp.testbuild|Any CPU
+		{F5827694-E586-454E-AF1A-03EA17115B03}.BZexp.testbuild|Any CPU.Build.0 = BZexp.testbuild|Any CPU
+		{F5827694-E586-454E-AF1A-03EA17115B03}.SN.dev|Any CPU.ActiveCfg = SN.dev|Any CPU
+		{F5827694-E586-454E-AF1A-03EA17115B03}.SN.dev|Any CPU.Build.0 = SN.dev|Any CPU
+		{F5827694-E586-454E-AF1A-03EA17115B03}.SN.publish|Any CPU.ActiveCfg = SN.publish|Any CPU
+		{F5827694-E586-454E-AF1A-03EA17115B03}.SN.publish|Any CPU.Build.0 = SN.publish|Any CPU
+		{F5827694-E586-454E-AF1A-03EA17115B03}.SN.testbuild|Any CPU.ActiveCfg = SN.testbuild|Any CPU
+		{F5827694-E586-454E-AF1A-03EA17115B03}.SN.testbuild|Any CPU.Build.0 = SN.testbuild|Any CPU
+		{F5827694-E586-454E-AF1A-03EA17115B03}.SNexp.dev|Any CPU.ActiveCfg = SNexp.dev|Any CPU
+		{F5827694-E586-454E-AF1A-03EA17115B03}.SNexp.dev|Any CPU.Build.0 = SNexp.dev|Any CPU
+		{F5827694-E586-454E-AF1A-03EA17115B03}.SNexp.testbuild|Any CPU.ActiveCfg = SNexp.testbuild|Any CPU
+		{F5827694-E586-454E-AF1A-03EA17115B03}.SNexp.testbuild|Any CPU.Build.0 = SNexp.testbuild|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -684,6 +709,7 @@ Global
 		{ED942635-A471-4B33-8140-3F453A4A0869} = {C49BC122-0A68-48A8-8EA3-737FB7553D8B}
 		{70F1D5D2-31DA-471D-9504-3FF971CB6A96} = {EE6D7B7D-F20A-439A-8C01-97B6A16F9B52}
 		{D896AE9C-C9A4-48F9-8027-DB351AB38E19} = {51F4A336-ADD0-4AD9-BBCF-336DAAB8EF4D}
+		{F5827694-E586-454E-AF1A-03EA17115B03} = {51F4A336-ADD0-4AD9-BBCF-336DAAB8EF4D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0A745472-1C11-4AB7-B6C4-79A169E0FB35}

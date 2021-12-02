@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+
+using UnityEngine;
 
 using Common;
 using Common.Crafting;
@@ -9,8 +11,10 @@ namespace StasisTorpedo
 	{
 		class StasisExplosion: MonoBehaviour
 		{
-			StasisSphere sphere;
+			static int instancesCount = 0; // for disabling stasis sound
 			static GameObject stasisSpherePrefab;
+
+			StasisSphere sphere;
 
 			public static void initPrefab(GameObject stasisRiflePrefab)
 			{
@@ -27,15 +31,21 @@ namespace StasisTorpedo
 				stasisSpherePrefab.transform.position = Vector3.zero;
 			}
 
-			void Start()
+			IEnumerator Start()
 			{
+				instancesCount++;																					$"StasisExplosion.Start: instances = {instancesCount}".logDbg();
+
 				if (!stasisSpherePrefab)
 				{
 					"StasisExplosion.Start: invalid prefab for StasisSphere!".logError();
 
 					Destroy(gameObject);
-					return;
+					yield break;
 				}
+
+				// HACK, waiting to remove stasis sounds from other torpedoes before creating stasis sphere
+				// it's far from perfect, but it's better than silence
+				yield return Utils.releaseAllEventInstances("event:/tools/stasis_gun/sphere_activate");
 
 				sphere = gameObject.createChild(stasisSpherePrefab).GetComponent<StasisSphere>();
 
@@ -49,12 +59,19 @@ namespace StasisTorpedo
 
 			void Update()
 			{
-				if (!sphere.fieldEnabled)
+				if (sphere?.fieldEnabled == false)
 					Destroy(gameObject);
 			}
-#if DEBUG
-			void OnDestroy() => "StasisExplosion.OnDestroy".logDbg();
-#endif
+
+			void OnDestroy()
+			{
+				instancesCount--;																					$"StasisExplosion.OnDestroy: instances = {instancesCount}".logDbg();
+
+				// HACK, for some reason sound from the last exploded torpedo doesn't shut up
+				// also, this fixes sound for stasis rifle
+				if (sphere && instancesCount == 0)
+					sphere.soundActivate.evt.getDescription().releaseAllInstances();
+			}
 		}
 
 		public static TorpedoType torpedoType { get; private set; }

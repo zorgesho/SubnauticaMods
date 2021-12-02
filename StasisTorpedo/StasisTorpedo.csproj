@@ -41,7 +41,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony" />
-    <Reference Include="Assembly-CSharp-firstpass" />
+    <Reference Include="Assembly-CSharp-firstpass.pb" />
     <Reference Include="Assembly-CSharp.pb" />
     <Reference Include="Newtonsoft.Json" />
     <Reference Include="SMLHelper" />
@@ -58,6 +58,7 @@
     <Compile Include="src\Patches.cs" />
     <Compile Include="src\StasisTorpedoCraftable.cs" />
     <Compile Include="src\StasisTorpedoPrefab.cs" />
+    <Compile Include="src\Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="mod.BZ.json" Condition="$(Configuration.Contains('BZ'))">

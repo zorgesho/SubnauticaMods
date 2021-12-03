@@ -3,10 +3,9 @@ using Common.Crafting;
 
 namespace StasisModule
 {
+	[CraftHelper.NoAutoPatch]
 	partial class StasisModule: PoolCraftableObject
 	{
-		public static new TechType TechType { get; private set; } = 0;
-
 		protected override TechInfo getTechInfo() => new // TODO
 		(
 			new (TechType.Titanium),
@@ -33,16 +32,36 @@ namespace StasisModule
 
 		public override void patch()
 		{
-			TechType = register(); // TODO
-
 			addToGroup(TechGroup.VehicleUpgrades, TechCategory.VehicleUpgrades);
-			addCraftingNodeTo(CraftTree.Type.SeamothUpgrades, "CommonModules");
-
-			// TODO make it work for both seamoth and prawn
-			//setEquipmentType(EquipmentType.VehicleModule, QuickSlotType.Selectable); // for seamoth
-			setEquipmentType(EquipmentType.VehicleModule, QuickSlotType.Instant); // for prawn
-
 			unlockOnStart(); // TODO
+		}
+	}
+
+	class SeamothStasisModule: StasisModule
+	{
+		public static new TechType TechType { get; private set; } = 0;
+
+		public override void patch()
+		{
+			TechType = register(); // TODO
+			base.patch();
+
+			addCraftingNodeTo(CraftTree.Type.SeamothUpgrades, "SeamothModules");
+			setEquipmentType(EquipmentType.SeamothModule, QuickSlotType.Selectable);
+		}
+	}
+
+	class PrawnSuitStasisModule: StasisModule
+	{
+		public static new TechType TechType { get; private set; } = 0;
+
+		public override void patch()
+		{
+			TechType = register(); // TODO
+			base.patch();
+
+			addCraftingNodeTo(CraftTree.Type.SeamothUpgrades, "ExosuitModules");
+			setEquipmentType(EquipmentType.ExosuitModule, QuickSlotType.Instant);
 		}
 	}
 }

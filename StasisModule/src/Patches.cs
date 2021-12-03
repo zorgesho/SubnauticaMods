@@ -39,7 +39,10 @@ namespace StasisModule
 		[HarmonyPatch(typeof(Vehicle), "OnUpgradeModuleUse")]
 		static void OnUpgradeModuleUse_Postfix(Vehicle __instance, TechType techType, int slotID)
 		{
-			if (techType != StasisModule.TechType || !__instance.HasEnoughEnergy(Main.config.energyCost))
+			if (techType != SeamothStasisModule.TechType && techType != PrawnSuitStasisModule.TechType)
+				return;
+
+			if (!__instance.HasEnoughEnergy(Main.config.energyCost))
 				return;
 
 			__instance.ConsumeEnergy(Main.config.energyCost);

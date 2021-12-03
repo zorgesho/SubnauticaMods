@@ -1,5 +1,6 @@
 ﻿using Common;
 using Common.Harmony;
+using Common.Crafting;
 
 namespace StasisModule
 {
@@ -9,7 +10,8 @@ namespace StasisModule
 
 		public static void patch()
 		{
-			HarmonyHelper.patchAll();
+			HarmonyHelper.patchAll(true);
+			CraftHelper.patchAll();
 		}
 	}
 }

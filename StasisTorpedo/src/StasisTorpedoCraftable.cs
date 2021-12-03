@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-using Common.Crafting;
+﻿using Common.Crafting;
 
 namespace StasisTorpedo
 {
@@ -13,23 +12,7 @@ namespace StasisTorpedo
 			new (TechType.Gold)
 		);
 
-		protected override void initPrefabPool()
-		{
-			addPrefabToPool(TechType.GasTorpedo);
-#if GAME_BZ
-#pragma warning disable CS0612
-#endif
-			addPrefabToPool(TechType.StasisRifle);
-#if GAME_BZ
-#pragma warning restore CS0612
-#endif
-		}
-
-		protected override GameObject getGameObject(GameObject[] prefabs)
-		{
-			StasisExplosion.initPrefab(prefabs[1]);
-			return prefabs[0];
-		}
+		protected override void initPrefabPool() => addPrefabToPool(TechType.GasTorpedo);
 
 		public override void patch()
 		{

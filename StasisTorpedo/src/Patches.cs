@@ -4,7 +4,6 @@ using System.Reflection.Emit;
 using System.Collections.Generic;
 
 using HarmonyLib;
-using UnityEngine;
 
 using Common;
 using Common.Harmony;
@@ -19,7 +18,10 @@ namespace StasisTorpedo
 		static void Vehicle_Awake_Postfix(Vehicle __instance)
 		{																																		$"Vehicle.Awake: {__instance.gameObject.name}".logDbg();
 			if (StasisTorpedo.torpedoType == null)
-				StasisTorpedo.initPrefab(__instance.torpedoTypes.FirstOrDefault(type => type.techType == TechType.GasTorpedo)?.prefab);
+			{
+				var gasTorpedoPrefab = __instance.torpedoTypes.FirstOrDefault(type => type.techType == TechType.GasTorpedo)?.prefab;
+				StasisTorpedo.initPrefab(gasTorpedoPrefab);
+			}
 
 			__instance.torpedoTypes = __instance.torpedoTypes.append(new[] { StasisTorpedo.torpedoType });
 		}
@@ -31,23 +33,6 @@ namespace StasisTorpedo
 			return __instance._active;
 		}
 
-		// stasis spheres will ignore vehicles
-		[HarmonyTranspiler, HarmonyPatch(typeof(StasisSphere), "Freeze")]
-		static IEnumerable<CodeInstruction> StasisSphere_Freeze_Transpiler(IEnumerable<CodeInstruction> cins, ILGenerator ilg)
-		{
-			static bool _isVehicle(Rigidbody target) => target.gameObject.GetComponent<Vehicle>();
-
-			var label = ilg.DefineLabel();
-
-			return cins.ciInsert(ci => ci.isOp(OpCodes.Ret), // right after null check
-				OpCodes.Ldarg_2,
-				OpCodes.Ldind_Ref,
-				CIHelper.emitCall<Func<Rigidbody, bool>>(_isVehicle),
-				OpCodes.Brfalse, label,
-				OpCodes.Ldc_I4_0,
-				OpCodes.Ret,
-				new CodeInstruction(OpCodes.Nop) { labels = { label } });
-		}
 #if GAME_SN
 		// allow to put stasis torpedoes to the seamoth torpedo storage
 		[HarmonyTranspiler, HarmonyPatch(typeof(SeaMoth), "OpenTorpedoStorage")]

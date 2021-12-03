@@ -1,10 +1,9 @@
-﻿using UnityEngine;
-using Common.Crafting;
+﻿using Common.Crafting;
 
 namespace StasisModule
 {
 	[CraftHelper.NoAutoPatch]
-	partial class StasisModule: PoolCraftableObject
+	class StasisModule: PoolCraftableObject
 	{
 		protected override TechInfo getTechInfo() => new // TODO
 		(
@@ -12,23 +11,7 @@ namespace StasisModule
 			new (TechType.Gold)
 		);
 
-		protected override void initPrefabPool()
-		{
-			addPrefabToPool(TechType.ExosuitJetUpgradeModule);
-#if GAME_BZ
-#pragma warning disable CS0612
-#endif
-			addPrefabToPool(TechType.StasisRifle);
-#if GAME_BZ
-#pragma warning restore CS0612
-#endif
-		}
-
-		protected override GameObject getGameObject(GameObject[] prefabs)
-		{
-			StasisExplosion.initPrefab(prefabs[1]);
-			return prefabs[0];
-		}
+		protected override void initPrefabPool() => addPrefabToPool(TechType.ExosuitJetUpgradeModule);
 
 		public override void patch()
 		{

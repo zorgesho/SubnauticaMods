@@ -3,9 +3,7 @@
 using FMOD.Studio;
 using UnityEngine;
 
-using Common;
-
-namespace StasisModule
+namespace Common.Stasis
 {
 	static class Utils
 	{

@@ -51,8 +51,13 @@ namespace Common.Crafting
 
 		public static GameObject storePrefabCopy(GameObject prefab)
 		{
+			if (!prefab)
+				return null;
+
 			var copiedPrefab = _instantiate(prefab, CopyOptions.UseCache);
 			copiedPrefab.name = copiedPrefab.name.Replace("(Clone)", "");
+			copiedPrefab.transform.position = Vector3.zero;
+
 			return copiedPrefab;
 		}
 

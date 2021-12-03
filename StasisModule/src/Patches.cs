@@ -30,4 +30,24 @@ namespace StasisModule
 				new CodeInstruction(OpCodes.Nop) { labels = { label } });
 		}
 	}
+
+	[PatchClass]
+	static class Vehicle_OnUpgradeModuleUse_Patch
+	{
+		[HarmonyPostfix]
+		[HarmonyPatch(typeof(SeaMoth), "OnUpgradeModuleUse")]
+		[HarmonyPatch(typeof(Vehicle), "OnUpgradeModuleUse")]
+		static void OnUpgradeModuleUse_Postfix(Vehicle __instance, TechType techType, int slotID)
+		{
+			if (techType != StasisModule.TechType || !__instance.HasEnoughEnergy(Main.config.energyCost))
+				return;
+
+			__instance.ConsumeEnergy(Main.config.energyCost);
+			__instance.quickSlotTimeUsed[slotID] = Time.time;
+			__instance.quickSlotCooldown[slotID] = Main.config.cooldown;
+
+			var go = new GameObject("stasis", typeof(StasisModule.StasisExplosion));
+			go.transform.position = __instance.transform.position;
+		}
+	}
 }

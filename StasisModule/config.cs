@@ -10,5 +10,8 @@ namespace StasisModule
 
 		[Field.Range(1f, 25f)]
 		public readonly float stasisRadius = 10f; // vanilla: min = 1, max = 10
+
+		public readonly float cooldown = 2f; // TODO
+		public readonly float energyCost = 1f; // TODO
 	}
 }

@@ -37,7 +37,10 @@ namespace StasisModule
 
 			addToGroup(TechGroup.VehicleUpgrades, TechCategory.VehicleUpgrades);
 			addCraftingNodeTo(CraftTree.Type.SeamothUpgrades, "CommonModules");
-			setEquipmentType(EquipmentType.VehicleModule, QuickSlotType.SelectableChargeable);
+
+			// TODO make it work for both seamoth and prawn
+			//setEquipmentType(EquipmentType.VehicleModule, QuickSlotType.Selectable); // for seamoth
+			setEquipmentType(EquipmentType.VehicleModule, QuickSlotType.Instant); // for prawn
 
 			unlockOnStart(); // TODO
 		}

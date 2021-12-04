@@ -2,7 +2,7 @@
 
 namespace StasisTorpedo
 {
-	[Field.BindConsole("st_torp")]
+	[Field.BindConsole("sts_trp")]
 	class ModConfig: Config
 	{
 		[Field.Range(2f, 60f)]

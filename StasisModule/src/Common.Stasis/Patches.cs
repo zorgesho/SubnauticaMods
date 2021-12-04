@@ -5,10 +5,10 @@ using System.Collections.Generic;
 using HarmonyLib;
 using UnityEngine;
 
-using Common.Harmony;
-
 namespace Common.Stasis
 {
+	using Harmony;
+
 	static class Patches
 	{
 		public static readonly HarmonyHelper.LazyPatcher patcher = new();
@@ -21,10 +21,10 @@ namespace Common.Stasis
 		{
 			static bool _isVehicle(Rigidbody target)
 			{
-				if (target.gameObject.GetComponent<Vehicle>())
+				if (target.GetComponent<Vehicle>())
 					return true;
 #if GAME_BZ
-				if (target.gameObject.GetComponent<SeaTruckSegment>())
+				if (target.GetComponent<SeaTruckSegment>())
 					return true;
 #endif
 				return false;

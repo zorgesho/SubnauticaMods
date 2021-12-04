@@ -1,16 +1,17 @@
 ﻿using System.Collections;
 using UnityEngine;
-using Common.Crafting;
 
 namespace Common.Stasis
 {
+	using Crafting;
+
 	static class StasisSphereCreator
 	{
 		public static void create(Vector3 position, float time, float radius)
 		{
 			Patches.patcher.patch();
 
-			var go = new GameObject("StasisSphere");
+			GameObject go = new ("StasisSphere");
 			go.transform.position = position;
 			go.AddComponent<StasisExplosion>().setProps(time, radius);
 		}

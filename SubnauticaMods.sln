@@ -182,6 +182,7 @@ Global
 		Common\Common.Config.Options\Common.Config.Options.projitems*{cb025d20-0b16-4e80-95e6-3c3fc77935fb}*SharedItemsImports = 4
 		Common\Common.Config\Common.Config.projitems*{cb025d20-0b16-4e80-95e6-3c3fc77935fb}*SharedItemsImports = 4
 		Common\Common.projitems*{cb025d20-0b16-4e80-95e6-3c3fc77935fb}*SharedItemsImports = 4
+		Common\Common.AssetsHelper\Common.AssetsHelper.projitems*{d896ae9c-c9a4-48f9-8027-db351ab38e19}*SharedItemsImports = 4
 		Common\Common.Config\Common.Config.projitems*{d896ae9c-c9a4-48f9-8027-db351ab38e19}*SharedItemsImports = 4
 		Common\Common.CraftHelper\Common.CraftHelper.projitems*{d896ae9c-c9a4-48f9-8027-db351ab38e19}*SharedItemsImports = 4
 		Common\Common.projitems*{d896ae9c-c9a4-48f9-8027-db351ab38e19}*SharedItemsImports = 4
@@ -193,6 +194,7 @@ Global
 		Common\Common.Config\Common.Config.projitems*{ec26571a-5a2b-4b0b-9431-93f9b6e639d4}*SharedItemsImports = 4
 		Common\Common.CraftHelper\Common.CraftHelper.projitems*{ec26571a-5a2b-4b0b-9431-93f9b6e639d4}*SharedItemsImports = 4
 		Common\Common.projitems*{ec26571a-5a2b-4b0b-9431-93f9b6e639d4}*SharedItemsImports = 4
+		Common\Common.AssetsHelper\Common.AssetsHelper.projitems*{f5827694-e586-454e-af1a-03ea17115b03}*SharedItemsImports = 4
 		Common\Common.Config\Common.Config.projitems*{f5827694-e586-454e-af1a-03ea17115b03}*SharedItemsImports = 4
 		Common\Common.CraftHelper\Common.CraftHelper.projitems*{f5827694-e586-454e-af1a-03ea17115b03}*SharedItemsImports = 4
 		Common\Common.projitems*{f5827694-e586-454e-af1a-03ea17115b03}*SharedItemsImports = 4

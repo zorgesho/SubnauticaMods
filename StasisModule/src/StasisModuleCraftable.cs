@@ -25,18 +25,14 @@ namespace StasisModule
 			new (TechType.Magnetite, 3)
 		);
 
-		protected override void initPrefabPool() => addPrefabToPool(TechType.ExosuitJetUpgradeModule);
+		protected override void initPrefabPool() =>
+			addPrefabToPool(TechType.ExosuitJetUpgradeModule);
 
 		protected TechType _register(string name, string description) =>
 			register(name, description, SpriteHelper.getSprite("stasismodule"));
 
-		public override void patch()
-		{
+		public override void patch() =>
 			addToGroup(TechGroup.VehicleUpgrades, TechCategory.VehicleUpgrades);
-#if GAME_SN
-			setTechTypeForUnlock(TechType.StasisRifle);
-#endif
-		}
 	}
 
 #if GAME_SN
@@ -51,6 +47,7 @@ namespace StasisModule
 
 			addCraftingNodeTo(CraftTree.Type.SeamothUpgrades, "SeamothModules");
 			setEquipmentType(EquipmentType.SeamothModule, QuickSlotType.Selectable);
+			setAllTechTypesForUnlock(TechType.StasisRifle, TechType.Seamoth);
 		}
 	}
 #elif GAME_BZ
@@ -81,7 +78,9 @@ namespace StasisModule
 
 			addCraftingNodeTo(CraftTree.Type.SeamothUpgrades, "ExosuitModules");
 			setEquipmentType(EquipmentType.ExosuitModule, QuickSlotType.Instant);
-#if GAME_BZ
+#if GAME_SN
+			setAllTechTypesForUnlock(TechType.StasisRifle, TechType.Exosuit);
+#elif GAME_BZ
 			addCraftingNodeTo(CraftTree.Type.Fabricator, "Upgrades/ExosuitUpgrades");
 			setTechTypeForUnlock(TechType.Exosuit);
 #endif

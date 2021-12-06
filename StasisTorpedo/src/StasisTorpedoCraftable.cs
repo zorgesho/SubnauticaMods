@@ -22,7 +22,7 @@ namespace StasisTorpedo
 			addToGroup(TechGroup.VehicleUpgrades, TechCategory.VehicleUpgrades, TechType.GasTorpedo);
 #if GAME_SN
 			addCraftingNodeTo(CraftTree.Type.SeamothUpgrades, "Torpedoes");
-			setTechTypeForUnlock(TechType.StasisRifle);
+			setAllTechTypesForUnlock(TechType.StasisRifle, TechType.GasTorpedo);
 #elif GAME_BZ
 			addCraftingNodeTo(CraftTree.Type.SeamothUpgrades, "ExosuitModules", TechType.GasTorpedo);
 			addCraftingNodeTo(CraftTree.Type.Fabricator, "Upgrades/ExosuitUpgrades", TechType.GasTorpedo);

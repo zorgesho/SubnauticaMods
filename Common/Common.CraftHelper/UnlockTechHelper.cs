@@ -18,6 +18,10 @@ namespace Common.Crafting
 		// key - tech for unlocking, value - tech for unlockPopup sprite (can be tech type or fragment type)
 		static readonly Dictionary<TechType, TechType> unlockPopups = new();
 
+		// techs that require multiple techs to unlock
+		record CompoundTech(TechType techType, List<TechType> dependencies);
+		static readonly List<CompoundTech> compoundTechs = new();
+
 		public static void setFragmentTypeToUnlock(TechType unlockTechType, TechType origFragTechType, TechType substFragTechType, int fragCount, float scanTime)
 		{
 			FragmentUnlockPatches.patcher.patch();
@@ -37,6 +41,12 @@ namespace Common.Crafting
 			unlockPopups[unlockTechType] = origFragTechType;
 
 			KnownTechHandler.SetAnalysisTechEntry(unlockTechType, new TechType[0]);
+		}
+
+		public static void setAllTechTypesForUnlock(TechType unlockTech, params TechType[] dependTechs)
+		{
+			CompoundTechUnlockPatch.patcher.patch();
+			compoundTechs.Add(new (unlockTech, new (dependTechs)));
 		}
 
 		#region patches
@@ -88,6 +98,24 @@ namespace Common.Crafting
 
 					if (sprite != null)
 						tech.unlockPopup = sprite;
+				}
+			}
+		}
+
+		static class CompoundTechUnlockPatch
+		{
+			public static readonly HarmonyHelper.LazyPatcher patcher = new();
+
+			[HarmonyPostfix, HarmonyPatch(typeof(KnownTech), "Add")]
+			static void KnownTech_Add_Postfix(TechType techType)
+			{
+				foreach (var tech in compoundTechs)
+				{
+					if (!tech.dependencies.Contains(techType) || KnownTech.Contains(tech.techType))
+						continue;
+
+					if (tech.dependencies.All(KnownTech.Contains))
+						KnownTech.Add(tech.techType, true);
 				}
 			}
 		}

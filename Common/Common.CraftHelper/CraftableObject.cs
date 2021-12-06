@@ -110,6 +110,9 @@ namespace Common.Crafting
 		protected void setTechTypeForUnlock(TechType techType) =>
 			KnownTechHandler.SetAnalysisTechEntry(techType, new TechType[1] { TechType });
 
+		protected void setAllTechTypesForUnlock(params TechType[] techTypes) =>
+			UnlockTechHelper.setAllTechTypesForUnlock(TechType, techTypes);
+
 		// for using already existing fragments (will be used for this tech if fragment own tech is unlocked)
 		protected void setFragmentToUnlock(TechType fragTechType, int fragCount, float scanTime = 1f)
 		{

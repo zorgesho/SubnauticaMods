@@ -17,7 +17,7 @@ namespace StasisModule
 	}
 
 	[CraftHelper.NoAutoPatch]
-	class StasisModule: PoolCraftableObject
+	abstract class StasisModule: PoolCraftableObject
 	{
 		protected override TechInfo getTechInfo() => new
 		(
@@ -30,9 +30,6 @@ namespace StasisModule
 
 		protected TechType _register(string name, string description) =>
 			register(name, description, SpriteHelper.getSprite("stasismodule"));
-
-		public override void patch() =>
-			addToGroup(TechGroup.VehicleUpgrades, TechCategory.VehicleUpgrades);
 	}
 
 #if GAME_SN
@@ -43,10 +40,12 @@ namespace StasisModule
 		public override void patch()
 		{
 			TechType = _register(L10n.ids_seamothSM_Name, L10n.ids_seamothSM_Desc);
-			base.patch();
 
-			addCraftingNodeTo(CraftTree.Type.SeamothUpgrades, "SeamothModules");
+			addToGroup(TechGroup.VehicleUpgrades, TechCategory.VehicleUpgrades, TechType.SeamothSolarCharge);
+			addCraftingNodeTo(CraftTree.Type.SeamothUpgrades, "SeamothModules", TechType.SeamothSolarCharge);
+
 			setEquipmentType(EquipmentType.SeamothModule, QuickSlotType.Selectable);
+
 			setAllTechTypesForUnlock(TechType.StasisRifle, TechType.Seamoth);
 		}
 	}
@@ -58,11 +57,13 @@ namespace StasisModule
 		public override void patch()
 		{
 			TechType = _register(L10n.ids_seatruckSM_Name, L10n.ids_seatruckSM_Desc);
-			base.patch();
 
-			addCraftingNodeTo(CraftTree.Type.SeamothUpgrades, "SeaTruckUpgrade");
-			addCraftingNodeTo(CraftTree.Type.Fabricator, "Upgrades/SeatruckUpgrades");
+			addToGroup(TechGroup.VehicleUpgrades, TechCategory.VehicleUpgrades, TechType.SeaTruckUpgradePerimeterDefense);
+			addCraftingNodeTo(CraftTree.Type.SeamothUpgrades, "SeaTruckUpgrade", TechType.SeaTruckUpgradePerimeterDefense);
+			addCraftingNodeTo(CraftTree.Type.Fabricator, "Upgrades/SeatruckUpgrades", TechType.SeaTruckUpgradePerimeterDefense);
+
 			setEquipmentType(EquipmentType.SeaTruckModule, QuickSlotType.Selectable);
+
 			setTechTypeForUnlock(TechType.SeaTruck);
 		}
 	}
@@ -74,14 +75,15 @@ namespace StasisModule
 		public override void patch()
 		{
 			TechType = _register(L10n.ids_prawnSM_Name, L10n.ids_prawnSM_Desc);
-			base.patch();
 
-			addCraftingNodeTo(CraftTree.Type.SeamothUpgrades, "ExosuitModules");
+			addToGroup(TechGroup.VehicleUpgrades, TechCategory.VehicleUpgrades, TechType.ExosuitThermalReactorModule);
+			addCraftingNodeTo(CraftTree.Type.SeamothUpgrades, "ExosuitModules", TechType.ExosuitThermalReactorModule);
+
 			setEquipmentType(EquipmentType.ExosuitModule, QuickSlotType.Instant);
 #if GAME_SN
 			setAllTechTypesForUnlock(TechType.StasisRifle, TechType.Exosuit);
 #elif GAME_BZ
-			addCraftingNodeTo(CraftTree.Type.Fabricator, "Upgrades/ExosuitUpgrades");
+			addCraftingNodeTo(CraftTree.Type.Fabricator, "Upgrades/ExosuitUpgrades", TechType.ExosuitThermalReactorModule);
 			setTechTypeForUnlock(TechType.Exosuit);
 #endif
 		}

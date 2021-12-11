@@ -1,10 +1,10 @@
 {
   "Id": "StasisModule",
-  "DisplayName": "StasisModule",
+  "DisplayName": "Stasis Module",
   "Author": "zorgesho",
   "Version": "1.0.0",
-  "Dependencies": [],
-  "VersionDependencies": {},
+  "Dependencies": [ "SMLHelper" ],
+  "VersionDependencies": { "SMLHelper": "2.9.0" },
   "Enable": true,
   "Game": "BelowZero",
   "AssemblyName": "StasisModule.dll",

@@ -74,7 +74,7 @@ namespace Common.Utils
 				yield return new WaitForSeconds(1f);
 				yield return new WaitWhile(() => SaveLoadManager.main.isLoading);
 																						"MainMenuMessages: game loading finished".logDbg();
-				messages.ForEach(msg => msg.timeEnd = Time.time + 1f);
+				messages.ForEach(msg => msg.timeEnd = GameUtils.time + 1f);
 
 				messages.Clear();
 				HarmonyHelper.patch(typeof(Patches), false);

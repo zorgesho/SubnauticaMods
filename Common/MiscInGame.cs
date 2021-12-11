@@ -75,8 +75,15 @@ namespace Common
 #elif GAME_BZ
 			uGUI._main?.loading.IsLoading == true; // doesn't work well in SN
 #endif
+		// use that when needed (Time.time -> PDA.time in BZ)
+		public static float time =>
+#if GAME_SN
+			Time.time;
+#elif GAME_BZ
+			PDA.time;
+#endif
 		public static void clearScreenMessages() => // expire all messages except QMM main menu messages
-			ErrorMessage.main?.messages.Where(m => m.timeEnd - Time.time < 1e3f).forEach(m => m.timeEnd = Time.time - 1f);
+			ErrorMessage.main?.messages.Where(m => m.timeEnd - time < 1e3f).forEach(m => m.timeEnd = time - 1f);
 
 		public static GameObject getTarget(float maxDistance)
 		{

@@ -30,8 +30,8 @@ namespace ConsoleImproved
 		{
 			public void action()
 			{
-				ErrorMessage.main.messages.Where(m => m.timeEnd - Time.time < 1e3f).
-										   ForEach(msg => msg.timeEnd = Time.time + Main.config.msgsSettings.timeDelay);
+				ErrorMessage.main.messages.Where(m => m.timeEnd - GameUtils.time < 1e3f).
+										   ForEach(msg => msg.timeEnd = GameUtils.time + Main.config.msgsSettings.timeDelay);
 			}
 		}
 

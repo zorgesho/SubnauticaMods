@@ -28,7 +28,7 @@ namespace Common.Crafting
 
 			foreach (var type in ReflectionHelper.definedTypes)
 			{
-				if (!typeof(CraftableObject).IsAssignableFrom(type) || type.checkAttr<NoAutoPatchAttribute>())
+				if (!shouldPatchClass(type))
 					continue;
 
 				if (type.checkAttr<PatchFirstAttribute>())
@@ -39,6 +39,9 @@ namespace Common.Crafting
 
 			toPatch.ForEach(patchClass);
 		}
+
+		static bool shouldPatchClass(Type type) =>
+			!type.IsAbstract && type.IsSubclassOf(typeof(CraftableObject)) && !type.checkAttr<NoAutoPatchAttribute>();
 
 		static void patchClass(Type type)
 		{																						$"CraftHelper: patching {type}".logDbg();

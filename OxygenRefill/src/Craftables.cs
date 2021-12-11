@@ -42,7 +42,6 @@ namespace OxygenRefill
 		}
 	}
 
-	[CraftHelper.NoAutoPatch]
 	abstract class TankRefill: PoolCraftableObject
 	{
 		// used for fill tank after creating at refilling station (we can't just change it in prefab)

@@ -16,7 +16,6 @@ namespace StasisModule
 		public const string ids_prawnSM_Desc = "Generates a stationary stasis field around the Prawn suit.";
 	}
 
-	[CraftHelper.NoAutoPatch]
 	abstract class StasisModule: PoolCraftableObject
 	{
 		protected override TechInfo getTechInfo() => new

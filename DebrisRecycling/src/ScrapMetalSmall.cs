@@ -62,8 +62,7 @@ namespace DebrisRecycling
 
 
 	// in case we not using dynamic titanium recipe
-	[CraftHelper.NoAutoPatch]
-	class TitaniumFromScrap: CraftableObject
+	abstract class TitaniumFromScrap: CraftableObject
 	{
 		readonly TechType sourceTech;
 		readonly int sourceCount, resultCount;

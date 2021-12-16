@@ -8,6 +8,11 @@ using Common.Configuration.Actions;
 
 namespace UITweaks
 {
+	using StorageTweaks;
+
+#if DEBUG
+	[Options.CustomOrder("QM")]
+#endif
 	[Field.BindConsole("ui")]
 	class ModConfig: Config
 	{
@@ -72,6 +77,25 @@ namespace UITweaks
 			};
 		}
 		public readonly PDATweaks pdaTweaks = new();
+
+		[Options.Hideable(typeof(Hider), "storage")]
+		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
+		public class StorageTweaks
+		{
+			class Hider: Options.Components.Hider.Simple
+			{ public Hider(): base("storage", () => Main.config.storageTweaks.enabled) {} }
+
+			[Options.Field("Storage tweaks")] // TODO tooltip ?
+			[Field.Action(typeof(Hider))]
+			[Options.FinalizeAction(typeof(StorageActions.UpdateStorages))]
+			[Options.Hideable(typeof(Options.Components.Hider.Ignore), "")]
+			public readonly bool enabled = true;
+
+			[Options.Field("\t\"All-in-one\" actions", "TODO")] // TODO tooltip
+			[Options.FinalizeAction(typeof(StorageActions.UpdateStorages))]
+			public readonly bool allInOneActions = true;
+		}
+		public readonly StorageTweaks storageTweaks = new();
 
 #if GAME_SN
 		class HideRenameBeacons: Options.Components.Hider.IVisibilityChecker

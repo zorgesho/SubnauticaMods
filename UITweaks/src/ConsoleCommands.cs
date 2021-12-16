@@ -15,6 +15,12 @@ namespace UITweaks
 		public void ui_setoptionsspacing(float spacing) => Options.Utils.setOptionsSpacing(spacing);
 
 #if DEBUG
+		public void ui_dump_storage(bool value, int dumpParent = 0)
+		{
+			StorageTweaks.StorageActions.dbgDumpStorage = value;
+			StorageTweaks.StorageActions.dbgDumpStorageParent = dumpParent;
+		}
+
 		public void ui_log_known_blueprints()
 		{
 			var blueprintsTab = uGUI_PDA.main.tabJournal as uGUI_BlueprintsTab;

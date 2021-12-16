@@ -51,6 +51,7 @@
     <Reference Include="UnityEngine" />
     <Reference Include="UnityEngine.CoreModule" />
     <Reference Include="UnityEngine.InputLegacyModule" />
+    <Reference Include="UnityEngine.PhysicsModule" />
     <Reference Include="UnityEngine.TextRenderingModule" />
     <Reference Include="UnityEngine.UI" />
   </ItemGroup>
@@ -68,6 +69,8 @@
     <Compile Include="src\MiscTweaks.cs" />
     <Compile Include="src\PDATweaks.cs" />
     <Compile Include="src\PingToggles.cs" />
+    <Compile Include="src\storage-tweaks\patches\StorageActionsPatches.cs" />
+    <Compile Include="src\storage-tweaks\StorageActions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="mod.BZ.json" Condition="$(Configuration.Contains('BZ'))">

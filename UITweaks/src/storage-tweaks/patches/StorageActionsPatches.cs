@@ -104,7 +104,8 @@ namespace UITweaks.StorageTweaks
 						setColliderEnabled(__instance, false);
 				}
 
-				[HarmonyPrefix, HarmonyPatch(typeof(PickupableStorage), "OnHandHover")]
+				[HarmonyPrefix, HarmonyPriority(Priority.Low)]
+				[HarmonyPatch(typeof(PickupableStorage), "OnHandHover")]
 				static bool PickupableStorage_OnHandHover_Prefix(PickupableStorage __instance)
 				{
 					setColliderEnabled(__instance, false);

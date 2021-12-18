@@ -100,7 +100,7 @@ namespace UITweaks.StorageTweaks
 						_actions += action;
 					}
 
-					bool allowedToPickUp = (container.IsEmpty() || storage.allowPickupWhenNonEmpty) && storage.pickupable.AllowedToPickUp();
+					bool allowedToPickUp = (container.IsEmpty() || storage.isAllowedToPickUpNonEmpty()) && storage.pickupable.AllowedToPickUp();
 					return allowedToPickUp? _actions: _actionDisabled;
 				}
 			}

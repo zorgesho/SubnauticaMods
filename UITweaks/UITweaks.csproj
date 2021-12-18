@@ -71,6 +71,7 @@
     <Compile Include="src\PingToggles.cs" />
     <Compile Include="src\storage-tweaks\patches\StorageActionsPatches.cs" />
     <Compile Include="src\storage-tweaks\StorageActions.cs" />
+    <Compile Include="src\storage-tweaks\Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="mod.BZ.json" Condition="$(Configuration.Contains('BZ'))">

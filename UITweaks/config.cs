@@ -85,6 +85,17 @@ namespace UITweaks
 			class Hider: Options.Components.Hider.Simple
 			{ public Hider(): base("storage", () => Main.config.storageTweaks.enabled) {} }
 
+			class ContentsInfoTweakHider: Options.Components.Hider.IVisibilityChecker, Field.IAction
+			{
+				public bool visible => StorageContentsInfo.tweakEnabled;
+
+				public void action()
+				{
+					Options.Components.Hider.setVisible($"{nameof(storageTweaks)}.{nameof(showMaxItemCount)}", visible);
+					Options.Components.Hider.setVisible($"{nameof(storageTweaks)}.{nameof(showSlotsInfo)}", visible);
+				}
+			}
+
 			[Options.Field("Storage tweaks")] // TODO tooltip ?
 			[Field.Action(typeof(Hider))]
 			[Options.FinalizeAction(typeof(StorageActions.UpdateStorages))]
@@ -94,6 +105,21 @@ namespace UITweaks
 			[Options.Field("\t\"All-in-one\" actions", "TODO")] // TODO tooltip
 			[Options.FinalizeAction(typeof(StorageActions.UpdateStorages))]
 			public readonly bool allInOneActions = true;
+
+			[Options.Field("\tShow storage contents info", "TODO")] // TODO tooltip
+			[Field.Action(typeof(ContentsInfoTweakHider))]
+			public readonly bool showContentsInfo = true;
+
+			[Options.Field("\t\tMax item count to show", "TODO")] // TODO tooltip
+			[Options.Slider(minValue: 0, maxValue: 10, defaultValue: 5)]
+			[Options.Hideable(typeof(ContentsInfoTweakHider), "storage")]
+			[Options.FinalizeAction(typeof(StorageContentsInfo.InvalidateCache))]
+			public readonly int showMaxItemCount = 5;
+
+			[Options.Field("\t\tShow free slots count", "TODO")] // TODO tooltip
+			[Options.Hideable(typeof(ContentsInfoTweakHider), "storage")]
+			[Options.FinalizeAction(typeof(StorageContentsInfo.InvalidateCache))]
+			public readonly bool showSlotsInfo = true;
 		}
 		public readonly StorageTweaks storageTweaks = new();
 
@@ -159,6 +185,10 @@ namespace UITweaks
 
 		public static readonly string ids_beaconName = "Name";
 		public static readonly string ids_beaconRename = "rename";
+
+		public static readonly string ids_freeSlots = "Free slots: {0}/{1}";
+		public static readonly string ids_fullContainer = "Full";
+		public static readonly string ids_otherItems = " and other items";
 #if GAME_SN
 		public static readonly string ids_modMerged = "<b>RenameBeacons</b> mod is now merged into <b>UI Tweaks</b> mod, you can safely delete it.";
 #elif GAME_BZ

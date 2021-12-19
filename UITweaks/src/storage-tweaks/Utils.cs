@@ -20,6 +20,16 @@ namespace UITweaks.StorageTweaks
 #endif
 		}
 
+		public static int getItemSize(TechType techType)
+		{
+#if GAME_SN
+			var size = CraftData.GetItemSize(techType);
+#elif GAME_BZ
+			var size = TechData.GetItemSize(techType);
+#endif
+			return size.x * size.y;
+		}
+
 #if GAME_SN // code is copied from BZ with some modifications
 		static readonly Dictionary<GameInput.Button, string> bindingCache = new();
 		static readonly Dictionary<GameInput.Button, Dictionary<string, string>> textCache = new();

@@ -1,6 +1,10 @@
 ﻿#if GAME_SN
 using System.Collections.Generic;
+
+using HarmonyLib;
+
 using Common;
+using Common.Harmony;
 #endif
 
 namespace UITweaks.StorageTweaks
@@ -40,6 +44,21 @@ namespace UITweaks.StorageTweaks
 			}
 
 			return result;
+		}
+
+		[OptionalPatch, PatchClass]
+		static class Patches
+		{
+			static bool prepare() => Main.config.storageTweaks.enabled;
+
+			[HarmonyPostfix]
+			[HarmonyPatch(typeof(HandReticle), "OnBindingsChanged")]
+			[HarmonyPatch(typeof(HandReticle), "OnLanguageChanged")]
+			static void clearCache()
+			{
+				bindingCache.Clear();
+				textCache.Values.forEach(c => c.Clear());
+			}
 		}
 #endif // GAME_SN
 	}

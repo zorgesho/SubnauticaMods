@@ -1,6 +1,9 @@
 ﻿using System;
+
 using UnityEngine;
+
 using Common;
+using Common.Reflection;
 
 #if GAME_BZ
 using System.Collections.Generic;
@@ -28,10 +31,17 @@ namespace UITweaks.StorageTweaks
 
 		abstract class StorageAction: MonoBehaviour, IActionHandler
 		{
+			static readonly EventWrapper onBindingsChanged = typeof(GameInput).evnt("OnBindingsChanged").wrap();
+
 			protected StorageContainer container;
 
 			protected string _actions;
 			public virtual string actions => _actions;
+
+			void clearCachedActions() => _actions = null;
+
+			void Awake() => onBindingsChanged.add<Action>(clearCachedActions);
+			void OnDestroy() => onBindingsChanged.remove<Action>(clearCachedActions);
 
 			protected virtual void Start()
 			{

@@ -21,7 +21,7 @@ namespace Common.Reflection
 
 		public void add<D>(D eventDelegate) => add(obj, eventDelegate);
 		public void add<D>(object obj, D eventDelegate)
-		{
+		{																				$"EventWrapper.add for {eventInfo.Name}".logDbg();
 			adder ??= eventInfo?.GetAddMethod();
 			Debug.assert(adder != null);
 
@@ -30,7 +30,7 @@ namespace Common.Reflection
 
 		public void remove<D>(D eventDelegate) => remove(obj, eventDelegate);
 		public void remove<D>(object obj, D eventDelegate)
-		{
+		{																				$"EventWrapper.remove for {eventInfo.Name}".logDbg();
 			remover ??= eventInfo?.GetRemoveMethod();
 			Debug.assert(remover != null);
 

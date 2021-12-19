@@ -31,7 +31,7 @@ namespace UITweaks.StorageTweaks
 				Patches.ColliderPatches.setCollidersEnabled<PickupableStorage>(!actionsTweakEnabled);
 
 				if (actionsTweakEnabled)
-					UnityEngine.Object.FindObjectsOfType<StorageContainer>().forEach(Patches.ensureActionHandler);
+					UnityHelper.FindObjectsOfTypeAll<StorageContainer>().forEach(Patches.ensureActionHandler);
 			}
 		}
 
@@ -46,7 +46,7 @@ namespace UITweaks.StorageTweaks
 				SelectMany(type => type.getAttrs<StorageHandlerAttribute>(), (type, attr) => (type, attr.classId)).
 				ToDictionary(pair => pair.classId, pair => pair.type);
 
-			static string getPrefabClassId(MonoBehaviour cmp) => cmp.GetComponentInParent<PrefabIdentifier>()?.ClassId ?? "";
+			static string getPrefabClassId(MonoBehaviour cmp) => cmp.GetComponentInParent<PrefabIdentifier>(true)?.ClassId ?? "";
 
 			public static void ensureActionHandler(StorageContainer container)
 			{
@@ -94,7 +94,7 @@ namespace UITweaks.StorageTweaks
 
 				public static void setCollidersEnabled<T>(bool enabled) where T: MonoBehaviour
 				{
-					UnityEngine.Object.FindObjectsOfType<T>().forEach(cmp => setColliderEnabled(cmp, enabled));
+					UnityHelper.FindObjectsOfTypeAll<T>().forEach(cmp => setColliderEnabled(cmp, enabled));
 				}
 
 				[HarmonyPostfix, HarmonyPatch(typeof(ColoredLabel), "OnEnable")]

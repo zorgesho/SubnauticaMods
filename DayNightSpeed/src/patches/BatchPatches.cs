@@ -35,7 +35,7 @@ namespace DayNightSpeed
 		// transpiler for correcting time if daynightspeed < 1 (with additional multiplier)
 		static CIEnumerable transpiler_dnsClamped01(CIEnumerable cins, string multCfgVarName) =>
 			cins.ciInsert(ci => ci.isOp(OpCodes.Callvirt, deltaTime) || ci.isOp(OpCodes.Callvirt, dayNightSpeed), +1, 0,
-				_dnsClamped01.ci, OpCodes.Div,
+				CIUtils.speedClamped01, OpCodes.Div,
 				CIHelper._codeForCfgVar(multCfgVarName), OpCodes.Mul);
 
 		[HarmonyTranspiler] // power charging

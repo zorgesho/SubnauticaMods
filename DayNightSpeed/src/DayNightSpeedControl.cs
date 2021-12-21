@@ -51,7 +51,7 @@ namespace DayNightSpeed
 		}
 
 		// for transpilers
-		public static float getDayNightSpeedClamped01()
+		public static float getSpeedClamped01()
 		{
 			Debug.assert(DayNightCycle.main);
 
@@ -136,8 +136,8 @@ namespace DayNightSpeed
 	}
 
 	// helper for transpilers
-	static class _dnsClamped01
+	static class CIUtils
 	{
-		public static CodeInstruction ci => CIHelper.emitCall<Func<float>>(DayNightSpeedControl.getDayNightSpeedClamped01);
+		public static CodeInstruction speedClamped01 => CIHelper.emitCall<Func<float>>(DayNightSpeedControl.getSpeedClamped01);
 	}
 }

@@ -48,9 +48,9 @@ namespace DayNightSpeed
 	{
 		static CIEnumerable Transpiler(CIEnumerable cins) =>
 #if GAME_SN
-			cins.ciInsert(ci => ci.isOp(OpCodes.Call), _dnsClamped01.ci, OpCodes.Mul);
+			cins.ciInsert(ci => ci.isOp(OpCodes.Call), CIUtils.speedClamped01, OpCodes.Mul);
 #elif GAME_BZ
-			cins.ciInsert(new MemberMatch(nameof(MapRoomFunctionality.scanInterval)), 0, 1, _dnsClamped01.ci, OpCodes.Mul);
+			cins.ciInsert(new MemberMatch(nameof(MapRoomFunctionality.scanInterval)), 0, 1, CIUtils.speedClamped01, OpCodes.Mul);
 #endif
 	}
 
@@ -59,7 +59,7 @@ namespace DayNightSpeed
 	static class PropulseCannonAmmoHandler_Update_Patch
 	{
 		static CIEnumerable Transpiler(CIEnumerable cins) =>
-			cins.ciInsert(ci => ci.isLDC(3.0f), _dnsClamped01.ci, OpCodes.Mul);
+			cins.ciInsert(ci => ci.isLDC(3.0f), CIUtils.speedClamped01, OpCodes.Mul);
 	}
 
 	// fixed lifetime for explosion
@@ -67,7 +67,7 @@ namespace DayNightSpeed
 	static class WorldForces_AddExplosion_Patch
 	{
 		static CIEnumerable Transpiler(CIEnumerable cins) =>
-			cins.ciInsert(ci => ci.isLDC(500f), _dnsClamped01.ci, OpCodes.Div);
+			cins.ciInsert(ci => ci.isLDC(500f), CIUtils.speedClamped01, OpCodes.Div);
 	}
 
 	// fixed lifetime for current
@@ -80,14 +80,14 @@ namespace DayNightSpeed
 	{
 #if GAME_SN
 		static CIEnumerable Transpiler(CIEnumerable cins) =>
-			cins.ciInsert(ci => ci.isOp(OpCodes.Ldarg_S, (byte)5), _dnsClamped01.ci, OpCodes.Mul);
+			cins.ciInsert(ci => ci.isOp(OpCodes.Ldarg_S, (byte)5), CIUtils.speedClamped01, OpCodes.Mul);
 #elif GAME_BZ
 		static void Prefix(WorldForces.Current current)
 		{
 			if (double.IsPositiveInfinity(current.endTime))
 				return;
 
-			double lifeTime = (current.endTime - current.startTime) * DayNightSpeedControl.getDayNightSpeedClamped01();
+			double lifeTime = (current.endTime - current.startTime) * DayNightSpeedControl.getSpeedClamped01();
 			current.endTime = current.startTime + lifeTime;
 		}
 #endif
@@ -101,8 +101,8 @@ namespace DayNightSpeed
 		{
 			var list = cins.ToList();
 
-			list.ciInsert(ci => ci.isLDC<double>(0.03f), _dnsClamped01.ci, OpCodes.Mul); // do not change to 0.03d !
-			list.ciInsert(ci => ci.isLDC(500f), _dnsClamped01.ci, OpCodes.Div); // changing only first '500f'
+			list.ciInsert(ci => ci.isLDC<double>(0.03f), CIUtils.speedClamped01, OpCodes.Mul); // do not change to 0.03d !
+			list.ciInsert(ci => ci.isLDC(500f), CIUtils.speedClamped01, OpCodes.Div); // changing only first '500f'
 
 			return list;
 		}

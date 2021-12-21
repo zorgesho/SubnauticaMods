@@ -57,12 +57,12 @@ namespace DayNightSpeed
 		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 		[Slider_0_100, Range_001_100, HideableSpeed]
 		public readonly float speedCreaturesGrow = 1.0f;
-
+#if GAME_SN
 		[Options.Field("Medkit fabrication", tooltipType: typeof(Tooltips.Medkit))]
 		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 		[Slider_0_100, Range_001_100, HideableSpeed]
 		public readonly float speedMedkitInterval = 1.0f;
-
+#endif
 		[Options.Field("Charging/generating power", tooltipType: typeof(Tooltips.PowerCharge))]
 		[Slider_0_100, Range_001_100, HideableSpeed]
 		public readonly float speedPowerCharge = 1.0f;
@@ -289,7 +289,7 @@ namespace DayNightSpeed
 								getDuration(growthDaysBigCreatures * dayNightSecs, Main.config.speedCreaturesGrow));
 			}
 			#endregion
-
+#if GAME_SN
 			#region tooltip: speedMedkitInterval
 			partial class L10n
 			{
@@ -310,7 +310,7 @@ namespace DayNightSpeed
 									(Options.mode == Options.Mode.IngameMenu? L10n.str(L10n.ids_restartWarning): "");
 			}
 			#endregion
-
+#endif
 			#region tooltip: speedPowerCharge
 			partial class L10n
 			{

@@ -82,6 +82,7 @@ namespace DayNightSpeed
 			cins.ciInsert(ci => ci.isLDC(420f) || ci.isLDC(840f), +1, 0, _codeForCfgVar(nameof(ModConfig.speedFiltrationMachine)), OpCodes.Div);
 	}
 
+#if GAME_SN
 	// modifying medkit autocraft time
 	[OptionalPatch, HarmonyPatch(typeof(MedicalCabinet), "Start")]
 	static class MedicalCabinet_Start_Patch
@@ -98,7 +99,7 @@ namespace DayNightSpeed
 			__instance.medKitSpawnInterval = medKitSpawnInterval / Main.config.speedMedkitInterval;
 		}
 	}
-
+#endif
 
 #if DEBUG
 	[OptionalPatch, PatchClass]

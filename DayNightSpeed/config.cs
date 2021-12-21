@@ -80,10 +80,9 @@ namespace DayNightSpeed
 		[Field.Action(typeof(UpdateOptionalPatches))]
 		public readonly float speedFiltrationMachine = 1.0f;
 
-#if GAME_SN
 		[Range_001_100, Field.Reloadable]
 		public readonly float speedStillsuitWater = 1.0f;
-#endif
+
 		#region aux speeds hider
 		class SpeedsHider: Options.Components.Hider.Simple
 		{ public SpeedsHider(): base("speeds", () => Main.config.useAuxSpeeds) {} }

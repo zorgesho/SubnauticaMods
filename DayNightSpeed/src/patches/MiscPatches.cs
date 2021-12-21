@@ -62,6 +62,16 @@ namespace DayNightSpeed
 			cins.ciInsert(ci => ci.isLDC(3.0f), CIUtils.speedClamped01, OpCodes.Mul);
 	}
 
+	// fixing stillsuit water capture speed
+	[HarmonyPatch(typeof(Stillsuit), (Mod.Consts.isGameBZ? "IEquippable.": "") + "UpdateEquipped")]
+	static class Stillsuit_UpdateEquipped_Patch
+	{
+		static CIEnumerable Transpiler(CIEnumerable cins) =>
+			cins.ciInsert(ci => ci.isLDC(100f),
+				CIUtils.speed, OpCodes.Mul,
+				_codeForCfgVar(nameof(ModConfig.speedStillsuitWater)), OpCodes.Mul);
+	}
+
 	// fixed lifetime for explosion
 	[HarmonyPatch(typeof(WorldForces), "AddExplosion")]
 	static class WorldForces_AddExplosion_Patch
@@ -121,16 +131,6 @@ namespace DayNightSpeed
 
 			__instance.rechargeInterval = rechargeIntervalInitial * Main.config.dayNightSpeed;
 		}
-	}
-
-	// fixing stillsuit water capture speed
-	[HarmonyPatch(typeof(Stillsuit), "UpdateEquipped")]
-	static class Stillsuit_UpdateEquipped_Patch
-	{
-		static CIEnumerable Transpiler(CIEnumerable cins) =>
-			cins.ciInsert(ci => ci.isLDC(100f),
-				CIUtils.speed, OpCodes.Mul,
-				_codeForCfgVar(nameof(ModConfig.speedStillsuitWater)), OpCodes.Mul);
 	}
 
 	// fixing sunbeam counter so it shows realtime seconds regardless of daynightspeed

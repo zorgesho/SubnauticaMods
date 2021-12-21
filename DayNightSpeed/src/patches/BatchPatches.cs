@@ -1,5 +1,4 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Reflection.Emit;
 using System.Collections.Generic;
 
@@ -26,11 +25,8 @@ namespace DayNightSpeed
 		[HarmonyPatch(typeof(DayNightCycle), "OnConsoleCommand_day")]
 		[HarmonyPatch(typeof(DayNightCycle), "OnConsoleCommand_night")]
 		[HarmonyPatch(typeof(DayNightCycle), "OnConsoleCommand_daynight")]
-		static CIEnumerable transpiler_dayNightSpeed(CIEnumerable cins)
-		{
-			static float _speed() => DayNightSpeedControl.forcedNormalSpeed? 1.0f: Main.config.dayNightSpeed;
-			return cins.ciReplace(ci => ci.isLDC(1.0f), CIHelper.emitCall<Func<float>>(_speed));
-		}
+		static CIEnumerable transpiler_dayNightSpeed(CIEnumerable cins) =>
+			cins.ciReplace(ci => ci.isLDC(1.0f), CIUtils.speed);
 
 		// transpiler for correcting time if daynightspeed < 1 (with additional multiplier)
 		static CIEnumerable transpiler_dnsClamped01(CIEnumerable cins, string multCfgVarName) =>

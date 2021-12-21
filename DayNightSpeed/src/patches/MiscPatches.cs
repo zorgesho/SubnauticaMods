@@ -18,7 +18,7 @@ namespace DayNightSpeed
 	{
 		static CIEnumerable Transpiler(CIEnumerable cins) =>
 			cins.ciInsert(ci => ci.isLDC(100f), +1, 2,
-				_codeForCfgVar(nameof(ModConfig.dayNightSpeed)), OpCodes.Mul,
+				CIUtils.speed, OpCodes.Mul,
 				_codeForCfgVar(nameof(ModConfig.auxSpeedHungerThirst)), OpCodes.Mul);
 
 #if DEBUG // debug patch
@@ -38,7 +38,7 @@ namespace DayNightSpeed
 		{
 			int ld = 0;
 			return cins.ciInsert(ci => (ci.isOp(OpCodes.Ldarg_2) && ++ld == 2) || ci.isLDC(0.1f), +1, 2,
-				_codeForCfgVar(nameof(ModConfig.dayNightSpeed)), OpCodes.Mul);
+				CIUtils.speed, OpCodes.Mul);
 		}
 	}
 
@@ -129,7 +129,7 @@ namespace DayNightSpeed
 	{
 		static CIEnumerable Transpiler(CIEnumerable cins) =>
 			cins.ciInsert(ci => ci.isLDC(100f),
-				_codeForCfgVar(nameof(ModConfig.dayNightSpeed)), OpCodes.Mul,
+				CIUtils.speed, OpCodes.Mul,
 				_codeForCfgVar(nameof(ModConfig.speedStillsuitWater)), OpCodes.Mul);
 	}
 
@@ -138,7 +138,7 @@ namespace DayNightSpeed
 	static class uGUISunbeamCountdown_UpdateInterface_Patch
 	{
 		static CIEnumerable Transpiler(CIEnumerable cins) =>
-			cins.ciInsert(ci => ci.isOp(OpCodes.Sub), _codeForCfgVar(nameof(ModConfig.dayNightSpeed)), OpCodes.Div);
+			cins.ciInsert(ci => ci.isOp(OpCodes.Sub), CIUtils.speed, OpCodes.Div);
 	}
 #endif
 }

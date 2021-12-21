@@ -33,8 +33,7 @@ namespace DayNightSpeed
 					return;
 
 				_forcedNormalSpeed = value;																	$"forcedNormalSpeed: {_forcedNormalSpeed} current speed:{DayNightCycle.main._dayNightSpeed}".logDbg();
-
-				DayNightCycle.main._dayNightSpeed = _forcedNormalSpeed? 1.0f: Main.config.dayNightSpeed;
+				DayNightCycle.main._dayNightSpeed = getActualSpeed();
 			}
 		}
 		static bool _forcedNormalSpeed = false;
@@ -50,15 +49,16 @@ namespace DayNightSpeed
 			NotificationCenter.DefaultCenter.RemoveObserver(__instance, "OnConsoleCommand_daynightspeed");
 		}
 
-		// for transpilers
+		public static float getActualSpeed()
+		{
+			return forcedNormalSpeed? 1.0f: Main.config.dayNightSpeed;
+		}
+
 		public static float getSpeedClamped01()
 		{
 			Debug.assert(DayNightCycle.main);
 
-			if (_forcedNormalSpeed)
-				return 1.0f;
-
-			float speed = DayNightCycle.main.dayNightSpeed;
+			float speed = getActualSpeed();
 			return (speed > float.Epsilon && speed < 1.0f)? speed: 1.0f;
 		}
 
@@ -138,6 +138,7 @@ namespace DayNightSpeed
 	// helper for transpilers
 	static class CIUtils
 	{
+		public static CodeInstruction speed => CIHelper.emitCall<Func<float>>(DayNightSpeedControl.getActualSpeed);
 		public static CodeInstruction speedClamped01 => CIHelper.emitCall<Func<float>>(DayNightSpeedControl.getSpeedClamped01);
 	}
 }

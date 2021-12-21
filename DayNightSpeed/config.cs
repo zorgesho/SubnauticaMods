@@ -450,6 +450,7 @@ namespace DayNightSpeed
 			public readonly bool enabled = false;
 
 			public readonly bool showGoals = false;
+			public readonly bool ignoreGoals = false;
 			public readonly bool showSurvivalStats = false;
 			public readonly bool showToggleLightStats = false;
 			public readonly bool showWaterParkCreatures = false;

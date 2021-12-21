@@ -89,9 +89,28 @@ namespace DayNightSpeed
 			static bool shouldIgnoreGoal(StoryGoal goal) =>
 				goal == null || goal.key.isNullOrEmpty() || goal.delay == 0f || goal.delay > shortGoalDelay;
 
+#if GAME_BZ
+			[HarmonyPostfix, HarmonyPatch(typeof(StoryGoalScheduler), "IProtoEventListener.OnProtoDeserialize")]
+			static void onInitScheduler()
+			{																			$"StoryGoalsListener: StoryGoalScheduler inited, goals scheduled: {StoryGoalScheduler.main.schedule.Count}".logDbg();
+				instance.goals.RemoveAll(goal => !StoryGoalScheduler.main.IsGoalScheduled(goal));
+			}
+#endif
 			[HarmonyPostfix, HarmonyPatch(typeof(StoryGoalScheduler), "Schedule")]
-			static void onAddGoal(StoryGoal goal)
+			static void onAddGoal(StoryGoalScheduler __instance, StoryGoal goal)
 			{
+#if DEBUG
+				if (Main.config.dbgCfg.ignoreGoals)
+				{																		$"StoryGoalsListener: goal '{goal.key}' ignored".logDbg();
+					return;
+				}
+#endif
+#if GAME_BZ
+				if (!__instance.IsGoalScheduled(goal.key))
+				{																		$"StoryGoalsListener: goal '{goal.key}' is not actually added!".logDbg();
+					return;
+				}
+#endif
 				if (shouldIgnoreGoal(goal) || isGoalCompleted(goal.key))
 					return;
 

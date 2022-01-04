@@ -30,7 +30,7 @@ namespace Common.Harmony
 			using var _ = Debug.profiler($"Update optional patch: {patchType}", allowNested: false);
 
 			var prepare = patchType.method("prepare", ReflectionHelper.bfAll | BindingFlags.IgnoreCase).wrap();
-			Debug.assert(prepare);
+			Debug.assert(prepare, $"OptionalPatches.update: 'prepare' method is absent for {patchType}");
 
 			if (prepare)
 				setEnabled(patchType, prepare.invoke<bool>());

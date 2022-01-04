@@ -5,31 +5,19 @@ using UnityEngine;
 using Common;
 using Common.Reflection;
 
-#if GAME_BZ
-using System.Collections.Generic;
-#endif
-
 namespace UITweaks.StorageTweaks
 {
+	interface IStorageActions
+	{
+		string actions { get; }
+		void processActions();
+	}
+
 	static partial class StorageActions
 	{
-		[AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
-		class StorageHandlerAttribute: Attribute
-		{
-			readonly TechType techType;
-			public string classId => CraftData.GetClassIdForTechType(techType);
-
-			public StorageHandlerAttribute(TechType techType) => this.techType = techType;
-		}
-
-		#region abstract base classes
-		interface IActionHandler
-		{
-			string actions { get; }
-			void processActions();
-		}
-
-		abstract class StorageAction: MonoBehaviour, IActionHandler
+		// we'll use inheritance for actions
+		// it's not quite correct, but it'll simplify the code and good enough in this case
+		abstract class StorageAction: MonoBehaviour, IStorageActions
 		{
 			static readonly EventWrapper onBindingsChanged = typeof(GameInput).evnt("OnBindingsChanged").wrap();
 
@@ -58,10 +46,22 @@ namespace UITweaks.StorageTweaks
 				_actions ??= HandReticle.main.GetText(container.hoverText, true, GameInput.Button.LeftHand);
 		}
 
-		abstract class StorageRenameAction: StorageOpenAction
+		[StorageHandler(TechType.SmallLocker)]
+#if GAME_BZ
+		[StorageHandler(TechType.SeaTruckStorageModule)]
+		[StorageHandler(TechType.SeaTruckFabricatorModule)]
+#endif
+		class StorageRenameAction: StorageOpenAction
 		{
 			const GameInput.Button actionButton = GameInput.Button.RightHand;
-			protected ColoredLabel label;
+
+			ColoredLabel label;
+
+			protected override void Start()
+			{
+				base.Start();
+				label = gameObject.GetComponent<IStorageLabel>()?.label;
+			}
 
 			public override string actions =>
 				_actions ??= base.actions + (!label? "": $"\n{HandReticle.main.GetText(label.stringEditLabel, true, actionButton)}");
@@ -70,18 +70,6 @@ namespace UITweaks.StorageTweaks
 			{
 				if (GameInput.GetButtonDown(actionButton))
 					label?.OnHandClick(Player.main.GetComponent<GUIHand>());
-			}
-		}
-		#endregion
-
-		#region action handlers
-		[StorageHandler(TechType.SmallLocker)]
-		class SmallLockerRenameAction: StorageRenameAction
-		{
-			protected override void Start()
-			{
-				base.Start();
-				label = gameObject.getChild("Label").GetComponent<ColoredLabel>();
 			}
 		}
 
@@ -119,8 +107,6 @@ namespace UITweaks.StorageTweaks
 			protected override void Start()
 			{
 				base.Start();
-
-				label = gameObject.getParent().GetComponentInChildren<ColoredLabel>();
 				storage = gameObject.getParent().GetComponentInChildren<PickupableStorage>(true);
 			}
 
@@ -137,31 +123,5 @@ namespace UITweaks.StorageTweaks
 					storage.OnHandClick(Player.main.GetComponent<GUIHand>());
 			}
 		}
-
-#if GAME_BZ
-		[StorageHandler(TechType.SeaTruckStorageModule)]
-		[StorageHandler(TechType.SeaTruckFabricatorModule)]
-		class SeaTruckStorageRenameAction: StorageRenameAction
-		{
-			static readonly Dictionary<string, string> labels = new() // :((
-			{
-				{ "StorageContainer", "Label (2)" },
-				{ "StorageContainer (1)", "Label (4)" },
-				{ "StorageContainer (2)", "Label" },
-				{ "StorageContainer (3)", "Label (1)" },
-				{ "StorageContainer (4)", "Label (3)" }
-			};
-
-			protected override void Start()
-			{
-				base.Start();
-				Common.Debug.assert(labels.ContainsKey(gameObject.name), $"name not found: '{gameObject.name}'");
-
-				if (labels.TryGetValue(gameObject.name, out string labelName))
-					label = gameObject.getChild($"../{labelName}").GetComponent<ColoredLabel>();
-			}
-		}
-#endif
-		#endregion
 	}
 }

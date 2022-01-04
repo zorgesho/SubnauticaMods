@@ -1,4 +1,6 @@
-﻿#if GAME_SN
+﻿using UnityEngine;
+
+#if GAME_SN
 using System.Collections.Generic;
 
 using HarmonyLib;
@@ -11,6 +13,11 @@ namespace UITweaks.StorageTweaks
 {
 	static class Utils
 	{
+		public static string getPrefabClassId(MonoBehaviour cmp)
+		{
+			return cmp.GetComponentInParent<PrefabIdentifier>(true)?.ClassId ?? "";
+		}
+
 		public static bool isAllowedToPickUpNonEmpty(this PickupableStorage storage)
 		{
 #if GAME_SN

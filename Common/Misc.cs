@@ -17,14 +17,17 @@ namespace Common
 				target.Add(item);
 		}
 
-		public static void forEach<T>(this IEnumerable<T> sequence, Action<T> action)
+		public static IEnumerable<T> forEach<T>(this IEnumerable<T> sequence, Action<T> action)
 		{
-			if (sequence == null)
-				return;
+			if (sequence != null)
+			{
+				var enumerator = sequence.GetEnumerator();
 
-			var enumerator = sequence.GetEnumerator();
-			while (enumerator.MoveNext())
-				action(enumerator.Current);
+				while (enumerator.MoveNext())
+					action(enumerator.Current);
+			}
+
+			return sequence;
 		}
 	}
 

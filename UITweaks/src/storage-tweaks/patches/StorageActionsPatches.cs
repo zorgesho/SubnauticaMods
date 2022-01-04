@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Reflection.Emit;
 using System.Collections.Generic;
 
@@ -8,18 +7,13 @@ using UnityEngine;
 
 using Common;
 using Common.Harmony;
-using Common.Reflection;
 using Common.Configuration;
 
 namespace UITweaks.StorageTweaks
 {
 	static partial class StorageActions
 	{
-#if DEBUG
-		public static bool dbgDumpStorage = false;
-		public static int dbgDumpStorageParent = 0;
-#endif
-		static bool actionsTweakEnabled => Main.config.storageTweaks.enabled && Main.config.storageTweaks.allInOneActions;
+		static bool tweakEnabled => Main.config.storageTweaks.enabled && Main.config.storageTweaks.allInOneActions;
 
 		public class UpdateStorages: Config.Field.IAction
 		{
@@ -27,53 +21,29 @@ namespace UITweaks.StorageTweaks
 			{
 				using var _ = Common.Debug.profiler("StorageActions.UpdateStorages");
 
-				Patches.ColliderPatches.setCollidersEnabled<ColoredLabel>(!actionsTweakEnabled);
-				Patches.ColliderPatches.setCollidersEnabled<PickupableStorage>(!actionsTweakEnabled);
+				Patches.ColliderPatches.setCollidersEnabled<ColoredLabel>(!tweakEnabled);
+				Patches.ColliderPatches.setCollidersEnabled<PickupableStorage>(!tweakEnabled);
 
-				if (actionsTweakEnabled)
-					UnityHelper.FindObjectsOfTypeAll<StorageContainer>().forEach(Patches.ensureActionHandler);
+				if (tweakEnabled)
+					UnityHelper.FindObjectsOfTypeAll<StorageContainer>().forEach(StorageHandlerProcessor.ensureHandlers);
 			}
 		}
 
 		[OptionalPatch, PatchClass]
 		static class Patches
 		{
-			static bool prepare() => actionsTweakEnabled;
-
-			static readonly Dictionary<string, Type> handlersByClassId =
-				typeof(StorageActions).GetNestedTypes(ReflectionHelper.bfAll).
-				Where(type => type.checkAttr<StorageHandlerAttribute>()).
-				SelectMany(type => type.getAttrs<StorageHandlerAttribute>(), (type, attr) => (type, attr.classId)).
-				ToDictionary(pair => pair.classId, pair => pair.type);
-
-			static string getPrefabClassId(MonoBehaviour cmp) => cmp.GetComponentInParent<PrefabIdentifier>(true)?.ClassId ?? "";
-
-			public static void ensureActionHandler(StorageContainer container)
-			{
-				if (handlersByClassId.TryGetValue(getPrefabClassId(container), out Type actionsHandler))
-					container.gameObject.ensureComponent(actionsHandler);
-			}
-
-			[HarmonyPostfix, HarmonyPatch(typeof(StorageContainer), "Awake")]
-			static void StorageContainer_Awake_Postfix(StorageContainer __instance)
-			{
-				ensureActionHandler(__instance);
-#if DEBUG
-				if (dbgDumpStorage)
-					__instance.gameObject.dump(dumpParent: dbgDumpStorageParent);
-#endif
-			}
+			static bool prepare() => tweakEnabled;
 
 			[HarmonyTranspiler, HarmonyPatch(typeof(StorageContainer), "OnHandHover")]
 			static IEnumerable<CodeInstruction> StorageContainer_OnHandHover_Transpiler(IEnumerable<CodeInstruction> cins)
 			{
 				static void _updateAndProcessActions(StorageContainer instance)
 				{
-					if (instance.GetComponent<IActionHandler>() is not IActionHandler actionHandler)
+					if (instance.GetComponent<IStorageActions>() is not IStorageActions storageActions)
 						return;
 
-					HandReticle.main.setText(textHand: actionHandler.actions);
-					actionHandler.processActions();
+					HandReticle.main.setText(textHand: storageActions.actions);
+					storageActions.processActions();
 				}
 
 				return cins.ciInsert(new CIHelper.MemberMatch(nameof(HandReticle.SetIcon)),
@@ -84,7 +54,7 @@ namespace UITweaks.StorageTweaks
 			[OptionalPatch, PatchClass]
 			public static class ColliderPatches
 			{
-				static bool prepare() => actionsTweakEnabled;
+				static bool prepare() => tweakEnabled;
 
 				static void setColliderEnabled(MonoBehaviour cmp, bool enabled)
 				{
@@ -100,7 +70,7 @@ namespace UITweaks.StorageTweaks
 				[HarmonyPostfix, HarmonyPatch(typeof(ColoredLabel), "OnEnable")]
 				static void ColoredLabel_OnEnable_Postfix(ColoredLabel __instance)
 				{
-					if (handlersByClassId.ContainsKey(getPrefabClassId(__instance)))
+					if (StorageHandlerProcessor.haveHandlers(Utils.getPrefabClassId(__instance)))
 						setColliderEnabled(__instance, false);
 				}
 

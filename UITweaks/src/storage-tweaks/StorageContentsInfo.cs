@@ -1,26 +1,51 @@
-﻿using System.Linq;
-using System.Text;
-using System.Collections.Generic;
+﻿using System.Text;
+
+using UnityEngine; 
 
 using Common;
+using Common.Reflection;
 using Common.Configuration;
 
 namespace UITweaks.StorageTweaks
 {
-	static partial class StorageContentsInfo
+	partial class StorageContentsInfo: MonoBehaviour
 	{
-		record Item(TechType techType, int count);
-
-		static readonly Dictionary<ItemsContainer, string> contentsCache = new(); // TODO use weak references
-
 		public class InvalidateCache: Config.Field.IAction
 		{
-			public void action() => contentsCache.Clear();
+			public void action() =>
+				UnityHelper.FindObjectsOfTypeAll<StorageContentsInfo>().forEach(info => info.invalidateCache());
 		}
 
-		static string getRaw(ItemsContainer container, int maxItemCount, bool slotsInfo)
+		static readonly EventWrapper onAddItem = typeof(ItemsContainer).evnt("onAddItem").wrap();
+		static readonly EventWrapper onRemoveItem = typeof(ItemsContainer).evnt("onRemoveItem").wrap();
+
+		string cachedInfo;
+		ItemsContainer container;
+
+		void invalidateCache() => cachedInfo = null;
+		void contentsListener(InventoryItem _) => invalidateCache();
+
+		public string getInfo() =>
+			cachedInfo ??= getRawInfo(Main.config.storageTweaks.showMaxItemCount, Main.config.storageTweaks.showSlotsInfo);
+
+		void Awake()
 		{
-			using var _ = Debug.profiler("StorageContentsInfo.getRaw");
+			container = GetComponent<StorageContainer>()?.container;
+			Common.Debug.assert(container != null);
+
+			onAddItem.add<OnAddItem>(container, contentsListener);
+			onRemoveItem.add<OnRemoveItem>(container, contentsListener);
+		}
+
+		void OnDestroy()
+		{
+			onAddItem.remove<OnAddItem>(container, contentsListener);
+			onRemoveItem.remove<OnRemoveItem>(container, contentsListener);
+		}
+
+		string getRawInfo(int maxItemCount, bool slotsInfo)
+		{
+			using var _ = Common.Debug.profiler("StorageContentsInfo.getRawInfo");
 
 			string result;
 			int slotsUsed = 0;
@@ -31,11 +56,7 @@ namespace UITweaks.StorageTweaks
 			}
 			else
 			{
-				var list = container._items.
-					Select(pair => new Item(pair.Key, pair.Value.items.Count)).
-					OrderByDescending(item => item.count).
-					ToList();
-
+				var list = Utils.getItems(container);
 				StringBuilder sb = new();
 
 				for (int i = 0; i < list.Count; i++)
@@ -43,7 +64,7 @@ namespace UITweaks.StorageTweaks
 					var item = list[i];
 
 					if (i < maxItemCount)
-						sb.Append($"{Language.main.Get(item.techType)}{(item.count == 1? "": $" ({item.count})")}, ");
+						sb.Append($"{item.name}{(item.count == 1? "": $" ({item.count})")}, ");
 
 					slotsUsed += Utils.getItemSize(item.techType) * item.count;
 				}
@@ -73,14 +94,6 @@ namespace UITweaks.StorageTweaks
 			}
 
 			return result;
-		}
-
-		public static string getInfo(ItemsContainer container)
-		{
-			if (contentsCache.TryGetValue(container, out string cachedInfo) && cachedInfo != null)
-				return cachedInfo;
-
-			return contentsCache[container] = getRaw(container, Main.config.storageTweaks.showMaxItemCount, Main.config.storageTweaks.showSlotsInfo);
 		}
 	}
 }

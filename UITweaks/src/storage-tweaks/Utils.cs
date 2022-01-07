@@ -1,8 +1,9 @@
-﻿using UnityEngine;
-
-#if GAME_SN
+﻿using System.Linq;
 using System.Collections.Generic;
 
+using UnityEngine;
+
+#if GAME_SN
 using HarmonyLib;
 
 using Common;
@@ -13,6 +14,20 @@ namespace UITweaks.StorageTweaks
 {
 	static class Utils
 	{
+		public record ItemCount(TechType techType, int count)
+		{
+			public string name => Language.main.Get(techType);
+		}
+
+		// return items in container ordered by descending count
+		public static List<ItemCount> getItems(ItemsContainer container)
+		{
+			return container._items.
+				Select(pair => new ItemCount(pair.Key, pair.Value.items.Count)).
+				OrderByDescending(item => item.count).
+				ToList();
+		}
+
 		public static string getPrefabClassId(MonoBehaviour cmp)
 		{
 			return cmp.GetComponentInParent<PrefabIdentifier>(true)?.ClassId ?? "";

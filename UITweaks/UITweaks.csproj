@@ -73,6 +73,7 @@
     <Compile Include="src\storage-tweaks\patches\StorageContentsInfoPatches.cs" />
     <Compile Include="src\storage-tweaks\StorageActions.cs" />
     <Compile Include="src\storage-tweaks\StorageContentsInfo.cs" />
+    <Compile Include="src\storage-tweaks\StorageContentsListener.cs" />
     <Compile Include="src\storage-tweaks\StorageHandlerProcessor.cs" />
     <Compile Include="src\storage-tweaks\StorageLabels.cs" />
     <Compile Include="src\storage-tweaks\Utils.cs" />

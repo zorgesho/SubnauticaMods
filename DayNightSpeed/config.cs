@@ -123,12 +123,12 @@ namespace DayNightSpeed
 				public static readonly string ids_tooltipTimePair  = "ingame <b>{0}</b> / realtime <b>{1}</b>";
 
 
-				const string tagsTitle = "<size=22><color=#ffffffff>";
+				const string tagsTitle = "<size=" + (Mod.Consts.isGameSN? "22": "19") + "><color=#ffffffff>";
 				const string tagsTitleEnd = "</color></size>";
 				const string tagsSubtitle = "<b><color=#ffffffff>";
 				const string tagsSubtitleEnd = "</color></b>";
-				const string tagsLine  = "<size=18><color=#dddedeff>";
-				const string tagsLineEnd   = "</color></size>";
+				const string tagsLine = "<size=" + (Mod.Consts.isGameSN? "18": "15") + "><color=#dddedeff>";
+				const string tagsLineEnd = "</color></size>";
 
 				static string title(string str) => $"{tagsTitle}{str}{tagsTitleEnd}{Environment.NewLine}";
 				static string subtitle(string str) => $"{tagsSubtitle}{str}: {tagsSubtitleEnd}";
@@ -223,15 +223,15 @@ namespace DayNightSpeed
 					line(subtitle("mushrooms") + "{0}") +
 					line(subtitle("marblemelon") + "{1}") +
 					line(subtitle("creepvine") + "{2}") +
-					line(subtitle("bulbo tree") + "{3}", true);
+					line(subtitle(Mod.Consts.isGameSN? "bulbo tree": "horseshoe shrub") + "{3}", true);
 			}
 
 			public class Plants: TooltipSpeed
 			{
-				const float growMushrooms = 400f;
+				const float growMushrooms = Mod.Consts.isGameSN? 400f: 600f;
 				const float growMelon     = 800f;
 				const float growCreepvine = 1200f;
-				const float growBulboTree = 1600f;
+				const float growBulboTreeOrShrub = Mod.Consts.isGameSN? 1600f: 2000f;
 
 				protected override bool needUpdate => isSpeedChanged(Main.config.speedPlantsGrow);
 
@@ -240,7 +240,7 @@ namespace DayNightSpeed
 						format(	getDuration(growMushrooms, Main.config.speedPlantsGrow),
 								getDuration(growMelon, Main.config.speedPlantsGrow),
 								getDuration(growCreepvine, Main.config.speedPlantsGrow),
-								getDuration(growBulboTree, Main.config.speedPlantsGrow));
+								getDuration(growBulboTreeOrShrub, Main.config.speedPlantsGrow));
 			}
 			#endregion
 

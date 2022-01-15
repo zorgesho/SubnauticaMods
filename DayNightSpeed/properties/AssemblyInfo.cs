@@ -3,8 +3,8 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("DayNightSpeed")]
 [assembly: AssemblyProduct("DayNightSpeed")]
-[assembly: AssemblyCopyright("© 2019-2021 zorgesho")]
+[assembly: AssemblyCopyright("© 2019-2022 zorgesho")]
 
 [assembly: ComVisible(false)]
 
-[assembly: AssemblyVersion("1.3.2.0")]
+[assembly: AssemblyVersion("1.3.3.0")]

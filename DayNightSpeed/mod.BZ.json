@@ -2,7 +2,7 @@
   "Id": "DayNightSpeed",
   "DisplayName": "Day/Night Speed",
   "Author": "zorgesho",
-  "Version": "1.3.2",
+  "Version": "1.3.3",
   "Dependencies": [ "SMLHelper" ],
   "VersionDependencies": { "SMLHelper": "2.6.0" },
   "Enable": true,

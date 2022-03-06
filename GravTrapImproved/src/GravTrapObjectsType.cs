@@ -121,8 +121,12 @@ namespace GravTrapImproved
 
 			if (obj.GetComponent<GasPod>() is GasPod gasPod)
 				return gasPod.detonated? TechType.None: TechType.GasPod;
+
+			if (obj.GetComponent<Pickupable>() is Pickupable P && P.overrideTechUsed && P.overrideTechType != TechType.None)
+				return P.overrideTechType;
+
 #endif
-			return CraftData.GetTechType(obj);
+				return CraftData.GetTechType(obj);
 		}
 
 		public bool isValidTarget(GameObject obj) // ! called on each frame for each attracted object

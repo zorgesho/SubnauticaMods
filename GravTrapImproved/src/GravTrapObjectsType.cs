@@ -88,25 +88,28 @@ namespace GravTrapImproved
 
 		public void handleAttracted(GameObject obj, bool added)
 		{
-			if (added && obj.GetComponent<Crash>() is Crash crash)
+			if (added)
 			{
-				crash.AttackLastTarget(); // if target object is CrashFish we want to pull it out
-			}
-			else
-			if (added && obj.GetComponent<SinkingGroundChunk>() is SinkingGroundChunk sgc)
-			{
-				Destroy(sgc);
+				if (obj.GetComponent<Crash>() is Crash crash)
+				{
+					crash.AttackLastTarget(); // if target object is CrashFish we want to pull it out
+				}
+				else if (obj.GetComponent<SinkingGroundChunk>() is SinkingGroundChunk sgc)
+				{
+					Destroy(sgc);
 
-				BoxCollider c = obj.AddComponent<BoxCollider>();
-				c.size = new Vector3(0.736f,0.51f,0.564f);
-				c.center = new Vector3(0.076f,0.224f,0.012f);
+					var c = obj.AddComponent<BoxCollider>();
+					c.size = new Vector3(0.736f, 0.51f, 0.564f);
+					c.center = new Vector3(0.076f, 0.224f, 0.012f);
 
-				obj.transform.Find("models").localPosition = Vector3.zero;
+					obj.transform.Find("models").localPosition = Vector3.zero;
+				}
 			}
 #if GAME_SN
 			if (GetComponent<GravTrapMK2.Tag>() && obj.GetComponent<GasPod>() is GasPod gasPod)
 			{
 				gasPod.grabbedByPropCannon = added;
+
 				if (!added)
 					gasPod.PrepareDetonationTime();
 			}

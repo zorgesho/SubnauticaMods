@@ -43,11 +43,22 @@ namespace GravTrapImproved
 			return CIHelper.constToCfgVar<sbyte, GravTrapMK2.Tag>(cins, 12, nameof(Main.config.mk2MaxObjects), ilg);
 		}
 
-		// patching max force applied to attracted objects
+		// patching max force applied to attracted objects and max mass for stable grav trap
 		[HarmonyTranspiler, HarmonyPatch(typeof(Gravsphere), "ApplyGravitation")]
-		static IEnumerable<CodeInstruction> patchMaxForce(IEnumerable<CodeInstruction> cins, ILGenerator ilg)
+		static IEnumerable<CodeInstruction> patchForces(IEnumerable<CodeInstruction> cins, ILGenerator ilg)
 		{
-			return CIHelper.constToCfgVar<float, GravTrapMK2.Tag>(cins, 15f, nameof(Main.config.mk2MaxForce), ilg);
+			var list = cins.ToList();
+
+			// first '15f' is max force, second '15f' is max mass for stable grav trap
+			int[] ii = list.ciFindIndexes(ci => ci.isLDC(15f), ci => ci.isLDC(15f));
+
+			void _toCfgVar(int? index, string varName) =>
+				list.ciReplace(index ?? -1, CIHelper._codeForCfgVar<float, GravTrapMK2.Tag>(15f, varName, ilg));
+
+			_toCfgVar(ii?[1], nameof(Main.config.mk2MaxMassStable));
+			_toCfgVar(ii?[0], nameof(Main.config.mk2MaxForce));
+
+			return list;
 		}
 
 

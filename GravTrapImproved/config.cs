@@ -45,6 +45,11 @@ namespace GravTrapImproved
 		[Field.BindConsole("gt_mk2")]
 		[Field.Action(typeof(GravTrapMK2Patches.UpdateRanges))]
 		public readonly float mk2Range = 30f; // default: 17f
+
+		[Field.Range(min: 15)]
+		[Field.BindConsole("gt_mk2")]
+		public readonly float mk2MaxMassStable = 150f; // default: 15f
+
 #if GAME_SN
 		public readonly float treaderChunkSpawnFactor = 1f;
 #endif

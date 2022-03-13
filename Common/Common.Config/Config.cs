@@ -8,6 +8,7 @@ namespace Common.Configuration
 		public const string defaultName = "config.json";
 
 		public static Config main { get; private set; }
+		public static string lastError { get; private set; }
 
 		[Flags]
 		public enum LoadOptions
@@ -20,14 +21,13 @@ namespace Common.Configuration
 			Default = ProcessAttributes | MainConfig
 		}
 
-		const bool ignoreExistingFile = // can be overrided by LoadOptions.ForcedLoad
+		const bool ignoreExistingFile = // can be overridden by LoadOptions.ForcedLoad
 #if DEBUG && !LOAD_CONFIG
 			true;
 #else
 			false;
 #endif
-		public static string lastError { get; private set; }
-
+		bool readOnly;
 		public string configPath { get; private set; }
 
 		protected virtual void onLoad() {} // called immediately after config loading/creating
@@ -56,13 +56,12 @@ namespace Common.Configuration
 
 				config = createDefault? Activator.CreateInstance(configType) as Config: deserialize(File.ReadAllText(configPath), configType);
 				config.onLoad();
+				config.configPath = configPath;
+				config.readOnly = loadOptions.HasFlag(LoadOptions.ReadOnly);
 
 				// saving config even if we just loaded it to update it in case of added or removed fields
-				if (createDefault || !loadOptions.HasFlag(LoadOptions.ReadOnly))
+				if (createDefault || !config.readOnly)
 					config.save(configPath);
-
-				if (!loadOptions.HasFlag(LoadOptions.ReadOnly))
-					config.configPath = configPath;
 
 				if (loadOptions.HasFlag(LoadOptions.MainConfig))
 				{																				"Config.main is already set!".logDbgError(main != null);
@@ -83,9 +82,12 @@ namespace Common.Configuration
 			return config;
 		}
 
-		public void save(string savePath = null)
+		public void save(string path = null)
 		{
-			if ((savePath ?? configPath) is not string path)
+			if (!readOnly)
+				path ??= configPath;
+
+			if (path == null)
 				return;
 
 			try { File.WriteAllText(path, serialize()); }

@@ -16,7 +16,8 @@ namespace GravTrapImproved
 			HarmonyHelper.patchAll(true);
 			CraftHelper.patchAll();
 
-			GravTrapObjectsType.init(Mod.loadConfig<TypesConfig>("types_config.json", Config.LoadOptions.ReadOnly));
+			var typesConfig = Mod.loadConfig<TypesConfig>("types_config.json", Config.LoadOptions.ReadOnly | Config.LoadOptions.ProcessAttributes);
+			GravTrapObjectsType.init(typesConfig);
 		}
 	}
 }

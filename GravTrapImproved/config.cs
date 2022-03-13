@@ -2,6 +2,7 @@
 
 using Common;
 using Common.Configuration;
+using Common.Configuration.Actions;
 
 namespace GravTrapImproved
 {
@@ -86,6 +87,9 @@ namespace GravTrapImproved
 			}
 		}
 
+		void reinit() => GravTrapObjectsType.init(this);
+
+		[NoInnerFieldsAttrProcessing]
 		public readonly List<string> noJoin = new()
 		{
 #if DEBUG
@@ -93,6 +97,8 @@ namespace GravTrapImproved
 #endif
 		};
 
+		[Field.Reloadable, NoInnerFieldsAttrProcessing]
+		[Field.Action(typeof(CallMethod), nameof(reinit))]
 		public readonly List<TechTypeList> techTypeLists = new() // from GravSphere.allowedTechTypes[]
 		{
 			new

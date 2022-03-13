@@ -2,9 +2,11 @@
 using System.Linq;
 using System.Reflection;
 using System.Collections;
+using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 namespace Common
 {
@@ -143,6 +145,20 @@ namespace Common
 			return obj;
 		}
 
+		// includes inactive objects
+		// for use in non-performance critical code
+		public static List<T> FindObjectsOfTypeAll<T>() where T: Behaviour
+		{
+			var list = Enumerable.Range(0, SceneManager.sceneCount).
+				Select(i => SceneManager.GetSceneAt(i)).
+				Where(s => s.isLoaded).
+				SelectMany(s => s.GetRootGameObjects()).
+				SelectMany(go => go.GetComponentsInChildren<T>(true)).
+				ToList();
+
+			$"FindObjectsOfTypeAll({typeof(T)}) result => all: {list.Count}, active: {list.Where(c => c.isActiveAndEnabled).Count()}".logDbg();
+			return list;
+		}
 
 		// using reflection to avoid including UnityEngine.UI in all projects
 		static readonly Type eventSystem = Type.GetType("UnityEngine.EventSystems.EventSystem, UnityEngine.UI");

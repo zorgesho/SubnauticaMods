@@ -15,6 +15,8 @@ namespace GravTrapImproved
 			static List<TypesConfig.TechTypeList> typeLists;
 
 			public static string getListName(int index) => typeLists[index].name;
+			public static int getListIndex(string name) => typeLists.FindIndex(list => list.name == name);
+
 			public static bool contains(int index, TechType techType) => typeLists[index].contains(techType);
 			public static void init(TypesConfig typesConfig)
 			{
@@ -30,12 +32,19 @@ namespace GravTrapImproved
 
 					L10n.add(typeLists[i].name, typeLists[i].name);
 				}
+
+				// can't use events for that
+				UnityHelper.FindObjectsOfTypeAll<GravTrapObjectsType>().forEach(cmp => cmp.refreshIndex());
 			}
 		}
 
 		public static void init(TypesConfig typesConfig) => Types.init(typesConfig);
 
-		class SaveData { public int trapObjType; }
+		class SaveData
+		{
+			public int trapObjType { get; init; }
+			public string trapObjTypeListName { get; init; }
+		}
 		string id;
 
 		public int techTypeListIndex
@@ -51,7 +60,8 @@ namespace GravTrapImproved
 			{
 				if (_cachedIndex != techTypeListIndex)
 				{
-					_cachedGUIString = L10n.str("ids_objectsType") + L10n.str(Types.getListName(techTypeListIndex));
+					listName = Types.getListName(techTypeListIndex);
+					_cachedGUIString = L10n.str("ids_objectsType") + L10n.str(listName);
 					_cachedIndex = techTypeListIndex;
 				}
 
@@ -61,11 +71,35 @@ namespace GravTrapImproved
 		int _cachedIndex = -1;
 		string _cachedGUIString = null;
 
-		public void OnProtoDeserialize(ProtobufSerializer serializer) =>
-			techTypeListIndex = Mathf.Min(Types.listCount, SaveLoad.load<SaveData>(id)?.trapObjType ?? 0);
+		string listName = null; // for restoring selected list in case of changes
 
-		public void OnProtoSerialize(ProtobufSerializer serializer) =>
-			SaveLoad.save(id, new SaveData { trapObjType = techTypeListIndex });
+		int restoreIndex(string listName, int listIndex)
+		{
+			// trying name first
+			int index = Types.getListIndex(listName);
+
+			// if list not found by name, try to use index
+			return index != -1? index: Mathf.Min(Types.listCount, listIndex);
+		}
+
+		void refreshIndex()
+		{
+			techTypeListIndex = restoreIndex(listName, techTypeListIndex);
+			_cachedIndex = -1;
+		}
+
+		public void OnProtoDeserialize(ProtobufSerializer serializer)
+		{
+			if (SaveLoad.load<SaveData>(id) is SaveData save)
+				techTypeListIndex = restoreIndex(save.trapObjTypeListName, save.trapObjType);
+			else
+				techTypeListIndex = 0;
+		}
+
+		public void OnProtoSerialize(ProtobufSerializer serializer)
+		{
+			SaveLoad.save(id, new SaveData { trapObjType = techTypeListIndex, trapObjTypeListName = Types.getListName(techTypeListIndex) });
+		}
 
 		// we may add this component while gameobject is inactive (while in inventory) and Awake for it is not called
 		// so we need initialize it that way

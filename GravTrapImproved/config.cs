@@ -267,10 +267,14 @@ namespace GravTrapImproved
 				TechType.TrivalveYellowEgg,
 				TechType.TrivalveYellowEggUndiscovered,
 #endif
+#if GAME_BZ
 #pragma warning disable CS0612 // for some reason it's marked obsolete in BZ
+#endif
 				TechType.CrashEgg,
 				TechType.CrashEggUndiscovered
+#if GAME_BZ
 #pragma warning restore CS0612
+#endif
 			),
 #if DEBUG
 			new

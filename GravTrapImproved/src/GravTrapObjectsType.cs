@@ -124,13 +124,13 @@ namespace GravTrapImproved
 		{
 			if (added)
 			{
-				if (obj.GetComponent<Crash>() is Crash crash)
+				if (obj.TryGetComponent<Crash>(out var crash))
 				{
 					crash.AttackLastTarget(); // if target object is CrashFish we want to pull it out
 				}
-				else if (obj.GetComponent<SinkingGroundChunk>() is SinkingGroundChunk sgc)
+				else if (obj.TryGetComponent<SinkingGroundChunk>(out var chunk))
 				{
-					Destroy(sgc);
+					Destroy(chunk);
 
 					var c = obj.AddComponent<BoxCollider>();
 					c.size = new Vector3(0.736f, 0.51f, 0.564f);
@@ -140,7 +140,7 @@ namespace GravTrapImproved
 				}
 			}
 #if GAME_SN
-			if (GetComponent<GravTrapMK2.Tag>() && obj.GetComponent<GasPod>() is GasPod gasPod)
+			if (GetComponent<GravTrapMK2.Tag>() && obj.TryGetComponent<GasPod>(out var gasPod))
 			{
 				gasPod.grabbedByPropCannon = added;
 
@@ -156,7 +156,7 @@ namespace GravTrapImproved
 			if (obj.GetComponentInParent<SinkingGroundChunk>() || obj.name.Contains("TreaderShale"))
 				return TechType.ShaleChunk;
 
-			if (obj.GetComponent<GasPod>() is GasPod gasPod)
+			if (obj.TryGetComponent<GasPod>(out var gasPod))
 				return gasPod.detonated? TechType.None: TechType.GasPod;
 #endif
 			return CraftData.GetTechType(obj);

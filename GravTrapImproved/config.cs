@@ -167,6 +167,7 @@ namespace GravTrapImproved
 				TechType.BreakableLead,
 				TechType.BreakableSilver,
 #endif
+				TechType.JeweledDiskPiece,
 				TechType.Aerogel,
 				TechType.AluminumOxide,
 				TechType.AramidFibers,

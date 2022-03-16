@@ -138,6 +138,19 @@ namespace GravTrapImproved
 
 					obj.transform.Find("models").localPosition = Vector3.zero;
 				}
+#if GAME_SN
+				else if (obj.GetComponent<Pickupable>()?.GetTechType() == TechType.JeweledDiskPiece)
+				{
+					var rb = obj.GetComponent<Rigidbody>();
+					rb.mass = 1f;
+					rb.useGravity = false;
+
+					if (obj.TryGetComponent<Exploder.Fragment>(out var f))
+						f.maxVelocity = 10f;
+
+					obj.ensureComponent<WorldForces>();
+				}
+#endif
 			}
 #if GAME_SN
 			if (GetComponent<GravTrapMK2.Tag>() && obj.TryGetComponent<GasPod>(out var gasPod))
@@ -159,6 +172,9 @@ namespace GravTrapImproved
 			if (obj.TryGetComponent<GasPod>(out var gasPod))
 				return gasPod.detonated? TechType.None: TechType.GasPod;
 #endif
+			if (obj.TryGetComponent<Pickupable>(out var p))
+				return p.GetTechType();
+
 			return CraftData.GetTechType(obj);
 		}
 

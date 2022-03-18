@@ -20,7 +20,7 @@ namespace GravTrapImproved
 				if (!techType.isGravTrap())
 					return;
 
-				if (Main.config.useWheelScroll && InputHelper.getMouseWheelValue() != 0f) // not exactly right to do it here, but I didn't find a better way
+				if (InputHelper.getMouseWheelValue() != 0f) // not exactly right to do it here, but I didn't find a better way
 					GravTrapObjectsType.getFrom(obj).techTypeListIndex += InputHelper.getMouseWheelDir();
 
 				TooltipFactory.WriteDescription(sb, GravTrapObjectsType.getFrom(obj).techTypeListName);
@@ -30,28 +30,12 @@ namespace GravTrapImproved
 		[HarmonyPatch(typeof(TooltipFactory), "ItemActions")]
 		static class TooltipFactory_ItemActions_Patch
 		{
-			static readonly string buttons = (Main.config.useWheelClick? Strings.Mouse.middleButton: "") +
-											((Main.config.useWheelClick && Main.config.useWheelScroll)? L10n.str("ids_or"): "") +
-											 (Main.config.useWheelScroll? (Strings.Mouse.scrollUp + "/" + Strings.Mouse.scrollDown): "");
-
-			static bool Prepare() => Main.config.useWheelClick || Main.config.useWheelScroll; // just in case
+			static readonly string buttons = Strings.Mouse.scrollUp + "/" + Strings.Mouse.scrollDown;
 
 			static void Postfix(StringBuilder sb, InventoryItem item)
 			{
 				if (item.item.GetTechType().isGravTrap())
 					TooltipFactory.WriteAction(sb, buttons, L10n.str("ids_switchObjectsType"));
-			}
-		}
-
-		[HarmonyPatch(typeof(uGUI_InventoryTab), "OnPointerClick")]
-		static class uGUIInventoryTab_OnPointerClick_Patch
-		{
-			static bool Prepare() => Main.config.useWheelClick;
-
-			static void Postfix(InventoryItem item, int button)
-			{
-				if (button == 2 && item.item.GetTechType().isGravTrap())
-					GravTrapObjectsType.getFrom(item.item.gameObject).techTypeListIndex++;
 			}
 		}
 

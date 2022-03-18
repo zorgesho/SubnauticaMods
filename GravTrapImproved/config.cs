@@ -8,9 +8,6 @@ namespace GravTrapImproved
 {
 	class ModConfig: Config
 	{
-		public readonly bool useWheelScroll = true;
-		public readonly bool useWheelClick = false;
-
 #if DEBUG
 		[Field.BindConsole("gt_mk2")]
 #endif
@@ -67,7 +64,6 @@ namespace GravTrapImproved
 
 		public static readonly string ids_objectsType = "Objects type: ";
 		public static readonly string ids_switchObjectsType = "switch objects type";
-		public static readonly string ids_or = " or ";
 
 		public static readonly string ids_All = "All";
 	}

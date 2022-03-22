@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
+using System.Collections.Generic;
 
 using UnityEngine;
 
@@ -22,7 +23,7 @@ namespace GravTrapImproved
 			{
 				listCount = typesConfig.techTypeLists.Count;
 
-				typeLists = typesConfig.techTypeLists;
+				typeLists = typesConfig.techTypeLists.Select(list => new TypesConfig.TechTypeList(list)).ToList();
 				typeLists.Insert(0, new TypesConfig.TechTypeList("ids_All"));
 
 				for (int i = 1; i <= listCount; i++)

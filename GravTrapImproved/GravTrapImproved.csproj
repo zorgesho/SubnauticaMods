@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="config.cs" />
+    <Compile Include="src\ConsoleCommands.cs" />
     <Compile Include="src\GravTrapMK2.cs" />
     <Compile Include="src\GravTrapObjectsType.cs" />
     <Compile Include="main.cs" />

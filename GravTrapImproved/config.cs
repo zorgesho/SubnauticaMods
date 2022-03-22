@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
+using System.Collections.Generic;
 
 using Common;
 using Common.Configuration;
@@ -68,7 +69,7 @@ namespace GravTrapImproved
 		public static readonly string ids_All = "All";
 	}
 
-
+	[SerializerSettings(verboseErrors = true)]
 	class TypesConfig: Config
 	{
 		public class TechTypeList
@@ -76,19 +77,26 @@ namespace GravTrapImproved
 			public readonly string name;
 			readonly HashSet<TechType> techTypes;
 
+			public bool add(TechType techType) => techTypes.Add(techType);
+			public bool remove(TechType techType) => techTypes.Remove(techType);
+
 			public void add(TechTypeList list) => add(list.techTypes);
 			public void add(IEnumerable<TechType> list) => techTypes.AddRange(list);
 
 			public bool contains(TechType techType) => techTypes.Contains(techType);
+
+			TechTypeList() {} // needed for serialization
 
 			public TechTypeList(string name, params TechType[] techTypes)
 			{
 				this.name = name;
 				this.techTypes = new HashSet<TechType>(techTypes);
 			}
+
+			public TechTypeList(TechTypeList list): this(list.name, list.techTypes.ToArray()) {}
 		}
 
-		void reinit() => GravTrapObjectsType.init(this);
+		public void reinit() => GravTrapObjectsType.init(this);
 
 		[NoInnerFieldsAttrProcessing]
 		public readonly List<string> noJoin = new()

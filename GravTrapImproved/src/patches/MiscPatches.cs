@@ -1,4 +1,7 @@
 ﻿using HarmonyLib;
+using UnityEngine;
+
+using Common;
 
 namespace GravTrapImproved
 {
@@ -9,7 +12,7 @@ namespace GravTrapImproved
 	{
 		static bool Prepare() => Main.config.treaderChunkSpawnFactor != 1f;
 
-		static bool Prefix() => UnityEngine.Random.value <= Main.config.treaderChunkSpawnFactor;
+		static bool Prefix() => Random.value <= Main.config.treaderChunkSpawnFactor;
 	}
 #endif
 	// change grav trap cell level
@@ -29,5 +32,18 @@ namespace GravTrapImproved
 		static bool Prepare() => !Main.config.raysVisible;
 
 		static void Postfix(Gravsphere __instance) => __instance.effects.ForEach(ray => ray.Value.enabled = false);
+	}
+
+	// sometimes gravtrap can lose creatures inside working range
+	[HarmonyPatch(typeof(Gravsphere), "OnTriggerExit")]
+	static class Gravsphere_OnTriggerExit_Patch
+	{
+		static bool Prefix(Gravsphere __instance, Collider collider)
+		{
+			float range = __instance.GetComponent<GravTrapMK2.Tag>()? Main.config.mk2Range: 17f;
+			float distSqr = (__instance.transform.position - collider.transform.position).sqrMagnitude;									$"Gravsphere_OnTriggerExit_Patch: object: {collider.name} distance: {Mathf.Sqrt(distSqr)}".logDbg();
+
+			return distSqr > range * range;
+		}
 	}
 }

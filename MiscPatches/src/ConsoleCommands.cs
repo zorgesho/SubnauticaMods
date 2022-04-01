@@ -78,6 +78,23 @@ namespace MiscPatches
 			GC.Collect();
 		}
 
+		public void frame_delay(int delayMs = 0)
+		{
+			StopAllCoroutines();
+
+			if (delayMs > 0)
+				StartCoroutine(_delay());
+
+			IEnumerator _delay()
+			{
+				while (true)
+				{
+					System.Threading.Thread.Sleep(delayMs);
+					yield return null;
+				}
+			}
+		}
+
 		public void spawnresource(string prefab)
 		{
 			// if parameter is prefabID

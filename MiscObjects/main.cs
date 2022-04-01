@@ -10,7 +10,7 @@ namespace MiscObjects
 
 		public static void patch()
 		{
-			HarmonyHelper.patchAll();
+			HarmonyHelper.patchAll(true);
 			CraftHelper.patchAll();
 
 			LanguageHelper.init();

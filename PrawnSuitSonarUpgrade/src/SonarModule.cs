@@ -23,7 +23,7 @@ namespace PrawnSuitSonarUpgrade
 
 		public override void patch()
 		{
-			TechType = register("Prawn suit sonar", Mod.Consts.isGameSN? "Seamoth sonar modified to use on prawn suit.": "Prawn suit sonar (TODO)");
+			TechType = register("Prawn suit sonar", Mod.Consts.isGameSN? "Seamoth sonar modified to use on prawn suit.": "Prawn suit sonar");
 #if GAME_SN
 			addToGroup(TechGroup.Workbench, TechCategory.Workbench);
 			addCraftingNodeTo(CraftTree.Type.Workbench, "ExosuitMenu");
@@ -31,7 +31,7 @@ namespace PrawnSuitSonarUpgrade
 #elif GAME_BZ
 			addToGroup(TechGroup.VehicleUpgrades, TechCategory.VehicleUpgrades, TechType.ExosuitJetUpgradeModule);
 			addCraftingNodeTo(CraftTree.Type.Fabricator, "Upgrades/ExosuitUpgrades", TechType.ExosuitJetUpgradeModule);
-			unlockOnStart(); // TODO
+			unlockOnStart();
 #endif
 			setEquipmentType(EquipmentType.ExosuitModule, QuickSlotType.SelectableChargeable);
 		}

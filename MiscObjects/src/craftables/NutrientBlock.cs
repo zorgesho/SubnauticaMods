@@ -13,7 +13,7 @@ namespace MiscObjects
 			new (TechType.CuredPeeper),
 			new (TechType.CuredReginald),
 #elif GAME_BZ
-			new (TechType.CuredArcticPeeper, 2), // TODO: ingredients?
+			new (TechType.CuredArcticPeeper, 2),
 			new (TechType.SmallMaroonPlantFruit),
 #endif
 			new (TechType.PurpleVegetable, 2),

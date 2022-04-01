@@ -44,7 +44,7 @@ namespace MiscObjects
 			Utils.addStorageToPrefab(prefab, prefabs[1]);
 			PrefabUtils.initStorage(prefab, 8, 8, L10n.str(L10n.ids_OpenBox), L10n.str(L10n.ids_BoxInv));
 #if GAME_SN
-			prefab.GetComponent<StorageContainer>().modelSizeRadius *= 3f; // TODO: ???
+			prefab.GetComponent<StorageContainer>().modelSizeRadius *= 3f;
 #endif
 			return prefab;
 		}

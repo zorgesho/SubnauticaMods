@@ -1,6 +1,8 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
 
+using UnityEngine;
+
 using Common;
 using Common.Configuration;
 using Common.Configuration.Actions;
@@ -9,6 +11,11 @@ namespace GravTrapImproved
 {
 	class ModConfig: Config
 	{
+		public readonly bool useWheelClick = false;
+
+		public readonly KeyCode keyNext = KeyCode.None;
+		public readonly KeyCode keyPrev = KeyCode.None;
+
 #if DEBUG
 		[Field.BindConsole("gt_mk2")]
 #endif

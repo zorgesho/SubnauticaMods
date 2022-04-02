@@ -10,6 +10,31 @@ namespace GravTrapImproved
 {
 	static class GUIPatches
 	{
+		static class TypeListSwitcher
+		{
+			static readonly bool useKeys = Main.config.keyNext != KeyCode.None && Main.config.keyPrev != KeyCode.None;
+
+			public static string getActionString()
+			{
+				if (Main.config.useWheelClick)
+					return Strings.Mouse.middleButton;
+				else if (useKeys)
+					return $"{Main.config.keyNext}/{Main.config.keyPrev}";
+				else
+					return $"{Strings.Mouse.scrollUp}/{Strings.Mouse.scrollDown}";
+			}
+
+			public static int getChangeListDir()
+			{
+				if (Main.config.useWheelClick)
+					return Input.GetKeyDown(KeyCode.Mouse2)? 1: 0;
+				else if (useKeys)
+					return Input.GetKeyDown(Main.config.keyNext)? 1: (Input.GetKeyDown(Main.config.keyPrev)? -1: 0);
+				else
+					return InputHelper.getMouseWheelDir();
+			}
+		}
+
 		static bool isGravTrap(this TechType techType) => techType == TechType.Gravsphere || techType == GravTrapMK2.TechType;
 
 		[HarmonyPatch(typeof(TooltipFactory), "ItemCommons")]
@@ -20,17 +45,16 @@ namespace GravTrapImproved
 				if (!techType.isGravTrap())
 					return;
 
-				if (InputHelper.getMouseWheelValue() != 0f) // not exactly right to do it here, but I didn't find a better way
-					GravTrapObjectsType.getFrom(obj).techTypeListIndex += InputHelper.getMouseWheelDir();
-
-				TooltipFactory.WriteDescription(sb, GravTrapObjectsType.getFrom(obj).techTypeListName);
+				var objectsType = GravTrapObjectsType.getFrom(obj);
+				objectsType.techTypeListIndex += TypeListSwitcher.getChangeListDir();
+				TooltipFactory.WriteDescription(sb, objectsType.techTypeListName);
 			}
 		}
 
 		[HarmonyPatch(typeof(TooltipFactory), "ItemActions")]
 		static class TooltipFactory_ItemActions_Patch
 		{
-			static readonly string buttons = Strings.Mouse.scrollUp + "/" + Strings.Mouse.scrollDown;
+			static readonly string buttons = TypeListSwitcher.getActionString();
 
 			static void Postfix(StringBuilder sb, InventoryItem item)
 			{

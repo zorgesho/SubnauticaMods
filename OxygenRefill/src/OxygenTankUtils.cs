@@ -1,9 +1,14 @@
-﻿using Common;
+﻿using System.Linq;
+using System.Collections.Generic;
+
+using Common;
 
 namespace OxygenRefill
 {
 	static class OxygenTankUtils
 	{
+		static readonly List<TechType> tankTechTypes = Main.config.tankCapacities.Keys.ToList();
+
 		public static bool isTankFull(Pickupable tank)
 		{
 			var oxygen = tank.GetComponent<Oxygen>();
@@ -21,8 +26,7 @@ namespace OxygenRefill
 			return tankItem?.item.GetTechType() == tankType && !isTankFull(tankItem.item);
 		}
 
-		public static bool isTankTechType(TechType techType) =>
-			techType == TechType.Tank || techType == TechType.DoubleTank || techType == TechType.PlasteelTank || techType == TechType.HighCapacityTank;
+		public static bool isTankTechType(TechType techType) => tankTechTypes.Contains(techType);
 
 		public static void toggleTankUsage()
 		{

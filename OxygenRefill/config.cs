@@ -18,6 +18,9 @@ namespace OxygenRefill
 			{TechType.DoubleTank,		400f},
 			{TechType.PlasteelTank,		400f},
 			{TechType.HighCapacityTank, 800f},
+#if GAME_BZ
+			{TechType.SuitBoosterTank,	400f},
+#endif
 		};
 
 		public float getTankCapacity(GameObject tank) =>

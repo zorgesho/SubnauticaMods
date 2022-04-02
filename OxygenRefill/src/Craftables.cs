@@ -97,4 +97,7 @@ namespace OxygenRefill
 	class T2: TankRefill { public T2(): base(TechType.DoubleTank, 10f) {} }
 	class T3: TankRefill { public T3(): base(TechType.PlasteelTank, 10f) {} }
 	class T4: TankRefill { public T4(): base(TechType.HighCapacityTank, 15f) {} }
+#if GAME_BZ
+	class T5: TankRefill { public T5(): base(TechType.SuitBoosterTank, 10f) {} }
+#endif
 }

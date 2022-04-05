@@ -98,6 +98,7 @@ namespace UITweaks
 
 			[Options.Field("Storage tweaks")] // TODO tooltip ?
 			[Field.Action(typeof(Hider))]
+			[Options.FinalizeAction(typeof(StorageAutoname.UpdateLabels))]
 			[Options.FinalizeAction(typeof(StorageActions.UpdateStorages))]
 			[Options.Hideable(typeof(Options.Components.Hider.Ignore), "")]
 			public readonly bool enabled = true;
@@ -120,6 +121,10 @@ namespace UITweaks
 			[Options.Hideable(typeof(ContentsInfoTweakHider), "storage")]
 			[Options.FinalizeAction(typeof(StorageContentsInfo.InvalidateCache))]
 			public readonly bool showSlotsInfo = true;
+
+			[Options.Field("\tStorage auto-naming", "TODO")] // TODO tooltip
+			[Options.FinalizeAction(typeof(StorageAutoname.UpdateLabels))]
+			public readonly bool autoname = true;
 		}
 		public readonly StorageTweaks storageTweaks = new();
 

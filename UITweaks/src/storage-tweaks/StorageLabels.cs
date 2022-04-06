@@ -6,14 +6,20 @@ namespace UITweaks.StorageTweaks
 	interface IStorageLabel
 	{
 		ColoredLabel label { get; }
+		StorageContainer owner { get; }
 	}
 
 	static class StorageLabels
 	{
+		public static IStorageLabel[] allLabels => Object.FindObjectsOfType<StorageLabel>();
+
 		abstract class StorageLabel: MonoBehaviour, IStorageLabel
 		{
 			public ColoredLabel label => _label ??= initLabel();
 			ColoredLabel _label;
+
+			public StorageContainer owner => _owner ??= gameObject.GetComponent<StorageContainer>();
+			StorageContainer _owner;
 
 			protected abstract ColoredLabel initLabel();
 		}

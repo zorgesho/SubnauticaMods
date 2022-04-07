@@ -132,7 +132,7 @@ namespace Common
 	static class UnityHelper
 	{
 		public static GameObject createPersistentGameObject(string name)
-		{
+		{																													$"UnityHelper.createPersistentGameObject: creating '{name}'".logDbg();
 			GameObject obj = new (name, typeof(SceneCleanerPreserve));
 			Object.DontDestroyOnLoad(obj);
 			return obj;
@@ -143,6 +143,14 @@ namespace Common
 			var obj = createPersistentGameObject(name);
 			obj.AddComponent<C>();
 			return obj;
+		}
+
+		class CoroutineHost: MonoBehaviour { public static CoroutineHost main; }
+
+		public static Coroutine startCoroutine(IEnumerator coroutine)
+		{
+			CoroutineHost.main ??= createPersistentGameObject("CoroutineHost").AddComponent<CoroutineHost>();
+			return CoroutineHost.main.StartCoroutine(coroutine);
 		}
 
 		// includes inactive objects

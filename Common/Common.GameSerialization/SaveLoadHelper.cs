@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections;
+
+using UnityEngine;
 
 namespace Common.GameSerialization
 {
@@ -7,10 +10,10 @@ namespace Common.GameSerialization
 		bool handledLoad, handledSave;
 		readonly Action onLoad, onSave;
 
-		public SaveLoadHelper(Action _onLoad, Action _onSave)
+		public SaveLoadHelper(Action onLoad, Action onSave)
 		{
-			onLoad = _onLoad;
-			onSave = _onSave;
+			this.onLoad = onLoad;
+			this.onSave = onSave;
 		}
 
 		public void update()
@@ -20,25 +23,34 @@ namespace Common.GameSerialization
 
 			if (onLoad != null)
 			{
-				if (!SaveLoadManager.main.isLoading)
-					handledLoad = false;
-				else
-				if (!handledLoad)
+				if (SaveLoadManager.main.isLoading && !handledLoad)
 				{
 					handledLoad = true;
+					UnityHelper.startCoroutine(_load());
+				}
+
+				IEnumerator _load()
+				{																							"SaveLoadHelper: load coroutine started".logDbg();
+					// wait while files are copied from the save slot to the temporary path
+					yield return new WaitWhile(() => SaveLoadManager.main.isLoading);
 
 					if (!SaveLoadManager.GetTemporarySavePath().isNullOrEmpty())
+					{																						"SaveLoadHelper: onLoad".logDbg();
 						onLoad();
+					}
+
+					handledLoad = false;
 				}
 			}
 
 			if (onSave != null)
 			{
 				if (!SaveLoadManager.main.isSaving)
-					handledSave = false;
-				else
-				if (!handledSave)
 				{
+					handledSave = false;
+				}
+				else if (!handledSave)
+				{																							"SaveLoadHelper: onSave".logDbg();
 					handledSave = true;
 					onSave();
 				}

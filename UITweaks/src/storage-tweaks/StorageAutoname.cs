@@ -1,4 +1,8 @@
-﻿using System.Collections.Generic;
+﻿#if DEBUG
+//#define LABEL_TEST
+#endif
+
+using System.Collections.Generic;
 
 using Common;
 using Common.Configuration;
@@ -42,7 +46,18 @@ namespace UITweaks.StorageTweaks
 		string storageID;
 		uGUI_SignInput sign;
 
-		string labelText => container.count == 0? Language.main.Get("Empty"): getItems()[0].name;
+		string labelText
+		{
+			get
+			{
+#if LABEL_TEST
+				return Utils.TechTypeNamesTest.getName();
+#else
+				return container.count == 0? Language.main.Get("Empty"): getItems()[0].name;
+#endif
+			}
+		}
+
 		bool shouldAutoname => sign.text == "" || sign.text == Language.main.Get(sign.stringDefaultLabel);
 
 		protected override void onContentsChanged()

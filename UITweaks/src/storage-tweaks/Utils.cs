@@ -9,10 +9,74 @@ using Common;
 using Common.Harmony;
 #endif
 
+#if DEBUG
+using System;
+using System.Linq;
+
+#if !GAME_SN
+using System.Collections.Generic;
+#endif
+#endif
+
 namespace UITweaks.StorageTweaks
 {
 	static class Utils
 	{
+#if DEBUG
+		public static class TechTypeNamesTest
+		{
+			static readonly bool useTestString = true;
+			static readonly bool useAllLanguages = true;
+
+			const string testString = "123456789012345678901234567890123456789012345678901234567890";
+
+			static int nameIndex = 0;
+			static List<string> techTypeNames;
+
+			static IEnumerable<string> getTechTypeNames() =>
+				Enum.GetValues(typeof(TechType)).OfType<TechType>().Select(Language.main.Get);
+
+			static void init()
+			{
+				if (techTypeNames != null)
+					return;
+
+				if (useAllLanguages)
+				{
+					techTypeNames = new();
+
+					foreach (var lang in Language.main.GetLanguages())
+					{
+						try { Language.main.SetCurrentLanguage(lang); }
+						catch (Exception) {}
+
+						techTypeNames.AddRange(getTechTypeNames());
+					}
+
+					Language.main.SetCurrentLanguage("English");
+				}
+				else
+				{
+					techTypeNames = getTechTypeNames().ToList();
+				}
+
+				techTypeNames.Sort((str1, str2) => str2.Length - str1.Length);
+			}
+
+			public static string getName()
+			{
+				if (useTestString)
+					return testString;
+
+				init();
+
+				if (nameIndex >= techTypeNames.Count)
+					nameIndex = -1;
+
+				return techTypeNames[nameIndex++];
+			}
+		}
+#endif
 		public static string getPrefabClassId(MonoBehaviour cmp)
 		{
 			return cmp.GetComponentInParent<PrefabIdentifier>(true)?.ClassId ?? "";

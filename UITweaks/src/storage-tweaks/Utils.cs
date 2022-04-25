@@ -101,6 +101,40 @@ namespace UITweaks.StorageTweaks
 			return size.x * size.y;
 		}
 
+#if GAME_SN
+		public static int getLineCount(this UnityEngine.UI.Text text) => text.cachedTextGenerator.lineCount;
+		public static int getFirstCharIndexAtLine(this UnityEngine.UI.Text text, int line) => text.cachedTextGenerator.GetLinesArray()[line].startCharIdx;
+
+		public static void forceRedraw(this UnityEngine.UI.Text text, string str)
+		{
+			var rt = text.transform as RectTransform;
+			text.cachedTextGenerator.Populate(str, text.GetGenerationSettings(rt.rect.size));
+		}
+#elif GAME_BZ
+		public static int getLineCount(this TMPro.TMP_Text text)
+		{
+			int lineCount = text.textInfo.lineCount;
+
+			// another bug in TMP_Text
+			int strLen = text.text.Length;
+			if (strLen > 2 && (text.text[strLen - 1] == '\n' || text.text[strLen - 2] == '\n'))
+				lineCount--;
+
+			return lineCount;
+		}
+
+		public static int getFirstCharIndexAtLine(this TMPro.TMP_Text text, int line)
+		{
+			return text.textInfo.lineInfo[line].firstCharacterIndex;
+		}
+
+		public static void forceRedraw(this TMPro.TMP_Text text, string str)
+		{
+			text.text = str; // this actually sets text from the inputField, not 'str' for some reason
+			text.ForceMeshUpdate();
+		}
+#endif
+
 #if GAME_SN // code is copied from BZ with some modifications
 		static readonly Dictionary<GameInput.Button, string> bindingCache = new();
 		static readonly Dictionary<GameInput.Button, Dictionary<string, string>> textCache = new();

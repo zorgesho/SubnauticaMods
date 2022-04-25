@@ -49,11 +49,13 @@
     <Reference Include="System.Core" />
     <Reference Include="Unity.TextMeshPro" Condition="$(Configuration.Contains('BZ'))" />
     <Reference Include="UnityEngine" />
+    <Reference Include="UnityEngine.AnimationModule" />
     <Reference Include="UnityEngine.CoreModule" />
     <Reference Include="UnityEngine.InputLegacyModule" />
     <Reference Include="UnityEngine.PhysicsModule" />
     <Reference Include="UnityEngine.TextRenderingModule" />
     <Reference Include="UnityEngine.UI" />
+    <Reference Include="UnityEngine.UIModule" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="config.cs" />
@@ -78,6 +80,7 @@
     <Compile Include="src\storage-tweaks\StorageContentsInfo.cs" />
     <Compile Include="src\storage-tweaks\StorageContentsListener.cs" />
     <Compile Include="src\storage-tweaks\StorageHandlerProcessor.cs" />
+    <Compile Include="src\storage-tweaks\StorageLabelFixers.cs" />
     <Compile Include="src\storage-tweaks\StorageLabels.cs" />
     <Compile Include="src\storage-tweaks\Utils.cs" />
   </ItemGroup>

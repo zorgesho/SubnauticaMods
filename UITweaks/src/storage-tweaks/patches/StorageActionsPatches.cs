@@ -70,7 +70,7 @@ namespace UITweaks.StorageTweaks
 				[HarmonyPostfix, HarmonyPatch(typeof(ColoredLabel), "OnEnable")]
 				static void ColoredLabel_OnEnable_Postfix(ColoredLabel __instance)
 				{
-					if (StorageHandlerProcessor.haveHandlers(Utils.getPrefabClassId(__instance)))
+					if (StorageHandlerProcessor.hasHandlers(Utils.getPrefabClassId(__instance)))
 						setColliderEnabled(__instance, false);
 				}
 

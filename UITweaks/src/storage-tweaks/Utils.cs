@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
+using Common;
 
 #if GAME_SN
 using System.Collections.Generic;
 
 using HarmonyLib;
 
-using Common;
 using Common.Harmony;
 #endif
 
@@ -63,17 +63,19 @@ namespace UITweaks.StorageTweaks
 				techTypeNames.Sort((str1, str2) => str2.Length - str1.Length);
 			}
 
+			// reset index to 0 if 'offset' is 0
+			public static void changeIndex(int offset)
+			{
+				nameIndex = offset == 0? 0: MathUtils.mod(nameIndex + offset, techTypeNames.Count);
+			}
+
 			public static string getName()
 			{
 				if (useTestString)
 					return testString;
 
 				init();
-
-				if (nameIndex >= techTypeNames.Count)
-					nameIndex = -1;
-
-				return techTypeNames[nameIndex++];
+				return techTypeNames[nameIndex];
 			}
 		}
 #endif

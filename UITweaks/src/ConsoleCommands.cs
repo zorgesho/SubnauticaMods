@@ -28,6 +28,8 @@ namespace UITweaks
 			$"blueprintCount: {blueprintCount}".onScreen().logDbg();
 		}
 
+		public void ui_change_test_str_index(int offset) => StorageTweaks.Utils.TechTypeNamesTest.changeIndex(offset);
+
 		public void ui_dump_tooltip() => uGUI_Tooltip.main.gameObject?.dump("tooltip");
 
 		public void ui_tooltipclear() => uGUI_Tooltip.Clear();

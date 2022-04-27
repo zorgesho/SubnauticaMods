@@ -39,7 +39,7 @@ namespace UITweaks.StorageTweaks
 #endif
 			ToLookup(pair => pair.classId, pair => pair.type);
 
-		public static bool haveHandlers(string classId) => handlersByClassId.Contains(classId);
+		public static bool hasHandlers(string classId) => handlersByClassId.Contains(classId);
 
 		public static void ensureHandlers(StorageContainer container)
 		{

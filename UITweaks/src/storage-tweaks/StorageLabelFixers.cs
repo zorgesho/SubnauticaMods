@@ -21,12 +21,50 @@ namespace UITweaks.StorageTweaks
 			protected RectTransform textTransform;
 			protected uGUI_InputField inputField;
 
-			void valueListener(string _) => fixLabel();
+			protected IStorageLabelInfo labelInfo;
+
+			void valueListener(string _)
+			{
+				if (inputField.text.IndexOf('\n') != -1)
+				{																							"StorageLabelFixers.Fixer: removing new line from the input".logDbg();
+					inputField.text = inputField.text.Replace("\n", "");
+					return;
+				}
+
+				using var __ = Common.Debug.profiler("StorageLabelFixer");
+
+				fixLabel();
+				ensureMaxLineCount(labelInfo.maxLineCount);
+			}
+
 			protected abstract void fixLabel();
+
+			protected virtual void ensureMaxLineCount(int maxLineCount)
+			{
+#if GAME_SN
+				string str = inputField.text;
+
+				while (text.getLineCount() > maxLineCount)
+				{
+					str = str.Remove(str.Length - 1);
+					text.forceRedraw(str);
+				}
+
+				if (inputField.text.Length != str.Length)
+					inputField.text = str; // will call 'valueListener'
+#elif GAME_BZ
+				// SN approach doesn't work here because of the bug in TMP_Text (see 'Utils.forceRedraw')
+				// will remove entire last word instead of just extra chars
+				// also, can't use 'inputField.lineLimit', need more control over this
+				if (text.getLineCount() > maxLineCount)
+					inputField.text = text.text.Remove(text.getFirstCharIndexAtLine(maxLineCount));
+#endif
+			}
 
 			protected virtual void Start()
 			{
 				inputField = GetComponent<IStorageLabel>()?.label.signInput.inputField;
+				labelInfo = GetComponent<IStorageLabelInfo>();
 
 				if (!inputField)
 				{
@@ -37,10 +75,10 @@ namespace UITweaks.StorageTweaks
 				text = inputField.textComponent;
 				textTransform = text.transform as RectTransform;
 
-				inputField.characterLimit = 80;
+				inputField.characterLimit = labelInfo.maxCharCount;
 				text.GetComponent<ContentSizeFitter>().enabled = false;
 
-				RectTransformExtensions.SetSize(textTransform, textTransform.rect.width, 200f);
+				RectTransformExtensions.SetSize(textTransform, labelInfo.size.x, labelInfo.size.y);
 #if GAME_SN
 				text.alignment = TextAnchor.MiddleCenter;
 				inputField.lineType = InputField.LineType.MultiLineSubmit;
@@ -63,32 +101,8 @@ namespace UITweaks.StorageTweaks
 		{
 			protected override void fixLabel()
 			{
-				using var _ = Common.Debug.profiler("SmallLockerLabelFixer");
-
-				text.forceRedraw(inputField.text); // at this point text in 'text' component is not yet updated
-
-				int lineCount = text.getLineCount();
-				text.lineSpacing = lineCount > 3? (Mod.Consts.isGameSN? 0.7f: -35f): (Mod.Consts.isGameSN? 1f: 0f);
-
-				ensureMaxLineCount(4);
-			}
-
-			void ensureMaxLineCount(int maxLineCount)
-			{
-#if GAME_SN
-				int charsToRemove = 0;
-
-				while (text.getLineCount() > maxLineCount)
-					text.forceRedraw(text.text.Remove(text.text.Length - ++charsToRemove));
-
-				if (charsToRemove > 0)
-					inputField.text = text.text; // will call 'fixLabel'
-#elif GAME_BZ
-				// SN approach doesn't work here because of the bug in TMP_Text (see 'Utils.forceRedraw')
-				// will remove entire last word instead of just extra chars
-				if (text.getLineCount() > maxLineCount)
-					inputField.text = text.text.Remove(text.getFirstCharIndexAtLine(maxLineCount));
-#endif
+				text.forceRedraw(inputField.text);
+				text.lineSpacing = text.getLineCount() > 3? (Mod.Consts.isGameSN? 0.7f: -35f): (Mod.Consts.isGameSN? 1f: 0f);
 			}
 		}
 
@@ -96,34 +110,31 @@ namespace UITweaks.StorageTweaks
 		[StorageHandler(TechType.SmallStorage)]
 		class SmallStorageLabelFixer: Fixer
 		{
-			const float labelWidth = 270f;
-
 			protected override void fixLabel()
 			{
-				using var _ = Common.Debug.profiler("SmallStorageLabelFixer");
-
 				text.forceRedraw(inputField.text);
-
-				int lineCount = text.getLineCount();
-				textTransform.localScale = new (1.0f, lineCount > 2? 1.2f: 1.7f, 1f);
-
-				ensureMaxLineCount(3);
+				textTransform.localScale = new (1.0f, text.getLineCount() > 2? 1.2f: 1.7f, 1f);
 			}
 
-			void ensureMaxLineCount(int maxLineCount)
+			protected override void ensureMaxLineCount(int maxLineCount)
 			{
 				const int maxSteps = 10;
 				const float scaleStep = 0.05f;
 
-				RectTransformExtensions.SetSize(textTransform, labelWidth, textTransform.rect.height);
+				RectTransformExtensions.SetSize(textTransform, labelInfo.size.x, textTransform.rect.height);
 				text.forceRedraw(inputField.text);
 
+				// first, we'll try to make symbols narrower
 				for (int i = 0; text.getLineCount() > maxLineCount && i < maxSteps; i++)
 				{
 					textTransform.localScale = textTransform.localScale.setX(textTransform.localScale.x - scaleStep);
-					RectTransformExtensions.SetSize(textTransform, labelWidth / textTransform.localScale.x, textTransform.rect.height);
+					RectTransformExtensions.SetSize(textTransform, labelInfo.size.x / textTransform.localScale.x, textTransform.rect.height);
 					text.forceRedraw(inputField.text);
 				}
+
+				// remove extra symbols if we still have too much lines
+				if (text.getLineCount() > maxLineCount)
+					base.ensureMaxLineCount(maxLineCount);
 			}
 
 			protected override void Start()
@@ -138,7 +149,6 @@ namespace UITweaks.StorageTweaks
 					return;
 
 				text.lineSpacing = Mod.Consts.isGameSN? 0.7f: -35f;
-				RectTransformExtensions.SetSize(textTransform, labelWidth, textTransform.rect.height);
 #if GAME_SN
 				storageModel = gameObject.getChild("../3rd_person_model");
 				fixLabelPos();

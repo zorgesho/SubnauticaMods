@@ -47,10 +47,7 @@ namespace UITweaks.StorageTweaks
 				string str = inputField.text;
 
 				while (text.getLineCount() > maxLineCount)
-				{
-					str = str.Remove(str.Length - 1);
-					text.forceRedraw(str);
-				}
+					text.forceRedraw(str = str.removeFromEnd(1));
 
 				if (inputField.text.Length != str.Length)
 					inputField.text = str; // will call 'valueListener'

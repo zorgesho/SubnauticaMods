@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using System.Collections.Generic;
 
 // fix for C# 9.0 (pre-5.0 .NET) for init-only properties
@@ -92,6 +93,9 @@ namespace Common
 		public static string format(this string s, params object[] args) => string.Format(s, args);
 
 		public static bool startsWith(this string s, string str) => s.StartsWith(str, StringComparison.Ordinal);
+
+		public static string removeFromEnd(this string s, int count) => s.Length > count? s.Remove(s.Length - count): s;
+		public static StringBuilder removeFromEnd(this StringBuilder sb, int count) => sb.Length > count? sb.Remove(sb.Length - count, count): sb;
 
 		public static string clampLength(this string s, int length)
 		{

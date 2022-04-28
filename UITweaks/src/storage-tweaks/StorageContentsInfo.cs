@@ -29,34 +29,30 @@ namespace UITweaks.StorageTweaks
 			int slotsUsed = 0;
 
 			if (container.count == 0)
-			{
 				return Language.main.Get("Empty"); // don't show slot count for empty containers
-			}
-			else
+
+			var items = getItems();
+			StringBuilder sb = new();
+
+			for (int i = 0; i < items.Count; i++)
 			{
-				var list = getItems();
-				StringBuilder sb = new();
+				var item = items[i];
 
-				for (int i = 0; i < list.Count; i++)
-				{
-					var item = list[i];
+				if (i < maxItemCount)
+					sb.Append($"{item.name}{(item.count == 1? "": $" ({item.count})")}, ");
 
-					if (i < maxItemCount)
-						sb.Append($"{item.name}{(item.count == 1? "": $" ({item.count})")}, ");
-
-					slotsUsed += Utils.getItemSize(item.techType) * item.count;
-				}
-
-				if (sb.Length > 0)
-				{
-					sb.Remove(sb.Length - 2, 2);
-
-					if (maxItemCount < list.Count)
-						sb.Append(L10n.str("ids_otherItems"));
-				}
-
-				result = sb.ToString();
+				slotsUsed += Utils.getItemSize(item.techType) * item.count;
 			}
+
+			if (sb.Length > 0)
+			{
+				sb.removeFromEnd(2);
+
+				if (maxItemCount < items.Count)
+					sb.Append(L10n.str("ids_otherItems"));
+			}
+
+			result = sb.ToString();
 
 			if (slotsInfo)
 			{

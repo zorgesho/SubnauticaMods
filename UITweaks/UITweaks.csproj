@@ -74,6 +74,7 @@
     <Compile Include="src\storage-tweaks\patches\StorageActionsPatches.cs" />
     <Compile Include="src\storage-tweaks\patches\StorageAutonamePatches.cs" />
     <Compile Include="src\storage-tweaks\patches\StorageContentsInfoPatches.cs" />
+    <Compile Include="src\storage-tweaks\patches\StorageLabelFixerPatches.cs" />
     <Compile Include="src\storage-tweaks\StorageActions.cs" />
     <Compile Include="src\storage-tweaks\StorageAutoname.cs" />
     <Compile Include="src\storage-tweaks\StorageAutonameSerializer.cs" />

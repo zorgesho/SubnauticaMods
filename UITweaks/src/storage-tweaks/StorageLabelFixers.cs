@@ -1,11 +1,9 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+
+using UnityEngine;
 using UnityEngine.UI;
 
 using Common;
-
-#if GAME_SN
-using System.Collections;
-#endif
 
 namespace UITweaks.StorageTweaks
 {
@@ -13,7 +11,7 @@ namespace UITweaks.StorageTweaks
 	using Text = TMPro.TMP_Text;
 #endif
 
-	static class StorageLabelFixers
+	static partial class StorageLabelFixers
 	{
 		public static bool tweakEnabled => Main.config.storageTweaks.enabled && Main.config.storageTweaks.multilineLabels;
 
@@ -25,15 +23,15 @@ namespace UITweaks.StorageTweaks
 
 			protected IStorageLabelInfo labelInfo;
 
-			void valueListener(string _)
+			void valueListener(string str)
 			{
-				if (inputField.text.IndexOf('\n') != -1)
+				if (str != null && str.IndexOf('\n') != -1)
 				{																							"StorageLabelFixers.Fixer: removing new line from the input".logDbg();
-					inputField.text = inputField.text.Replace("\n", "");
+					inputField.text = str.Replace("\n", "");
 					return;
 				}
 
-				using var __ = Common.Debug.profiler("StorageLabelFixer");
+				using var _ = Common.Debug.profiler("StorageLabelFixer");
 
 				fixLabel();
 				ensureMaxLineCount(labelInfo.maxLineCount);
@@ -92,6 +90,16 @@ namespace UITweaks.StorageTweaks
 				inputField.lineType = TMPro.TMP_InputField.LineType.MultiLineSubmit;
 #endif
 				inputField.onValueChanged.AddListener(valueListener);
+				UWE.CoroutineHost.StartCoroutine(_updateLabel());
+
+				IEnumerator _updateLabel()
+				{
+					// skip two frames to wait for initialization
+					yield return null;
+					yield return null;
+
+					valueListener(null);
+				}
 			}
 
 			void OnDestroy()
@@ -107,7 +115,7 @@ namespace UITweaks.StorageTweaks
 			protected override void fixLabel()
 			{
 				text.forceRedraw(inputField.text);
-				text.lineSpacing = text.getLineCount() > 3? (Mod.Consts.isGameSN? 0.7f: -35f): (Mod.Consts.isGameSN? 1f: 0f);
+				text.lineSpacing = text.getLineCount() > 3? (Mod.Consts.isGameSN? 0.7f: -43f): (Mod.Consts.isGameSN? 1f: 0f);
 			}
 		}
 
@@ -115,19 +123,23 @@ namespace UITweaks.StorageTweaks
 		[StorageHandler(TechType.SmallStorage)]
 		class SmallStorageLabelFixer: Fixer
 		{
+			static readonly Vector3 defaultScale = new (1.0f, 1.7f, 1.0f);
+			static readonly Vector3 tightScale = new (1.0f, 1.2f, 1.0f);
+
 			protected override void fixLabel()
 			{
+				RectTransformExtensions.SetSize(textTransform, labelInfo.size.x, textTransform.rect.height);
+				textTransform.localScale = defaultScale;
 				text.forceRedraw(inputField.text);
-				textTransform.localScale = new (1.0f, text.getLineCount() > 2? 1.2f: 1.7f, 1f);
+
+				if (text.getLineCount() > 2)
+					textTransform.localScale = tightScale;
 			}
 
 			protected override void ensureMaxLineCount(int maxLineCount)
 			{
 				const int maxSteps = 10;
 				const float scaleStep = 0.05f;
-
-				RectTransformExtensions.SetSize(textTransform, labelInfo.size.x, textTransform.rect.height);
-				text.forceRedraw(inputField.text);
 
 				// first, we'll try to make symbols narrower
 				for (int i = 0; text.getLineCount() > maxLineCount && i < maxSteps; i++)

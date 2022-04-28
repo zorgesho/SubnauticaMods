@@ -63,22 +63,23 @@ namespace UITweaks.StorageTweaks
 		[StorageHandler(TechType.SeaTruckFabricatorModule)]
 		class SeaTruckStorageLabel: StorageLabel, IStorageLabelInfo
 		{
-			enum StorageType { Unknown, Vertical, HorizontalBig, HorizontalSmall }
-			record LabelInfo(Vector2 size, int maxCharCount, int maxLineCount);
+			enum StorageType { Unknown, Vertical, HorizontalBig, HorizontalSmallLeft, HorizontalSmallRight }
+			record LabelInfo(Vector2 size, int maxLineCount);
 
 			static readonly Dictionary<StorageType, LabelInfo> labelInfos = new()
 			{
-				{ StorageType.Vertical,		   new (new (0f, 0f), 0, 0) },
-				{ StorageType.HorizontalBig,   new (new (0f, 0f), 0, 0) },
-				{ StorageType.HorizontalSmall, new (new (0f, 0f), 0, 0) }
+				{ StorageType.Vertical,				new (new (320f, 500f), 8) },
+				{ StorageType.HorizontalBig,		new (new (600f, 200f), 3) },
+				{ StorageType.HorizontalSmallLeft,	new (new (480f, 300f), 4) },
+				{ StorageType.HorizontalSmallRight,	new (new (480f, 300f), 4) },
 			};
 
 			static readonly Dictionary<string, (string name, StorageType type)> labels = new()
 			{
 				{ "StorageContainer",	  ("Label (2)", StorageType.Vertical) },
 				{ "StorageContainer (1)", ("Label (4)", StorageType.HorizontalBig) },
-				{ "StorageContainer (2)", ("Label",		StorageType.HorizontalSmall) },
-				{ "StorageContainer (3)", ("Label (1)", StorageType.HorizontalSmall) },
+				{ "StorageContainer (2)", ("Label",		StorageType.HorizontalSmallLeft) },
+				{ "StorageContainer (3)", ("Label (1)", StorageType.HorizontalSmallRight) },
 				{ "StorageContainer (4)", ("Label (3)", StorageType.Vertical) }
 			};
 
@@ -87,7 +88,7 @@ namespace UITweaks.StorageTweaks
 
 			public string type => storageType.ToString();
 			public Vector2 size => labelInfo.size;
-			public int maxCharCount => labelInfo.maxCharCount;
+			public int maxCharCount => 100;
 			public int maxLineCount => labelInfo.maxLineCount;
 
 			protected override ColoredLabel initLabel()

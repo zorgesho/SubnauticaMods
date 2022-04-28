@@ -193,5 +193,87 @@ namespace UITweaks.StorageTweaks
 			}
 #endif
 		}
+
+#if GAME_BZ
+		abstract class SeaTruckLabelFixer: Fixer
+		{
+			protected abstract int lineTight { get; }
+			protected virtual Vector2 labelPos => Vector2.zero;
+			protected abstract Vector2 colorSelectorPos { get; }
+
+			protected override void fixLabel()
+			{
+				text.forceRedraw(inputField.text);
+				text.lineSpacing = text.getLineCount() > lineTight? -20f: 0f;
+			}
+
+			protected override void Start()
+			{
+				base.Start();
+
+				if (inputField)
+				{
+					inputField.transform.localPosition = labelPos;
+					inputField.transform.Find("../ColorSelector").localPosition = colorSelectorPos;
+				}
+			}
+		}
+
+		[StorageHandler(TechType.SeaTruckFabricatorModule)]
+		class SeaTruckFabricatorFixer: SeaTruckLabelFixer
+		{
+			protected override int lineTight => 2;
+			protected override Vector2 labelPos => new (110f, -30f);
+			protected override Vector2 colorSelectorPos => new (-230f, -30f);
+		}
+
+		[StorageHandler(TechType.SeaTruckStorageModule)]
+		class SeaTruckStorageFixer: MonoBehaviour
+		{
+			class FixerVertical: SeaTruckLabelFixer
+			{
+				protected override int lineTight => 4;
+				protected override Vector2 colorSelectorPos => new (0f, -270f);
+			}
+
+			class FixerHorizontalBig: SeaTruckLabelFixer
+			{
+				protected override int lineTight => 2;
+				protected override Vector2 labelPos => new (0f, -30f);
+				protected override Vector2 colorSelectorPos => new (-400f, -30f);
+			}
+
+			class FixerHorizontalSmallLeft: SeaTruckLabelFixer
+			{
+				protected override int lineTight => 3;
+				protected override Vector2 labelPos => new (-12f, 80f);
+				protected override Vector2 colorSelectorPos => new (-245f, -50f);
+			}
+
+			class FixerHorizontalSmallRight: SeaTruckLabelFixer
+			{
+				protected override int lineTight => 3;
+				protected override Vector2 labelPos => new (7f, 80f);
+				protected override Vector2 colorSelectorPos => new (-225f, -50f);
+			}
+
+			void Start()
+			{
+				var fixerType = GetComponent<IStorageLabelInfo>()?.type switch
+				{
+					"Vertical" => typeof(FixerVertical),
+					"HorizontalBig" => typeof(FixerHorizontalBig),
+					"HorizontalSmallLeft" => typeof(FixerHorizontalSmallLeft),
+					"HorizontalSmallRight" => typeof(FixerHorizontalSmallRight),
+					_ => null
+				};
+
+				Common.Debug.assert(fixerType != null);
+
+				if (fixerType != null)
+					gameObject.AddComponent(fixerType);
+			}
+		}
+#endif
 	}
 }

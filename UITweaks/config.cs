@@ -96,6 +96,14 @@ namespace UITweaks
 				}
 			}
 
+			class AutonameTweakHider: Options.Components.Hider.IVisibilityChecker, Field.IAction
+			{
+				public bool visible => StorageLabelFixers.tweakEnabled;
+
+				public void action() =>
+					Options.Components.Hider.setVisible($"{nameof(storageTweaks)}.{nameof(autoname)}", visible);
+			}
+
 			[Options.Field("Storage tweaks")] // TODO tooltip ?
 			[Field.Action(typeof(Hider))]
 			[Options.FinalizeAction(typeof(StorageAutoname.UpdateLabels))]
@@ -122,7 +130,13 @@ namespace UITweaks
 			[Options.FinalizeAction(typeof(StorageContentsInfo.InvalidateCache))]
 			public readonly bool showSlotsInfo = true;
 
+			[Options.Field("\tMultiline labels", "TODO (restart needed)")] // TODO tooltip
+			[Field.Action(typeof(AutonameTweakHider))]
+			[Options.FinalizeAction(typeof(StorageAutoname.UpdateLabels))]
+			public readonly bool multilineLabels = true;
+
 			[Options.Field("\tStorage auto-naming", "TODO")] // TODO tooltip
+			[Options.Hideable(typeof(AutonameTweakHider), "storage")]
 			[Options.FinalizeAction(typeof(StorageAutoname.UpdateLabels))]
 			public readonly bool autoname = true;
 		}

@@ -17,7 +17,7 @@ namespace UITweaks.StorageTweaks
 #endif
 	partial class StorageAutoname: StorageContentsListener
 	{
-		static bool tweakEnabled => Main.config.storageTweaks.enabled && Main.config.storageTweaks.autoname;
+		static bool tweakEnabled => StorageLabelFixers.tweakEnabled && Main.config.storageTweaks.autoname;
 
 		public class UpdateLabels: Config.Field.IAction
 		{

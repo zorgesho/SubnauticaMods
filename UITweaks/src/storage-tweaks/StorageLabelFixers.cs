@@ -15,6 +15,8 @@ namespace UITweaks.StorageTweaks
 
 	static class StorageLabelFixers
 	{
+		public static bool tweakEnabled => Main.config.storageTweaks.enabled && Main.config.storageTweaks.multilineLabels;
+
 		abstract class Fixer: MonoBehaviour
 		{
 			protected Text text;
@@ -61,8 +63,14 @@ namespace UITweaks.StorageTweaks
 #endif
 			}
 
-			protected virtual void Start()
+			void Awake()
 			{
+				if (!tweakEnabled)
+					Destroy(this);
+			}
+
+			protected virtual void Start()
+			{																								$"StorageLabelFixers.Fixer: Start (type: {GetType()})".logDbg();
 				inputField = GetComponent<IStorageLabel>()?.label.signInput.inputField;
 				labelInfo = GetComponent<IStorageLabelInfo>();
 
@@ -172,6 +180,9 @@ namespace UITweaks.StorageTweaks
 
 			void OnDisable()
 			{
+				if (!tweakEnabled)
+					return;
+
 				// 'OnDisable' can be called before 'Start' and nothing will be initialized
 				// so we need this minor hack to do it ourselves
 				if (!text)

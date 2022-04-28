@@ -104,6 +104,14 @@ namespace UITweaks
 					Options.Components.Hider.setVisible($"{nameof(storageTweaks)}.{nameof(autoname)}", visible);
 			}
 
+			class AutonameItemCountHider: Options.Components.Hider.IVisibilityChecker, Field.IAction
+			{
+				public bool visible => StorageAutoname.tweakEnabled;
+
+				public void action() =>
+					Options.Components.Hider.setVisible($"{nameof(storageTweaks)}.{nameof(autonameMaxItemCount)}", visible);
+			}
+
 			[Options.Field("Storage tweaks")] // TODO tooltip ?
 			[Field.Action(typeof(Hider))]
 			[Options.FinalizeAction(typeof(StorageAutoname.UpdateLabels))]
@@ -119,7 +127,7 @@ namespace UITweaks
 			[Field.Action(typeof(ContentsInfoTweakHider))]
 			public readonly bool showContentsInfo = true;
 
-			[Options.Field("\t\tMax item count to show", "TODO")] // TODO tooltip
+			[Options.Field("\t\tMax item count", "TODO")] // TODO tooltip
 			[Options.Slider(minValue: 0, maxValue: 10, defaultValue: 5)]
 			[Options.Hideable(typeof(ContentsInfoTweakHider), "storage")]
 			[Options.FinalizeAction(typeof(StorageContentsInfo.InvalidateCache))]
@@ -132,13 +140,21 @@ namespace UITweaks
 
 			[Options.Field("\tMultiline labels", "TODO (restart needed)")] // TODO tooltip
 			[Field.Action(typeof(AutonameTweakHider))]
+			[Field.Action(typeof(AutonameItemCountHider))]
 			[Options.FinalizeAction(typeof(StorageAutoname.UpdateLabels))]
 			public readonly bool multilineLabels = true;
 
 			[Options.Field("\tStorage auto-naming", "TODO")] // TODO tooltip
+			[Field.Action(typeof(AutonameItemCountHider))]
 			[Options.Hideable(typeof(AutonameTweakHider), "storage")]
 			[Options.FinalizeAction(typeof(StorageAutoname.UpdateLabels))]
 			public readonly bool autoname = true;
+
+			[Options.Field("\t\tMax item count", "TODO")] // TODO tooltip
+			[Options.Slider(minValue: 1, maxValue: 5, defaultValue: 3)]
+			[Options.Hideable(typeof(AutonameItemCountHider), "storage")]
+			[Options.FinalizeAction(typeof(StorageAutoname.UpdateLabels))]
+			public readonly int autonameMaxItemCount = 3;
 		}
 		public readonly StorageTweaks storageTweaks = new();
 

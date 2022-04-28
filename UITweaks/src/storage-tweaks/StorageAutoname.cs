@@ -2,6 +2,7 @@
 //#define LABEL_TEST
 #endif
 
+using System.Text;
 using System.Collections.Generic;
 
 using Common;
@@ -17,7 +18,7 @@ namespace UITweaks.StorageTweaks
 #endif
 	partial class StorageAutoname: StorageContentsListener
 	{
-		static bool tweakEnabled => StorageLabelFixers.tweakEnabled && Main.config.storageTweaks.autoname;
+		public static bool tweakEnabled => StorageLabelFixers.tweakEnabled && Main.config.storageTweaks.autoname;
 
 		public class UpdateLabels: Config.Field.IAction
 		{
@@ -53,7 +54,16 @@ namespace UITweaks.StorageTweaks
 #if LABEL_TEST
 				return Utils.TechTypeNamesTest.getName();
 #else
-				return container.count == 0? Language.main.Get("Empty"): getItems()[0].name;
+				if (container.count == 0)
+					return Language.main.Get("Empty");
+
+				var items = getItems();
+				StringBuilder sb = new();
+
+				for (int i = 0; i < items.Count && i < Main.config.storageTweaks.autonameMaxItemCount; i++)
+					sb.Append($"{items[i].name}, ");
+
+				return sb.removeFromEnd(2).ToString();
 #endif
 			}
 		}

@@ -44,8 +44,8 @@ namespace UITweaks
 
 			uGUI_PingTab pingTab;
 
-			GameObject cameraButton;
-			List<GameObject> beaconButtons, signalButtons;
+			GameObject tertiaryPingButton;
+			List<GameObject> primaryPingButtons, secondaryPingButtons;
 
 			[Serializable]
 			public class PingStates
@@ -106,11 +106,11 @@ namespace UITweaks
 
 				pingStates = PingStates.create();
 
-				cameraButton = _addPingButton(PingType.MapRoomCamera, -1, content);
-				cameraButton.transform.localPosition = new Vector3(btnPrefabPos.x + btnPrefabSize.x + groupSpacing , btnPrefabPos.y, 0f);
+				tertiaryPingButton = _addPingButton(Main.config.pdaTweaks.pingTypes.tertiary, -1, content);
+				tertiaryPingButton.transform.localPosition = new Vector3(btnPrefabPos.x + btnPrefabSize.x + groupSpacing , btnPrefabPos.y, 0f);
 
-				beaconButtons = _createPingButtons(PingType.Beacon, "BeaconButtons");
-				signalButtons = _createPingButtons(PingType.Signal, "SignalButtons");
+				primaryPingButtons = _createPingButtons(Main.config.pdaTweaks.pingTypes.primary, "PrimaryPingButtons");
+				secondaryPingButtons = _createPingButtons(Main.config.pdaTweaks.pingTypes.secondary, "SecondaryPingButtons");
 
 				StartCoroutine(_initButtons());
 
@@ -172,9 +172,9 @@ namespace UITweaks
 			{																						"PingToggleToolbar: OnDestroy()".logDbg();
 				subscribeToPingManager(false);
 
-				beaconButtons.ForEach(Destroy);
-				signalButtons.ForEach(Destroy);
-				Destroy(cameraButton);
+				primaryPingButtons.ForEach(Destroy);
+				secondaryPingButtons.ForEach(Destroy);
+				Destroy(tertiaryPingButton);
 
 				updateEntries();
 
@@ -256,9 +256,9 @@ namespace UITweaks
 			// show buttons for existing pings only (pingType & color)
 			public void updateButtons()
 			{
-				_updateButtons(beaconButtons, PingType.Beacon);
-				_updateButtons(signalButtons, PingType.Signal);
-				cameraButton.SetActive(_colors(PingType.MapRoomCamera).Count > 0);
+				_updateButtons(primaryPingButtons, Main.config.pdaTweaks.pingTypes.primary);
+				_updateButtons(secondaryPingButtons, Main.config.pdaTweaks.pingTypes.secondary);
+				tertiaryPingButton.SetActive(_colors(Main.config.pdaTweaks.pingTypes.tertiary).Count > 0);
 
 				updateEntries();
 

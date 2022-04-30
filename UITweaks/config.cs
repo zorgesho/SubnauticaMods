@@ -63,9 +63,22 @@ namespace UITweaks
 
 			[Options.Field("\tShow item count", "Show number of items for the each tab on the tab tooltip")]
 			public readonly bool showItemCount = true;
+#if DEBUG
+			[Options.Field]
+#endif
+			public class PingTypes
+			{
+				public PingType primary = PingType.Beacon;
+#if GAME_SN
+				public PingType secondary = PingType.Signal;
+#elif GAME_BZ
+				public PingType secondary = PingType.ArchitectArtifact;
+#endif
+				public PingType tertiary = PingType.MapRoomCamera;
+			}
+			public readonly PingTypes pingTypes = new();
 
-			[Field.Reloadable]
-			[NoInnerFieldsAttrProcessing]
+			[Field.Reloadable, NoInnerFieldsAttrProcessing]
 			public readonly Dictionary<PDATab, KeyCode> tabHotkeys = new()
 			{
 				{ PDATab.Inventory,		KeyCode.Alpha1 },

@@ -72,7 +72,18 @@ namespace UITweaks
 
 			static void Postfix(MainMenuLoadButton lb)
 			{
-				if (lb.load.getChild(textPath)?.GetComponent<Text>() is Text text)
+				var textGO = lb.load.getChild(textPath);
+
+				if (!textGO)
+				{
+					"MainMenuLoadPanel_UpdateLoadButtonState_Patch: text not found".logError();
+					return;
+				}
+#if GAME_BZ
+				var rt = textGO.transform as RectTransform;
+				RectTransformExtensions.SetSize(rt, 190f, rt.rect.height);
+#endif
+				if (textGO.TryGetComponent<Text>(out var text))
 					text.text += $" | {lb.saveGame}";
 			}
 		}

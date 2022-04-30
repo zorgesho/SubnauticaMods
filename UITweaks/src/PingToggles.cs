@@ -281,7 +281,7 @@ namespace UITweaks
 
 						btn.SetActive(isNeedActive);
 
-						if (!isActive && isNeedActive) // if btn was hided before we will show it as enabled
+						if (!isActive && isNeedActive) // if btn was hidden before we will show it as enabled
 							toggleButton(btn, i, pingType, true, false);
 						else
 							toggleButton(btn, i, pingType, pingStates.getPingState(pingType, i) ?? true, false);
@@ -301,9 +301,7 @@ namespace UITweaks
 				return pingTogglesEnabled;
 			}
 
-			[HarmonyPostfix]
-			[HarmonyPatch(typeof(uGUI_PingTab), "Open")]
-			[HarmonyPatch(typeof(uGUI_PingTab), "Awake")]
+			[HarmonyPrefix, HarmonyPatch(typeof(uGUI_PingTab), "Open")]
 			static void addToolbar(uGUI_PingTab __instance)
 			{
 				__instance.gameObject.ensureComponent<PingToggleToolbar>();
@@ -333,7 +331,7 @@ namespace UITweaks
 			}
 
 			// compatibility patch for SubnauticaMap mod
-			// hide ping icons from the map for disabled pings
+			// hides ping icons from the map for disabled pings
 			[HarmonyHelper.Patch(HarmonyHelper.PatchOptions.CanBeAbsent)]
 			[HarmonyPostfix, HarmonyHelper.Patch("SubnauticaMap.Controller, SubnauticaMap" + (Mod.Consts.isGameBZ? "_BZ": ""), "UpdateIcons")]
 			static void updateMapPings(object __instance)

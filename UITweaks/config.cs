@@ -85,6 +85,7 @@ namespace UITweaks
 			class Hider: Options.Components.Hider.Simple
 			{ public Hider(): base("storage", () => Main.config.storageTweaks.enabled) {} }
 
+			#region hiders
 			class ContentsInfoTweakHider: Options.Components.Hider.IVisibilityChecker, Field.IAction
 			{
 				public bool visible => StorageContentsInfo.tweakEnabled;
@@ -111,47 +112,50 @@ namespace UITweaks
 				public void action() =>
 					Options.Components.Hider.setVisible($"{nameof(storageTweaks)}.{nameof(autonameMaxItemCount)}", visible);
 			}
+			#endregion
 
-			[Options.Field("Storage tweaks")] // TODO tooltip ?
+			[Options.Field("Storage tweaks")]
 			[Field.Action(typeof(Hider))]
 			[Options.FinalizeAction(typeof(StorageAutoname.UpdateLabels))]
 			[Options.FinalizeAction(typeof(StorageActions.UpdateStorages))]
 			[Options.Hideable(typeof(Options.Components.Hider.Ignore), "")]
 			public readonly bool enabled = true;
 
-			[Options.Field("\t\"All-in-one\" actions", "TODO")] // TODO tooltip
+			[Options.Field("\t\"All-in-one\" actions", "All available storage actions (open, change label, pack up) will be accessible by hovering over the storage rather than over different parts of it")]
 			[Options.FinalizeAction(typeof(StorageActions.UpdateStorages))]
 			public readonly bool allInOneActions = true;
 
-			[Options.Field("\tShow storage contents info", "TODO")] // TODO tooltip
+			[Options.Field("\tShow storage contents info", "Contents of the storage and free slots count will be shown by hovering over the storage")]
 			[Field.Action(typeof(ContentsInfoTweakHider))]
 			public readonly bool showContentsInfo = true;
 
-			[Options.Field("\t\tMax item count", "TODO")] // TODO tooltip
-			[Options.Slider(minValue: 0, maxValue: 10, defaultValue: 5)]
+			[Options.Field("\t\tMax item count", "If the storage has different types of items, show first N of them (sorted by the count)")]
+			[Field.Range(0, 10), Options.Slider(defaultValue: 5)]
 			[Options.Hideable(typeof(ContentsInfoTweakHider), "storage")]
 			[Options.FinalizeAction(typeof(StorageContentsInfo.InvalidateCache))]
 			public readonly int showMaxItemCount = 5;
 
-			[Options.Field("\t\tShow free slots count", "TODO")] // TODO tooltip
+			[Options.Field("\t\tShow free slots count", "Number of free slots in the storage (and total number) will be shown by hovering over the storage")]
 			[Options.Hideable(typeof(ContentsInfoTweakHider), "storage")]
 			[Options.FinalizeAction(typeof(StorageContentsInfo.InvalidateCache))]
 			public readonly bool showSlotsInfo = true;
 
-			[Options.Field("\tMultiline labels", "TODO (restart needed)")] // TODO tooltip
+			[Options.Field("\tMultiline labels", "Allows for storage labels to be multiline. Required for storage auto-naming. To apply it properly restart the game to the main menu.")]
 			[Field.Action(typeof(AutonameTweakHider))]
 			[Field.Action(typeof(AutonameItemCountHider))]
 			[Options.FinalizeAction(typeof(StorageAutoname.UpdateLabels))]
 			public readonly bool multilineLabels = true;
 
-			[Options.Field("\tStorage auto-naming", "TODO")] // TODO tooltip
+			[Options.Field("\tStorage auto-naming", "For storages with labels, change label automatically to reflect the contents.\n" +
+													"<color=#ffffff><b>Doesn't apply to manually changed labels.\n" +
+													"To enable auto-naming for changed labels again, delete the label.</b></color>")]
 			[Field.Action(typeof(AutonameItemCountHider))]
 			[Options.Hideable(typeof(AutonameTweakHider), "storage")]
 			[Options.FinalizeAction(typeof(StorageAutoname.UpdateLabels))]
 			public readonly bool autoname = true;
 
-			[Options.Field("\t\tMax item count", "TODO")] // TODO tooltip
-			[Options.Slider(minValue: 1, maxValue: 5, defaultValue: 3)]
+			[Options.Field("\t\tMax item count", "If the storage has different types of items, use first N of them (sorted by the count) for auto-naming")]
+			[Field.Range(1, 5), Options.Slider(defaultValue: 3)]
 			[Options.Hideable(typeof(AutonameItemCountHider), "storage")]
 			[Options.FinalizeAction(typeof(StorageAutoname.UpdateLabels))]
 			public readonly int autonameMaxItemCount = 3;

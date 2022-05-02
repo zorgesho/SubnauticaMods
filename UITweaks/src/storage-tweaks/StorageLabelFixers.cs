@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Text.RegularExpressions;
 
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,6 +18,8 @@ namespace UITweaks.StorageTweaks
 
 		abstract class Fixer: MonoBehaviour
 		{
+			static readonly Regex spaceRemover = new ("\\s+", RegexOptions.Compiled);
+
 			protected Text text;
 			protected RectTransform textTransform;
 			protected uGUI_InputField inputField;
@@ -25,10 +28,16 @@ namespace UITweaks.StorageTweaks
 
 			void valueListener(string str)
 			{
-				if (str != null && str.IndexOf('\n') != -1)
-				{																							"StorageLabelFixers.Fixer: removing new line from the input".logDbg();
-					inputField.text = str.Replace("\n", "");
-					return;
+				if (str != null)
+				{
+					str = str.Replace("\n", "");
+					str = spaceRemover.Replace(str, " "); // consecutive spaces are buggy, replacing them with one space
+
+					if (inputField.text != str)
+					{																						"StorageLabelFixers.Fixer: changing label in valueListener".logDbg();
+						inputField.text = str;
+						return;
+					}
 				}
 
 				using var _ = Common.Debug.profiler("StorageLabelFixer");

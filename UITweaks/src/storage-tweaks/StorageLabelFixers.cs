@@ -220,7 +220,7 @@ namespace UITweaks.StorageTweaks
 					fixLabelPos();
 				}
 			}
-#endif
+#endif // GAME_SN
 		}
 
 #if GAME_BZ
@@ -303,6 +303,6 @@ namespace UITweaks.StorageTweaks
 					gameObject.AddComponent(fixerType);
 			}
 		}
-#endif
+#endif // GAME_BZ
 	}
 }

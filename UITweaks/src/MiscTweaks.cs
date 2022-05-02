@@ -136,6 +136,6 @@ namespace UITweaks
 					TooltipFactory.WriteAction(sb, buttons, L10n.str("ids_metalDetectorSwitchTarget"));
 			}
 		}
-#endif
+#endif // GAME_BZ
 	}
 }

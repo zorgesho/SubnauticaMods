@@ -64,7 +64,7 @@ namespace UITweaks
 
 			text.text = _writeAction("tmp"); // adding temporary text to update rect size
 		}
-#endif
+#endif // GAME_SN
 		static void init(TechType techType)
 		{
 			currentCraftAmount = 0;

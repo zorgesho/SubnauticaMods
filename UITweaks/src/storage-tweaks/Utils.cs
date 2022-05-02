@@ -1,19 +1,22 @@
 ﻿using UnityEngine;
-using Common;
 
 #if GAME_SN
 using System.Collections.Generic;
-
 using HarmonyLib;
-
 using Common.Harmony;
+
+#if !DEBUG
+using Common;
+#endif
 #endif
 
 #if DEBUG
 using System;
 using System.Linq;
 
-#if !GAME_SN
+using Common;
+
+#if GAME_BZ
 using System.Collections.Generic;
 #endif
 #endif
@@ -78,7 +81,7 @@ namespace UITweaks.StorageTweaks
 				return techTypeNames[nameIndex];
 			}
 		}
-#endif
+#endif // DEBUG
 		public static string getPrefabClassId(MonoBehaviour cmp)
 		{
 			return cmp.GetComponentInParent<PrefabIdentifier>(true)?.ClassId ?? "";

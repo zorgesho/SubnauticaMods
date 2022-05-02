@@ -23,14 +23,12 @@ namespace UITweaks.StorageTweaks
 
 		string getRawInfo(int maxItemCount, bool slotsInfo)
 		{
-			using var _ = Debug.profiler("StorageContentsInfo.getRawInfo");
-
-			string result;
-			int slotsUsed = 0;
-
 			if (container.count == 0)
 				return Language.main.Get("Empty"); // don't show slot count for empty containers
 
+			using var _ = Debug.profiler("StorageContentsInfo.getRawInfo");
+
+			int slotsUsed = 0;
 			var items = getItems();
 			StringBuilder sb = new();
 
@@ -52,7 +50,7 @@ namespace UITweaks.StorageTweaks
 					sb.Append(L10n.str("ids_otherItems"));
 			}
 
-			result = sb.ToString();
+			string result = sb.ToString();
 
 			if (slotsInfo)
 			{

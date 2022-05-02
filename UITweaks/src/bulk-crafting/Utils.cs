@@ -61,7 +61,7 @@ namespace UITweaks
 					return false;
 				}
 			}
-#endif
+#endif // GAME_BZ
 		}
 	}
 }

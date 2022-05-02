@@ -112,7 +112,7 @@ namespace Common.Harmony
 	{
 		public static string get(string harmonyID = null, bool omitNames = false)
 		{
-			var patchedMethods = HarmonyHelper.harmonyInstance.GetPatchedMethods().ToList();
+			var patchedMethods = HarmonyLib.Harmony.GetAllPatchedMethods().ToList();
 			patchedMethods.Sort((m1, m2) => string.Compare(m1.fullName(), m2.fullName(), StringComparison.Ordinal));
 
 			StringBuilder sb = new();

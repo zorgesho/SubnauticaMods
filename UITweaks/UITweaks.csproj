@@ -71,6 +71,7 @@
     <Compile Include="src\MiscTweaks.cs" />
     <Compile Include="src\PDATweaks.cs" />
     <Compile Include="src\PingToggles.cs" />
+    <Compile Include="src\storage-tweaks\patches\CompatibilityPatches.cs" />
     <Compile Include="src\storage-tweaks\patches\StorageActionsPatches.cs" />
     <Compile Include="src\storage-tweaks\patches\StorageAutonamePatches.cs" />
     <Compile Include="src\storage-tweaks\patches\StorageContentsInfoPatches.cs" />

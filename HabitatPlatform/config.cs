@@ -31,6 +31,5 @@ namespace HabitatPlatform
 		public const string ids_ChargeCameraDesc = "Charge and repair camera drone.";
 
 		public static readonly string ids_platformsNode = "Platforms";
-		public static readonly string ids_terminalText = "WILL BE USED LATER";
 	}
 }

@@ -134,7 +134,7 @@ namespace HabitatPlatform
 
 			var screen = guiScreen.buildAnimationScreen.GetComponent<uGUI_BuildBotScreen>();
 			screen.enabled = false;
-			screen.constructingText.text = L10n.str(L10n.ids_terminalText);
+			screen.constructingText.text = "";
 
 			// ignoring plaform colliders for builder so they don't interfere with foundations
 			GameObject collisions = gameObject.getChild("Base/BaseCollisions");

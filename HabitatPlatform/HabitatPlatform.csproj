@@ -41,14 +41,15 @@
     <Compile Include="config.cs" />
     <Compile Include="main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="src\CameraDroneCharge.cs" />
     <Compile Include="src\ConsoleCommands.cs" />
+    <Compile Include="src\fixers\CameraDronePosFix.cs" />
     <Compile Include="src\fixers\PlatformCollisionFixer.cs" />
     <Compile Include="src\fixers\RigidbodyKinematicFixer.cs" />
     <Compile Include="src\fixers\TransformFixer.cs" />
     <Compile Include="src\patches\BuilderPatches.cs" />
     <Compile Include="src\patches\BasePatches.cs" />
     <Compile Include="src\patches\ConstructorPatches.cs" />
-    <Compile Include="src\CameraDroneCharge.cs" />
     <Compile Include="src\patches\DebugPatches.cs" />
     <Compile Include="src\PlatformBuildable.cs" />
     <Compile Include="src\PlatformInitializer.cs" />

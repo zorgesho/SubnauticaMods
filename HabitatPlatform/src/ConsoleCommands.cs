@@ -51,6 +51,21 @@ namespace HabitatPlatform
 			platform.transform.position = new Vector3(x ?? pos.x, platform.transform.position.y, y ?? pos.z);
 		}
 
+		public void hbpl_destroy(bool confirmation = true)
+		{
+			if (!confirmation)
+			{
+				Destroy(_platform);
+				return;
+			}
+
+			uGUI.main.confirmation?.Show(Language.main.Get("AreYouSure"), val =>
+			{
+				if (val)
+					Destroy(_platform);
+			});
+		}
+
 		#region debug console commands
 #if DEBUG
 		public void hbpl_dump(int parent = 0)

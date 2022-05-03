@@ -44,6 +44,7 @@
     <Compile Include="src\CameraDroneCharge.cs" />
     <Compile Include="src\ConsoleCommands.cs" />
     <Compile Include="src\fixers\CameraDronePosFix.cs" />
+    <Compile Include="src\fixers\MapRoomFixer.cs" />
     <Compile Include="src\fixers\PlatformCollisionFixer.cs" />
     <Compile Include="src\fixers\RigidbodyKinematicFixer.cs" />
     <Compile Include="src\fixers\TransformFixer.cs" />

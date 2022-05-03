@@ -3,8 +3,8 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("UITweaks")]
 [assembly: AssemblyProduct("UITweaks")]
-[assembly: AssemblyCopyright("© 2020-2021 zorgesho")]
+[assembly: AssemblyCopyright("© 2020-2022 zorgesho")]
 
 [assembly: ComVisible(false)]
 
-[assembly: AssemblyVersion("1.0.4.0")]
+[assembly: AssemblyVersion("1.1.0.0")]

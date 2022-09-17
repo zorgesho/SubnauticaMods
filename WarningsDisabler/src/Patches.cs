@@ -46,12 +46,12 @@ namespace WarningsDisabler
 
 #if GAME_BZ
 	// Disabling disclaimer on startup
-	[HarmonyPatch(typeof(EarlyAccessDisclaimer), "Start")]
-	static class EarlyAccessDisclaimer_Start_Patch
+	[HarmonyPatch(typeof(FlashingLightsDisclaimer), "Start")]
+	static class FlashingLightsDisclaimer_Start_Patch
 	{
 		static bool Prepare() => !Main.config.showDisclaimer;
 
-		static bool Prefix(EarlyAccessDisclaimer __instance)
+		static bool Prefix(FlashingLightsDisclaimer __instance)
 		{
 			__instance.gameObject.SetActive(false);
 			return false;

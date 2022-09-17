@@ -14,6 +14,15 @@ namespace UITweaks
 {
 	static partial class BulkCraftingTooltip
 	{
+		static bool isCraftingRequiresResources()
+		{
+#if GAME_SN
+			return GameModeUtils.RequiresIngredients();
+#elif GAME_BZ
+			return GameModeManager.GetOption<bool>(GameOption.CraftingRequiresResources);
+#endif
+		}
+
 		static class TechInfoUtils
 		{
 			public static TechInfo getTechInfo(TechType techType)

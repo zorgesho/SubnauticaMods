@@ -92,7 +92,7 @@ namespace UITweaks
 		{
 			int maxAmount = int.MaxValue;
 
-			if (GameModeUtils.RequiresIngredients())
+			if (isCraftingRequiresResources())
 			{
 				foreach (var ing in techInfo.ingredients)
 					maxAmount = Math.Min(maxAmount, getCountAvailable(ing.techType) / ing.amount);

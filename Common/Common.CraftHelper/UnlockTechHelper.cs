@@ -90,7 +90,9 @@ namespace Common.Crafting
 
 				foreach (var popup in unlockPopups)
 				{
-					var tech = _getEntry(popup.Key);
+					if (_getEntry(popup.Key) is not KnownTech.AnalysisTech tech)
+						continue;
+
 					var sprite = _getEntry(popup.Value)?.unlockPopup;
 
 					if (sprite == null && PDAScanner.GetEntryData(popup.Value) is PDAScanner.EntryData fragData)

@@ -2,7 +2,7 @@
   "Id": "GravTrapImproved",
   "DisplayName": "Grav Trap Improved",
   "Author": "zorgesho",
-  "Version": "2.2.1",
+  "Version": "2.2.2",
   "Dependencies": [ "SMLHelper" ],
   "VersionDependencies": { "SMLHelper": "2.9.0" },
   "Enable": true,

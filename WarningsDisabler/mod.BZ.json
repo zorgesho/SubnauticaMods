@@ -2,7 +2,7 @@
   "Id": "WarningsDisabler",
   "DisplayName": "Warnings Disabler",
   "Author": "zorgesho",
-  "Version": "1.2.2",
+  "Version": "1.2.3",
   "Dependencies": [ "SMLHelper" ],
   "VersionDependencies": { "SMLHelper": "2.6.0" },
   "Enable": true,
